@@ -72,7 +72,7 @@ npm run dev
 
 | Service | URL |
 | :------ | :-- |
-| Admin | `http://localhost:3200` (confirm in project config) |
+| Admin | `http://localhost:5174` |
 | API | `http://localhost:3000` |
 | Swagger (contract) | `http://localhost:3000/api` |
 
