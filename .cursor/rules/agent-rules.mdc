@@ -1,0 +1,8 @@
+---
+description: Admin dashboard agent policy
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+Follow the canonical policy in `AGENT.md`.
