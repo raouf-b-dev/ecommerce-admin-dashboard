@@ -50,7 +50,7 @@ Write tests **with** each feature.
 | API | Typed client from OpenAPI / Swagger |
 | Tests | Vitest + Testing Library + Playwright |
 
-**Ports (intent):** admin `3200`, API `3000`. Confirm in Phase 0.
+**Ports:** admin `5174`, API `3000` (or remapped API `PORT` on hosts that reserve `3000–3199`).
 
 ---
 
@@ -58,8 +58,8 @@ Write tests **with** each feature.
 
 | Phase | Name | Status | Focus |
 | ----- | ---- | ------ | ----- |
-| **0** | Foundation | `[ ]` | Vite scaffold, tooling, tests, OpenAPI client |
-| **1** | Agent ecosystem and conventions | `[ ]` | AGENT policy, context, AI docs, adapters |
+| **0** | Foundation | `[x]` | Vite scaffold, tooling, tests, OpenAPI client |
+| **1** | Agent ecosystem and conventions | `[x]` | AGENT policy, context, AI docs, adapters |
 | **2** | Auth and RBAC chrome | `[ ]` | Login, permission-aware nav + tests |
 | **3** | Products | `[ ]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
@@ -79,17 +79,17 @@ Write tests **with** each feature.
 
 **Scope:**
 
-- [ ] Scaffold Vite React-TS
-- [ ] Tailwind + shadcn/ui + app shell (sidebar/topbar)
-- [ ] React Router skeleton
-- [ ] `.env.example` with `VITE_API_BASE_URL=http://localhost:3000` (no secrets)
-- [ ] `.gitignore` ignores `.env` and other secret files
-- [ ] OpenAPI typed client stub + regenerate script
-- [ ] Vitest + Testing Library sample test
-- [ ] Playwright placeholder smoke
-- [ ] Scripts: `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`
-- [ ] CI: lint, typecheck, unit tests
-- [ ] Dev server on port **3200** (or document the chosen port)
+- [x] Scaffold Vite React-TS
+- [x] Tailwind + shadcn/ui + app shell (sidebar/topbar)
+- [x] React Router skeleton
+- [x] `.env.example` with `VITE_API_BASE_URL=http://localhost:3000` (no secrets)
+- [x] `.gitignore` ignores `.env` and other secret files
+- [x] OpenAPI typed client stub + regenerate script
+- [x] Vitest + Testing Library sample test
+- [x] Playwright placeholder smoke
+- [x] Scripts: `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`
+- [x] CI: lint, typecheck, unit tests
+- [x] Dev server on port **5174** (or document the chosen port)
 
 **Done when:** clean install passes lint/typecheck/test; `npm run dev` shows the shell.
 
@@ -129,9 +129,9 @@ Write tests **with** each feature.
 
 **Scope checklist:**
 
-- [ ] Create all files above
-- [ ] Link from README docs table
-- [ ] Adapters do not fork policy
+- [x] Create all files above
+- [x] Link from README docs table
+- [x] Adapters do not fork policy
 
 **Done when:** `AGENT.md` + `PROJECT-CONTEXT.md` are enough to start a feature phase safely.
 

@@ -18,7 +18,7 @@ Do **not** keep an endpoint inventory here. Added, removed, or renamed API route
 
 | Item | Typical local value |
 | :--- | :------------------ |
-| API origin | `http://localhost:3000` (from `VITE_API_BASE_URL`) |
+| API origin | `VITE_API_BASE_URL` (default intent `http://localhost:3000`; use the API `PORT` when remapped) |
 | Versioned API | Confirm versioning scheme in OpenAPI |
 | Health | Confirm health routes in OpenAPI |
 
