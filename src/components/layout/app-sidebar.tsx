@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router';
 import { cn } from '@/lib/utils';
 import { navigation } from '@/app/navigation';
+import { filterNavigation } from '@/lib/auth/permissions';
+import { useAuth } from '@/lib/auth/auth-context';
 
 type AppSidebarProps = {
   className?: string;
@@ -8,6 +10,12 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
+  const { session } = useAuth();
+  const navItems = filterNavigation(
+    navigation,
+    session?.permissions ?? [],
+  );
+
   return (
     <aside
       className={cn(
@@ -23,7 +31,7 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
       </div>
 
       <nav className="space-y-2">
-        {navigation.map(({ to, label, icon: Icon }) => (
+        {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
