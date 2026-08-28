@@ -61,7 +61,7 @@ Write tests **with** each feature.
 | **0** | Foundation | `[x]` | Vite scaffold, tooling, tests, OpenAPI client |
 | **1** | Agent ecosystem and conventions | `[x]` | AGENT policy, context, AI docs, adapters |
 | **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
-| **2** | Auth and RBAC chrome | `[ ]` | Login, permission-aware nav + tests |
+| **2** | Auth and RBAC chrome | `[x]` | Login, permission-aware nav + tests |
 | **3** | Products | `[ ]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
 | **5** | Orders | `[ ]` | Ops actions + tests |
@@ -169,16 +169,17 @@ Write tests **with** each feature.
 
 **Scope:**
 
-- [ ] Login (RHF + Zod)
-- [ ] Session persistence matching the API
-- [ ] Wire `ProtectedRoute` / `GuestRoute` to API session (stubs from Phase 1.5)
-- [ ] Unauthenticated access to any protected path → `/login?redirect=...`
-- [ ] Post-login redirect to `redirect` query param or `/`
-- [ ] Global `401` handler on `apiClient`
-- [ ] Nav filtered by permission claims in `src/app/navigation.ts` (UX only)
-- [ ] 401 -> login; 403 -> forbidden
-- [ ] Component tests: validation, guard, forbidden
-- [ ] Playwright: login success and failure
+- [x] Login (RHF + Zod)
+- [x] Session persistence matching the API
+- [x] Wire `ProtectedRoute` / `GuestRoute` to API session (stubs from Phase 1.5)
+- [x] Unauthenticated access to any protected path → `/login?redirect=...`
+- [x] Post-login redirect to `redirect` query param or `/`
+- [x] Global `401` handler on `apiClient`
+- [x] Nav filtered by permission claims in `src/app/navigation.ts` (UX only)
+- [x] 401 -> login; 403 -> forbidden
+- [x] Component tests: validation, guard, forbidden
+- [x] Playwright: login success and failure
+- [x] Architecture docs + ADRs (`docs/architecture/`)
 
 **Done when:** Seeded admin reaches the shell; unauthenticated user cannot see admin shell or placeholder pages; forbidden route shows 403 UX; tests green.
 
