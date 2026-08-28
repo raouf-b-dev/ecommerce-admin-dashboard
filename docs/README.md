@@ -4,6 +4,8 @@
 | :------- | :---------- |
 | [../SECURITY.md](../SECURITY.md) | Frontend security baseline |
 | [ROADMAP.md](ROADMAP.md) | Delivery plan, testing policy, ship gates |
+| [architecture/ARCHITECTURE.md](architecture/ARCHITECTURE.md) | SPA system context, auth flow, source layout |
+| [architecture/adr/README.md](architecture/adr/README.md) | Architecture decision records |
 | [API-INTEGRATION.md](API-INTEGRATION.md) | Client rules; OpenAPI owns endpoints |
 | [ai/README.md](ai/README.md) | Agent and conventions docs |
 | [../README.md](../README.md) | Overview, stack, quick start |
