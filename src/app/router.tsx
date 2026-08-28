@@ -1,72 +1,45 @@
 import { createBrowserRouter } from 'react-router';
-import { App } from './App';
-
-function PlaceholderPage({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <section className="space-y-3">
-      <h2 className="text-3xl font-semibold">{title}</h2>
-      <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-    </section>
-  );
-}
+import { AppLayout } from '@/components/layout/app-layout';
+import { LoginPage } from '@/features/auth/pages/login-page';
+import { DashboardPage } from '@/features/dashboard/pages/dashboard-page';
+import { OrdersPage } from '@/features/orders/pages/orders-page';
+import { ProductsPage } from '@/features/products/pages/products-page';
+import { GuestRoute } from '@/lib/auth/guest-route';
+import { ProtectedRoute } from '@/lib/auth/protected-route';
+import { NotFoundPage } from '@/app/pages/not-found-page';
 
 export const router = createBrowserRouter([
   {
+    path: '/login',
+    element: (
+      <GuestRoute>
+        <LoginPage />
+      </GuestRoute>
+    ),
+  },
+  {
     path: '/',
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
-        element: (
-          <PlaceholderPage
-            title="Dashboard"
-            description="Summary widgets, alerts, and operational snapshots will land here after the foundation and data contracts are in place."
-          />
-        ),
+        element: <DashboardPage />,
       },
       {
         path: 'products',
-        element: (
-          <PlaceholderPage
-            title="Products"
-            description="Product list, filters, and editor flows will follow the product feature phase."
-          />
-        ),
+        element: <ProductsPage />,
       },
       {
         path: 'orders',
-        element: (
-          <PlaceholderPage
-            title="Orders"
-            description="Order list, detail, and status actions will be wired once the admin operations phase begins."
-          />
-        ),
-      },
-      {
-        path: 'login',
-        element: (
-          <PlaceholderPage
-            title="Login"
-            description="Authentication UI is intentionally deferred. This placeholder keeps the route shell in place for the next phase."
-          />
-        ),
+        element: <OrdersPage />,
       },
       {
         path: '*',
-        element: (
-          <PlaceholderPage
-            title="Not Found"
-            description="The requested page does not exist."
-          />
-        ),
+        element: <NotFoundPage />,
       },
     ],
   },

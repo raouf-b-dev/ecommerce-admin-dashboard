@@ -60,6 +60,7 @@ Write tests **with** each feature.
 | ----- | ---- | ------ | ----- |
 | **0** | Foundation | `[x]` | Vite scaffold, tooling, tests, OpenAPI client |
 | **1** | Agent ecosystem and conventions | `[x]` | AGENT policy, context, AI docs, adapters |
+| **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
 | **2** | Auth and RBAC chrome | `[ ]` | Login, permission-aware nav + tests |
 | **3** | Products | `[ ]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
@@ -137,7 +138,30 @@ Write tests **with** each feature.
 
 ---
 
+## Phase 1.5: Shell and page structure
+
+> Extract layout, establish feature page folders, and lock in auth-first routing shape before Phase 2.
+
+**Scope:**
+
+- [x] Extract `AppLayout`, `AppSidebar`, `AppHeader`, `MobileNav`, `PageHeader` under `src/components/layout/`
+- [x] Move placeholder pages to `src/features/*/pages/`
+- [x] Slim `router.tsx` to route map only (imports page components; no inline page JSX)
+- [x] `/login` outside admin shell; sole public route in v1
+- [x] `ProtectedRoute` / `GuestRoute` stubs under `src/lib/auth/` (passthrough until Phase 2)
+- [x] Protected route tree: `ProtectedRoute` → `AppLayout` for all admin routes
+- [x] Responsive mobile nav (shadcn `Sheet` on `<lg`; `SheetTitle` for a11y)
+- [x] Scroll on `<main>` only (`h-screen overflow-hidden` shell)
+- [x] Component + Playwright tests
+- [x] Update conventions docs
+
+**Done when:** all routes work; mobile nav functional; auth route shape in place; tests green; docs updated.
+
+---
+
 ## Phase 2: Auth and RBAC chrome
+
+> Builds on Phase 1.5 shell. Wire session logic into existing route guards and nav config.
 
 **OpenAPI capabilities:** admin login/session; permission/role reads if needed for chrome.
 
@@ -147,13 +171,16 @@ Write tests **with** each feature.
 
 - [ ] Login (RHF + Zod)
 - [ ] Session persistence matching the API
-- [ ] Protected route wrapper
-- [ ] Nav filtered by permission claims (UX only)
+- [ ] Wire `ProtectedRoute` / `GuestRoute` to API session (stubs from Phase 1.5)
+- [ ] Unauthenticated access to any protected path → `/login?redirect=...`
+- [ ] Post-login redirect to `redirect` query param or `/`
+- [ ] Global `401` handler on `apiClient`
+- [ ] Nav filtered by permission claims in `src/app/navigation.ts` (UX only)
 - [ ] 401 -> login; 403 -> forbidden
 - [ ] Component tests: validation, guard, forbidden
 - [ ] Playwright: login success and failure
 
-**Done when:** Seeded admin reaches the shell; forbidden route shows 403 UX; tests green.
+**Done when:** Seeded admin reaches the shell; unauthenticated user cannot see admin shell or placeholder pages; forbidden route shows 403 UX; tests green.
 
 ---
 
