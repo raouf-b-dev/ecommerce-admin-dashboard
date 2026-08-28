@@ -84,20 +84,7 @@ Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security bas
 
 ## Architecture
 
-```text
-Browser -> Vite SPA (React Router) -> versioned HTTP API -> ecommerce-store-api
-                                                          ^
-Storefront / mobile apps ---------------------------------+
-```
-
-| Rule | Detail |
-| :--- | :----- |
-| Boundary | Status changes, stock, refunds, and RBAC live in the API. |
-| Data access | Typed client from the API OpenAPI/Swagger spec. |
-| Client data | TanStack Query for lists, detail, and mutations. |
-| Tables | TanStack Table for admin grids. |
-| Auth / RBAC UX | Hide or disable controls from claims. Do not treat that as security. |
-| Conflicts | Show HTTP 409 so the operator can reload and retry. |
+Browser → Vite SPA (React Router) → versioned HTTP API. See [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) for auth flow, RBAC chrome, and source layout.
 
 ---
 
@@ -129,6 +116,8 @@ Storefront / mobile apps ---------------------------------+
 | :------- | :---------- |
 | [`SECURITY.md`](SECURITY.md) | Frontend security baseline |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Delivery plan, tests-with-features, ship gates |
+| [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) | SPA architecture, auth flow, folder map |
+| [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md) | Architecture decision records |
 | [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) | Client integration rules (OpenAPI is the contract) |
 | [`docs/README.md`](docs/README.md) | Docs index |
 | [`docs/ai/README.md`](docs/ai/README.md) | Agent and conventions docs |
