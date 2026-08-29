@@ -236,6 +236,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/payments/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment for an order */
+        get: operations["PaymentsController_getOrderPayments_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/payments/{id}": {
         parameters: {
             query?: never;
@@ -298,23 +315,6 @@ export interface paths {
         put?: never;
         /** Verify payment status with payment gateway */
         post: operations["PaymentsController_verifyPayment_v1"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/payments/orders/{orderId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get payment for an order */
-        get: operations["PaymentsController_getOrderPayments_v1"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1133,25 +1133,191 @@ export interface components {
              */
             clientSecret?: string;
         };
-        OrderItemResponseDto: Record<string, never>;
-        OrderResponseDto: {
-            /** @example ord_123 */
-            id: string;
-            /** @example cust_456 */
-            userId: string;
-            items: components["schemas"]["OrderItemResponseDto"][];
-            /** @enum {string} */
+        OrderListItemResponseDto: {
+            /**
+             * @description Order ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Human-readable order number
+             * @example ORD-2025-0001
+             */
+            orderNumber: string;
+            /**
+             * @description Customer user ID
+             * @example 3
+             */
+            userId: number;
+            /**
+             * @description Customer display name
+             * @example Jane Doe
+             */
+            userName: string;
+            /**
+             * @description Customer email
+             * @example customer@store.local
+             */
+            userEmail: string;
+            /**
+             * @description Order status
+             * @example confirmed
+             * @enum {string}
+             */
             status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
-            /** @example 2400 */
+            /**
+             * @description Number of line items
+             * @example 2
+             */
+            itemCount: number;
+            /**
+             * @description Order total amount
+             * @example 224.94
+             */
+            totalAmount: number;
+            /**
+             * @description Currency code
+             * @example USD
+             */
+            currency: string;
+            /**
+             * @description Order creation date
+             * @example 2025-10-31T12:30:00.000Z
+             */
+            createdAt: string;
+        };
+        PaginatedOrdersResponseDto: {
+            items: components["schemas"]["OrderListItemResponseDto"][];
+            /** @example 4 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 10 */
+            limit: number;
+            /** @example 1 */
+            totalPages: number;
+        };
+        OrderItemDetailResponseDto: {
+            /**
+             * @description Product ID
+             * @example 1
+             */
+            productId: number;
+            /**
+             * @description Product SKU
+             * @example ELEC-ANC-001
+             */
+            sku: string;
+            /**
+             * @description Product title
+             * @example Wireless Noise-Canceling Headphones
+             */
+            title: string;
+            /**
+             * @description Unit price
+             * @example 199.99
+             */
+            unitPrice: number;
+            /**
+             * @description Quantity ordered
+             * @example 1
+             */
+            quantity: number;
+            /**
+             * @description Line subtotal
+             * @example 199.99
+             */
+            subtotal: number;
+        };
+        OrderDetailResponseDto: {
+            /**
+             * @description Order ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Human-readable order number
+             * @example ORD-2025-0001
+             */
+            orderNumber: string;
+            /**
+             * @description Customer user ID
+             * @example 3
+             */
+            userId: number;
+            /**
+             * @description Customer display name
+             * @example Jane Doe
+             */
+            userName: string;
+            /**
+             * @description Customer email
+             * @example customer@store.local
+             */
+            userEmail: string;
+            /**
+             * @description Order status
+             * @example confirmed
+             * @enum {string}
+             */
+            status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
+            /**
+             * @description Formatted shipping address
+             * @example Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US
+             */
+            shippingAddress: string;
+            items: components["schemas"]["OrderItemDetailResponseDto"][];
+            /**
+             * @description Order total amount
+             * @example 224.94
+             */
+            totalAmount: number;
+            /**
+             * @description Order total price
+             * @example 224.94
+             */
             totalPrice: number;
             /**
-             * Format: date-time
-             * @example 2025-08-25T12:34:56.000Z
+             * @description Currency code
+             * @example USD
+             */
+            currency: string;
+            /**
+             * @description Order creation date
+             * @example 2025-10-31T12:30:00.000Z
              */
             createdAt: string;
             /**
-             * Format: date-time
-             * @example 2025-08-25T12:34:56.000Z
+             * @description Last update date
+             * @example 2025-10-31T12:35:00.000Z
+             */
+            updatedAt: string;
+        };
+        OrderMutationResponseDto: {
+            /**
+             * @description Order ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Updated order status
+             * @example processing
+             * @enum {string}
+             */
+            status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
+            /**
+             * @description Order total price
+             * @example 224.94
+             */
+            totalPrice: number;
+            /**
+             * @description Currency code
+             * @example USD
+             */
+            currency: string;
+            /**
+             * @description Last update date
+             * @example 2025-10-31T12:35:00.000Z
              */
             updatedAt: string;
         };
@@ -1290,6 +1456,82 @@ export interface components {
              * Format: date-time
              * @description Last update date
              * @example 2025-10-31T12:30:00Z
+             */
+            updatedAt: string;
+        };
+        PaymentDetailResponseDto: {
+            /**
+             * @description Payment ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Order ID
+             * @example 1
+             */
+            orderId: number;
+            /**
+             * @description Customer user ID
+             * @example 3
+             */
+            userId: number;
+            /**
+             * @description Customer display name
+             * @example Jane Doe
+             */
+            userName: string;
+            /**
+             * @description Customer email
+             * @example customer@store.local
+             */
+            userEmail: string;
+            /**
+             * @description Payment amount
+             * @example 224.94
+             */
+            amount: number;
+            /**
+             * @description Currency code
+             * @example USD
+             */
+            currency: string;
+            /**
+             * @description Payment status
+             * @example completed
+             */
+            status: string;
+            /**
+             * @description Payment method
+             * @example stripe
+             */
+            paymentMethod: string;
+            /**
+             * @description Transaction ID
+             * @example txn_123
+             */
+            transactionId: string;
+            /**
+             * @description Payment creation date
+             * @example 2025-10-31T12:30:00.000Z
+             */
+            createdAt: string;
+            /**
+             * @description Gateway payment intent ID
+             * @example pi_123
+             */
+            gatewayPaymentIntentId?: string | null;
+            /**
+             * @description Failure reason if payment failed
+             * @example Card declined
+             */
+            failureReason?: string | null;
+            /** @description Gateway metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Last update date
+             * @example 2025-10-31T12:35:00.000Z
              */
             updatedAt: string;
         };
@@ -2214,7 +2456,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PaginatedOrdersResponseDto"];
+                };
             };
             /** @description Unauthorized. */
             401: {
@@ -2242,7 +2486,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderDetailResponseDto"];
                 };
             };
             /** @description Unauthorized. */
@@ -2278,7 +2522,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
             /** @description Order cannot be confirmed. */
@@ -2314,7 +2558,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
             /** @description Order not found. */
@@ -2343,7 +2587,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
             /** @description Order not found. */
@@ -2376,7 +2620,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
             /** @description Order not found. */
@@ -2405,7 +2649,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
             /** @description Order cannot be cancelled. */
@@ -2477,6 +2721,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaymentResponseDto"];
+                };
+            };
+        };
+    };
+    PaymentsController_getOrderPayments_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentDetailResponseDto"];
                 };
             };
         };
@@ -2564,25 +2829,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PaymentResponseDto"];
                 };
-            };
-        };
-    };
-    PaymentsController_getOrderPayments_v1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                orderId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

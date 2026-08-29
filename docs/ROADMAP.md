@@ -66,7 +66,7 @@ Write tests **with** each feature.
 | **2.6** | Operator gate + silent refresh | `[x]` | Operators-only SPA; domain 401 one-shot refresh |
 | **3** | Products | `[x]` | Table/forms + tests |
 | **4** | Inventory | `[x]` | Stock views + tests |
-| **5** | Orders | `[ ]` | Ops actions + tests |
+| **5** | Orders | `[x]` | Ops actions + tests |
 | **6** | Customers | `[ ]` | Read views + tests |
 | **7** | Dashboard | `[ ]` | Summary widgets + tests |
 | **8** | Quality sweep | `[ ]` | Full smoke, a11y |
@@ -265,12 +265,12 @@ Write tests **with** each feature.
 
 **Scope:**
 
-- [ ] Orders table and detail
-- [ ] Transitions only via API operations allowed for the current order status (discover in OpenAPI; disable illegal controls in UX)
-- [ ] Disable illegal controls; still handle API rejection
-- [ ] Show payment fields when API returns them
-- [ ] Component tests for disabled vs enabled actions
-- [ ] Playwright: open order detail; one safe transition on seeded data if available
+- [x] Orders table and detail
+- [x] Transitions only via API operations allowed for the current order status (discover in OpenAPI; disable illegal controls in UX)
+- [x] Disable illegal controls; still handle API rejection
+- [x] Show payment fields when API returns them
+- [x] Component tests for disabled vs enabled actions
+- [x] Playwright: open order detail; one safe transition on seeded data if available
 
 **Done when:** Admin can inspect an order and run at least one allowed transition in a test or seeded manual script checked into docs.
 

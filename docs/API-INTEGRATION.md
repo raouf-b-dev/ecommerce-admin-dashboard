@@ -78,7 +78,7 @@ Concrete paths live in Swagger. Typical admin needs:
 - Admin login/session; permission/role reads if needed for chrome
 - Product list/detail and product writes
 - Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust
-- Order list/detail and allowed status transitions; payment reads optional
+- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`)
 - Customer/user reads (writes optional)
 - Dashboard inputs from existing reads or future API aggregates
 
