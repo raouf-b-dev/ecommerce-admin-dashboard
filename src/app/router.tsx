@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Outlet } from 'react-router';
 import { AppLayout } from '@/components/layout/app-layout';
 import { LoginPage } from '@/features/auth/pages/login-page';
 import { ChangePasswordPage } from '@/features/auth/pages/change-password-page';
@@ -6,6 +6,8 @@ import { RolesSettingsPage } from '@/features/auth/pages/roles-settings-page';
 import { DashboardPage } from '@/features/dashboard/pages/dashboard-page';
 import { OrdersPage } from '@/features/orders/pages/orders-page';
 import { ProductsPage } from '@/features/products/pages/products-page';
+import { ProductCreatePage } from '@/features/products/pages/product-create-page';
+import { ProductEditPage } from '@/features/products/pages/product-edit-page';
 import { GuestRoute } from '@/lib/auth/guest-route';
 import {
   ChangePasswordRoute,
@@ -50,7 +52,33 @@ export const router = createBrowserRouter([
       },
       {
         path: 'products',
-        element: <ProductsPage />,
+        element: (
+          <PermissionRoute permission="view_all_products">
+            <Outlet />
+          </PermissionRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ProductsPage />,
+          },
+          {
+            path: 'new',
+            element: (
+              <PermissionRoute permission="manage_products">
+                <ProductCreatePage />
+              </PermissionRoute>
+            ),
+          },
+          {
+            path: ':id/edit',
+            element: (
+              <PermissionRoute permission="manage_products">
+                <ProductEditPage />
+              </PermissionRoute>
+            ),
+          },
+        ],
       },
       {
         path: 'orders',
