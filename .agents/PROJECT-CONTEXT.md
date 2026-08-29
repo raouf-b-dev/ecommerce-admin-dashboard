@@ -21,6 +21,8 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - It consumes the API contract over versioned HTTP.
 - It does not own domain rules.
 - It may hide or disable actions for UX, but the API remains the authority for auth and data integrity.
+- Only sessions with `access_admin` are admitted ([ADR-0006](../docs/architecture/adr/ADR-0006-operators-only-admin-spa.md)).
+- Domain `401` recovery: one-shot silent refresh ([ADR-0005](../docs/architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)).
 
 ## Local Environment
 
@@ -46,11 +48,12 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 ## Upcoming Feature Order
 
 1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done (Phase 2)**
-2. ~~Products~~ **done (Phase 3)**
-3. Inventory
-4. Orders
-5. Customers
-6. Dashboard
+2. ~~Operator gate + silent refresh~~ **done (Phase 2.6)**
+3. ~~Products~~ **done (Phase 3)**
+4. Inventory
+5. Orders
+6. Customers
+7. Dashboard
 
 Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for delivery plan and done criteria.
 
