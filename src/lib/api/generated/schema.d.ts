@@ -569,6 +569,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** List all roles */
         get: operations["RolesController_findAll_v1"];
         put?: never;
         post: operations["RolesController_create_v1"];
@@ -585,6 +586,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get role by ID */
         get: operations["RolesController_findOne_v1"];
         put?: never;
         post?: never;
@@ -1292,6 +1294,11 @@ export interface components {
              * @example 2025-10-31T12:35:00.000Z
              */
             updatedAt: string;
+            /**
+             * @description Admin PATCH actions allowed for the current status (workflow ∩ existing endpoints)
+             * @example ["process","cancel"]
+             */
+            allowedActions: ("confirm" | "process" | "ship" | "deliver" | "cancel")[];
         };
         OrderMutationResponseDto: {
             /**
@@ -1581,6 +1588,11 @@ export interface components {
              * @example false
              */
             mustChangePassword: boolean;
+            /**
+             * @description Permission codes for the authenticated role (live from DB; use for SPA chrome)
+             * @example ["access_admin","view_all_users"]
+             */
+            permissions: string[];
         };
         RefreshTokenDto: {
             /**
@@ -1629,9 +1641,8 @@ export interface components {
             /**
              * @description Assigned role code
              * @example CUSTOMER
-             * @enum {string|null}
              */
-            roleCode?: "SUPER_ADMIN" | "ADMIN" | "CUSTOMER" | null;
+            roleCode?: string | null;
             /**
              * @description User registration date
              * @example 2025-10-31T10:00:00.000Z
@@ -1683,9 +1694,8 @@ export interface components {
             /**
              * @description Assigned role code
              * @example CUSTOMER
-             * @enum {string|null}
              */
-            roleCode?: "SUPER_ADMIN" | "ADMIN" | "CUSTOMER" | null;
+            roleCode?: string | null;
             /**
              * @description User registration date
              * @example 2025-10-31T10:00:00.000Z
@@ -1879,6 +1889,51 @@ export interface components {
              * @example Leave at front door
              */
             deliveryInstructions?: string;
+        };
+        RolePermissionsResponseDto: {
+            /**
+             * @description Permission codes granted by this role
+             * @example [
+             *       "view_all_users",
+             *       "manage_products"
+             *     ]
+             */
+            codes: string[];
+        };
+        RoleResponseDto: {
+            /**
+             * @description Role ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Unique role code
+             * @example CUSTOMER
+             */
+            code: string;
+            /**
+             * @description Display name
+             * @example Customer
+             */
+            name: string;
+            /**
+             * @description Whether this is a built-in system role
+             * @example true
+             */
+            isSystem: boolean;
+            permissions: components["schemas"]["RolePermissionsResponseDto"];
+            /**
+             * Format: date-time
+             * @description Creation timestamp
+             * @example 2025-10-31T10:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Last update timestamp
+             * @example 2025-10-31T12:00:00.000Z
+             */
+            updatedAt: string;
         };
         CreateRoleDto: {
             /** @example ADMIN */
@@ -3079,8 +3134,8 @@ export interface operations {
                 search?: string;
                 /** @description Filter by active status */
                 isActive?: boolean;
-                /** @description Filter by assigned system role code */
-                roleCode?: "SUPER_ADMIN" | "ADMIN" | "CUSTOMER";
+                /** @description Filter by assigned role code */
+                roleCode?: string;
                 /** @description Page number */
                 page?: number;
                 /** @description Items per page */
@@ -3354,7 +3409,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RoleResponseDto"][];
+                };
             };
         };
     };
@@ -3394,7 +3451,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RoleResponseDto"];
+                };
             };
         };
     };
