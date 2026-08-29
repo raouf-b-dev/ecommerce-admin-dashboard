@@ -1,5 +1,6 @@
 import createClient from 'openapi-fetch';
 import type { paths } from '@/lib/api/generated/schema';
+import { silentRefreshAccessToken } from '@/lib/api/silent-refresh';
 import { clearAccessToken, getAccessToken } from '@/lib/auth/auth-session';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -42,6 +43,51 @@ function redirectToChangePassword(): void {
   }
 }
 
+export function redirectToLogin(): void {
+  clearAccessToken();
+
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const redirectTarget = `${window.location.pathname}${window.location.search}`;
+  const loginUrl = `/login?redirect=${encodeURIComponent(redirectTarget)}`;
+
+  if (window.location.pathname !== '/login') {
+    window.location.assign(loginUrl);
+  }
+}
+
+/**
+ * One-shot silent refresh + single retry for a domain 401.
+ * Returns the retry Response, or null when the session was cleared / redirected.
+ */
+export async function recoverFromDomain401(
+  request: Request,
+): Promise<Response | null> {
+  const accessToken = await silentRefreshAccessToken();
+  if (!accessToken) {
+    redirectToLogin();
+    return null;
+  }
+
+  const retryHeaders = new Headers(request.headers);
+  retryHeaders.set('Authorization', `Bearer ${accessToken}`);
+
+  const retryResponse = await fetch(
+    new Request(request, {
+      headers: retryHeaders,
+    }),
+  );
+
+  if (retryResponse.status === 401) {
+    redirectToLogin();
+    return null;
+  }
+
+  return retryResponse;
+}
+
 apiClient.use({
   onRequest({ request }) {
     const token = getAccessToken();
@@ -78,17 +124,9 @@ apiClient.use({
       return;
     }
 
-    clearAccessToken();
-
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const redirectTarget = `${window.location.pathname}${window.location.search}`;
-    const loginUrl = `/login?redirect=${encodeURIComponent(redirectTarget)}`;
-
-    if (window.location.pathname !== '/login') {
-      window.location.assign(loginUrl);
+    const recovered = await recoverFromDomain401(request);
+    if (recovered) {
+      return recovered;
     }
   },
 });
