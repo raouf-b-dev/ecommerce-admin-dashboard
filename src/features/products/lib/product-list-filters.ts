@@ -1,4 +1,7 @@
-import type { ProductListFilters } from '@/features/products/types';
+import type {
+  ListProductsQuery,
+  ProductListFilters,
+} from '@/features/products/types';
 
 export const DEFAULT_PRODUCT_LIST_FILTERS: ProductListFilters = {
   page: 1,
@@ -7,6 +10,32 @@ export const DEFAULT_PRODUCT_LIST_FILTERS: ProductListFilters = {
   sortBy: 'createdAt',
   sortOrder: 'desc',
 };
+
+const PRODUCT_SORT_BY = [
+  'createdAt',
+  'price',
+  'name',
+  'id',
+] as const satisfies readonly NonNullable<ListProductsQuery['sortBy']>[];
+
+const SORT_ORDERS = [
+  'asc',
+  'desc',
+] as const satisfies readonly NonNullable<ListProductsQuery['sortOrder']>[];
+
+function isProductSortBy(
+  value: string | null,
+): value is NonNullable<ListProductsQuery['sortBy']> {
+  return (
+    value !== null && (PRODUCT_SORT_BY as readonly string[]).includes(value)
+  );
+}
+
+function isSortOrder(
+  value: string | null,
+): value is NonNullable<ListProductsQuery['sortOrder']> {
+  return value !== null && (SORT_ORDERS as readonly string[]).includes(value);
+}
 
 export function normalizeProductListFilters(
   input: Partial<ProductListFilters> = {},
@@ -35,15 +64,8 @@ export function productListFiltersFromSearchParams(
   return normalizeProductListFilters({
     page: Number.isFinite(page) ? page : undefined,
     limit: Number.isFinite(limit) ? limit : undefined,
-    sortBy:
-      sortBy === 'createdAt' ||
-      sortBy === 'price' ||
-      sortBy === 'name' ||
-      sortBy === 'id'
-        ? sortBy
-        : undefined,
-    sortOrder:
-      sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined,
+    sortBy: isProductSortBy(sortBy) ? sortBy : undefined,
+    sortOrder: isSortOrder(sortOrder) ? sortOrder : undefined,
     search,
   });
 }

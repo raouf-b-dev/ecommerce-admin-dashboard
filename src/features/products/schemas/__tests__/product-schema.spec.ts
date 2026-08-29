@@ -47,10 +47,21 @@ describe('createProductSchema', () => {
     }
   });
 
+  it('rejects missing currency', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: '',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('rejects invalid image URL', () => {
     const result = createProductSchema.safeParse({
       name: 'Laptop',
       price: '10',
+      currency: 'USD',
       imageUrl: 'not-a-url',
     });
 
