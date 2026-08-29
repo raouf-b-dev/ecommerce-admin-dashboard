@@ -8,6 +8,8 @@ import { OrdersPage } from '@/features/orders/pages/orders-page';
 import { ProductsPage } from '@/features/products/pages/products-page';
 import { ProductCreatePage } from '@/features/products/pages/product-create-page';
 import { ProductEditPage } from '@/features/products/pages/product-edit-page';
+import { InventoryPage } from '@/features/inventory/pages/inventory-page';
+import { InventoryDetailPage } from '@/features/inventory/pages/inventory-detail-page';
 import { GuestRoute } from '@/lib/auth/guest-route';
 import {
   ChangePasswordRoute,
@@ -84,6 +86,24 @@ export const router = createBrowserRouter([
                 <ProductEditPage />
               </PermissionRoute>
             ),
+          },
+        ],
+      },
+      {
+        path: 'inventory',
+        element: (
+          <PermissionRoute permission="view_all_inventory">
+            <Outlet />
+          </PermissionRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <InventoryPage />,
+          },
+          {
+            path: ':productId',
+            element: <InventoryDetailPage />,
           },
         ],
       },
