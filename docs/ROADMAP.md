@@ -62,6 +62,7 @@ Write tests **with** each feature.
 | **1** | Agent ecosystem and conventions | `[x]` | AGENT policy, context, AI docs, adapters |
 | **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
 | **2** | Auth and RBAC chrome | `[x]` | Login, permission-aware nav + tests |
+| **2.5** | Forced password change | `[x]` | `/change-password`, session flag, API guard integration |
 | **3** | Products | `[ ]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
 | **5** | Orders | `[ ]` | Ops actions + tests |
@@ -182,6 +183,25 @@ Write tests **with** each feature.
 - [x] Architecture docs + ADRs (`docs/architecture/`)
 
 **Done when:** Seeded admin reaches the shell; unauthenticated user cannot see admin shell or placeholder pages; forbidden route shows 403 UX; tests green.
+
+---
+
+## Phase 2.5: Forced password change
+
+> Requires API Phase 14b (`mustChangePassword` enforcement). Uses seeded accounts from API [`SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md).
+
+**Scope:**
+
+- [x] Parse `mustChangePassword` on login, refresh, and change-password responses
+- [x] `/change-password` route (minimal layout, no shell)
+- [x] `RequirePasswordChanged` / `ChangePasswordRoute` guards
+- [x] Change-password form (RHF + Zod) wired to API
+- [x] Global 403 `MUST_CHANGE_PASSWORD` redirect on `apiClient`
+- [x] Component tests for guards and validation
+- [x] Playwright: seeded user forced change then reaches dashboard (when seed available)
+- [x] Update `docs/API-INTEGRATION.md`
+
+**Done when:** Seeded user with `mustChangePassword: true` lands on change-password, updates password, and reaches the dashboard shell; tests green.
 
 ---
 
