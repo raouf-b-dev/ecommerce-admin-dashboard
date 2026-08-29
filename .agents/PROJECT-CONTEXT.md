@@ -51,8 +51,8 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 2. ~~Operator gate + silent refresh~~ **done (Phase 2.6)**
 3. ~~Products~~ **done (Phase 3)**
 4. ~~Inventory~~ **done (Phase 4)**
-5. Orders
-6. Customers
+5. ~~Orders~~ **done (Phase 5)**
+6. ~~Users~~ **done (Phase 6)**
 7. Dashboard
 
 Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for delivery plan and done criteria.
