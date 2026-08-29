@@ -1294,11 +1294,6 @@ export interface components {
              * @example 2025-10-31T12:35:00.000Z
              */
             updatedAt: string;
-            /**
-             * @description Admin PATCH actions allowed for the current status (workflow ∩ existing endpoints)
-             * @example ["process","cancel"]
-             */
-            allowedActions: ("confirm" | "process" | "ship" | "deliver" | "cancel")[];
         };
         OrderMutationResponseDto: {
             /**

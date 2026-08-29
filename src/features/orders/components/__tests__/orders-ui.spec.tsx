@@ -56,7 +56,6 @@ const detailQueryMock = vi.hoisted(() =>
           currency: string;
           createdAt: string;
           updatedAt: string;
-          allowedActions: string[];
         }
       | undefined,
     isLoading: false,
@@ -152,10 +151,10 @@ describe('OrdersPage', () => {
 });
 
 describe('OrderStatusActions', () => {
-  it('enables process and cancel when allowedActions includes them', () => {
+  it('enables process and cancel for confirmed orders', () => {
     render(
       <OrderStatusActions
-        allowedActions={['process', 'cancel']}
+        status="confirmed"
         isPending={false}
         onAction={vi.fn()}
       />,
@@ -166,10 +165,10 @@ describe('OrderStatusActions', () => {
     expect(screen.queryByRole('button', { name: 'Ship' })).not.toBeInTheDocument();
   });
 
-  it('shows no action buttons when allowedActions is empty', () => {
+  it('shows no action buttons for delivered orders', () => {
     render(
       <OrderStatusActions
-        allowedActions={[]}
+        status="delivered"
         isPending={false}
         onAction={vi.fn()}
       />,
@@ -234,7 +233,6 @@ describe('OrderDetailPage', () => {
         currency: 'USD',
         createdAt: '2025-01-01T00:00:00.000Z',
         updatedAt: '2025-01-01T00:00:00.000Z',
-        allowedActions: ['process', 'cancel'],
       },
       isLoading: false,
       isError: false,
@@ -274,7 +272,6 @@ describe('OrderDetailPage', () => {
         currency: 'USD',
         createdAt: '2025-01-01T00:00:00.000Z',
         updatedAt: '2025-01-01T00:00:00.000Z',
-        allowedActions: ['process', 'cancel'],
       },
       isLoading: false,
       isError: false,
