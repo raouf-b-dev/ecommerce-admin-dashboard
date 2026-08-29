@@ -88,7 +88,7 @@ sequenceDiagram
 | :------ | :----- |
 | Access token | In-memory only (`src/lib/auth/auth-session.ts`) |
 | Refresh token | HttpOnly cookie set by API; `credentials: 'include'` on client |
-| Permission claims | Derived from JWT `role` + UX-only system-role map |
+| Permission claims | From auth response `permissions` (DB-resolved) |
 
 ## RBAC model
 
