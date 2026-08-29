@@ -13,6 +13,7 @@ import {
   ChangePasswordRoute,
   RequirePasswordChanged,
 } from '@/lib/auth/must-change-password-route';
+import { OperatorRoute } from '@/lib/auth/operator-route';
 import { PermissionRoute } from '@/lib/auth/permission-route';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { NotFoundPage } from '@/app/pages/not-found-page';
@@ -41,14 +42,20 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <RequirePasswordChanged>
-          <AppLayout />
+          <OperatorRoute>
+            <AppLayout />
+          </OperatorRoute>
         </RequirePasswordChanged>
       </ProtectedRoute>
     ),
     children: [
       {
         index: true,
-        element: <DashboardPage />,
+        element: (
+          <PermissionRoute permission="view_all_orders">
+            <DashboardPage />
+          </PermissionRoute>
+        ),
       },
       {
         path: 'products',
@@ -82,7 +89,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'orders',
-        element: <OrdersPage />,
+        element: (
+          <PermissionRoute permission="view_all_orders">
+            <OrdersPage />
+          </PermissionRoute>
+        ),
       },
       {
         path: 'settings/roles',
