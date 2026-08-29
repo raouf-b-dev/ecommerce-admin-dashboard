@@ -569,6 +569,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** List all roles */
         get: operations["RolesController_findAll_v1"];
         put?: never;
         post: operations["RolesController_create_v1"];
@@ -585,6 +586,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get role by ID */
         get: operations["RolesController_findOne_v1"];
         put?: never;
         post?: never;
@@ -1581,6 +1583,11 @@ export interface components {
              * @example false
              */
             mustChangePassword: boolean;
+            /**
+             * @description Permission codes for the authenticated role (live from DB; use for SPA chrome)
+             * @example ["access_admin","view_all_users"]
+             */
+            permissions: string[];
         };
         RefreshTokenDto: {
             /**
@@ -1595,72 +1602,7 @@ export interface components {
             /** @example NewSecurePass123! */
             newPassword: string;
         };
-        AddressResponseDto: {
-            /**
-             * @description Address ID
-             * @example 123
-             */
-            id: number;
-            /**
-             * @description Street address line 1
-             * @example 123 Main Street
-             */
-            street: string;
-            /**
-             * @description Street address line 2
-             * @example Apt 4B
-             */
-            street2?: string;
-            /**
-             * @description City
-             * @example New York
-             */
-            city: string;
-            /**
-             * @description State/Province
-             * @example NY
-             */
-            state: string;
-            /**
-             * @description Postal/ZIP code
-             * @example 10001
-             */
-            postalCode: string;
-            /**
-             * @description Country code
-             * @example US
-             */
-            country: string;
-            /**
-             * @description Address type
-             * @example HOME
-             * @enum {string}
-             */
-            type: "HOME" | "WORK" | "OTHER" | "BILLING" | "SHIPPING";
-            /**
-             * @description Whether this is the default address
-             * @example true
-             */
-            isDefault: boolean;
-            /**
-             * @description Delivery instructions
-             * @example Leave at front door
-             */
-            deliveryInstructions?: string;
-            /**
-             * Format: date-time
-             * @description Address creation date
-             * @example 2025-10-31T10:00:00Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Last update date
-             * @example 2025-10-31T12:30:00Z
-             */
-            updatedAt: string;
-        };
-        UserResponseDto: {
+        UserListItemResponseDto: {
             /**
              * @description User ID
              * @example 123
@@ -1677,10 +1619,58 @@ export interface components {
              */
             lastName: string;
             /**
-             * @description User full name
-             * @example John Doe
+             * @description User email
+             * @example john.doe@example.com
              */
-            fullName: string;
+            email: string;
+            /**
+             * @description User phone number
+             * @example +1234567890
+             */
+            phone?: string | null;
+            /**
+             * @description Whether the account is active
+             * @example true
+             */
+            isActive: boolean;
+            /**
+             * @description Assigned role code
+             * @example CUSTOMER
+             */
+            roleCode?: string | null;
+            /**
+             * @description User registration date
+             * @example 2025-10-31T10:00:00.000Z
+             */
+            createdAt: string;
+        };
+        PaginatedUsersResponseDto: {
+            items: components["schemas"]["UserListItemResponseDto"][];
+            /** @example 4 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 20 */
+            limit: number;
+            /** @example 1 */
+            totalPages: number;
+        };
+        UserDetailResponseDto: {
+            /**
+             * @description User ID
+             * @example 123
+             */
+            id: number;
+            /**
+             * @description User first name
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description User last name
+             * @example Doe
+             */
+            lastName: string;
             /**
              * @description User email
              * @example john.doe@example.com
@@ -1690,31 +1680,30 @@ export interface components {
              * @description User phone number
              * @example +1234567890
              */
-            phone?: string;
-            /** @description User addresses */
-            addresses: components["schemas"]["AddressResponseDto"][];
-            /** @description Default address */
-            defaultAddress?: components["schemas"]["AddressResponseDto"];
+            phone?: string | null;
             /**
-             * @description Total number of orders
-             * @example 5
+             * @description Whether the account is active
+             * @example true
              */
-            totalOrders: number;
+            isActive: boolean;
             /**
-             * @description Total amount spent
-             * @example 1499.95
+             * @description Assigned role code
+             * @example CUSTOMER
              */
-            totalSpent: number;
+            roleCode?: string | null;
             /**
-             * Format: date-time
              * @description User registration date
-             * @example 2025-10-31T10:00:00Z
+             * @example 2025-10-31T10:00:00.000Z
              */
             createdAt: string;
             /**
-             * Format: date-time
+             * @description Number of addresses on the account
+             * @example 2
+             */
+            addressCount: number;
+            /**
              * @description Last update date
-             * @example 2025-10-31T12:30:00Z
+             * @example 2025-10-31T12:30:00.000Z
              */
             updatedAt: string;
         };
@@ -1788,6 +1777,71 @@ export interface components {
              */
             deliveryInstructions?: string;
         };
+        AddressResponseDto: {
+            /**
+             * @description Address ID
+             * @example 123
+             */
+            id: number;
+            /**
+             * @description Street address line 1
+             * @example 123 Main Street
+             */
+            street: string;
+            /**
+             * @description Street address line 2
+             * @example Apt 4B
+             */
+            street2?: string;
+            /**
+             * @description City
+             * @example New York
+             */
+            city: string;
+            /**
+             * @description State/Province
+             * @example NY
+             */
+            state: string;
+            /**
+             * @description Postal/ZIP code
+             * @example 10001
+             */
+            postalCode: string;
+            /**
+             * @description Country code
+             * @example US
+             */
+            country: string;
+            /**
+             * @description Address type
+             * @example HOME
+             * @enum {string}
+             */
+            type: "HOME" | "WORK" | "OTHER" | "BILLING" | "SHIPPING";
+            /**
+             * @description Whether this is the default address
+             * @example true
+             */
+            isDefault: boolean;
+            /**
+             * @description Delivery instructions
+             * @example Leave at front door
+             */
+            deliveryInstructions?: string;
+            /**
+             * Format: date-time
+             * @description Address creation date
+             * @example 2025-10-31T10:00:00Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Last update date
+             * @example 2025-10-31T12:30:00Z
+             */
+            updatedAt: string;
+        };
         UpdateAddressDto: {
             /**
              * @description Street address line 1
@@ -1830,6 +1884,51 @@ export interface components {
              * @example Leave at front door
              */
             deliveryInstructions?: string;
+        };
+        RolePermissionsResponseDto: {
+            /**
+             * @description Permission codes granted by this role
+             * @example [
+             *       "view_all_users",
+             *       "manage_products"
+             *     ]
+             */
+            codes: string[];
+        };
+        RoleResponseDto: {
+            /**
+             * @description Role ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Unique role code
+             * @example CUSTOMER
+             */
+            code: string;
+            /**
+             * @description Display name
+             * @example Customer
+             */
+            name: string;
+            /**
+             * @description Whether this is a built-in system role
+             * @example true
+             */
+            isSystem: boolean;
+            permissions: components["schemas"]["RolePermissionsResponseDto"];
+            /**
+             * Format: date-time
+             * @description Creation timestamp
+             * @example 2025-10-31T10:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Last update timestamp
+             * @example 2025-10-31T12:00:00.000Z
+             */
+            updatedAt: string;
         };
         CreateRoleDto: {
             /** @example ADMIN */
@@ -3028,10 +3127,10 @@ export interface operations {
             query?: {
                 /** @description Search by name or email */
                 search?: string;
-                /** @description Filter by email */
-                email?: string;
-                /** @description Filter by phone */
-                phone?: string;
+                /** @description Filter by active status */
+                isActive?: boolean;
+                /** @description Filter by assigned role code */
+                roleCode?: string;
                 /** @description Page number */
                 page?: number;
                 /** @description Items per page */
@@ -3048,7 +3147,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserResponseDto"][];
+                    "application/json": components["schemas"]["PaginatedUsersResponseDto"];
                 };
             };
         };
@@ -3069,7 +3168,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
+                    "application/json": components["schemas"]["UserDetailResponseDto"];
                 };
             };
         };
@@ -3109,13 +3208,12 @@ export interface operations {
             };
         };
         responses: {
-            200: {
+            /** @description User updated */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
-                };
+                content?: never;
             };
         };
     };
@@ -3306,7 +3404,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RoleResponseDto"][];
+                };
             };
         };
     };
@@ -3346,7 +3446,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RoleResponseDto"];
+                };
             };
         };
     };

@@ -14,74 +14,69 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  formatUserPhone,
+  formatUserRole,
+  userDisplayName,
+} from '@/features/users/lib/display-name';
 import type {
-  ProductListFilters,
-  ProductListItemResponseDto,
-} from '@/features/products/types';
+  UserListFilters,
+  UserListItemResponseDto,
+} from '@/features/users/types';
 
-type ProductsTableProps = {
-  items: ProductListItemResponseDto[];
+type UsersTableProps = {
+  items: UserListItemResponseDto[];
   total: number;
-  filters: ProductListFilters;
-  canManage: boolean;
-  onFiltersChange: (next: ProductListFilters) => void;
+  filters: UserListFilters;
+  roleNamesByCode?: Record<string, string>;
+  onFiltersChange: (next: UserListFilters) => void;
 };
 
 const features = tableFeatures({});
-
-function formatPrice(price: number, currency?: string | null) {
-  if (!currency?.trim()) {
-    return String(price);
-  }
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency,
-    }).format(price);
-  } catch {
-    return `${price} ${currency}`;
-  }
-}
 
 function formatDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     return value;
   }
-  return date.toLocaleDateString();
+  return date.toLocaleString();
 }
 
-function nullableString(value: unknown): string {
-  if (typeof value === 'string') {
-    return value;
-  }
-  return '—';
-}
-
-export function ProductsTable({
+export function UsersTable({
   items,
   total,
   filters,
-  canManage,
+  roleNamesByCode,
   onFiltersChange,
-}: ProductsTableProps) {
-  const columns: ColumnDef<typeof features, ProductListItemResponseDto>[] = [
+}: UsersTableProps) {
+  const columns: ColumnDef<typeof features, UserListItemResponseDto>[] = [
     {
-      accessorKey: 'name',
+      id: 'name',
       header: 'Name',
       cell: ({ row }) => (
-        <div className="font-medium">{row.original.name}</div>
+        <div className="font-medium">{userDisplayName(row.original)}</div>
       ),
     },
     {
-      accessorKey: 'sku',
-      header: 'SKU',
-      cell: ({ row }) => nullableString(row.original.sku),
+      accessorKey: 'email',
+      header: 'Email',
+      cell: ({ row }) => row.original.email,
     },
     {
-      accessorKey: 'price',
-      header: 'Price',
-      cell: ({ row }) => formatPrice(row.original.price, row.original.currency),
+      id: 'phone',
+      header: 'Phone',
+      cell: ({ row }) => formatUserPhone(row.original.phone),
+    },
+    {
+      id: 'role',
+      header: 'Role',
+      cell: ({ row }) =>
+        formatUserRole(
+          row.original.roleCode,
+          row.original.roleCode
+            ? roleNamesByCode?.[row.original.roleCode]
+            : undefined,
+        ),
     },
     {
       accessorKey: 'isActive',
@@ -96,12 +91,11 @@ export function ProductsTable({
     {
       id: 'actions',
       header: '',
-      cell: ({ row }) =>
-        canManage ? (
-          <Button asChild variant="outline" size="sm">
-            <Link to={`/products/${row.original.id}/edit`}>Edit</Link>
-          </Button>
-        ) : null,
+      cell: ({ row }) => (
+        <Button asChild variant="outline" size="sm">
+          <Link to={`/users/${row.original.id}`}>View</Link>
+        </Button>
+      ),
     },
   ];
 
@@ -155,7 +149,7 @@ export function ProductsTable({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No products found.
+                  No users found.
                 </TableCell>
               </TableRow>
             )}

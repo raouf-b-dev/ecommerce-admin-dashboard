@@ -8,25 +8,11 @@ import { Label } from '@/components/ui/label';
 import { OrdersTable } from '@/features/orders/components/orders-table';
 import { useOrdersListQuery } from '@/features/orders/hooks/use-orders';
 import {
+  ORDER_STATUS_OPTIONS,
   orderListFiltersFromSearchParams,
   orderListFiltersToSearchParams,
 } from '@/features/orders/lib/order-list-filters';
-import type {
-  OrderListFilters,
-  OrderStatus,
-} from '@/features/orders/types';
-
-const STATUS_OPTIONS: { value: '' | OrderStatus; label: string }[] = [
-  { value: '', label: 'All statuses' },
-  { value: 'pending_payment', label: 'Pending payment' },
-  { value: 'payment_failed', label: 'Payment failed' },
-  { value: 'confirmed', label: 'Confirmed' },
-  { value: 'processing', label: 'Processing' },
-  { value: 'shipped', label: 'Shipped' },
-  { value: 'delivered', label: 'Delivered' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'refunded', label: 'Refunded' },
-];
+import type { OrderListFilters, OrderStatus } from '@/features/orders/types';
 
 export function OrdersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -103,7 +89,7 @@ export function OrdersPage() {
               });
             }}
           >
-            {STATUS_OPTIONS.map((option) => (
+            {ORDER_STATUS_OPTIONS.map((option) => (
               <option key={option.value || 'all'} value={option.value}>
                 {option.label}
               </option>
@@ -111,6 +97,28 @@ export function OrdersPage() {
           </select>
         </div>
       </div>
+
+      {filters.userId ? (
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <span className="text-muted-foreground">
+            Filtered by user #{filters.userId}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              updateFilters({
+                ...filters,
+                page: 1,
+                userId: undefined,
+              })
+            }
+          >
+            Clear user filter
+          </Button>
+        </div>
+      ) : null}
 
       {isError && !data ? (
         <Alert variant="destructive">

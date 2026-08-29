@@ -23,6 +23,7 @@ export type OrderListFilters = {
   sortBy: NonNullable<ListOrdersQuery['sortBy']>;
   sortOrder: NonNullable<ListOrdersQuery['sortOrder']>;
   status?: OrderStatus;
+  userId?: number;
   userEmail?: string;
   userName?: string;
 };

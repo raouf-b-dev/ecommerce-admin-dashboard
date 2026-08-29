@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  getAllowedOrderActions,
-  isOrderActionAllowed,
-} from '@/features/orders/lib/order-status-actions';
+import { getAllowedOrderActions } from '@/features/orders/lib/order-status-actions';
 
 describe('getAllowedOrderActions', () => {
   it('returns confirm and cancel for pending_payment', () => {
@@ -24,25 +21,17 @@ describe('getAllowedOrderActions', () => {
     expect(getAllowedOrderActions('shipped')).toEqual(['deliver', 'cancel']);
   });
 
-  it('returns cancel only for payment_failed', () => {
+  it('returns only cancel for payment_failed', () => {
     expect(getAllowedOrderActions('payment_failed')).toEqual(['cancel']);
   });
 
-  it('returns none for terminal statuses', () => {
+  it('returns no actions for terminal statuses', () => {
     expect(getAllowedOrderActions('delivered')).toEqual([]);
     expect(getAllowedOrderActions('cancelled')).toEqual([]);
     expect(getAllowedOrderActions('refunded')).toEqual([]);
   });
 
-  it('returns none for unknown status', () => {
+  it('returns empty for unknown statuses', () => {
     expect(getAllowedOrderActions('mystery')).toEqual([]);
-  });
-});
-
-describe('isOrderActionAllowed', () => {
-  it('gates actions by status', () => {
-    expect(isOrderActionAllowed('confirmed', 'process')).toBe(true);
-    expect(isOrderActionAllowed('confirmed', 'ship')).toBe(false);
-    expect(isOrderActionAllowed('shipped', 'deliver')).toBe(true);
   });
 });

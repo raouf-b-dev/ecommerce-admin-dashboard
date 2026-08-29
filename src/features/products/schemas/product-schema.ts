@@ -17,7 +17,10 @@ export const createProductSchema = z.object({
   slug: z.string().optional(),
   description: z.string().optional(),
   sku: z.string().optional(),
-  currency: z.string().optional(),
+  currency: z
+    .string()
+    .trim()
+    .min(1, 'Currency is required'),
   imageUrl: z
     .string()
     .optional()

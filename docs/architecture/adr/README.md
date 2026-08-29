@@ -53,9 +53,10 @@ If a decision changes or is extended:
 | :-- | :----- | :------ | :--- | :--------- | :------------ |
 | [ADR-0001](ADR-0001-auth-first-routing-and-route-guards.md) | Accepted | Auth-first routing; `/login` public; shell behind guards; `redirect` query param | 2026-08-28 | — | — |
 | [ADR-0002](ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md) | Accepted | Access token in memory; refresh via HttpOnly cookie; no `localStorage` | 2026-08-28 | — | — |
-| [ADR-0003](ADR-0003-client-rbac-chrome-api-authoritative.md) | Accepted | Nav filtering and route gates are UX only; API enforces authorization | 2026-08-28 | — | — |
+| [ADR-0003](ADR-0003-client-rbac-chrome-api-authoritative.md) | Superseded | Nav filtering and route gates are UX only; API enforces authorization (UX role map) | 2026-08-28 | — | [ADR-0007](ADR-0007-auth-response-permissions-for-chrome.md) |
 | [ADR-0004](ADR-0004-forced-password-change-routing.md) | Accepted | Forced password change at `/change-password`; shell gated by `mustChangePassword` | 2026-08-29 | — | — |
 | [ADR-0005](ADR-0005-silent-one-shot-access-token-refresh.md) | Accepted | Silent one-shot refresh + single-flight on domain 401; extends ADR-0002 | 2026-08-29 | — | — |
 | [ADR-0006](ADR-0006-operators-only-admin-spa.md) | Accepted | SPA admission via `access_admin`; login reject + `OperatorRoute` | 2026-08-29 | — | — |
+| [ADR-0007](ADR-0007-auth-response-permissions-for-chrome.md) | Accepted | Session permissions from auth response; supersedes ADR-0003 UX role map | 2026-08-29 | [ADR-0003](ADR-0003-client-rbac-chrome-api-authoritative.md) | — |
 
 Cross-link API ADRs when relevant; do not duplicate backend decision records here.

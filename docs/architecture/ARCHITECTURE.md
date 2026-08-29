@@ -88,11 +88,11 @@ sequenceDiagram
 | :------ | :----- |
 | Access token | In-memory only (`src/lib/auth/auth-session.ts`) |
 | Refresh token | HttpOnly cookie set by API; `credentials: 'include'` on client |
-| Permission claims | Derived from JWT `role` + UX-only system-role map |
+| Permission claims | From auth response `permissions` (DB-resolved) |
 
 ## RBAC model
 
-Rationale: [ADR-0003](adr/ADR-0003-client-rbac-chrome-api-authoritative.md).
+Rationale: [ADR-0007](adr/ADR-0007-auth-response-permissions-for-chrome.md) (supersedes [ADR-0003](adr/ADR-0003-client-rbac-chrome-api-authoritative.md)).
 
 - Nav items in `src/app/navigation.ts` declare optional `permission` codes
 - `AppSidebar` filters items via `filterNavigation()` and `useAuth().hasPermission()`

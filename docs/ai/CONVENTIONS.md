@@ -62,13 +62,13 @@ Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-
 
 ## 5.1 RBAC chrome
 
-Rationale: [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
+Rationale: [ADR-0007](../architecture/adr/ADR-0007-auth-response-permissions-for-chrome.md) (supersedes [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md)), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
 
 - SPA admission requires `access_admin` (`ACCESS_ADMIN_PERMISSION`); do not hardcode role codes
 - Declare optional `permission` on nav items in `src/app/navigation.ts`
 - Filter sidebar items with `filterNavigation()` and `useAuth().hasPermission()`
 - Use `PermissionRoute` for route-level forbidden UX inside the shell
-- Permission claims are UX-only; derive from JWT role via system-role map until a profile API exists
+- Permission claims for chrome come from auth token response `permissions` (API-authoritative)
 
 ## 6. Responsive Shell
 

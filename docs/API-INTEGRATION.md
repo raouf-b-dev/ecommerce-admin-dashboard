@@ -43,8 +43,8 @@ See also root [`SECURITY.md`](../SECURITY.md).
 - Use the API auth operations from OpenAPI (login / refresh / logout / change-password).
 - Access token in memory; refresh via HttpOnly cookie (`credentials: 'include'` on `apiClient`).
 - Login, refresh, and change-password responses include `mustChangePassword`. When `true`, route to `/change-password` before the app shell.
-- **Operators only:** require permission `access_admin` (API system permission; UX map mirrors it). Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md).
-- Permissions and roles are API-owned. Nav filtering is UX only (JWT role + client map).
+- **Operators only:** require permission `access_admin` from the auth response `permissions` array. Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md) and [ADR-0007](architecture/adr/ADR-0007-auth-response-permissions-for-chrome.md).
+- Permissions for chrome come from auth token responses (live from DB) per ADR-0007. Filter/form enums lock to OpenAPI via `satisfies`. Order status action buttons are UX chrome (API still rejects illegal transitions). Nav filtering is UX only.
 - On domain `401`, attempt a single-flight silent refresh and one request retry ([ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)); if that fails, return to login. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
 - Seeded **administrator** / **customer** accounts: API seeding doc only (no passwords in this repo).
 
@@ -79,7 +79,7 @@ Concrete paths live in Swagger. Typical admin needs:
 - Product list/detail and product writes
 - Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust
 - Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`)
-- Customer/user reads (writes optional)
+- User reads with optional role filter (writes optional)
 - Dashboard inputs from existing reads or future API aggregates
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.

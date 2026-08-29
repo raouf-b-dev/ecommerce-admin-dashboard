@@ -24,6 +24,7 @@ export async function listOrdersRequest(
         sortBy: query.sortBy,
         sortOrder: query.sortOrder,
         ...(query.status ? { status: query.status } : {}),
+        ...(query.userId ? { userId: query.userId } : {}),
         ...(query.userEmail ? { userEmail: query.userEmail } : {}),
         ...(query.userName ? { userName: query.userName } : {}),
       },

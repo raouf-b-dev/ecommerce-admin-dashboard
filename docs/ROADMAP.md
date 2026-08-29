@@ -67,7 +67,7 @@ Write tests **with** each feature.
 | **3** | Products | `[x]` | Table/forms + tests |
 | **4** | Inventory | `[x]` | Stock views + tests |
 | **5** | Orders | `[x]` | Ops actions + tests |
-| **6** | Customers | `[ ]` | Read views + tests |
+| **6** | Users | `[x]` | Read views + role filter + tests |
 | **7** | Dashboard | `[ ]` | Summary widgets + tests |
 | **8** | Quality sweep | `[ ]` | Full smoke, a11y |
 | **9** | Release gate | `[ ]` | Deploy, verified quick start |
@@ -276,18 +276,18 @@ Write tests **with** each feature.
 
 ---
 
-## Phase 6: Customers
+## Phase 6: Users
 
-**OpenAPI capabilities:** customer/user reads (writes optional in v1).
+**OpenAPI capabilities:** user reads with optional role filter (writes optional in v1).
 
 **Scope:**
 
-- [ ] Customer list/detail
-- [ ] No client-side IDOR bypass
-- [ ] Tests for empty/forbidden
-- [ ] Playwright: open customers list
+- [x] User list/detail (role on read model + role filter)
+- [x] No client-side IDOR bypass
+- [x] Tests for empty/forbidden
+- [x] Playwright: open users list
 
-**Done when:** Admin can open seeded customer detail read-only (or with documented mutations); tests green.
+**Done when:** Admin can open seeded user detail read-only (or with documented mutations); tests green.
 
 ---
 
