@@ -1,8 +1,17 @@
 import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
 import { resolvePermissionsForRole } from '@/features/auth/constants/system-role-permissions';
-import type { AuthSession, AuthTokensResponse } from '@/features/auth/types';
+import type {
+  AuthSession,
+  AuthTokensResponse,
+  ChangePasswordInput,
+  LoginCredentials,
+} from '@/features/auth/types';
 import { setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
+import {
+  readAuthErrorFromResponse,
+  toAuthRequestError,
+} from '@/features/auth/api/parse-auth-error';
 
 function parseTokensResponse(data: unknown): AuthTokensResponse {
   if (!data || typeof data !== 'object') {
@@ -28,10 +37,16 @@ function parseTokensResponse(data: unknown): AuthTokensResponse {
         ? record.refresh_token
         : undefined;
 
-  return { accessToken, refreshToken };
+  const mustChangePassword =
+    record.mustChangePassword === true || record.must_change_password === true;
+
+  return { accessToken, refreshToken, mustChangePassword };
 }
 
-export function buildSessionFromAccessToken(accessToken: string): AuthSession {
+export function buildSessionFromAccessToken(
+  accessToken: string,
+  mustChangePassword = false,
+): AuthSession {
   const claims = decodeAccessTokenClaims(accessToken);
   if (!claims) {
     throw new Error('Invalid access token');
@@ -44,11 +59,13 @@ export function buildSessionFromAccessToken(accessToken: string): AuthSession {
     email: claims.email,
     role: claims.role,
     permissions: resolvePermissionsForRole(claims.role),
+    mustChangePassword:
+      mustChangePassword || claims.mustChangePassword === true,
   };
 }
 
 export async function loginRequest(
-  credentials: { email: string; password: string },
+  credentials: LoginCredentials,
 ): Promise<AuthSession> {
   const { data, error, response } = await apiClient.POST('/v1/authentication/login', {
     body: credentials,
@@ -59,7 +76,10 @@ export async function loginRequest(
   }
 
   const tokens = parseTokensResponse(data);
-  return buildSessionFromAccessToken(tokens.accessToken);
+  return buildSessionFromAccessToken(
+    tokens.accessToken,
+    tokens.mustChangePassword,
+  );
 }
 
 export async function refreshSessionRequest(): Promise<AuthSession | null> {
@@ -76,7 +96,33 @@ export async function refreshSessionRequest(): Promise<AuthSession | null> {
   }
 
   const tokens = parseTokensResponse(data);
-  return buildSessionFromAccessToken(tokens.accessToken);
+  return buildSessionFromAccessToken(
+    tokens.accessToken,
+    tokens.mustChangePassword,
+  );
+}
+
+export async function changePasswordRequest(
+  input: ChangePasswordInput,
+): Promise<AuthSession> {
+  const { data, error, response } = await apiClient.POST(
+    '/v1/authentication/change-password',
+    {
+      body: input,
+    },
+  );
+
+  if (error || !response.ok) {
+    const parsed = response ? await readAuthErrorFromResponse(response) : null;
+    throw toAuthRequestError(
+      response ?? new Response(null, { status: 500 }),
+      parsed,
+      'Failed to change password',
+    );
+  }
+
+  const tokens = parseTokensResponse(data);
+  return buildSessionFromAccessToken(tokens.accessToken, tokens.mustChangePassword);
 }
 
 export async function logoutRequest(): Promise<void> {

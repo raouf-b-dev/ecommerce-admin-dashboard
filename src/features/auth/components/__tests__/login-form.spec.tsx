@@ -62,7 +62,13 @@ describe('LoginForm', () => {
   });
 
   it('navigates after successful login', async () => {
-    mockLogin.mockResolvedValue(undefined);
+    mockLogin.mockResolvedValue({
+      userId: '1',
+      email: 'admin@store.local',
+      role: 'ADMIN',
+      permissions: [],
+      mustChangePassword: false,
+    });
 
     render(
       <MemoryRouter>
