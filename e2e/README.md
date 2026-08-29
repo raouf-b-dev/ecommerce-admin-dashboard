@@ -40,7 +40,7 @@ $env:E2E_SUPERADMIN_NEW_PASSWORD="SuperAdminRotated1!"   # optional; default suf
 
 After a rotation test, the next `npm run test:e2e` re-seeds auth via global setup. For a full database reset, run `npm run db:seed` in the API repo.
 
-Products and inventory list smokes assume catalog + inventory seed data already exist (`npm run db:seed` in the API). Auth-only seed does not re-insert products or stock.
+Products, inventory, and orders list smokes assume catalog + inventory + demo orders seed data already exist (`npm run db:seed` in the API). Auth-only seed does not re-insert products, stock, or orders.
 
 ### Customer blocked from admin
 
@@ -52,3 +52,9 @@ $env:E2E_CUSTOMER_PASSWORD="..."   # from API SEEDING.md
 ```
 
 Unauthenticated redirect and login-failure tests do not require credentials.
+
+## Parallelism
+
+Playwright runs with `workers: 1` and `fullyParallel: false`. Authenticated specs share one seeded admin account; parallel workers raced forced password rotation and the API login throttle. Prefer a single worker unless you introduce isolated e2e users.
+
+Auth login/register throttle is **10/min** (`AUTH_STRICT_LIMIT` in the API). Rapid local re-runs can still 429 until the prior 60s window expires; prefer `workers: 1` and avoid re-logging in every spec when possible.

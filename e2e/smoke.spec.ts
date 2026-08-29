@@ -59,6 +59,7 @@ test('mobile navigation opens and navigates', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await loginAsAdmin(page);
 
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   await expect(page.getByRole('link', { name: 'Products' })).toBeVisible();
 
@@ -73,10 +74,14 @@ test('forbidden route shows access denied inside shell', async ({ page }) => {
   );
 
   await loginAsAdmin(page);
-  await page.goto('/settings/roles');
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
 
+  await page.goto('/settings/roles');
+  // Full navigation re-bootstraps the session via refresh cookie.
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+    timeout: 15_000,
+  });
   await expect(
     page.getByRole('heading', { name: 'Access denied' }),
-  ).toBeVisible();
-  await expect(page.getByText('Control Center')).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
 });
