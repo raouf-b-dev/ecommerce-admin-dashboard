@@ -1,6 +1,7 @@
 # ADR-0003: Client RBAC Chrome — API Authoritative
 
-- **Status**: Accepted
+- **Status**: Superseded
+- **Superseded By**: [ADR-0007](ADR-0007-auth-response-permissions-for-chrome.md)
 - **Date**: 2026-08-28
 - **Context**: Phase 2 permission-aware navigation and forbidden UX.
 

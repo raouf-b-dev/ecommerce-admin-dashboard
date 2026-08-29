@@ -43,8 +43,8 @@ See also root [`SECURITY.md`](../SECURITY.md).
 - Use the API auth operations from OpenAPI (login / refresh / logout / change-password).
 - Access token in memory; refresh via HttpOnly cookie (`credentials: 'include'` on `apiClient`).
 - Login, refresh, and change-password responses include `mustChangePassword`. When `true`, route to `/change-password` before the app shell.
-- **Operators only:** require permission `access_admin` from the auth response `permissions` array. Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md).
-- Permissions for chrome come from auth token responses (live from DB). Filter/form enums lock to OpenAPI via `satisfies`. Order detail status buttons use `allowedActions` from the API. Nav filtering is UX only.
+- **Operators only:** require permission `access_admin` from the auth response `permissions` array. Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md) and [ADR-0007](architecture/adr/ADR-0007-auth-response-permissions-for-chrome.md).
+- Permissions for chrome come from auth token responses (live from DB) per ADR-0007. Filter/form enums lock to OpenAPI via `satisfies`. Order detail status buttons use `allowedActions` from the API. Nav filtering is UX only.
 - On domain `401`, attempt a single-flight silent refresh and one request retry ([ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)); if that fails, return to login. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
 - Seeded **administrator** / **customer** accounts: API seeding doc only (no passwords in this repo).
 

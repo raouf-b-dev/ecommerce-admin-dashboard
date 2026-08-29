@@ -92,7 +92,7 @@ sequenceDiagram
 
 ## RBAC model
 
-Rationale: [ADR-0003](adr/ADR-0003-client-rbac-chrome-api-authoritative.md).
+Rationale: [ADR-0007](adr/ADR-0007-auth-response-permissions-for-chrome.md) (supersedes [ADR-0003](adr/ADR-0003-client-rbac-chrome-api-authoritative.md)).
 
 - Nav items in `src/app/navigation.ts` declare optional `permission` codes
 - `AppSidebar` filters items via `filterNavigation()` and `useAuth().hasPermission()`
