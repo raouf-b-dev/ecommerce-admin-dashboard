@@ -7,6 +7,7 @@ vi.mock('@/features/auth/lib/jwt-decode', () => ({
 
 vi.mock('@/lib/auth/auth-session', () => ({
   setAccessToken: vi.fn(),
+  clearAccessToken: vi.fn(),
 }));
 
 import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
