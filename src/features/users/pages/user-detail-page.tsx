@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useUserDetailQuery } from '@/features/users/hooks/use-users';
+import { useRolesListQuery } from '@/features/users/hooks/use-roles';
 import {
   formatUserPhone,
   formatUserRole,
@@ -26,6 +27,7 @@ export function UserDetailPage() {
   const userId = Number(params.userId);
   const validId = Number.isInteger(userId) && userId > 0;
   const detailQuery = useUserDetailQuery(validId ? userId : undefined);
+  const rolesQuery = useRolesListQuery();
 
   if (!validId) {
     return (
@@ -66,6 +68,9 @@ export function UserDetailPage() {
   }
 
   const user = detailQuery.data;
+  const roleName = rolesQuery.data?.find(
+    (role) => role.code === user.roleCode,
+  )?.name;
 
   return (
     <div className="space-y-8">
@@ -94,7 +99,7 @@ export function UserDetailPage() {
         <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Role</dt>
           <dd className="text-sm font-medium">
-            {formatUserRole(user.roleCode)}
+            {formatUserRole(user.roleCode, roleName)}
           </dd>
         </div>
         <div className="space-y-1">

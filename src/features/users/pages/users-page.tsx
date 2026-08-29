@@ -6,28 +6,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UsersTable } from '@/features/users/components/users-table';
+import { useRolesListQuery } from '@/features/users/hooks/use-roles';
 import { useUsersListQuery } from '@/features/users/hooks/use-users';
 import {
   userListFiltersFromSearchParams,
   userListFiltersToSearchParams,
 } from '@/features/users/lib/user-list-filters';
-import type { UserListFilters, UserRoleCode } from '@/features/users/types';
+import type { UserListFilters } from '@/features/users/types';
 
 type ActiveFilter = '' | 'true' | 'false';
-type RoleFilter = '' | UserRoleCode;
-
-const ROLE_OPTIONS: { value: RoleFilter; label: string }[] = [
-  { value: '', label: 'All roles' },
-  { value: 'CUSTOMER', label: 'Customer' },
-  { value: 'ADMIN', label: 'Admin' },
-  { value: 'SUPER_ADMIN', label: 'Super admin' },
-];
 
 export function UsersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = userListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
     useUsersListQuery(filters);
+  const rolesQuery = useRolesListQuery();
 
   const [searchDraft, setSearchDraft] = useState(filters.search ?? '');
 
@@ -50,6 +44,13 @@ export function UsersPage() {
       : filters.isActive === false
         ? 'false'
         : '';
+
+  const roleOptions = [...(rolesQuery.data ?? [])].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  const roleNamesByCode = Object.fromEntries(
+    roleOptions.map((role) => [role.code, role.name]),
+  );
 
   return (
     <div className="space-y-8">
@@ -110,8 +111,9 @@ export function UsersPage() {
             id="users-role"
             className="flex h-10 w-44 rounded-md border border-input bg-background px-3 py-2 text-sm"
             value={filters.roleCode ?? ''}
+            disabled={rolesQuery.isLoading || rolesQuery.isError}
             onChange={(e) => {
-              const value = e.target.value as RoleFilter;
+              const value = e.target.value;
               updateFilters({
                 ...filters,
                 page: 1,
@@ -119,14 +121,36 @@ export function UsersPage() {
               });
             }}
           >
-            {ROLE_OPTIONS.map((option) => (
-              <option key={option.value || 'all'} value={option.value}>
-                {option.label}
+            <option value="">All roles</option>
+            {roleOptions.map((role) => (
+              <option key={role.id} value={role.code}>
+                {role.name}
               </option>
             ))}
           </select>
         </div>
       </div>
+
+      {rolesQuery.isError ? (
+        <Alert>
+          <AlertTitle>Could not load roles</AlertTitle>
+          <AlertDescription className="flex flex-wrap items-center gap-3">
+            <span>
+              {rolesQuery.error instanceof Error
+                ? rolesQuery.error.message
+                : 'Role filter is unavailable.'}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => rolesQuery.refetch()}
+            >
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {isError && !data ? (
         <Alert variant="destructive">
@@ -178,6 +202,7 @@ export function UsersPage() {
             items={data.items}
             total={data.total}
             filters={filters}
+            roleNamesByCode={roleNamesByCode}
             onFiltersChange={updateFilters}
           />
         </div>
