@@ -79,7 +79,7 @@ Concrete paths live in Swagger. Typical admin needs:
 - Product list/detail and product writes
 - Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust
 - Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`)
-- Customer/user reads (writes optional)
+- User reads with optional role filter (writes optional)
 - Dashboard inputs from existing reads or future API aggregates
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.
