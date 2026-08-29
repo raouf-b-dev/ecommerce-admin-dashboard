@@ -40,6 +40,8 @@ $env:E2E_SUPERADMIN_NEW_PASSWORD="SuperAdminRotated1!"   # optional; default suf
 
 After a rotation test, the next `npm run test:e2e` re-seeds auth via global setup. For a full database reset, run `npm run db:seed` in the API repo.
 
+Products and inventory list smokes assume catalog + inventory seed data already exist (`npm run db:seed` in the API). Auth-only seed does not re-insert products or stock.
+
 ### Customer blocked from admin
 
 `e2e/operator-gate.spec.ts` verifies seeded **customer** accounts cannot enter Control Center:
