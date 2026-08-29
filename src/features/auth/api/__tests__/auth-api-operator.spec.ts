@@ -32,11 +32,14 @@ describe('admin access gate in auth-api', () => {
     vi.mocked(clearAccessToken).mockReset();
   });
 
-  it('loginRequest rejects roles without access_admin and clears session', async () => {
+  it('loginRequest rejects sessions without access_admin and clears session', async () => {
     vi.mocked(apiClient.POST).mockImplementation(async (path) => {
       if (path === '/v1/authentication/login') {
         return {
-          data: { accessToken: 'customer-token' },
+          data: {
+            accessToken: 'customer-token',
+            permissions: ['view_own_orders'],
+          },
           error: undefined,
           response: new Response(null, { status: 200 }),
         };
@@ -70,7 +73,10 @@ describe('admin access gate in auth-api', () => {
     vi.mocked(apiClient.POST).mockImplementation(async (path) => {
       if (path === '/v1/authentication/refresh') {
         return {
-          data: { accessToken: 'customer-token' },
+          data: {
+            accessToken: 'customer-token',
+            permissions: ['view_own_orders'],
+          },
           error: undefined,
           response: new Response(null, { status: 200 }),
         };
@@ -93,9 +99,13 @@ describe('admin access gate in auth-api', () => {
     expect(clearAccessToken).toHaveBeenCalled();
   });
 
-  it('loginRequest accepts ADMIN (has access_admin in UX map)', async () => {
+  it('loginRequest accepts sessions with access_admin from the auth response', async () => {
     vi.mocked(apiClient.POST).mockResolvedValue({
-      data: { accessToken: 'admin-token', mustChangePassword: false },
+      data: {
+        accessToken: 'admin-token',
+        mustChangePassword: false,
+        permissions: ['access_admin', 'view_all_users'],
+      },
       error: undefined,
       response: new Response(null, { status: 200 }),
     });
@@ -112,7 +122,10 @@ describe('admin access gate in auth-api', () => {
     });
 
     expect(session.role).toBe('ADMIN');
-    expect(session.permissions).toContain('access_admin');
+    expect(session.permissions).toEqual([
+      'access_admin',
+      'view_all_users',
+    ]);
     expect(setAccessToken).toHaveBeenCalledWith('admin-token');
   });
 });

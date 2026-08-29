@@ -1,6 +1,5 @@
 import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
 import { ACCESS_ADMIN_PERMISSION } from '@/features/auth/constants/admin-access';
-import { resolvePermissionsForRole } from '@/features/auth/constants/system-role-permissions';
 import type {
   AuthSession,
   AuthTokensResponse,
@@ -20,6 +19,13 @@ export class NotOperatorError extends Error {
     super('NOT_OPERATOR');
     this.name = 'NotOperatorError';
   }
+}
+
+function parsePermissions(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((item): item is string => typeof item === 'string');
 }
 
 function parseTokensResponse(data: unknown): AuthTokensResponse {
@@ -49,12 +55,18 @@ function parseTokensResponse(data: unknown): AuthTokensResponse {
   const mustChangePassword =
     record.mustChangePassword === true || record.must_change_password === true;
 
-  return { accessToken, refreshToken, mustChangePassword };
+  return {
+    accessToken,
+    refreshToken,
+    mustChangePassword,
+    permissions: parsePermissions(record.permissions),
+  };
 }
 
 export function buildSessionFromAccessToken(
   accessToken: string,
   mustChangePassword = false,
+  permissions: string[] = [],
 ): AuthSession {
   const claims = decodeAccessTokenClaims(accessToken);
   if (!claims) {
@@ -67,17 +79,14 @@ export function buildSessionFromAccessToken(
     userId: claims.sub,
     email: claims.email,
     role: claims.role,
-    permissions: resolvePermissionsForRole(claims.role),
+    permissions,
     mustChangePassword:
       mustChangePassword || claims.mustChangePassword === true,
   };
 }
 
-function roleHasAdminAccess(roleCode: string): boolean {
-  return hasPermission(
-    resolvePermissionsForRole(roleCode),
-    ACCESS_ADMIN_PERMISSION,
-  );
+function hasAdminAccess(permissions: string[]): boolean {
+  return hasPermission(permissions, ACCESS_ADMIN_PERMISSION);
 }
 
 async function clearNonOperatorSession(): Promise<void> {
@@ -93,15 +102,19 @@ async function clearNonOperatorSession(): Promise<void> {
 async function ensureAdminAccessSession(
   accessToken: string,
   mustChangePassword: boolean,
+  permissions: string[],
 ): Promise<AuthSession> {
-  const claims = decodeAccessTokenClaims(accessToken);
-  if (!claims || !roleHasAdminAccess(claims.role)) {
+  if (!hasAdminAccess(permissions)) {
     setAccessToken(accessToken);
     await clearNonOperatorSession();
     throw new NotOperatorError();
   }
 
-  return buildSessionFromAccessToken(accessToken, mustChangePassword);
+  return buildSessionFromAccessToken(
+    accessToken,
+    mustChangePassword,
+    permissions,
+  );
 }
 
 export async function loginRequest(
@@ -116,7 +129,11 @@ export async function loginRequest(
   }
 
   const tokens = parseTokensResponse(data);
-  return ensureAdminAccessSession(tokens.accessToken, tokens.mustChangePassword);
+  return ensureAdminAccessSession(
+    tokens.accessToken,
+    tokens.mustChangePassword,
+    tokens.permissions,
+  );
 }
 
 export async function refreshSessionRequest(): Promise<AuthSession | null> {
@@ -133,8 +150,7 @@ export async function refreshSessionRequest(): Promise<AuthSession | null> {
   }
 
   const tokens = parseTokensResponse(data);
-  const claims = decodeAccessTokenClaims(tokens.accessToken);
-  if (!claims || !roleHasAdminAccess(claims.role)) {
+  if (!hasAdminAccess(tokens.permissions)) {
     setAccessToken(tokens.accessToken);
     await clearNonOperatorSession();
     return null;
@@ -143,6 +159,7 @@ export async function refreshSessionRequest(): Promise<AuthSession | null> {
   return buildSessionFromAccessToken(
     tokens.accessToken,
     tokens.mustChangePassword,
+    tokens.permissions,
   );
 }
 
@@ -166,7 +183,11 @@ export async function changePasswordRequest(
   }
 
   const tokens = parseTokensResponse(data);
-  return ensureAdminAccessSession(tokens.accessToken, tokens.mustChangePassword);
+  return ensureAdminAccessSession(
+    tokens.accessToken,
+    tokens.mustChangePassword,
+    tokens.permissions,
+  );
 }
 
 export async function logoutRequest(): Promise<void> {
