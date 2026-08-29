@@ -1,4 +1,7 @@
-import type { InventoryListFilters } from '@/features/inventory/types';
+import type {
+  InventoryListFilters,
+  ListInventoryQuery,
+} from '@/features/inventory/types';
 
 export const DEFAULT_INVENTORY_LIST_FILTERS: InventoryListFilters = {
   page: 1,
@@ -6,6 +9,32 @@ export const DEFAULT_INVENTORY_LIST_FILTERS: InventoryListFilters = {
   sortBy: 'updatedAt',
   sortOrder: 'desc',
 };
+
+const INVENTORY_SORT_BY = [
+  'updatedAt',
+  'availableQuantity',
+  'totalQuantity',
+  'productId',
+] as const satisfies readonly NonNullable<ListInventoryQuery['sortBy']>[];
+
+const SORT_ORDERS = [
+  'asc',
+  'desc',
+] as const satisfies readonly NonNullable<ListInventoryQuery['sortOrder']>[];
+
+function isInventorySortBy(
+  value: string | null,
+): value is NonNullable<ListInventoryQuery['sortBy']> {
+  return (
+    value !== null && (INVENTORY_SORT_BY as readonly string[]).includes(value)
+  );
+}
+
+function isSortOrder(
+  value: string | null,
+): value is NonNullable<ListInventoryQuery['sortOrder']> {
+  return value !== null && (SORT_ORDERS as readonly string[]).includes(value);
+}
 
 export function normalizeInventoryListFilters(
   input: Partial<InventoryListFilters> = {},
@@ -43,15 +72,8 @@ export function inventoryListFiltersFromSearchParams(
   return normalizeInventoryListFilters({
     page: Number.isFinite(page) ? page : undefined,
     limit: Number.isFinite(limit) ? limit : undefined,
-    sortBy:
-      sortBy === 'updatedAt' ||
-      sortBy === 'availableQuantity' ||
-      sortBy === 'totalQuantity' ||
-      sortBy === 'productId'
-        ? sortBy
-        : undefined,
-    sortOrder:
-      sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined,
+    sortBy: isInventorySortBy(sortBy) ? sortBy : undefined,
+    sortOrder: isSortOrder(sortOrder) ? sortOrder : undefined,
     sku,
     productTitle,
     lowStockOnly: lowStockOnly === 'true' || lowStockOnly === '1',
