@@ -46,8 +46,11 @@ export function LoginForm() {
     setFormError(null);
 
     try {
-      await login(values);
-      navigate(safeRedirectPath(searchParams.get('redirect')), { replace: true });
+      const session = await login(values);
+      const destination = session.mustChangePassword
+        ? '/change-password'
+        : safeRedirectPath(searchParams.get('redirect'));
+      navigate(destination, { replace: true });
     } catch {
       setFormError('Invalid email or password.');
     }
