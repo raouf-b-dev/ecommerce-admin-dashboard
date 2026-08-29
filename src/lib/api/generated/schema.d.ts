@@ -406,6 +406,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/authentication/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change password for the authenticated user */
+        post: operations["AuthenticationController_changePassword_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/authentication/.well-known/jwks.json": {
         parameters: {
             query?: never;
@@ -1219,12 +1236,35 @@ export interface components {
             /** @example password123 */
             password: string;
         };
+        AuthTokensResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+            /**
+             * @description Refresh token (also set as HttpOnly cookie on login, refresh, and change-password)
+             * @example eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            refreshToken?: string;
+            /**
+             * @description When true, the client must complete password rotation before calling domain APIs
+             * @example false
+             */
+            mustChangePassword: boolean;
+        };
         RefreshTokenDto: {
             /**
              * @description The refresh token. Optional when sent via HttpOnly cookie.
              * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
              */
             refreshToken?: string;
+        };
+        ChangePasswordDto: {
+            /** @example Admin123! */
+            currentPassword: string;
+            /** @example NewSecurePass123! */
+            newPassword: string;
         };
         AddressResponseDto: {
             /**
@@ -2411,7 +2451,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthTokensResponseDto"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -2440,7 +2482,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthTokensResponseDto"];
+                };
             };
             /** @description Invalid refresh token */
             401: {
@@ -2488,6 +2532,44 @@ export interface operations {
         responses: {
             /** @description Successfully logged out all sessions */
             204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthenticationController_changePassword_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangePasswordDto"];
+            };
+        };
+        responses: {
+            /** @description Password changed; new tokens issued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthTokensResponseDto"];
+                };
+            };
+            /** @description Validation failed or same password */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Current password incorrect */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
