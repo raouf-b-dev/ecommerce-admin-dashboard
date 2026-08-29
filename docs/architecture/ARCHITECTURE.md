@@ -39,18 +39,19 @@ flowchart TD
   Boot -->|loading| Spinner["Auth loading screen"]
   Boot -->|unauthenticated + protected| Login["/login?redirect=..."]
   Boot -->|authenticated + /login| Home["redirect param or /"]
-  Boot -->|authenticated + protected| Shell["ProtectedRoute → AppLayout → page"]
-  Login --> Submit["Login succeeds"]
+  Boot -->|authenticated + protected| Shell["ProtectedRoute → RequirePasswordChanged → OperatorRoute → AppLayout → page"]
+  Login --> Submit["Login succeeds (operator role)"]
   Submit --> Shell
 ```
 
 - `/login` — sole public route; no admin chrome
-- All other routes — `ProtectedRoute` → `AppLayout` → feature page
-- `PermissionRoute` — optional route-level 403 UX inside the shell
+- Shell routes — `ProtectedRoute` → `RequirePasswordChanged` → `OperatorRoute` → `AppLayout` → feature page
+- `OperatorRoute` — requires `access_admin` ([ADR-0006](adr/ADR-0006-operators-only-admin-spa.md))
+- `PermissionRoute` — optional route-level 403 UX inside the shell (Dashboard/Orders require `view_all_orders`)
 
 ## Auth and session flow
 
-Rationale: [ADR-0002](adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md).
+Rationale: [ADR-0002](adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](adr/ADR-0005-silent-one-shot-access-token-refresh.md).
 
 ```mermaid
 sequenceDiagram
@@ -62,11 +63,11 @@ sequenceDiagram
     Browser->>AuthProvider: App mount
     AuthProvider->>ApiClient: POST /v1/authentication/refresh
     ApiClient->>API: HttpOnly cookie (credentials include)
-    alt Valid refresh cookie
+    alt Valid refresh cookie and operator role
         API-->>AuthProvider: accessToken
         AuthProvider-->>Browser: authenticated
-    else No session
-        API-->>AuthProvider: 401
+    else No session or non-operator
+        API-->>AuthProvider: 401 or client reject
         AuthProvider-->>Browser: unauthenticated
     end
 
@@ -74,7 +75,12 @@ sequenceDiagram
     ApiClient->>API: Authorization Bearer accessToken
     alt 401 on domain request
         API-->>ApiClient: 401
-        ApiClient-->>Browser: clear token, redirect /login?redirect=...
+        ApiClient->>API: POST refresh once single-flight
+        alt Refresh ok
+            ApiClient->>API: Retry original request once
+        else Refresh or retry fails
+            ApiClient-->>Browser: clear token, redirect /login?redirect=...
+        end
     end
 ```
 
