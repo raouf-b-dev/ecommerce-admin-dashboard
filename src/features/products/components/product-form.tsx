@@ -41,7 +41,7 @@ const emptyDefaults: ProductFormValues = {
   slug: '',
   description: '',
   sku: '',
-  currency: 'USD',
+  currency: '',
   imageUrl: '',
   categoryId: '',
 };
@@ -110,7 +110,7 @@ export function ProductForm({
         slug: defaultValues.slug ?? '',
         description: defaultValues.description ?? '',
         sku: defaultValues.sku ?? '',
-        currency: defaultValues.currency ?? 'USD',
+        currency: defaultValues.currency ?? '',
         imageUrl: defaultValues.imageUrl ?? '',
         categoryId: defaultValues.categoryId ?? '',
         price:

@@ -29,11 +29,14 @@ type ProductsTableProps = {
 
 const features = tableFeatures({});
 
-function formatPrice(price: number, currency: string) {
+function formatPrice(price: number, currency?: string | null) {
+  if (!currency?.trim()) {
+    return String(price);
+  }
   try {
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
-      currency: currency || 'USD',
+      currency,
     }).format(price);
   } catch {
     return `${price} ${currency}`;
