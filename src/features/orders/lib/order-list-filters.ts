@@ -1,4 +1,8 @@
-import type { OrderListFilters, OrderStatus } from '@/features/orders/types';
+import type {
+  ListOrdersQuery,
+  OrderListFilters,
+  OrderStatus,
+} from '@/features/orders/types';
 
 export const DEFAULT_ORDER_LIST_FILTERS: OrderListFilters = {
   page: 1,
@@ -7,7 +11,7 @@ export const DEFAULT_ORDER_LIST_FILTERS: OrderListFilters = {
   sortOrder: 'desc',
 };
 
-const ORDER_STATUSES: OrderStatus[] = [
+export const ORDER_STATUSES = [
   'pending_payment',
   'payment_failed',
   'confirmed',
@@ -16,10 +20,46 @@ const ORDER_STATUSES: OrderStatus[] = [
   'delivered',
   'cancelled',
   'refunded',
+] as const satisfies readonly OrderStatus[];
+
+export const ORDER_STATUS_OPTIONS: {
+  value: '' | OrderStatus;
+  label: string;
+}[] = [
+  { value: '', label: 'All statuses' },
+  ...ORDER_STATUSES.map((status) => ({
+    value: status,
+    label: status.replaceAll('_', ' '),
+  })),
 ];
 
+const ORDER_SORT_BY = [
+  'createdAt',
+  'updatedAt',
+  'totalPrice',
+] as const satisfies readonly NonNullable<ListOrdersQuery['sortBy']>[];
+
+const SORT_ORDERS = [
+  'asc',
+  'desc',
+] as const satisfies readonly NonNullable<ListOrdersQuery['sortOrder']>[];
+
 function isOrderStatus(value: string | null): value is OrderStatus {
-  return value !== null && (ORDER_STATUSES as string[]).includes(value);
+  return value !== null && (ORDER_STATUSES as readonly string[]).includes(value);
+}
+
+function isOrderSortBy(
+  value: string | null,
+): value is NonNullable<ListOrdersQuery['sortBy']> {
+  return (
+    value !== null && (ORDER_SORT_BY as readonly string[]).includes(value)
+  );
+}
+
+function isSortOrder(
+  value: string | null,
+): value is NonNullable<ListOrdersQuery['sortOrder']> {
+  return value !== null && (SORT_ORDERS as readonly string[]).includes(value);
 }
 
 export function normalizeOrderListFilters(
@@ -63,14 +103,8 @@ export function orderListFiltersFromSearchParams(
   return normalizeOrderListFilters({
     page: Number.isFinite(page) ? page : undefined,
     limit: Number.isFinite(limit) ? limit : undefined,
-    sortBy:
-      sortBy === 'createdAt' ||
-      sortBy === 'updatedAt' ||
-      sortBy === 'totalPrice'
-        ? sortBy
-        : undefined,
-    sortOrder:
-      sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined,
+    sortBy: isOrderSortBy(sortBy) ? sortBy : undefined,
+    sortOrder: isSortOrder(sortOrder) ? sortOrder : undefined,
     status: isOrderStatus(status) ? status : undefined,
     userId: Number.isInteger(userId) && userId > 0 ? userId : undefined,
     userEmail,
