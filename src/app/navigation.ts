@@ -3,6 +3,7 @@ import {
   Package,
   ShoppingCart,
   Shield,
+  Users,
   Warehouse,
   type LucideIcon,
 } from 'lucide-react';
@@ -38,6 +39,12 @@ export const navigation: NavItem[] = [
     label: 'Orders',
     icon: ShoppingCart,
     permission: 'view_all_orders',
+  },
+  {
+    to: '/users',
+    label: 'Users',
+    icon: Users,
+    permission: 'view_all_users',
   },
   {
     to: '/settings/roles',

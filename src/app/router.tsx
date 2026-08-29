@@ -11,6 +11,8 @@ import { ProductCreatePage } from '@/features/products/pages/product-create-page
 import { ProductEditPage } from '@/features/products/pages/product-edit-page';
 import { InventoryPage } from '@/features/inventory/pages/inventory-page';
 import { InventoryDetailPage } from '@/features/inventory/pages/inventory-detail-page';
+import { UsersPage } from '@/features/users/pages/users-page';
+import { UserDetailPage } from '@/features/users/pages/user-detail-page';
 import { GuestRoute } from '@/lib/auth/guest-route';
 import {
   ChangePasswordRoute,
@@ -123,6 +125,24 @@ export const router = createBrowserRouter([
           {
             path: ':orderId',
             element: <OrderDetailPage />,
+          },
+        ],
+      },
+      {
+        path: 'users',
+        element: (
+          <PermissionRoute permission="view_all_users">
+            <Outlet />
+          </PermissionRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <UsersPage />,
+          },
+          {
+            path: ':userId',
+            element: <UserDetailPage />,
           },
         ],
       },
