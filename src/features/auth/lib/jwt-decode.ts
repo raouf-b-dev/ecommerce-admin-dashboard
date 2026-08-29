@@ -2,6 +2,7 @@ export type AccessTokenClaims = {
   sub: string;
   email: string;
   role: string;
+  mustChangePassword?: boolean;
 };
 
 export function decodeAccessTokenClaims(
@@ -34,6 +35,7 @@ export function decodeAccessTokenClaims(
       sub: decoded.sub,
       email: decoded.email,
       role: decoded.role,
+      mustChangePassword: decoded.mustChangePassword === true,
     };
   } catch {
     return null;
