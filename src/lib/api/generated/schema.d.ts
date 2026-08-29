@@ -1720,22 +1720,88 @@ export interface components {
              */
             quantity: number;
         };
-        InventoryResponseDto: {
+        InventoryListItemResponseDto: {
             /**
              * @description Inventory record ID
-             * @example inv-123
+             * @example 1
              */
             id: number;
             /**
              * @description Product ID
-             * @example prod-123
+             * @example 1
              */
             productId: number;
             /**
-             * @description Product name
+             * @description Product SKU
+             * @example SKU-HEADPHONES
+             */
+            sku: string;
+            /**
+             * @description Product title
              * @example Wireless Headphones
              */
-            productName: string;
+            productTitle: string;
+            /**
+             * @description Available quantity
+             * @example 150
+             */
+            availableQuantity: number;
+            /**
+             * @description Reserved quantity
+             * @example 10
+             */
+            reservedQuantity: number;
+            /**
+             * @description Total quantity (available + reserved)
+             * @example 160
+             */
+            totalQuantity: number;
+            /**
+             * @description Last update date
+             * @example 2025-10-31T12:30:00.000Z
+             */
+            updatedAt: string;
+        };
+        PaginatedInventoryResponseDto: {
+            items: components["schemas"]["InventoryListItemResponseDto"][];
+            /** @example 15 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 10 */
+            limit: number;
+            /** @example 2 */
+            totalPages: number;
+        };
+        AdjustStockDto: {
+            /**
+             * @description Quantity to adjust
+             * @example 50
+             */
+            quantity: number;
+            /**
+             * @description Type of adjustment
+             * @example ADD
+             * @enum {string}
+             */
+            type: "ADD" | "SUBTRACT" | "SET";
+            /**
+             * @description Reason for stock adjustment
+             * @example Received new shipment
+             */
+            reason?: string;
+        };
+        InventoryStockResponseDto: {
+            /**
+             * @description Inventory record ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Product ID
+             * @example 1
+             */
+            productId: number;
             /**
              * @description Available quantity
              * @example 150
@@ -1757,45 +1823,22 @@ export interface components {
              */
             lowStockThreshold: number;
             /**
-             * @description Whether stock is low
-             * @example false
+             * @description Last restock date
+             * @example 2025-10-31T10:00:00.000Z
              */
-            isLowStock: boolean;
-            /**
-             * @description Whether product is in stock
-             * @example true
-             */
-            inStock: boolean;
+            lastRestockDate?: Record<string, never> | null;
             /**
              * Format: date-time
-             * @description Last restock date
-             * @example 2025-10-31T10:00:00Z
+             * @description Created at
+             * @example 2025-10-31T12:30:00.000Z
              */
-            lastRestockDate?: string;
+            createdAt: string;
             /**
              * Format: date-time
              * @description Last update date
-             * @example 2025-10-31T12:30:00Z
+             * @example 2025-10-31T12:30:00.000Z
              */
             updatedAt: string;
-        };
-        AdjustStockDto: {
-            /**
-             * @description Quantity to adjust
-             * @example 50
-             */
-            quantity: number;
-            /**
-             * @description Type of adjustment
-             * @example ADD
-             * @enum {string}
-             */
-            type: "ADD" | "SUBTRACT" | "SET";
-            /**
-             * @description Reason for stock adjustment
-             * @example Received new shipment
-             */
-            reason?: string;
         };
         ReserveStockItemDto: {
             /**
@@ -3280,7 +3323,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PaginatedInventoryResponseDto"];
+                };
             };
         };
     };
@@ -3300,7 +3345,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InventoryResponseDto"];
+                    "application/json": components["schemas"]["InventoryListItemResponseDto"];
                 };
             };
         };
@@ -3325,7 +3370,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InventoryResponseDto"];
+                    "application/json": components["schemas"]["InventoryStockResponseDto"];
                 };
             };
         };
@@ -3437,7 +3482,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InventoryResponseDto"][];
+                    "application/json": components["schemas"]["InventoryStockResponseDto"][];
                 };
             };
         };
