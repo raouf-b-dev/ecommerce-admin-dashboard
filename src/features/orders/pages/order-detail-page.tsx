@@ -149,7 +149,7 @@ export function OrderDetailPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-medium">Status actions</h2>
           <OrderStatusActions
-            status={order.status}
+            allowedActions={order.allowedActions ?? []}
             isPending={transition.isPending}
             onAction={handleAction}
           />
