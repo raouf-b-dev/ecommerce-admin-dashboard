@@ -50,7 +50,7 @@ See also root [`SECURITY.md`](../SECURITY.md).
 
 ## Concurrency (`409`)
 
-Product/order updates may use optimistic concurrency. On `409`:
+Product, inventory adjust, and order updates may use optimistic concurrency. On `409`:
 
 1. Reload the entity from the API.
 2. Let the operator retry.
@@ -67,6 +67,7 @@ Confirm version/conflict fields in OpenAPI for each write operation you use.
 | `403` | Forbidden; hide nav that requires the permission |
 | `404` | Empty / not found |
 | `409` | Reload and retry |
+| `429` | Retryable banner; keep last good list data when a refresh is rate-limited |
 | `5xx` | Retryable banner/toast |
 
 ## Capability areas (discover in OpenAPI)
@@ -76,7 +77,7 @@ Concrete paths live in Swagger. Typical admin needs:
 - Health for local diagnostics
 - Admin login/session; permission/role reads if needed for chrome
 - Product list/detail and product writes
-- Inventory reads (and adjust/low-stock if you ship them)
+- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust
 - Order list/detail and allowed status transitions; payment reads optional
 - Customer/user reads (writes optional)
 - Dashboard inputs from existing reads or future API aggregates

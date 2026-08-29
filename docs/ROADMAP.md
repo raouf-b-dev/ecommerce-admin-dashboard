@@ -65,7 +65,7 @@ Write tests **with** each feature.
 | **2.5** | Forced password change | `[x]` | `/change-password`, session flag, API guard integration |
 | **2.6** | Operator gate + silent refresh | `[x]` | Operators-only SPA; domain 401 one-shot refresh |
 | **3** | Products | `[x]` | Table/forms + tests |
-| **4** | Inventory | `[ ]` | Stock views + tests |
+| **4** | Inventory | `[x]` | Stock views + tests |
 | **5** | Orders | `[ ]` | Ops actions + tests |
 | **6** | Customers | `[ ]` | Read views + tests |
 | **7** | Dashboard | `[ ]` | Summary widgets + tests |
@@ -248,12 +248,12 @@ Write tests **with** each feature.
 
 **Scope:**
 
-- [ ] Stock list/detail from API read models
-- [ ] Low-stock view if useful
-- [ ] Adjust stock only if product needs it in v1
-- [ ] Empty/error states; no client inventory engine
-- [ ] Tests for empty/error
-- [ ] Playwright: open inventory list
+- [x] Stock list/detail from API read models
+- [x] Low-stock view if useful
+- [x] Adjust stock only if product needs it in v1
+- [x] Empty/error states; no client inventory engine
+- [x] Tests for empty/error
+- [x] Playwright: open inventory list
 
 **Done when:** Admin can see stock for seeded products; tests green.
 
