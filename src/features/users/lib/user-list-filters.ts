@@ -1,19 +1,21 @@
-import type { UserListFilters, UserRoleCode } from '@/features/users/types';
+import type { UserListFilters } from '@/features/users/types';
 
 export const DEFAULT_USER_LIST_FILTERS: UserListFilters = {
   page: 1,
   limit: 20,
 };
 
-const ROLE_CODES: UserRoleCode[] = ['SUPER_ADMIN', 'ADMIN', 'CUSTOMER'];
+const ROLE_CODE_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 
-function isUserRoleCode(value: string | null): value is UserRoleCode {
-  return value !== null && (ROLE_CODES as string[]).includes(value);
+export function isValidRoleCode(value: string | null | undefined): value is string {
+  return typeof value === 'string' && ROLE_CODE_PATTERN.test(value);
 }
 
 export function normalizeUserListFilters(
   input: Partial<UserListFilters> = {},
 ): UserListFilters {
+  const roleCode = input.roleCode?.trim().toUpperCase();
+
   return {
     page:
       input.page && input.page > 0 ? input.page : DEFAULT_USER_LIST_FILTERS.page,
@@ -28,7 +30,7 @@ export function normalizeUserListFilters(
         : input.isActive === false
           ? false
           : undefined,
-    roleCode: input.roleCode,
+    roleCode: isValidRoleCode(roleCode) ? roleCode : undefined,
   };
 }
 
@@ -53,7 +55,7 @@ export function userListFiltersFromSearchParams(
     limit: Number.isFinite(limit) ? limit : undefined,
     search,
     isActive,
-    roleCode: isUserRoleCode(roleCode) ? roleCode : undefined,
+    roleCode: roleCode ?? undefined,
   });
 }
 

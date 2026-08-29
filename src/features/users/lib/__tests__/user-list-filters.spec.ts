@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  isValidRoleCode,
   normalizeUserListFilters,
   userListFiltersFromSearchParams,
   userListFiltersToSearchParams,
@@ -20,14 +21,14 @@ describe('userListFilters', () => {
         limit: 10,
         search: '  jane  ',
         isActive: true,
-        roleCode: 'CUSTOMER',
+        roleCode: 'support_agent',
       }),
     ).toEqual({
       page: 2,
       limit: 10,
       search: 'jane',
       isActive: true,
-      roleCode: 'CUSTOMER',
+      roleCode: 'SUPPORT_AGENT',
     });
   });
 
@@ -49,10 +50,12 @@ describe('userListFilters', () => {
     expect(userListFiltersFromSearchParams(params)).toEqual(filters);
   });
 
-  it('ignores invalid roleCode values', () => {
+  it('accepts dynamic role codes and rejects invalid ones', () => {
+    expect(isValidRoleCode('CUSTOM_MANAGER')).toBe(true);
+    expect(isValidRoleCode('not-valid')).toBe(false);
     expect(
       userListFiltersFromSearchParams(
-        new URLSearchParams('roleCode=NOT_A_ROLE'),
+        new URLSearchParams('roleCode=NOT-A-ROLE'),
       ).roleCode,
     ).toBeUndefined();
   });

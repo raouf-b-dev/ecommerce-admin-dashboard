@@ -27,7 +27,11 @@ describe('formatUserPhone', () => {
 });
 
 describe('formatUserRole', () => {
-  it('formats role codes for display', () => {
+  it('prefers role name when provided', () => {
+    expect(formatUserRole('SUPER_ADMIN', 'Super Admin')).toBe('Super Admin');
+  });
+
+  it('formats role codes when name is missing', () => {
     expect(formatUserRole('SUPER_ADMIN')).toBe('SUPER ADMIN');
     expect(formatUserRole(null)).toBe('—');
   });

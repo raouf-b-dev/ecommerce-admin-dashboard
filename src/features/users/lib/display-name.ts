@@ -16,7 +16,13 @@ export function formatUserPhone(phone: string | null | undefined): string {
   return '—';
 }
 
-export function formatUserRole(roleCode: string | null | undefined): string {
+export function formatUserRole(
+  roleCode: string | null | undefined,
+  roleName?: string | null,
+): string {
+  if (roleName?.trim()) {
+    return roleName.trim();
+  }
   if (!roleCode) {
     return '—';
   }
