@@ -3,6 +3,7 @@
  * Mirrors API `SYSTEM_ROLES` — API remains authoritative for authorization.
  */
 const ALL_ADMIN_PERMISSIONS = [
+  'access_admin',
   'manage_products',
   'view_all_products',
   'manage_orders',
