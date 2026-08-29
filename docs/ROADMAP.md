@@ -63,7 +63,7 @@ Write tests **with** each feature.
 | **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
 | **2** | Auth and RBAC chrome | `[x]` | Login, permission-aware nav + tests |
 | **2.5** | Forced password change | `[x]` | `/change-password`, session flag, API guard integration |
-| **3** | Products | `[ ]` | Table/forms + tests |
+| **3** | Products | `[x]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
 | **5** | Orders | `[ ]` | Ops actions + tests |
 | **6** | Customers | `[ ]` | Read views + tests |
@@ -211,14 +211,16 @@ Write tests **with** each feature.
 
 **Scope:**
 
-- [ ] Product table (TanStack Table)
-- [ ] Create/edit forms aligned to API DTOs
-- [ ] Query invalidation after mutations
-- [ ] HTTP 409 OCC: reload and retry
-- [ ] Component tests for validation and 409 messaging
-- [ ] Playwright: list + open create/edit
+- [x] Product table (TanStack Table)
+- [x] Create/edit forms aligned to API DTOs
+- [x] Query invalidation after mutations
+- [x] HTTP 409 OCC: reload and retry
+- [x] Component tests for validation and 409 messaging
+- [x] Playwright: list + open create/edit
 
 **Done when:** Admin can create/edit a product via API; 409 path is covered by a test or documented manual check with follow-up issue.
+
+> Note: Live concurrent-edit 409 is unit/component covered via mocked `OPTIMISTIC_LOCK_CONFLICT`. End-to-end dual-session OCC remains a follow-up if needed.
 
 ---
 

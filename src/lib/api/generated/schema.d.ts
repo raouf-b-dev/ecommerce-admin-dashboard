@@ -23,8 +23,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List all products
-         * @description Retrieves a list of all products in the catalog.
+         * List products
+         * @description Retrieves a paginated list of products with optional filters and sorting.
          */
         get: operations["ProductsController_findAll_v1"];
         put?: never;
@@ -924,18 +924,26 @@ export interface components {
             categoryId?: number;
         };
         ProductResponseDto: {
-            /** @example prod_123 */
-            id: string;
+            /** @example 1 */
+            id: number;
             /** @example Laptop */
             name: string;
+            /** @example laptop */
+            slug: string;
             /** @example High-end gaming laptop */
             description?: string;
-            /** @example SKU12345 */
-            sku?: string;
             /** @example 1200 */
             price: number;
-            /** @example 50 */
-            stockQuantity: number;
+            /** @example USD */
+            currency: string;
+            /** @example SKU12345 */
+            sku?: string;
+            /** @example https://example.com/laptop.jpg */
+            imageUrl?: Record<string, never> | null;
+            /** @example 1 */
+            categoryId?: Record<string, never> | null;
+            /** @example true */
+            isActive: boolean;
             /**
              * Format: date-time
              * @example 2025-08-25T12:34:56.000Z
@@ -947,7 +955,86 @@ export interface components {
              */
             updatedAt: string;
         };
-        UpdateProductDto: Record<string, never>;
+        ProductListItemResponseDto: {
+            /** @example 1 */
+            id: number;
+            /** @example Laptop */
+            name: string;
+            /** @example laptop */
+            slug: string;
+            /** @example SKU12345 */
+            sku: string;
+            /** @example 1200 */
+            price: number;
+            /** @example USD */
+            currency: string;
+            /** @example https://example.com/laptop.jpg */
+            imageUrl?: Record<string, never> | null;
+            /** @example 1 */
+            categoryId?: Record<string, never> | null;
+            /** @example true */
+            isActive: boolean;
+            /** @example 2025-08-25T12:34:56.000Z */
+            createdAt: string;
+        };
+        PaginatedProductsResponseDto: {
+            items: components["schemas"]["ProductListItemResponseDto"][];
+            /** @example 15 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 10 */
+            limit: number;
+            /** @example 2 */
+            totalPages: number;
+        };
+        ProductDetailResponseDto: {
+            /** @example 1 */
+            id: number;
+            /** @example Laptop */
+            name: string;
+            /** @example laptop */
+            slug: string;
+            /** @example SKU12345 */
+            sku: string;
+            /** @example 1200 */
+            price: number;
+            /** @example USD */
+            currency: string;
+            /** @example https://example.com/laptop.jpg */
+            imageUrl?: Record<string, never> | null;
+            /** @example 1 */
+            categoryId?: Record<string, never> | null;
+            /** @example true */
+            isActive: boolean;
+            /** @example 2025-08-25T12:34:56.000Z */
+            createdAt: string;
+            /** @example High-end gaming laptop */
+            description?: Record<string, never> | null;
+            /** @example 2025-08-25T12:34:56.000Z */
+            updatedAt: string;
+        };
+        UpdateProductDto: {
+            /**
+             * @description Product name
+             * @example Laptop
+             */
+            name?: string;
+            /** @example laptop */
+            slug?: string;
+            /** @example High-end gaming laptop */
+            description?: string;
+            /** @example SKU12345 */
+            sku?: string;
+            /** @example 1200 */
+            price?: number;
+            /** @example USD */
+            currency?: string;
+            /** @example https://example.com/laptop.jpg */
+            imageUrl?: string;
+            /** @example 1 */
+            categoryId?: number;
+        };
         ShippingAddressDto: {
             /**
              * @description First name
@@ -1759,7 +1846,24 @@ export interface operations {
     };
     ProductsController_findAll_v1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Page number for pagination */
+                page?: number;
+                /** @description Number of items per page */
+                limit?: number;
+                /** @description Filter products by category ID */
+                categoryId?: number;
+                /** @description Search by name, description, or SKU */
+                search?: string;
+                /** @description Filter by active status */
+                isActive?: boolean;
+                /** @description Minimum price (major currency units) */
+                minPrice?: number;
+                /** @description Maximum price (major currency units) */
+                maxPrice?: number;
+                sortBy?: "createdAt" | "price" | "name" | "id";
+                sortOrder?: "asc" | "desc";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1772,8 +1876,22 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProductResponseDto"][];
+                    "application/json": components["schemas"]["PaginatedProductsResponseDto"];
                 };
+            };
+            /** @description Unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden - Admin access required. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1839,8 +1957,22 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProductResponseDto"];
+                    "application/json": components["schemas"]["ProductDetailResponseDto"];
                 };
+            };
+            /** @description Unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden - Admin access required. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Product not found. */
             404: {
@@ -1932,6 +2064,13 @@ export interface operations {
             };
             /** @description Product not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Conflict — product was modified concurrently. Reload and retry. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
