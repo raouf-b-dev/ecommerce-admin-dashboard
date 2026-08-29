@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import {
   ORDER_STATUS_ACTION_LABELS,
-  getAllowedOrderActions,
+  parseAllowedOrderActions,
 } from '@/features/orders/lib/order-status-actions';
 import type { OrderStatusAction } from '@/features/orders/types';
 import { ApiRequestError } from '@/lib/api/parse-api-error';
 
 type OrderStatusActionsProps = {
-  status: string;
+  allowedActions: readonly string[];
   isPending: boolean;
   onAction: (action: OrderStatusAction) => Promise<void>;
 };
@@ -25,11 +25,11 @@ type OrderStatusActionsProps = {
 const CONFIRM_REQUIRED: OrderStatusAction[] = ['cancel', 'deliver'];
 
 export function OrderStatusActions({
-  status,
+  allowedActions,
   isPending,
   onAction,
 }: OrderStatusActionsProps) {
-  const allowed = getAllowedOrderActions(status);
+  const allowed = parseAllowedOrderActions(allowedActions);
   const [confirmAction, setConfirmAction] = useState<OrderStatusAction | null>(
     null,
   );
