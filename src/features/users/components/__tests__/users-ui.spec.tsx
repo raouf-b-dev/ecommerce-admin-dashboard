@@ -32,6 +32,35 @@ const listQueryMock = vi.hoisted(() =>
   })),
 );
 
+const rolesQueryMock = vi.hoisted(() =>
+  vi.fn(() => ({
+    data: [
+      {
+        id: 1,
+        code: 'CUSTOMER',
+        name: 'Customer',
+        isSystem: true,
+        permissions: { codes: [] },
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-01T00:00:00.000Z',
+      },
+      {
+        id: 2,
+        code: 'ADMIN',
+        name: 'Administrator',
+        isSystem: true,
+        permissions: { codes: [] },
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-01T00:00:00.000Z',
+      },
+    ],
+    isLoading: false,
+    isError: false,
+    error: null as Error | null,
+    refetch: vi.fn(),
+  })),
+);
+
 const detailQueryMock = vi.hoisted(() =>
   vi.fn(() => ({
     data: undefined as
@@ -68,6 +97,10 @@ vi.mock('@/features/users/hooks/use-users', () => ({
   useUserDetailQuery: detailQueryMock,
 }));
 
+vi.mock('@/features/users/hooks/use-roles', () => ({
+  useRolesListQuery: rolesQueryMock,
+}));
+
 vi.mock('@/lib/auth/auth-context', () => ({
   useAuth: () => authMock(),
 }));
@@ -96,6 +129,12 @@ describe('UsersPage', () => {
     expect(screen.getByRole('heading', { name: 'Users' })).toBeInTheDocument();
     expect(screen.getByText('No users found.')).toBeInTheDocument();
     expect(screen.getByLabelText('Role')).toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'Customer' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'Administrator' }),
+    ).toBeInTheDocument();
   });
 
   it('shows error alert with retry when the query fails', () => {
@@ -188,7 +227,7 @@ describe('UserDetailPage', () => {
     expect(screen.getAllByText('customer@store.local').length).toBeGreaterThan(
       0,
     );
-    expect(screen.getByText('CUSTOMER')).toBeInTheDocument();
+    expect(screen.getByText('Customer')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'View orders' })).toHaveAttribute(
       'href',
       '/orders?userId=3',

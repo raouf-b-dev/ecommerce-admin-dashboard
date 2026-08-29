@@ -28,6 +28,7 @@ type UsersTableProps = {
   items: UserListItemResponseDto[];
   total: number;
   filters: UserListFilters;
+  roleNamesByCode?: Record<string, string>;
   onFiltersChange: (next: UserListFilters) => void;
 };
 
@@ -45,6 +46,7 @@ export function UsersTable({
   items,
   total,
   filters,
+  roleNamesByCode,
   onFiltersChange,
 }: UsersTableProps) {
   const columns: ColumnDef<typeof features, UserListItemResponseDto>[] = [
@@ -68,7 +70,13 @@ export function UsersTable({
     {
       id: 'role',
       header: 'Role',
-      cell: ({ row }) => formatUserRole(row.original.roleCode),
+      cell: ({ row }) =>
+        formatUserRole(
+          row.original.roleCode,
+          row.original.roleCode
+            ? roleNamesByCode?.[row.original.roleCode]
+            : undefined,
+        ),
     },
     {
       accessorKey: 'isActive',
