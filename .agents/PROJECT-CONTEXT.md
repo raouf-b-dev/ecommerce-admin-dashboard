@@ -46,7 +46,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 ## Upcoming Feature Order
 
 1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done (Phase 2)**
-2. Products
+2. ~~Products~~ **done (Phase 3)**
 3. Inventory
 4. Orders
 5. Customers
