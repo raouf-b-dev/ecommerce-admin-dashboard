@@ -112,6 +112,28 @@ export function OrdersPage() {
         </div>
       </div>
 
+      {filters.userId ? (
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <span className="text-muted-foreground">
+            Filtered by user #{filters.userId}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              updateFilters({
+                ...filters,
+                page: 1,
+                userId: undefined,
+              })
+            }
+          >
+            Clear user filter
+          </Button>
+        </div>
+      ) : null}
+
       {isError && !data ? (
         <Alert variant="destructive">
           <AlertTitle>Could not load orders</AlertTitle>

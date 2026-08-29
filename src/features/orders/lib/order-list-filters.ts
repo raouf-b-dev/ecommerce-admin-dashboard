@@ -37,6 +37,12 @@ export function normalizeOrderListFilters(
     sortBy: input.sortBy ?? DEFAULT_ORDER_LIST_FILTERS.sortBy,
     sortOrder: input.sortOrder ?? DEFAULT_ORDER_LIST_FILTERS.sortOrder,
     status: input.status,
+    userId:
+      typeof input.userId === 'number' &&
+      Number.isInteger(input.userId) &&
+      input.userId > 0
+        ? input.userId
+        : undefined,
     userEmail: input.userEmail?.trim() ? input.userEmail.trim() : undefined,
     userName: input.userName?.trim() ? input.userName.trim() : undefined,
   };
@@ -50,6 +56,7 @@ export function orderListFiltersFromSearchParams(
   const sortBy = params.get('sortBy');
   const sortOrder = params.get('sortOrder');
   const status = params.get('status');
+  const userId = Number(params.get('userId') ?? '');
   const userEmail = params.get('userEmail') ?? undefined;
   const userName = params.get('userName') ?? undefined;
 
@@ -65,6 +72,7 @@ export function orderListFiltersFromSearchParams(
     sortOrder:
       sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined,
     status: isOrderStatus(status) ? status : undefined,
+    userId: Number.isInteger(userId) && userId > 0 ? userId : undefined,
     userEmail,
     userName,
   });
@@ -90,6 +98,9 @@ export function orderListFiltersToSearchParams(
   }
   if (normalized.status) {
     params.set('status', normalized.status);
+  }
+  if (normalized.userId) {
+    params.set('userId', String(normalized.userId));
   }
   if (normalized.userEmail) {
     params.set('userEmail', normalized.userEmail);

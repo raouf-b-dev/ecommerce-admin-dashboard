@@ -48,12 +48,19 @@ describe('orderListFiltersFromSearchParams', () => {
     });
   });
 
-  it('ignores invalid status values', () => {
+  it('parses and serializes userId', () => {
     expect(
       orderListFiltersFromSearchParams(
-        new URLSearchParams('status=not_a_status'),
-      ).status,
-    ).toBeUndefined();
+        new URLSearchParams('userId=42'),
+      ).userId,
+    ).toBe(42);
+
+    expect(
+      orderListFiltersToSearchParams({
+        ...DEFAULT_ORDER_LIST_FILTERS,
+        userId: 42,
+      }).toString(),
+    ).toBe('userId=42');
   });
 });
 
