@@ -1,14 +1,30 @@
-import { PageHeader } from '@/components/layout/page-header';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { LoginForm } from '@/features/auth/components/login-form';
 
 export function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-8">
-      <div className="w-full max-w-md">
-        <PageHeader
-          title="Login"
-          description="Authentication UI is intentionally deferred. This placeholder keeps the route shell in place for the next phase."
-        />
-      </div>
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>
+            <h1 className="text-2xl font-semibold leading-none tracking-tight">
+              Sign in
+            </h1>
+          </CardTitle>
+          <CardDescription>
+            Use your operator account to access the admin dashboard.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LoginForm />
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -16,8 +16,9 @@ async function generate() {
     }
 
     const spec = await response.json();
-    const { default: openapiTS } = await import('openapi-typescript');
-    const output = await openapiTS(spec);
+    const { default: openapiTS, astToString } = await import('openapi-typescript');
+    const ast = await openapiTS(spec);
+    const output = astToString(ast);
 
     await fs.mkdir(path.dirname(outputFile), { recursive: true });
     await fs.writeFile(outputFile, output, 'utf8');

@@ -49,11 +49,24 @@ App-level pages (e.g. 404) may live in `src/app/pages/`.
 
 ## 5. Routing and Auth Guards
 
+Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-guards.md).
+
 - `/login` is the sole public route in v1; no admin chrome on login
-- All other routes: `ProtectedRoute` → `AppLayout` → feature page
-- Route guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`)
+- All other routes: `ProtectedRoute` → `AppLayout` → feature page (optional `PermissionRoute` for claim-gated pages)
+- Route guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`, `permission-route.tsx`)
+- Session state comes from `AuthProvider` + TanStack Query bootstrap refresh
 - Client guards are UX only; the API enforces authorization
-- Route guard stubs pass through until auth is wired to the API session
+- Unauthenticated protected visits redirect to `/login?redirect=<path>`
+- Authenticated `/login` visits redirect to `redirect` query param or `/`
+
+## 5.1 RBAC chrome
+
+Rationale: [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md).
+
+- Declare optional `permission` on nav items in `src/app/navigation.ts`
+- Filter sidebar items with `filterNavigation()` and `useAuth().hasPermission()`
+- Use `PermissionRoute` for route-level forbidden UX inside the shell
+- Permission claims are UX-only; derive from JWT role via system-role map until a profile API exists
 
 ## 6. Responsive Shell
 
@@ -83,9 +96,12 @@ App-level pages (e.g. 404) may live in `src/app/pages/`.
 
 ## 10. Auth and Security
 
+Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md).
+
 - Browser configuration uses `VITE_*` public values only.
-- Prefer httpOnly cookie sessions when the API supports them.
+- Access token in memory only; refresh token via HttpOnly cookie + `credentials: 'include'`.
 - Avoid `localStorage` for long-lived tokens.
+- Global `401` on domain requests clears session UX and returns to login.
 - Treat rendered API strings as untrusted data.
 
 ## 11. Concurrency

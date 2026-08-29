@@ -1,6 +1,7 @@
 # E-commerce Admin Dashboard
 
 <p align="center">
+  <a href="https://github.com/raouf-b-dev/ecommerce-admin-dashboard/actions"><img src="https://github.com/raouf-b-dev/ecommerce-admin-dashboard/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white" alt="TypeScript"></a>
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black" alt="React"></a>
   <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite"></a>
@@ -15,6 +16,7 @@
 
 - [What this is](#what-this-is)
 - [Quick start](#quick-start)
+- [Verify](#verify)
 - [Architecture](#architecture)
 - [Tech stack](#tech-stack)
 - [Documentation](#documentation)
@@ -28,18 +30,20 @@
 
 ## What this is
 
-Vite + React single-page app for store operators. Product and inventory management, order handling, customer views, and navigation that respects RBAC.
+Vite + React app for store operators. Login, session handling, and permission-aware navigation are in place. Product, order, inventory, and customer screens are still placeholders.
 
-It calls the NestJS ecommerce API (versioned HTTP; see OpenAPI). The UI can hide or disable actions based on permissions, but the API authorizes every request. The same API also serves the customer storefront and can serve mobile later.
+The UI can hide nav items or show a forbidden page when a permission is missing. That is convenience only; the API still checks every request. There is no BFF: the browser calls the API with a typed OpenAPI client.
+
+The same backend also powers the [customer storefront](https://github.com/raouf-b-dev/ecommerce-store-web).
 
 **Current limits**
 
 | Topic | Status |
 | :---- | :----- |
-| Application code | Not scaffolded yet. Build order: [`docs/ROADMAP.md`](docs/ROADMAP.md). |
-| Hosted demo | None yet. Run locally. |
-| Analytics | Dashboard numbers come from API read models when those exist. |
-| BFF | Not used. Talks to the API directly. |
+| Feature screens | Routes exist; CRUD is not wired yet. |
+| Dashboard | No summary widgets yet. |
+| Hosted demo | Local dev only. |
+| Analytics | Numbers will come from API read models when we build them. |
 
 ---
 
@@ -51,20 +55,19 @@ It calls the NestJS ecommerce API (versioned HTTP; see OpenAPI). The UI can hide
 
 - **Node.js** >= 24
 - **npm** >= 11
-- Local [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) on `http://localhost:3000`
+- A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api)
 
 ### Run the API first
 
-Follow the API local boot guide (do not fork script names here; they can change):
+Use the API repo for Docker, migrations, and seed accounts. Script names live there so they do not drift in two places.
 
-[`docs/development/LOCAL-SETUP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md)
+[Local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [Seeding](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (local fixtures only)
 
-Seeded admin account: API [`docs/development/SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (local fixtures only; never production).
-
-### Run this app (after scaffold)
+### Run this app
 
 ```bash
-cd ../ecommerce-admin-dashboard
+git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
+cd ecommerce-admin-dashboard
 npm install
 cp .env.example .env
 npm run dev
@@ -73,10 +76,27 @@ npm run dev
 | Service | URL |
 | :------ | :-- |
 | Admin | `http://localhost:5174` |
-| API | `http://localhost:3000` |
-| Swagger (contract) | `http://localhost:3000/api` |
+| API | Set `VITE_API_BASE_URL` in `.env` (default `http://localhost:3000`) |
 
-Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security baseline: [`SECURITY.md`](SECURITY.md).
+If your machine remaps the API port, match that value in `.env`. After the API contract changes, run `npm run api:generate` while the API is up.
+
+Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security: [`SECURITY.md`](SECURITY.md).
+
+---
+
+<a id="verify"></a>
+
+## Verify
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run test:e2e    # needs API + seed for login flows
+```
+
+CI runs lint, typecheck, unit tests, and build on every push. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ---
 
@@ -84,20 +104,7 @@ Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security bas
 
 ## Architecture
 
-```text
-Browser -> Vite SPA (React Router) -> versioned HTTP API -> ecommerce-store-api
-                                                          ^
-Storefront / mobile apps ---------------------------------+
-```
-
-| Rule | Detail |
-| :--- | :----- |
-| Boundary | Status changes, stock, refunds, and RBAC live in the API. |
-| Data access | Typed client from the API OpenAPI/Swagger spec. |
-| Client data | TanStack Query for lists, detail, and mutations. |
-| Tables | TanStack Table for admin grids. |
-| Auth / RBAC UX | Hide or disable controls from claims. Do not treat that as security. |
-| Conflicts | Show HTTP 409 so the operator can reload and retry. |
+Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chrome, and folder layout: [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md).
 
 ---
 
@@ -113,10 +120,9 @@ Storefront / mobile apps ---------------------------------+
 | Styling | Tailwind CSS + shadcn/ui (Radix) |
 | Client data | TanStack Query |
 | Tables | TanStack Table |
-| Local UI state | React state; Zustand only when several trees need the same UI state |
+| Local UI state | React state; Zustand if several trees need the same UI state |
 | Forms | React Hook Form + Zod |
-| Charts | Recharts (dashboard widgets) |
-| API | Typed OpenAPI client |
+| API | Typed OpenAPI client (`openapi-fetch`) |
 | Tests | Vitest, Testing Library, Playwright |
 
 ---
@@ -128,10 +134,12 @@ Storefront / mobile apps ---------------------------------+
 | Document | Description |
 | :------- | :---------- |
 | [`SECURITY.md`](SECURITY.md) | Frontend security baseline |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Delivery plan, tests-with-features, ship gates |
+| [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) | SPA architecture, auth flow, folder map |
+| [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md) | Architecture decision records |
 | [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) | Client integration rules (OpenAPI is the contract) |
+| [`docs/ai/CONVENTIONS.md`](docs/ai/CONVENTIONS.md) | Feature layout, Query, forms, guards |
+| [`AGENT.md`](AGENT.md) | Contributor and agent conventions |
 | [`docs/README.md`](docs/README.md) | Docs index |
-| [`docs/ai/README.md`](docs/ai/README.md) | Agent and conventions docs |
 | API docs | [`ecommerce-store-api/docs`](https://github.com/raouf-b-dev/ecommerce-store-api/tree/master/docs) |
 
 ---
@@ -151,20 +159,16 @@ Storefront / mobile apps ---------------------------------+
 
 ## Project layout
 
-Target layout (may shift slightly with the scaffold):
-
 ```
 src/
-├── app/                  # router, providers, shell
-├── features/             # products, orders, etc.
-├── components/           # shared UI
+├── app/                  # router, navigation
+├── features/             # auth, products, orders, etc.
+├── components/           # layout shell + shared UI
 ├── lib/
 │   ├── api/              # OpenAPI client, HTTP helpers
-│   └── auth/             # session helpers matching the API
-docs/
-  API-INTEGRATION.md
-  ROADMAP.md
-  ai/                     # agent conventions
+│   └── auth/             # session, guards, AuthProvider
+docs/                     # architecture, integration, conventions
+e2e/                      # Playwright
 ```
 
 ---

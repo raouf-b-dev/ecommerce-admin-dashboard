@@ -29,3 +29,14 @@ Stop and clarify when:
 - CORS or cookie behavior differs from the expected contract
 - API docs and runtime behavior disagree
 - a change tempts the UI to own domain rules
+
+## ADR triggers
+
+Write an ADR in `docs/architecture/adr/ADR-XXXX-[title].md` when a change affects:
+
+- Auth-first routing shape or guard behavior
+- Session/token storage strategy
+- Client RBAC chrome boundaries or permission resolution approach
+- New global state patterns (e.g. replacing TanStack Query for server data)
+
+Follow the index and naming rules in [`docs/architecture/adr/README.md`](../architecture/adr/README.md).

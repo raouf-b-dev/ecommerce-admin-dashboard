@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "types": ["node"]
   },

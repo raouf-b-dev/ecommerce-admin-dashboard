@@ -36,7 +36,8 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `src/components/ui/` -> shadcn-style UI primitives
 - `src/features/` -> feature folders (`dashboard`, `products`, `orders`, `auth`, etc.)
 - `src/features/<name>/pages/` -> route entry components per feature
-- `src/lib/auth/` -> route guards (`ProtectedRoute`, `GuestRoute`)
+- `src/lib/auth/` -> `AuthProvider`, route guards, permission helpers
+- `docs/architecture/` -> SPA architecture overview and ADRs
 - `src/lib/api/` -> generated schema and typed client wrapper
 - `src/test/` -> shared test setup
 - `e2e/` -> Playwright smoke and later end-to-end flows
@@ -44,7 +45,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 
 ## Upcoming Feature Order
 
-1. Auth and RBAC chrome (wire guards to API session)
+1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done (Phase 2)**
 2. Products
 3. Inventory
 4. Orders

@@ -19,6 +19,7 @@ When instructions conflict, resolve in this order:
 - Workflow: [`docs/ai/WORKFLOW-PLAYBOOK.md`](docs/ai/WORKFLOW-PLAYBOOK.md)
 - Security baseline: [`SECURITY.md`](SECURITY.md)
 - API integration rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md)
+- Architecture: [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md)
 
 ## 3. Context First
 
