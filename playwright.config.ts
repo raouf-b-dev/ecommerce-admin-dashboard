@@ -1,10 +1,10 @@
-import process from 'node:process';
 import { defineConfig } from '@playwright/test';
 
 const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: './e2e/global-setup.ts',
   use: {
     baseURL: 'http://localhost:5174',
     trace: 'on-first-retry',
