@@ -5,6 +5,7 @@ import { ChangePasswordPage } from '@/features/auth/pages/change-password-page';
 import { RolesSettingsPage } from '@/features/auth/pages/roles-settings-page';
 import { DashboardPage } from '@/features/dashboard/pages/dashboard-page';
 import { OrdersPage } from '@/features/orders/pages/orders-page';
+import { OrderDetailPage } from '@/features/orders/pages/order-detail-page';
 import { ProductsPage } from '@/features/products/pages/products-page';
 import { ProductCreatePage } from '@/features/products/pages/product-create-page';
 import { ProductEditPage } from '@/features/products/pages/product-edit-page';
@@ -111,9 +112,19 @@ export const router = createBrowserRouter([
         path: 'orders',
         element: (
           <PermissionRoute permission="view_all_orders">
-            <OrdersPage />
+            <Outlet />
           </PermissionRoute>
         ),
+        children: [
+          {
+            index: true,
+            element: <OrdersPage />,
+          },
+          {
+            path: ':orderId',
+            element: <OrderDetailPage />,
+          },
+        ],
       },
       {
         path: 'settings/roles',
