@@ -40,4 +40,13 @@ $env:E2E_SUPERADMIN_NEW_PASSWORD="SuperAdminRotated1!"   # optional; default suf
 
 After a rotation test, the next `npm run test:e2e` re-seeds auth via global setup. For a full database reset, run `npm run db:seed` in the API repo.
 
+### Customer blocked from admin
+
+`e2e/operator-gate.spec.ts` verifies seeded **customer** accounts cannot enter Control Center:
+
+```powershell
+$env:E2E_CUSTOMER_EMAIL="customer@store.local"
+$env:E2E_CUSTOMER_PASSWORD="..."   # from API SEEDING.md
+```
+
 Unauthenticated redirect and login-failure tests do not require credentials.

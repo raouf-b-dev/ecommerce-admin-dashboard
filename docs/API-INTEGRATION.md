@@ -43,9 +43,10 @@ See also root [`SECURITY.md`](../SECURITY.md).
 - Use the API auth operations from OpenAPI (login / refresh / logout / change-password).
 - Access token in memory; refresh via HttpOnly cookie (`credentials: 'include'` on `apiClient`).
 - Login, refresh, and change-password responses include `mustChangePassword`. When `true`, route to `/change-password` before the app shell.
+- **Operators only:** require permission `access_admin` (API system permission; UX map mirrors it). Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md).
 - Permissions and roles are API-owned. Nav filtering is UX only (JWT role + client map).
-- On `401`, return to login. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
-- Seeded **administrator** account: API seeding doc only (no passwords in this repo).
+- On domain `401`, attempt a single-flight silent refresh and one request retry ([ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)); if that fails, return to login. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
+- Seeded **administrator** / **customer** accounts: API seeding doc only (no passwords in this repo).
 
 ## Concurrency (`409`)
 
@@ -62,7 +63,7 @@ Confirm version/conflict fields in OpenAPI for each write operation you use.
 | Class | Typical admin behavior |
 | :---- | :--------------------- |
 | Validation | Form/field errors from payload |
-| `401` | Login |
+| `401` | Silent refresh + one retry; then login |
 | `403` | Forbidden; hide nav that requires the permission |
 | `404` | Empty / not found |
 | `409` | Reload and retry |

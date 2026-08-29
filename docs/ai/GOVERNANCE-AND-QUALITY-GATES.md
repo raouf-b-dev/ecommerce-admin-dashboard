@@ -34,9 +34,17 @@ Stop and clarify when:
 
 Write an ADR in `docs/architecture/adr/ADR-XXXX-[title].md` when a change affects:
 
-- Auth-first routing shape or guard behavior
+- Auth-first routing shape or guard behavior (including operator gates)
 - Session/token storage strategy
+- Mid-request auth recovery (silent refresh / retry policy)
 - Client RBAC chrome boundaries or permission resolution approach
 - New global state patterns (e.g. replacing TanStack Query for server data)
 
-Follow the index and naming rules in [`docs/architecture/adr/README.md`](../architecture/adr/README.md).
+### ADR lifecycle states
+
+- **`Proposed`**: Written during design; awaiting approval
+- **`Accepted`**: Approved and in effect
+- **`Deprecated`**: No longer recommended
+- **`Superseded`**: Obsoleted by a later ADR (must link the successor)
+
+ADRs are immutable historical documents for their **decision body** — do not edit Context / Decisions / Alternatives / Consequences. **Status** (and supersede header/index links) may be updated when a later ADR fully replaces one. Extend without replacement via a new ADR and `Does not supersede` (leave the prior ADR `Accepted`). See [`docs/architecture/adr/README.md`](../architecture/adr/README.md) and [`docs/ai/CONVENTIONS.md`](./CONVENTIONS.md) §14.

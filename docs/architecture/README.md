@@ -20,6 +20,8 @@ Notes on how the admin SPA is put together: routing, auth, and the decisions beh
 3. [ADR-0001](adr/ADR-0001-auth-first-routing-and-route-guards.md) (routing)
 4. [ADR-0002](adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md) (session)
 5. [ADR-0003](adr/ADR-0003-client-rbac-chrome-api-authoritative.md) (RBAC in the UI)
+6. [ADR-0005](adr/ADR-0005-silent-one-shot-access-token-refresh.md) (silent refresh)
+7. [ADR-0006](adr/ADR-0006-operators-only-admin-spa.md) (`access_admin` admission)
 
 ## Related
 

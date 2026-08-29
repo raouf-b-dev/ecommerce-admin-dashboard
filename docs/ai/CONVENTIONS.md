@@ -49,11 +49,12 @@ App-level pages (e.g. 404) may live in `src/app/pages/`.
 
 ## 5. Routing and Auth Guards
 
-Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-guards.md).
+Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-guards.md), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
 
 - `/login` is the sole public route in v1; no admin chrome on login
-- All other routes: `ProtectedRoute` → `AppLayout` → feature page (optional `PermissionRoute` for claim-gated pages)
-- Route guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`, `permission-route.tsx`)
+- Shell routes: `ProtectedRoute` → `RequirePasswordChanged` → `OperatorRoute` → `AppLayout` → feature page (optional `PermissionRoute` for claim-gated pages)
+- Admit sessions with `access_admin` only; reject others at login/refresh and via `OperatorRoute`
+- Route guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`, `operator-route.tsx`, `permission-route.tsx`)
 - Session state comes from `AuthProvider` + TanStack Query bootstrap refresh
 - Client guards are UX only; the API enforces authorization
 - Unauthenticated protected visits redirect to `/login?redirect=<path>`
@@ -61,8 +62,9 @@ Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-
 
 ## 5.1 RBAC chrome
 
-Rationale: [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md).
+Rationale: [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
 
+- SPA admission requires `access_admin` (`ACCESS_ADMIN_PERMISSION`); do not hardcode role codes
 - Declare optional `permission` on nav items in `src/app/navigation.ts`
 - Filter sidebar items with `filterNavigation()` and `useAuth().hasPermission()`
 - Use `PermissionRoute` for route-level forbidden UX inside the shell
@@ -96,12 +98,13 @@ Rationale: [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-author
 
 ## 10. Auth and Security
 
-Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md).
+Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](../architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md).
 
 - Browser configuration uses `VITE_*` public values only.
 - Access token in memory only; refresh token via HttpOnly cookie + `credentials: 'include'`.
 - Avoid `localStorage` for long-lived tokens.
-- Global `401` on domain requests clears session UX and returns to login.
+- Domain `401`: single-flight silent refresh + one request retry; if that fails, clear session and return to login.
+- Never silent-retry `/authentication/*` paths.
 - Treat rendered API strings as untrusted data.
 
 ## 11. Concurrency
@@ -119,3 +122,15 @@ Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-h
 
 - Roadmap phase numbers and delivery sequencing belong only in [`docs/ROADMAP.md`](../ROADMAP.md).
 - Other docs describe structure, conventions, and behavior without referencing roadmap phases.
+
+## 14. Architecture Decision Records
+
+Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (aligned with `ecommerce-store-api`):
+
+- Naming: `ADR-XXXX-[short-title].md` (4-digit zero-padded).
+- **Body is immutable.** Do not rewrite Context, Decisions, Alternatives, or Consequences on an existing ADR.
+- **Status (and supersede links) may change** in the file header and index only — e.g. set `Superseded` and `Superseded By: ADR-XXXX` when a later ADR fully replaces it.
+- Extending a decision (prior ADR still stands) → new ADR with `Does not supersede`; leave the prior ADR `Accepted`.
+- Full replacement → new ADR with `Supersedes`; mark the old ADR `Superseded` (header Status + index). Never rewrite the old Decisions.
+- Lifecycle: `Proposed` | `Accepted` | `Deprecated` | `Superseded`.
+- Always update the ADR index (`Supersedes` / `Superseded By` columns) when adding or superseding a record.

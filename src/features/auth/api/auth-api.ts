@@ -1,4 +1,5 @@
 import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
+import { ACCESS_ADMIN_PERMISSION } from '@/features/auth/constants/admin-access';
 import { resolvePermissionsForRole } from '@/features/auth/constants/system-role-permissions';
 import type {
   AuthSession,
@@ -6,12 +7,20 @@ import type {
   ChangePasswordInput,
   LoginCredentials,
 } from '@/features/auth/types';
-import { setAccessToken } from '@/lib/auth/auth-session';
+import { clearAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
 import {
   readAuthErrorFromResponse,
   toAuthRequestError,
 } from '@/features/auth/api/parse-auth-error';
+import { hasPermission } from '@/lib/auth/permissions';
+
+export class NotOperatorError extends Error {
+  constructor() {
+    super('NOT_OPERATOR');
+    this.name = 'NotOperatorError';
+  }
+}
 
 function parseTokensResponse(data: unknown): AuthTokensResponse {
   if (!data || typeof data !== 'object') {
@@ -64,6 +73,37 @@ export function buildSessionFromAccessToken(
   };
 }
 
+function roleHasAdminAccess(roleCode: string): boolean {
+  return hasPermission(
+    resolvePermissionsForRole(roleCode),
+    ACCESS_ADMIN_PERMISSION,
+  );
+}
+
+async function clearNonOperatorSession(): Promise<void> {
+  try {
+    await logoutRequest();
+  } catch {
+    // Best-effort cookie clear; always drop in-memory token.
+  } finally {
+    clearAccessToken();
+  }
+}
+
+async function ensureAdminAccessSession(
+  accessToken: string,
+  mustChangePassword: boolean,
+): Promise<AuthSession> {
+  const claims = decodeAccessTokenClaims(accessToken);
+  if (!claims || !roleHasAdminAccess(claims.role)) {
+    setAccessToken(accessToken);
+    await clearNonOperatorSession();
+    throw new NotOperatorError();
+  }
+
+  return buildSessionFromAccessToken(accessToken, mustChangePassword);
+}
+
 export async function loginRequest(
   credentials: LoginCredentials,
 ): Promise<AuthSession> {
@@ -76,10 +116,7 @@ export async function loginRequest(
   }
 
   const tokens = parseTokensResponse(data);
-  return buildSessionFromAccessToken(
-    tokens.accessToken,
-    tokens.mustChangePassword,
-  );
+  return ensureAdminAccessSession(tokens.accessToken, tokens.mustChangePassword);
 }
 
 export async function refreshSessionRequest(): Promise<AuthSession | null> {
@@ -96,6 +133,13 @@ export async function refreshSessionRequest(): Promise<AuthSession | null> {
   }
 
   const tokens = parseTokensResponse(data);
+  const claims = decodeAccessTokenClaims(tokens.accessToken);
+  if (!claims || !roleHasAdminAccess(claims.role)) {
+    setAccessToken(tokens.accessToken);
+    await clearNonOperatorSession();
+    return null;
+  }
+
   return buildSessionFromAccessToken(
     tokens.accessToken,
     tokens.mustChangePassword,
@@ -122,7 +166,7 @@ export async function changePasswordRequest(
   }
 
   const tokens = parseTokensResponse(data);
-  return buildSessionFromAccessToken(tokens.accessToken, tokens.mustChangePassword);
+  return ensureAdminAccessSession(tokens.accessToken, tokens.mustChangePassword);
 }
 
 export async function logoutRequest(): Promise<void> {

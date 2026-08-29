@@ -63,6 +63,7 @@ Write tests **with** each feature.
 | **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
 | **2** | Auth and RBAC chrome | `[x]` | Login, permission-aware nav + tests |
 | **2.5** | Forced password change | `[x]` | `/change-password`, session flag, API guard integration |
+| **2.6** | Operator gate + silent refresh | `[x]` | Operators-only SPA; domain 401 one-shot refresh |
 | **3** | Products | `[x]` | Table/forms + tests |
 | **4** | Inventory | `[ ]` | Stock views + tests |
 | **5** | Orders | `[ ]` | Ops actions + tests |
@@ -202,6 +203,23 @@ Write tests **with** each feature.
 - [x] Update `docs/API-INTEGRATION.md`
 
 **Done when:** Seeded user with `mustChangePassword: true` lands on change-password, updates password, and reaches the dashboard shell; tests green.
+
+---
+
+## Phase 2.6: Operator gate + silent access-token refresh
+
+> Operators-only admin SPA and mid-request silent refresh. ADRs: [ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md), [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md). Do not amend ADR-0002 body.
+
+**Scope:**
+
+- [x] Gate on `access_admin` (not hardcoded role codes); reject missing permission on login/refresh (logout clears cookie)
+- [x] Login form message for accounts without admin access
+- [x] `OperatorRoute` on shell (`access_admin`); Dashboard `/` and `/orders` behind `PermissionRoute` (`view_all_orders`)
+- [x] Single-flight silent refresh + one domain request retry on `401`
+- [x] Unit/component + Playwright (customer blocked; admin OK)
+- [x] ADR-0005 / ADR-0006 + conventions/governance ADR immutability notes
+
+**Done when:** Seeded customer cannot enter Control Center; seeded admin can; expired access token recovers via one refresh without login when the cookie is valid; tests green.
 
 ---
 
