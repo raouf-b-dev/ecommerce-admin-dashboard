@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { NotOperatorError } from '@/features/auth/api/auth-api';
 import {
   loginSchema,
   type LoginFormValues,
@@ -51,7 +52,12 @@ export function LoginForm() {
         ? '/change-password'
         : safeRedirectPath(searchParams.get('redirect'));
       navigate(destination, { replace: true });
-    } catch {
+    } catch (error) {
+      if (error instanceof NotOperatorError) {
+        setFormError('This account cannot access the admin dashboard.');
+        return;
+      }
+
       setFormError('Invalid email or password.');
     }
   }

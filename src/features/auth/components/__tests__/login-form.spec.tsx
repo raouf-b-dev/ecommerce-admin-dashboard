@@ -61,6 +61,31 @@ describe('LoginForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows operator-denied message for non-operator accounts', async () => {
+    const { NotOperatorError } = await import('@/features/auth/api/auth-api');
+    mockLogin.mockRejectedValue(new NotOperatorError());
+
+    render(
+      <MemoryRouter>
+        <LoginForm />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Email'), {
+      target: { value: 'customer@store.local' },
+    });
+    fireEvent.change(screen.getByLabelText('Password'), {
+      target: { value: 'Customer123!' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(
+      await screen.findByText(
+        'This account cannot access the admin dashboard.',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('navigates after successful login', async () => {
     mockLogin.mockResolvedValue({
       userId: '1',
