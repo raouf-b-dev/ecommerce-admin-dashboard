@@ -69,16 +69,16 @@ Use the API repo for Docker, migrations, and seed accounts. Script names live th
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
 cd ecommerce-admin-dashboard
 npm install
-cp .env.example .env
+npm run env:init
 npm run dev
 ```
 
 | Service | URL |
 | :------ | :-- |
 | Admin | `http://localhost:5174` |
-| API | Set `VITE_API_BASE_URL` in `.env` (default `http://localhost:3000`) |
+| API | `VITE_API_BASE_URL` in `.env.local` (from `npm run env:init`, default `http://localhost:3000`) |
 
-If your machine remaps the API port, match that value in `.env`. After the API contract changes, run `npm run api:generate` while the API is up.
+If you remapped the API port, match that value in `.env.local`. After the API contract changes, run `npm run api:generate` while the API is up.
 
 Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security: [`SECURITY.md`](SECURITY.md).
 
