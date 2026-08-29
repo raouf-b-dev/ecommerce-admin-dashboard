@@ -40,10 +40,11 @@ See also root [`SECURITY.md`](../SECURITY.md).
 
 ## Auth and RBAC (admin)
 
-- Use the API auth operations from OpenAPI (login / refresh / logout as documented).
-- Permissions and roles are API-owned. Nav filtering is UX only.
-- Load permission claims from whatever the API returns on auth/profile (confirm in Swagger).
-- On `401`, return to login. On `403`, show forbidden; do not invent a bypass.
+- Use the API auth operations from OpenAPI (login / refresh / logout / change-password).
+- Access token in memory; refresh via HttpOnly cookie (`credentials: 'include'` on `apiClient`).
+- Login, refresh, and change-password responses include `mustChangePassword`. When `true`, route to `/change-password` before the app shell.
+- Permissions and roles are API-owned. Nav filtering is UX only (JWT role + client map).
+- On `401`, return to login. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
 - Seeded **administrator** account: API seeding doc only (no passwords in this repo).
 
 ## Concurrency (`409`)
