@@ -7,6 +7,7 @@ export type AuthTokensResponse = {
   accessToken: string;
   refreshToken?: string;
   mustChangePassword: boolean;
+  permissions: string[];
 };
 
 export type AuthSession = {
