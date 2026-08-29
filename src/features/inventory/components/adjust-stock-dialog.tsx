@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   adjustStockSchema,
+  ADJUST_STOCK_TYPE_OPTIONS,
   toAdjustStockDto,
   type AdjustStockFormValues,
 } from '@/features/inventory/schemas/adjust-stock-schema';
@@ -125,9 +126,11 @@ export function AdjustStockDialog({
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       {...field}
                     >
-                      <option value="ADD">Add</option>
-                      <option value="SUBTRACT">Subtract</option>
-                      <option value="SET">Set</option>
+                      {ADJUST_STOCK_TYPE_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </FormControl>
                   <FormMessage />
