@@ -50,7 +50,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done (Phase 2)**
 2. ~~Operator gate + silent refresh~~ **done (Phase 2.6)**
 3. ~~Products~~ **done (Phase 3)**
-4. Inventory
+4. ~~Inventory~~ **done (Phase 4)**
 5. Orders
 6. Customers
 7. Dashboard
