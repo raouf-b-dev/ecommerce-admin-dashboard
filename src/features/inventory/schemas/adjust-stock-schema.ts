@@ -1,8 +1,19 @@
 import { z } from 'zod';
 import type { AdjustStockDto } from '@/features/inventory/types';
 
+export const ADJUST_STOCK_TYPES = [
+  'ADD',
+  'SUBTRACT',
+  'SET',
+] as const satisfies readonly AdjustStockDto['type'][];
+
+export const ADJUST_STOCK_TYPE_OPTIONS = ADJUST_STOCK_TYPES.map((type) => ({
+  value: type,
+  label: type.charAt(0) + type.slice(1).toLowerCase(),
+}));
+
 export const adjustStockSchema = z.object({
-  type: z.enum(['ADD', 'SUBTRACT', 'SET'], {
+  type: z.enum(ADJUST_STOCK_TYPES, {
     message: 'Select an adjustment type',
   }),
   quantity: z
