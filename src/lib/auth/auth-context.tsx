@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query';
 import {
   buildSessionFromAccessToken,
+  changePasswordRequest,
   loginRequest,
   logoutRequest,
   refreshSessionRequest,
@@ -19,6 +20,7 @@ import {
 import type {
   AuthSession,
   AuthStatus,
+  ChangePasswordInput,
   LoginCredentials,
 } from '@/features/auth/types';
 import { clearAccessToken } from '@/lib/auth/auth-session';
@@ -30,7 +32,9 @@ type AuthContextValue = {
   status: AuthStatus;
   session: AuthSession | null;
   isAuthenticated: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  mustChangePassword: boolean;
+  login: (credentials: LoginCredentials) => Promise<AuthSession>;
+  changePassword: (input: ChangePasswordInput) => Promise<AuthSession>;
   logout: () => Promise<void>;
   hasPermission: (permission?: string) => boolean;
 };
@@ -49,6 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: loginRequest,
+    onSuccess: (session) => {
+      queryClient.setQueryData(AUTH_SESSION_QUERY_KEY, session);
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: changePasswordRequest,
     onSuccess: (session) => {
       queryClient.setQueryData(AUTH_SESSION_QUERY_KEY, session);
     },
@@ -77,9 +88,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
-      await loginMutation.mutateAsync(credentials);
+      return loginMutation.mutateAsync(credentials);
     },
     [loginMutation],
+  );
+
+  const changePassword = useCallback(
+    async (input: ChangePasswordInput) => {
+      return changePasswordMutation.mutateAsync(input);
+    },
+    [changePasswordMutation],
   );
 
   const logout = useCallback(async () => {
@@ -97,11 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       status,
       session,
       isAuthenticated: status === 'authenticated',
+      mustChangePassword: session?.mustChangePassword ?? false,
       login,
+      changePassword,
       logout,
       hasPermission,
     }),
-    [status, session, login, logout, hasPermission],
+    [status, session, login, changePassword, logout, hasPermission],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -12,11 +12,15 @@ function safeRedirectPath(value: string | null): string {
     return '/';
   }
 
+  if (value.startsWith('/login')) {
+    return '/';
+  }
+
   return value;
 }
 
 export function GuestRoute({ children }: GuestRouteProps) {
-  const { status } = useAuth();
+  const { status, mustChangePassword } = useAuth();
   const [searchParams] = useSearchParams();
 
   if (status === 'loading') {
@@ -24,6 +28,10 @@ export function GuestRoute({ children }: GuestRouteProps) {
   }
 
   if (status === 'authenticated') {
+    if (mustChangePassword) {
+      return <Navigate to="/change-password" replace />;
+    }
+
     const redirect = safeRedirectPath(searchParams.get('redirect'));
     return <Navigate to={redirect} replace />;
   }

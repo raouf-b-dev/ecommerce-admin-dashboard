@@ -49,15 +49,46 @@ describe('GuestRoute', () => {
   });
 
   it('redirects authenticated users away from login', () => {
-    mockUseAuth.mockReturnValue({ status: 'authenticated' });
+    mockUseAuth.mockReturnValue({
+      status: 'authenticated',
+      mustChangePassword: false,
+    });
 
     renderGuestRoute('/login');
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
+  it('redirects authenticated users with mustChangePassword to change-password', () => {
+    mockUseAuth.mockReturnValue({
+      status: 'authenticated',
+      mustChangePassword: true,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/login']}>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <div>Login form</div>
+              </GuestRoute>
+            }
+          />
+          <Route path="/change-password" element={<div>Change password</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Change password')).toBeInTheDocument();
+  });
+
   it('honors redirect query param for authenticated users', () => {
-    mockUseAuth.mockReturnValue({ status: 'authenticated' });
+    mockUseAuth.mockReturnValue({
+      status: 'authenticated',
+      mustChangePassword: false,
+    });
 
     renderGuestRoute('/login?redirect=%2Fproducts');
 
