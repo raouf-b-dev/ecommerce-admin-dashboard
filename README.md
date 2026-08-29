@@ -30,7 +30,7 @@
 
 ## What this is
 
-Vite + React app for store operators. Login, session handling, and permission-aware navigation are in place. Product, order, inventory, and customer screens are still placeholders.
+Vite + React app for store operators. Login, session handling, and permission-aware navigation are in place. Product, inventory, order, and user screens are wired to the API. Dashboard widgets remain Phase 7.
 
 The UI can hide nav items or show a forbidden page when a permission is missing. That is convenience only; the API still checks every request. There is no BFF: the browser calls the API with a typed OpenAPI client.
 
