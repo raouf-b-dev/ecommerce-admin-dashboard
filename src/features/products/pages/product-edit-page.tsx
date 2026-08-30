@@ -13,6 +13,7 @@ import {
   type ProductFormValues,
   type ProductSubmitValues,
 } from '@/features/products/schemas/product-schema';
+import { QueryLoading } from '@/components/feedback/query-state';
 import {
   ApiRequestError,
   isOptimisticLockConflict,
@@ -82,7 +83,7 @@ export function ProductEditPage() {
   }
 
   if (productQuery.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading product…</p>;
+    return <QueryLoading>Loading product…</QueryLoading>;
   }
 
   if (productQuery.isError || !productQuery.data) {

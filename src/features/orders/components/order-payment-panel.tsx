@@ -1,7 +1,9 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { QueryLoading } from '@/components/feedback/query-state';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
 import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { formatDateTime, formatMoney } from '@/lib/format';
 
 type OrderPaymentPanelProps = {
   isLoading: boolean;
@@ -11,25 +13,6 @@ type OrderPaymentPanelProps = {
   onRetry: () => void;
 };
 
-function formatMoney(amount: number, currency: string) {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency,
-    }).format(amount);
-  } catch {
-    return `${amount} ${currency}`;
-  }
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
-}
-
 export function OrderPaymentPanel({
   isLoading,
   isError,
@@ -38,9 +21,7 @@ export function OrderPaymentPanel({
   onRetry,
 }: OrderPaymentPanelProps) {
   if (isLoading) {
-    return (
-      <p className="text-sm text-muted-foreground">Loading payment…</p>
-    );
+    return <QueryLoading>Loading payment…</QueryLoading>;
   }
 
   if (isError) {
@@ -91,7 +72,7 @@ export function OrderPaymentPanel({
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Created</dt>
-        <dd className="text-sm">{formatDate(payment.createdAt)}</dd>
+        <dd className="text-sm">{formatDateTime(payment.createdAt)}</dd>
       </div>
       {payment.failureReason ? (
         <div className="space-y-1 sm:col-span-2 lg:col-span-3">

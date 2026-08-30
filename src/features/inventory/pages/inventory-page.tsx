@@ -1,10 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  QueryListRegion,
+  QueryStateAlert,
+} from '@/components/feedback/query-state';
 import { InventoryTable } from '@/features/inventory/components/inventory-table';
 import { useInventoryListQuery } from '@/features/inventory/hooks/use-inventory';
 import {
@@ -93,60 +96,29 @@ export function InventoryPage() {
         </div>
       </div>
 
-      {isError && !data ? (
-        <Alert variant="destructive">
-          <AlertTitle>Could not load inventory</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof Error ? error.message : 'Unexpected error'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
+      <QueryStateAlert
+        isError={isError}
+        hasData={Boolean(data)}
+        error={error}
+        onRetry={() => refetch()}
+        resource="inventory"
+      />
 
-      {isError && data ? (
-        <Alert>
-          <AlertTitle>Could not refresh inventory</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof Error
-                ? error.message
-                : 'Showing the last loaded results.'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading inventory…</p>
-      ) : data ? (
-        <div
-          className={isFetching ? 'opacity-70 transition-opacity' : undefined}
-        >
+      <QueryListRegion
+        isLoading={isLoading}
+        isFetching={isFetching}
+        loadingLabel="Loading inventory…"
+        hasData={Boolean(data)}
+      >
+        {data ? (
           <InventoryTable
             items={data.items}
             total={data.total}
             filters={filters}
             onFiltersChange={updateFilters}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </QueryListRegion>
     </div>
   );
 }

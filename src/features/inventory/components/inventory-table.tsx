@@ -14,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { formatDateTime } from '@/lib/format';
 import type {
   InventoryListFilters,
   InventoryListItemResponseDto,
@@ -27,14 +29,6 @@ type InventoryTableProps = {
 };
 
 const features = tableFeatures({});
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
-}
 
 export function InventoryTable({
   items,
@@ -73,7 +67,7 @@ export function InventoryTable({
     {
       accessorKey: 'updatedAt',
       header: 'Updated',
-      cell: ({ row }) => formatDate(row.original.updatedAt),
+      cell: ({ row }) => formatDateTime(row.original.updatedAt),
     },
     {
       id: 'actions',
@@ -91,10 +85,6 @@ export function InventoryTable({
     data: items,
     columns,
   });
-
-  const totalPages = Math.max(1, Math.ceil(total / filters.limit));
-  const canPrev = filters.page > 1;
-  const canNext = filters.page < totalPages;
 
   return (
     <div className="space-y-4">
@@ -144,35 +134,12 @@ export function InventoryTable({
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
-        <p>
-          Page {filters.page} of {totalPages} · {total} total
-        </p>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!canPrev}
-            onClick={() =>
-              onFiltersChange({ ...filters, page: filters.page - 1 })
-            }
-          >
-            Previous
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!canNext}
-            onClick={() =>
-              onFiltersChange({ ...filters, page: filters.page + 1 })
-            }
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <TablePagination
+        page={filters.page}
+        limit={filters.limit}
+        total={total}
+        onPageChange={(page) => onFiltersChange({ ...filters, page })}
+      />
     </div>
   );
 }

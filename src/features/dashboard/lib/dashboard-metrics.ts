@@ -1,3 +1,5 @@
+import { formatMoney, formatStatusLabel } from '@/lib/format';
+
 export type DashboardPeriodDays = 7 | 30 | 90;
 
 export function buildDashboardPeriod(
@@ -13,21 +15,7 @@ export function buildDashboardPeriod(
   };
 }
 
-export function formatMoney(
-  amount: number,
-  currency: string,
-  locale = 'en-US',
-): string {
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    return `${amount.toFixed(2)} ${currency}`;
-  }
-}
+export { formatMoney };
 
 export function percentChange(current: number, previous: number): number | null {
   if (previous === 0) {
@@ -46,5 +34,5 @@ export function formatPercentDelta(delta: number | null): string {
 }
 
 export function attentionStatusLabel(status: string): string {
-  return status.replaceAll('_', ' ');
+  return formatStatusLabel(status);
 }
