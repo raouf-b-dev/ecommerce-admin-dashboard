@@ -3,6 +3,7 @@ import {
   readApiErrorFromResponse,
   toApiRequestError,
 } from '@/lib/api/parse-api-error';
+import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   AdjustStockDto,
   InventoryListFilters,
@@ -31,27 +32,18 @@ export async function listInventoryRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    if (response?.status === 429) {
-      throw toApiRequestError(response, {
-        statusCode: 429,
-        message: 'Too many requests. Wait a moment and try again.',
-        code: parsed?.code,
-      }, 'Too many requests. Wait a moment and try again.');
-    }
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load inventory',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load inventory');
   }
 
   return data;
 }
 
+/**
+ * Inventory for a product. API returns HTTP 200 with `null` when no stock row exists.
+ */
 export async function getInventoryRequest(
   productId: number,
-): Promise<InventoryListItemResponseDto> {
+): Promise<InventoryListItemResponseDto | null> {
   const { data, error, response } = await apiClient.GET(
     '/v1/inventory/products/{productId}',
     {
@@ -59,7 +51,7 @@ export async function getInventoryRequest(
     },
   );
 
-  if (error || !response.ok || !data) {
+  if (error || !response.ok) {
     const parsed = response ? await readApiErrorFromResponse(response) : null;
     throw toApiRequestError(
       response ?? new Response(null, { status: 500 }),
@@ -68,7 +60,7 @@ export async function getInventoryRequest(
     );
   }
 
-  return data;
+  return data ?? null;
 }
 
 export async function adjustStockRequest(
