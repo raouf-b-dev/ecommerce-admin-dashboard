@@ -22,6 +22,7 @@ import { OperatorRoute } from '@/lib/auth/operator-route';
 import { PermissionRoute } from '@/lib/auth/permission-route';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { NotFoundPage } from '@/app/pages/not-found-page';
+import { RootErrorPage } from '@/app/pages/root-error-page';
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
         </RequirePasswordChanged>
       </ProtectedRoute>
     ),
+    errorElement: <RootErrorPage />,
     children: [
       {
         index: true,
