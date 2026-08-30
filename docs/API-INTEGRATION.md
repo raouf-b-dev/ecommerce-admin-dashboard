@@ -77,10 +77,10 @@ Concrete paths live in Swagger. Typical admin needs:
 - Health for local diagnostics
 - Admin login/session; permission/role reads if needed for chrome
 - Product list/detail and product writes
-- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust
-- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`)
+- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust — `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
+- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`) — `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
 - User reads with optional role filter (writes optional)
-- Dashboard inputs from existing reads or future API aggregates
+- Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`) — not list `total` fan-out, not Prometheus
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.
 
@@ -88,7 +88,23 @@ Build order for these capabilities: [`ROADMAP.md`](ROADMAP.md).
 
 ## Dashboard metrics
 
-Prefer API aggregates or documented read models. If you derive widgets from list endpoints, document that totals may be approximate under pagination, or wait for proper aggregate endpoints.
+Use the analytics OpenAPI operations (UTC periods, max 90 days):
+
+| Widget | Endpoint | Permission |
+| --- | --- | --- |
+| KPI cards + attention + low-stock count | `GET /v1/admin/analytics/overview` | `view_all_orders` |
+| Net revenue chart | `GET /v1/admin/analytics/payments/time-series` | `view_all_payments` |
+| Top products | `GET /v1/admin/analytics/products/top` | `view_all_orders` |
+| Low-stock table | `GET /v1/admin/analytics/inventory/alerts` | `view_all_inventory` |
+| Recent orders queue | `GET /v1/orders` (limit 5) | `view_all_orders` |
+
+Revenue = CAPTURED / COMPLETED / PARTIALLY_REFUNDED / REFUNDED payments (`gross`, `refunded`, `net`, AOV = net ÷ paid count). Buckets are zero-filled UTC. Do **not** sum paginated order rows in the SPA. Grafana/Prometheus remains engineering observability only.
+
+Period is driven by URL `?days=7|30|90` (default 7). Period queries use TanStack Query `keepPreviousData` to avoid flash on change. Errors are **per widget** (retry in place). Global QueryClient skips retries on HTTP `429`; shared `throwApiErrorFromResponse` / `throwTooManyRequests` in `src/lib/api/`.
+
+SPA caches with TanStack Query `staleTime` (~45s); no Redis analytics cache in v1.
+
+After API OpenAPI changes: regenerate `src/lib/api/generated/schema.d.ts` via `npm run api:generate` against a running API (or patch types when Swagger is unavailable).
 
 ## When the API changes
 
