@@ -2,6 +2,15 @@ import { defineConfig } from '@playwright/test';
 
 const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
+if (
+  process.env.CI &&
+  (!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD)
+) {
+  throw new Error(
+    'CI e2e requires E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+}
+
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',
