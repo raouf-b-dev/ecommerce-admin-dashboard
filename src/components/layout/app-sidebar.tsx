@@ -27,10 +27,10 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Ecommerce Admin
         </p>
-        <h1 className="mt-2 text-2xl font-semibold">Control Center</h1>
+        <p className="mt-2 text-2xl font-semibold">Control Center</p>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="space-y-2" aria-label="Admin">
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
@@ -46,7 +46,7 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
               )
             }
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4" aria-hidden="true" />
             <span>{label}</span>
           </NavLink>
         ))}

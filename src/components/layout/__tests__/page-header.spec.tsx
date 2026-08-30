@@ -11,7 +11,7 @@ describe('PageHeader', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Dashboard' }),
+      screen.getByRole('heading', { level: 1, name: 'Dashboard' }),
     ).toBeInTheDocument();
     expect(
       screen.getByText('Summary widgets and operational snapshots.'),
