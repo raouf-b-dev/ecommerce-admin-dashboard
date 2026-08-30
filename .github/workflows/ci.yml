@@ -6,6 +6,7 @@ on:
       - main
       - master
   pull_request:
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -35,3 +36,90 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Full-stack Playwright: API seed + auth throttle (10/min) + workers: 1.
+  # Not a PR merge gate. Fail closed when E2E_ADMIN_* secrets are missing.
+  e2e:
+    name: Playwright
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CI: true
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      E2E_CUSTOMER_EMAIL: ${{ secrets.E2E_CUSTOMER_EMAIL }}
+      E2E_CUSTOMER_PASSWORD: ${{ secrets.E2E_CUSTOMER_PASSWORD }}
+      E2E_SUPERADMIN_PASSWORD: ${{ secrets.E2E_SUPERADMIN_PASSWORD }}
+      VITE_API_BASE_URL: http://localhost:3000
+
+    steps:
+      - name: Require e2e credentials
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ -z "$E2E_ADMIN_EMAIL" ] || [ -z "$E2E_ADMIN_PASSWORD" ]; then
+            echo "Set repository secrets E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD."
+            echo "Do not skip tests when credentials are missing in CI."
+            exit 1
+          fi
+
+      - name: Checkout dashboard
+        uses: actions/checkout@v5
+        with:
+          path: ecommerce-admin-dashboard
+          persist-credentials: false
+
+      - name: Checkout API
+        uses: actions/checkout@v5
+        with:
+          repository: raouf-b-dev/ecommerce-store-api
+          path: ecommerce-store-api
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ecommerce-admin-dashboard/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            ecommerce-admin-dashboard/package-lock.json
+            ecommerce-store-api/package-lock.json
+
+      - name: Install dashboard dependencies
+        working-directory: ecommerce-admin-dashboard
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ecommerce-admin-dashboard
+        run: npx playwright install --with-deps chromium
+
+      - name: Install API dependencies
+        working-directory: ecommerce-store-api
+        run: npm ci
+
+      - name: Generate API env and start Postgres/Redis
+        working-directory: ecommerce-store-api
+        run: |
+          npm run env:init
+          docker compose --env-file .env.development up -d --wait postgres redis
+
+      - name: Migrate, boot, and seed API
+        working-directory: ecommerce-store-api
+        env:
+          OTEL_TRACING_ENABLED: 'false'
+        run: |
+          npm run migration:run:dev
+          npm run build
+          npx cross-env NODE_ENV=development node --require ./dist/src/infrastructure/tracing/tracing.js dist/src/main.js &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3000/health/liveness >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl -sf http://localhost:3000/health/liveness
+          npm run db:seed
+
+      - name: Run Playwright
+        working-directory: ecommerce-admin-dashboard
+        run: npm run test:e2e
