@@ -852,6 +852,74 @@ export interface paths {
         patch: operations["NotificationsController_markAsRead_v1"];
         trace?: never;
     };
+    "/v1/admin/analytics/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Operational overview KPIs for a period (UTC) */
+        get: operations["AnalyticsController_overview_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/analytics/payments/time-series": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Zero-filled payments revenue time series (UTC) */
+        get: operations["AnalyticsController_paymentsTimeSeries_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/analytics/products/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Top products by line revenue in period */
+        get: operations["AnalyticsController_topProducts_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/analytics/inventory/alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Low-stock inventory alerts */
+        get: operations["AnalyticsController_inventoryAlerts_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -2202,6 +2270,66 @@ export interface components {
             /** @description Items to reserve */
             items: components["schemas"]["ReserveStockItemDto"][];
         };
+        AnalyticsKpiSnapshotDto: {
+            netRevenue: number;
+            grossRevenue: number;
+            refundedAmount: number;
+            ordersCount: number;
+            paidOrderCount: number;
+            aov: number;
+            currency: string;
+        };
+        OrderAttentionCountDto: {
+            status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
+            count: number;
+        };
+        AnalyticsOverviewResponseDto: {
+            timezone: "UTC";
+            from: string;
+            to: string;
+            current: components["schemas"]["AnalyticsKpiSnapshotDto"];
+            previous: components["schemas"]["AnalyticsKpiSnapshotDto"];
+            ordersNeedingAttention: components["schemas"]["OrderAttentionCountDto"][];
+            lowStockCount: number;
+        };
+        PaymentTimeSeriesBucketDto: {
+            bucketStart: string;
+            grossAmount: number;
+            refundedAmount: number;
+            netAmount: number;
+            capturedCount: number;
+            currency: string;
+        };
+        PaymentsTimeSeriesResponseDto: {
+            timezone: "UTC";
+            bucket: "day" | "week";
+            from: string;
+            to: string;
+            buckets: components["schemas"]["PaymentTimeSeriesBucketDto"][];
+        };
+        TopProductItemDto: {
+            productId: number;
+            name: string;
+            sku: string | null;
+            unitsSold: number;
+            lineRevenue: number;
+        };
+        TopProductsResponseDto: {
+            timezone: "UTC";
+            from: string;
+            to: string;
+            items: components["schemas"]["TopProductItemDto"][];
+        };
+        InventoryAlertItemDto: {
+            productId: number;
+            productTitle: string;
+            sku: string | null;
+            availableQuantity: number;
+            lowStockThreshold: number;
+        };
+        InventoryAlertsResponseDto: {
+            items: components["schemas"]["InventoryAlertItemDto"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -2840,7 +2968,8 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaymentDetailResponseDto"];
+                    /** Payment detail, or null when the order has no payment yet */
+                    "application/json": components["schemas"]["PaymentDetailResponseDto"] | null;
                 };
             };
         };
@@ -3693,7 +3822,8 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InventoryListItemResponseDto"];
+                    /** Inventory detail, or null when no stock row exists for the product */
+                    "application/json": components["schemas"]["InventoryListItemResponseDto"] | null;
                 };
             };
         };
@@ -4225,6 +4355,95 @@ export interface operations {
                             };
                         };
                     };
+                };
+            };
+        };
+    };
+    AnalyticsController_overview_v1: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsOverviewResponseDto"];
+                };
+            };
+        };
+    };
+    AnalyticsController_paymentsTimeSeries_v1: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                bucket: "day" | "week";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentsTimeSeriesResponseDto"];
+                };
+            };
+        };
+    };
+    AnalyticsController_topProducts_v1: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopProductsResponseDto"];
+                };
+            };
+        };
+    };
+    AnalyticsController_inventoryAlerts_v1: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InventoryAlertsResponseDto"];
                 };
             };
         };
