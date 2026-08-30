@@ -1,8 +1,5 @@
 import { apiClient } from '@/lib/api/client';
-import {
-  readApiErrorFromResponse,
-  toApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
 
 /**
@@ -19,12 +16,7 @@ export async function getOrderPaymentRequest(
   );
 
   if (error || !response.ok) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load payment',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load payment');
   }
 
   // Explicit null from API = no payment yet (valid business state).

@@ -4,8 +4,9 @@ import {
   getInventoryAlertsRequest,
   getPaymentsTimeSeriesRequest,
   getTopProductsRequest,
+  listRecentOrdersForDashboard,
 } from '@/features/dashboard/api/dashboard-api';
-import { listOrdersRequest } from '@/features/orders/api/orders-api';
+import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
 import type { DashboardPeriodDays } from '@/features/dashboard/types';
 import { buildDashboardPeriod } from '@/features/dashboard/lib/dashboard-metrics';
 
@@ -26,7 +27,7 @@ export function useDashboardOverviewQuery(
   enabled: boolean,
 ) {
   return useQuery({
-    queryKey: ['dashboard', 'overview', days],
+    queryKey: dashboardKeys.overview(days),
     queryFn: () => {
       const period = buildDashboardPeriod(days);
       return getAnalyticsOverviewRequest({
@@ -46,7 +47,7 @@ export function useDashboardRevenueSeriesQuery(
 ) {
   const bucket = seriesBucket(days);
   return useQuery({
-    queryKey: ['dashboard', 'payments-series', days, bucket],
+    queryKey: dashboardKeys.paymentsSeries(days, bucket),
     queryFn: () => {
       const period = buildDashboardPeriod(days);
       return getPaymentsTimeSeriesRequest({
@@ -66,7 +67,7 @@ export function useDashboardTopProductsQuery(
   enabled: boolean,
 ) {
   return useQuery({
-    queryKey: ['dashboard', 'top-products', days],
+    queryKey: dashboardKeys.topProducts(days),
     queryFn: () => {
       const period = buildDashboardPeriod(days);
       return getTopProductsRequest({
@@ -83,7 +84,7 @@ export function useDashboardTopProductsQuery(
 
 export function useDashboardInventoryAlertsQuery(enabled: boolean) {
   return useQuery({
-    queryKey: ['dashboard', 'inventory-alerts'],
+    queryKey: dashboardKeys.inventoryAlerts(),
     queryFn: () => getInventoryAlertsRequest({ limit: 20 }),
     enabled,
     staleTime: DASHBOARD_STALE_MS,
@@ -92,14 +93,8 @@ export function useDashboardInventoryAlertsQuery(enabled: boolean) {
 
 export function useDashboardRecentOrdersQuery(enabled: boolean) {
   return useQuery({
-    queryKey: ['dashboard', 'recent-orders'],
-    queryFn: () =>
-      listOrdersRequest({
-        page: 1,
-        limit: 5,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      }),
+    queryKey: dashboardKeys.recentOrders(),
+    queryFn: () => listRecentOrdersForDashboard(),
     enabled,
     staleTime: DASHBOARD_STALE_MS,
   });

@@ -9,6 +9,8 @@ import {
   getInventoryRequest,
   listInventoryRequest,
 } from '@/features/inventory/api/inventory-api';
+import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
+import { inventoryKeys } from '@/features/inventory/hooks/inventory-keys';
 import { normalizeInventoryListFilters } from '@/features/inventory/lib/inventory-list-filters';
 import type {
   AdjustStockDto,
@@ -23,7 +25,7 @@ export function useInventoryListQuery(filters: Partial<InventoryListFilters>) {
   const normalized = normalizeInventoryListFilters(filters);
 
   return useQuery({
-    queryKey: ['inventory', 'list', normalized],
+    queryKey: inventoryKeys.list(normalized),
     queryFn: () => listInventoryRequest(normalized),
     placeholderData: keepPreviousData,
   });
@@ -31,7 +33,7 @@ export function useInventoryListQuery(filters: Partial<InventoryListFilters>) {
 
 export function useInventoryDetailQuery(productId: number | undefined) {
   return useQuery({
-    queryKey: ['inventory', 'detail', productId],
+    queryKey: inventoryKeys.detail(productId),
     queryFn: () => getInventoryRequest(productId!),
     enabled: typeof productId === 'number' && Number.isFinite(productId),
   });
@@ -44,16 +46,17 @@ export function useAdjustStock(productId: number) {
     mutationFn: (body: AdjustStockDto) => adjustStockRequest(productId, body),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['inventory', 'list'] }),
+        queryClient.invalidateQueries({ queryKey: inventoryKeys.lists() }),
         queryClient.invalidateQueries({
-          queryKey: ['inventory', 'detail', productId],
+          queryKey: inventoryKeys.detail(productId),
         }),
+        queryClient.invalidateQueries({ queryKey: dashboardKeys.all }),
       ]);
     },
     onError: async (error: Error) => {
       if (isOptimisticLockConflict(error as ApiRequestError)) {
         await queryClient.invalidateQueries({
-          queryKey: ['inventory', 'detail', productId],
+          queryKey: inventoryKeys.detail(productId),
         });
       }
     },
