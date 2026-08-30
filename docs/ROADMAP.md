@@ -11,7 +11,7 @@
 - `[ ]` not started
 - `[/]` in progress
 - `[x]` done
-- Finish each phase before starting the next.
+- Finish each phase before starting the next. Phase 12 (payments) is optional: skip it or do it after Phase 13.
 - Keep domain rules and auth enforcement in the API.
 - Contracts: live OpenAPI/Swagger + generated client. [API-INTEGRATION.md](API-INTEGRATION.md) is client rules only (not an endpoint list).
 
@@ -69,8 +69,12 @@ Write tests **with** each feature.
 | **5** | Orders | `[x]` | Ops actions + tests |
 | **6** | Users | `[x]` | Read views + role filter + tests |
 | **7** | Dashboard | `[x]` | Operational cockpit (analytics API + Recharts) |
-| **8** | Quality sweep | `[ ]` | Full smoke, a11y |
-| **9** | Release gate | `[ ]` | Deploy, verified quick start |
+| **8** | Quality sweep | `[x]` | Journey, a11y, consistency, CI e2e policy |
+| **9** | Query parity | `[ ]` | Expose every list query param this API version already accepts |
+| **10** | Existing writes | `[ ]` | Wire OpenAPI writes already shipped (users, products delete, roles UI) |
+| **11** | API gaps then SPA | `[ ]` | Product activate/deactivate + assign user role (API first) |
+| **12** | Payments ops | `[ ]` | Optional; does not block the release gate |
+| **13** | Release gate | `[ ]` | Deploy after Phases 9–11; verified quick start |
 
 ---
 
@@ -200,6 +204,7 @@ Write tests **with** each feature.
 - [x] Global 403 `MUST_CHANGE_PASSWORD` redirect on `apiClient`
 - [x] Component tests for guards and validation
 - [x] Playwright: seeded user forced change then reaches dashboard (when seed available)
+- [x] Sign out on `/change-password` (stay on the page; no skip into the shell)
 - [x] Update `docs/API-INTEGRATION.md`
 
 **Done when:** Seeded user with `mustChangePassword: true` lands on change-password, updates password, and reaches the dashboard shell; tests green.
@@ -309,29 +314,158 @@ Write tests **with** each feature.
 
 ## Phase 8: Quality sweep
 
-- [ ] Playwright journey: login -> products -> order detail
-- [ ] Keyboard access for sidebar and dialogs
-- [ ] CI unit + e2e (or documented e2e job) reliable
+> No new OpenAPI capabilities. Harden the SPA that Phases 2–7 already wired.
 
-**Done when:** Journey green in CI or linked scheduled job.
+**OpenAPI capabilities:** none (uses existing operations).
+
+### A. Operator journey (Playwright)
+
+- [x] One spec: login → dashboard widgets visible → products list → open edit → orders list → open detail (same session)
+- [x] Deduplicate overlapping smokes in `e2e/smoke.spec.ts`
+- [x] Keep per-feature specs; journey is glue, not a replacement
+- [x] In CI, missing `E2E_*` fails the e2e job; locally skip with the existing message
+
+### B. Keyboard and accessibility
+
+- [x] Skip link to `#main`; `main` id; `nav` `aria-label`
+- [x] Page title is the `h1` (`PageHeader`); sidebar branding is not an `h1`
+- [x] Sidebar keyboard + decorative icons `aria-hidden`
+- [x] Mobile sheet: keyboard open, Esc closes, focus returns
+- [x] Adjust-stock dialog: Tab / Esc / focus restore
+- [x] `@axe-core/playwright` on login, dashboard, products, order detail (no serious/critical)
+- [x] `eslint-plugin-jsx-a11y` + `eslint-plugin-react-hooks` (React 19 compatible)
+- [x] Remove non-functional theme buttons
+- [x] Loading / status: `role="status"`, `aria-busy`, `aria-live="polite"`
+- [x] Focus `#main` (or page `h1`) after client navigation
+
+### C. Consistency
+
+- [x] Shared list query status UI + table pagination + `src/lib/format.ts` (operator locale)
+- [x] TkDodo query-key factories; invalidate dashboard keys from mutations that affect widgets
+- [x] Rename `useProductsQuery` → `useProductsListQuery`; `keepPreviousData` on products list
+- [x] Domain API helpers through `throwApiErrorFromResponse` (products + order payments)
+- [x] Dashboard recent-orders read through dashboard `api/`
+- [x] Render `ErrorBoundary` around the shell outlet (no `QueryErrorResetBoundary` / `throwOnError`)
+- [x] ProductsPage empty/error/retry tests; move page specs to `pages/__tests__/`
+- [x] Align CONVENTIONS + ARCHITECTURE with real folders (`types.ts`, `pages/`, `lib/`, no barrels)
+
+### D. CI and governance
+
+- [x] Keep PR `validate` job (lint, typecheck, unit, build)
+- [x] `e2e` job on `workflow_dispatch` and `push` to `main`/`master`; credentials required (no skip-to-green)
+- [x] GOVERNANCE states when Playwright runs; PR e2e remains optional
+- [x] PROJECT-CONTEXT + README current limits match shipped Phases 2–7
+
+**Done when:** journey spec green locally against seeded API; axe/keyboard tests pass; lint includes hooks + jsx-a11y; query/API helper drift is gone; CI policy is documented and the e2e job does not skip-to-green.
 
 ---
 
-## Phase 9: Release gate
+Phases 9–11 are **this API version**, not new product ideas. Prefer API **Phase 14c** (OpenAPI truthfulness) before regenerating for Phase 9. Prefer API **Phase 14d** before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
+
+Phase 12 (payments) is optional and does **not** block Phase 13.
+
+---
+
+## Phase 9: Query parity
+
+> No new OpenAPI operations. Put every **list query param this API already accepts** on the matching admin list (URL + visible controls). Table column-sort was deferred in filter comments; this phase owns it.
+
+Named fields below were true at planning time. On start, take the **current** list query DTOs from live Swagger / `schema.d.ts`.
+
+**OpenAPI capabilities:** existing product, order, and inventory list query DTOs (discover in OpenAPI).
+
+**Scope:**
+
+- [ ] **Products:** search box (name/SKU/description); `isActive`; `minPrice` / `maxPrice`; `categoryId` as a numeric filter until a categories list exists (do not invent a category picker)
+- [ ] Pass those params through `listProductsRequest` (extend `ProductListFilters`)
+- [ ] **Orders:** date range (`createdAfter` / `createdBefore`); `minAmount` / `maxAmount`; optional `firstName` / `lastName` if you keep `userName`
+- [ ] Pass those params through `listOrdersRequest` (today the client drops them even if they were in the URL)
+- [ ] **Inventory:** `productId` (e.g. from product/detail “view stock”)
+- [ ] Column-sort UI bound to existing `sortBy` / `sortOrder` on products, orders, inventory (still URL-as-source-of-truth)
+- [ ] Hide or relabel the Roles nav item until Phase 10 (stop advertising an empty page)
+- [ ] Tests: each new control updates the URL and the query key; empty filter result still shows the empty table
+
+**Done when:** an operator can exercise every documented list query field from the UI; no client-side filtering of full pages.
+
+---
+
+## Phase 10: Existing writes
+
+> Wire **writes that already exist in OpenAPI**. Still no new API endpoints.
+
+**OpenAPI capabilities:** product delete; user PATCH/activate/deactivate/delete; roles CRUD; permissions list (discover in OpenAPI).
+
+**Scope:**
+
+- [ ] Product: delete (confirm); keep 409 reload-and-retry on edit
+- [ ] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
+- [ ] User **address** writes only if OpenAPI still exposes them **and** ops need them
+- [ ] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
+- [ ] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007) — document that the operator may need to re-login or refresh to see nav changes for **their own** account
+- [ ] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
+
+**Done when:** superadmin can manage roles in the SPA; admin can deactivate a user and delete a product through the API; stub Roles page is gone.
+
+---
+
+## Phase 11: API gaps, then SPA
+
+> Capabilities the domain already has but **HTTP does not**. Do this in `ecommerce-store-api` **Phase 14d** first, then regenerate the admin client.
+
+**API (required before any SPA toggle):**
+
+- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`) — do not silently add `isActive` to PATCH if the domain treats it as a dedicated action
+- [ ] Assign or replace a user’s role over HTTP (today `AssignRoleUseCase` is not on a controller)
+- [ ] OpenAPI + tests in the API repo; regenerate `schema.d.ts` here
+
+**Admin SPA (after the API ships):**
+
+- [ ] Product status control on edit (and/or list row action)
+- [ ] User detail: change assigned role
+- [ ] Tests + Playwright
+
+**Done when:** an operator can take a product off the catalog and change a user’s role without SQL or seed scripts.
+
+---
+
+## Phase 12: Payments ops (optional)
+
+> The API already lists and mutates payments. v1 only showed payment **on order detail**. This is money movement — ship only if you want it in Control Center. **Does not block Phase 13.**
+
+**OpenAPI capabilities:** payment list/detail and capture/refund/verify if present (discover in OpenAPI).
+
+**Scope:**
+
+- [ ] Payments list with the existing query DTO (`status`, `orderId`, `userId`, email/name, sort)
+- [ ] Link from order detail to payment row
+- [ ] Capture / refund / verify only with `view_all_payments` / whatever OpenAPI requires; disable illegal statuses; still handle API rejection
+- [ ] Do not invent refund amounts the DTO does not allow
+
+**Done when:** ops can find a payment without opening the order first; mutating actions are covered by tests.
+
+---
+
+## Phase 13: Release gate
+
+> After Phases 9–11. Do **not** treat this as the next step after Phase 8. Optional Phase 12 may be skipped.
+
+**Scope:**
 
 - [ ] Hosted static deploy against a configured API
 - [ ] README quick start on a clean machine
 - [ ] Smoke checklist against seeded admin data
 - [ ] README + PROJECT-CONTEXT still accurate
+- [ ] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (runtime is `/api/docs`, not `/api`, unless 14c documents otherwise)
 
-**Done when:** A stranger can follow the README and perform a basic admin flow.
+**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign)—not the thin Phase 8 surface.
 
 ---
 
-## Out of scope (v1)
+## Out of scope (this API version)
 
 - BFF
 - Domain logic in the SPA
-- Customer checkout UI
-- Payment ops beyond API capabilities
+- Customer checkout UI, carts, register, inventory reserve/release/check (storefront)
+- Inventing filters or buttons for operations that are not in OpenAPI
 - Global client store for server data (use TanStack Query)
+- Categories admin until the API exposes category list/write operations

@@ -2,14 +2,27 @@
 
 ## Merge Gates
 
-The baseline gates for this repository are:
+The baseline gates for this repository (PR and every `validate` CI job) are:
 
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
 
-Playwright smoke remains a local validation step until end-to-end CI is added.
+Prettier is installed for local formatting. `format:check` is not a merge gate.
+
+## Playwright
+
+Playwright is **not** a pull-request merge gate. A full run needs a seeded API (Postgres, Redis, migrations, `db:seed`), shares one admin account, and must use `workers: 1` because login is throttled at 10/min.
+
+The `e2e` GitHub Actions job runs on:
+
+- `workflow_dispatch`
+- `push` to `main` or `master`
+
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). Set those as repository secrets from the API seed accounts in API `docs/development/SEEDING.md` — do not commit passwords here.
+
+Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 
 ## Definition of Done
 
