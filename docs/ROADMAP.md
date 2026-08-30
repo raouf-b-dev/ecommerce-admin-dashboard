@@ -68,7 +68,7 @@ Write tests **with** each feature.
 | **4** | Inventory | `[x]` | Stock views + tests |
 | **5** | Orders | `[x]` | Ops actions + tests |
 | **6** | Users | `[x]` | Read views + role filter + tests |
-| **7** | Dashboard | `[ ]` | Summary widgets + tests |
+| **7** | Dashboard | `[x]` | Operational cockpit (analytics API + Recharts) |
 | **8** | Quality sweep | `[ ]` | Full smoke, a11y |
 | **9** | Release gate | `[ ]` | Deploy, verified quick start |
 
@@ -293,15 +293,15 @@ Write tests **with** each feature.
 
 ## Phase 7: Dashboard
 
-**OpenAPI capabilities:** dashboard inputs from existing reads or future API aggregates (no invented metrics).
+**OpenAPI capabilities:** `/v1/admin/analytics/overview`, `payments/time-series`, `products/top`, `inventory/alerts` (plus recent orders list). See [API-INTEGRATION.md](API-INTEGRATION.md).
 
 **Scope:**
 
-- [ ] Summary cards with documented data source
-- [ ] Recharts visualizations
-- [ ] If totals are approximate due to pagination, say so in the UI or docs
-- [ ] Tests for empty/error dashboard
-- [ ] Playwright: load dashboard after login
+- [x] Summary cards with documented data source (analytics overview)
+- [x] Recharts visualizations (net revenue time series)
+- [x] No invented SPA metrics; footnote documents UTC analytics aggregates (not Prometheus)
+- [x] Tests for empty/error dashboard (+ permission gating)
+- [x] Playwright: load dashboard after login (existing smoke heading)
 
 **Done when:** Dashboard loads for seeded admin without inventing business metrics in the client.
 

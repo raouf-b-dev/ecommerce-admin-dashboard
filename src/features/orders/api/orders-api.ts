@@ -3,6 +3,7 @@ import {
   readApiErrorFromResponse,
   toApiRequestError,
 } from '@/lib/api/parse-api-error';
+import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   OrderDetailResponseDto,
   OrderListFilters,
@@ -32,23 +33,7 @@ export async function listOrdersRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    if (response?.status === 429) {
-      throw toApiRequestError(
-        response,
-        {
-          statusCode: 429,
-          message: 'Too many requests. Wait a moment and try again.',
-          code: parsed?.code,
-        },
-        'Too many requests. Wait a moment and try again.',
-      );
-    }
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load orders',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load orders');
   }
 
   return data;

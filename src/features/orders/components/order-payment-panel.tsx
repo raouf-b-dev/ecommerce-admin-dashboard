@@ -7,7 +7,7 @@ type OrderPaymentPanelProps = {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
-  payment: PaymentDetailResponseDto | undefined;
+  payment: PaymentDetailResponseDto | null | undefined;
   onRetry: () => void;
 };
 

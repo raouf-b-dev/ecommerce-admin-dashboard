@@ -67,7 +67,7 @@ export function InventoryDetailPage() {
     );
   }
 
-  if (detailQuery.isError || !detailQuery.data) {
+  if (detailQuery.isError) {
     return (
       <Alert variant="destructive">
         <AlertTitle>Could not load inventory</AlertTitle>
@@ -75,7 +75,7 @@ export function InventoryDetailPage() {
           <span>
             {detailQuery.error instanceof ApiRequestError
               ? detailQuery.error.message
-              : 'Inventory not found'}
+              : 'Failed to load inventory'}
           </span>
           <Button
             type="button"
@@ -87,6 +87,25 @@ export function InventoryDetailPage() {
           </Button>
         </AlertDescription>
       </Alert>
+    );
+  }
+
+  if (detailQuery.data == null) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title={`Product #${productId}`}
+          description="No inventory record for this product yet."
+        >
+          <Button asChild variant="outline">
+            <Link to="/inventory">Back to list</Link>
+          </Button>
+        </PageHeader>
+        <p className="text-sm text-muted-foreground">
+          No inventory recorded for this product. Stock appears after seed or
+          the first adjust/create inventory flow.
+        </p>
+      </div>
     );
   }
 
