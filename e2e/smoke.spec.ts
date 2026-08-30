@@ -36,6 +36,8 @@ test('login success reaches admin shell', async ({ page }) => {
 
   await expect(page.getByText('Control Center')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await expect(page.getByLabel('Period')).toBeVisible();
+  await expect(page.getByText('Needs attention')).toBeVisible({ timeout: 15_000 });
 });
 
 test('admin shell loads after login', async ({ page }) => {
@@ -48,6 +50,7 @@ test('admin shell loads after login', async ({ page }) => {
 
   await expect(page.getByText('Control Center')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await expect(page.getByLabel('Period')).toBeVisible();
 });
 
 test('mobile navigation opens and navigates', async ({ page }) => {
