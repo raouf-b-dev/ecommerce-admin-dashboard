@@ -20,8 +20,8 @@ Admin operators must not see navigation chrome, placeholder pages, or layout str
 
 ## 3. Alternatives Considered
 
-1. **Render shell with disabled nav before auth** — Rejected: leaks admin structure to unauthenticated visitors and complicates loading states.
-2. **Use `/` as the login URL** — Rejected: explicit `/login` simplifies 401 redirects, bookmarks, and Playwright flows.
+1. **Render shell with disabled nav before auth**: Rejected: leaks admin structure to unauthenticated visitors and complicates loading states.
+2. **Use `/` as the login URL**: Rejected: explicit `/login` simplifies 401 redirects, bookmarks, and Playwright flows.
 
 ## 4. Consequences
 

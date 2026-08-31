@@ -33,9 +33,9 @@ Operators stay on a page for longer than the access-token TTL. Domain calls then
 
 ## 3. Alternatives Considered
 
-1. **Keep ADR-0002 hard redirect only** — Rejected: poor operator UX for routine access-token expiry.
-2. **Retry loops / unbounded refresh** — Rejected: can amplify load and obscure real auth failures.
-3. **Proactive refresh on a timer** — Deferred: more moving parts; on-demand recovery is enough for current TTLs.
+1. **Keep ADR-0002 hard redirect only**: Rejected: poor operator UX for routine access-token expiry.
+2. **Retry loops / unbounded refresh**: Rejected: can amplify load and obscure real auth failures.
+3. **Proactive refresh on a timer**: Deferred: more moving parts; on-demand recovery is enough for current TTLs.
 
 ## 4. Consequences
 

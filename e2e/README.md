@@ -17,7 +17,7 @@ The journey is glue, not a replacement for per-feature specs.
 ## Prerequisites
 
 1. API running locally (see API `docs/development/LOCAL-SETUP.md`).
-2. Seeded administrator account (see API `docs/development/SEEDING.md` — credentials stay in that doc only).
+2. Seeded administrator account (see API `docs/development/SEEDING.md`: credentials stay in that doc only).
 3. `VITE_API_BASE_URL` pointing at the API origin (default `http://localhost:3000`; match the API `PORT` if you remapped it).
 
 ## Authenticated tests
@@ -75,7 +75,7 @@ The `e2e` GitHub Actions job runs on `workflow_dispatch` and on push to `main`/`
 
 Repository secrets (see [`.secrets.example`](../.secrets.example); generate local copy with `npm run env:init:secrets`):
 
-- `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` (required — job fails if unset)
+- `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` (required: job fails if unset)
 - `E2E_CUSTOMER_EMAIL`, `E2E_CUSTOMER_PASSWORD`, `E2E_SUPERADMIN_EMAIL`, `E2E_SUPERADMIN_PASSWORD` (operator-gate and change-password specs)
 
 Use the same emails and passwords as API `SEEDING.md`. Do not put those values in this repository.

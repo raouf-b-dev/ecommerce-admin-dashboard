@@ -22,9 +22,9 @@ Reference: API [JWT-RSA-JWKS.md](https://github.com/raouf-b-dev/ecommerce-store-
 
 ## 3. Alternatives Considered
 
-1. **`localStorage` for access token** — Rejected: XSS can exfiltrate tokens (OWASP JWT guidance; API security docs).
-2. **Refresh token in JSON body stored in JS** — Rejected: API sets HttpOnly cookie; body storage increases XSS exposure.
-3. **Silent refresh retry on every 401 mid-request** — Deferred: boot refresh + re-login is sufficient for v1.
+1. **`localStorage` for access token**: Rejected: XSS can exfiltrate tokens (OWASP JWT guidance; API security docs).
+2. **Refresh token in JSON body stored in JS**: Rejected: API sets HttpOnly cookie; body storage increases XSS exposure.
+3. **Silent refresh retry on every 401 mid-request**: Deferred: boot refresh + re-login is sufficient for v1.
 
 ## 4. Consequences
 

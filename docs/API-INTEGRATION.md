@@ -6,7 +6,7 @@ How `ecommerce-admin-dashboard` consumes [ecommerce-store-api](https://github.co
 
 | Concern | Source of truth |
 | :------ | :-------------- |
-| Paths, methods, DTOs, status codes | API **OpenAPI / Swagger** (`http://localhost:3000/api` locally) |
+| Paths, methods, DTOs, status codes | API **OpenAPI / Swagger** (`http://localhost:3000/api/docs` locally) |
 | Auth, RBAC, cookies, versioning | API docs + OpenAPI |
 | Local seed users | API [`docs/development/SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) |
 | Local API boot | API [`docs/development/LOCAL-SETUP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) |
@@ -77,10 +77,10 @@ Concrete paths live in Swagger. Typical admin needs:
 - Health for local diagnostics
 - Admin login/session; permission/role reads if needed for chrome
 - Product list/detail and product writes
-- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust — `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
-- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`) — `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
+- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust: `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
+- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`): `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
 - User reads with optional role filter (writes optional)
-- Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`) — not list `total` fan-out, not Prometheus
+- Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`): not list `total` fan-out, not Prometheus
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.
 

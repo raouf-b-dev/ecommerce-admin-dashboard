@@ -25,7 +25,7 @@ The `e2e` GitHub Actions job runs on:
 - `workflow_dispatch`
 - `push` to `main` or `master`
 
-That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md` — do not commit `.secrets`.
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md`: do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 
@@ -65,4 +65,4 @@ Write an ADR in `docs/architecture/adr/ADR-XXXX-[title].md` when a change affect
 - **`Deprecated`**: No longer recommended
 - **`Superseded`**: Obsoleted by a later ADR (must link the successor)
 
-ADRs are immutable historical documents for their **decision body** — do not edit Context / Decisions / Alternatives / Consequences. **Status** (and supersede header/index links) may be updated when a later ADR fully replaces one. Extend without replacement via a new ADR and `Does not supersede` (leave the prior ADR `Accepted`). See [`docs/architecture/adr/README.md`](../architecture/adr/README.md) and [`docs/ai/CONVENTIONS.md`](./CONVENTIONS.md) §14.
+ADRs are immutable historical documents for their **decision body**: do not edit Context / Decisions / Alternatives / Consequences. **Status** (and supersede header/index links) may be updated when a later ADR fully replaces one. Extend without replacement via a new ADR and `Does not supersede` (leave the prior ADR `Accepted`). See [`docs/architecture/adr/README.md`](../architecture/adr/README.md) and [`docs/ai/CONVENTIONS.md`](./CONVENTIONS.md) §14.
