@@ -2,7 +2,7 @@
 
 > Delivery plan for the admin SPA. Work top to bottom.
 >
-> Companions: [README.md](../README.md), [API-INTEGRATION.md](API-INTEGRATION.md), [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api), [ecommerce-store-web](https://github.com/raouf-b-dev/ecommerce-store-web).
+> Companions: [README.md](../README.md), [API-INTEGRATION.md](API-INTEGRATION.md), [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api)., [ecommerce-store-web](https://github.com/raouf-b-dev/ecommerce-store-web).
 
 ---
 
@@ -19,11 +19,11 @@
 
 Write tests **with** each feature.
 
-| Layer | When |
-| :---- | :--- |
-| Unit / component | Same phase as the UI |
-| Playwright | Extend smoke when the feature joins the critical path |
-| Cross-cutting quality | Phase 8 only |
+| Layer                 | When                                                  |
+| :-------------------- | :---------------------------------------------------- |
+| Unit / component      | Same phase as the UI                                  |
+| Playwright            | Extend smoke when the feature joins the critical path |
+| Cross-cutting quality | Phase 8 only                                          |
 
 ### Definition of done (every feature phase)
 
@@ -37,18 +37,18 @@ Write tests **with** each feature.
 
 ## Stack
 
-| Concern | Choice |
-| :------ | :----- |
-| App | Vite + React 19 + TypeScript strict |
-| Routing | React Router |
-| Styling | Tailwind CSS + shadcn/ui |
-| Client data | TanStack Query |
-| Tables | TanStack Table |
+| Concern        | Choice                                        |
+| :------------- | :-------------------------------------------- |
+| App            | Vite + React 19 + TypeScript strict           |
+| Routing        | React Router                                  |
+| Styling        | Tailwind CSS + shadcn/ui                      |
+| Client data    | TanStack Query                                |
+| Tables         | TanStack Table                                |
 | Local UI state | React state; Zustand when needed across trees |
-| Forms | React Hook Form + Zod |
-| Charts | Recharts (dashboard widgets) |
-| API | Typed client from OpenAPI / Swagger |
-| Tests | Vitest + Testing Library + Playwright |
+| Forms          | React Hook Form + Zod                         |
+| Charts         | Recharts (dashboard widgets)                  |
+| API            | Typed client from OpenAPI / Swagger           |
+| Tests          | Vitest + Testing Library + Playwright         |
 
 **Ports:** admin `5174`, API `3000` (or remapped API `PORT` on hosts that reserve `3000–3199`).
 
@@ -56,25 +56,25 @@ Write tests **with** each feature.
 
 ## Phase overview
 
-| Phase | Name | Status | Focus |
-| ----- | ---- | ------ | ----- |
-| **0** | Foundation | `[x]` | Vite scaffold, tooling, tests, OpenAPI client |
-| **1** | Agent ecosystem and conventions | `[x]` | AGENT policy, context, AI docs, adapters |
-| **1.5** | Shell and page structure | `[x]` | Layout extraction, feature pages, responsive nav, auth route shape |
-| **2** | Auth and RBAC chrome | `[x]` | Login, permission-aware nav + tests |
-| **2.5** | Forced password change | `[x]` | `/change-password`, session flag, API guard integration |
-| **2.6** | Operator gate + silent refresh | `[x]` | Operators-only SPA; domain 401 one-shot refresh |
-| **3** | Products | `[x]` | Table/forms + tests |
-| **4** | Inventory | `[x]` | Stock views + tests |
-| **5** | Orders | `[x]` | Ops actions + tests |
-| **6** | Users | `[x]` | Read views + role filter + tests |
-| **7** | Dashboard | `[x]` | Operational cockpit (analytics API + Recharts) |
-| **8** | Quality sweep | `[x]` | Journey, a11y, consistency, CI e2e policy |
-| **9** | Query parity | `[ ]` | Expose every list query param this API version already accepts |
-| **10** | Existing writes | `[ ]` | Wire OpenAPI writes already shipped (users, products delete, roles UI) |
-| **11** | API gaps then SPA | `[ ]` | Product activate/deactivate + assign user role (API first) |
-| **12** | Payments ops | `[ ]` | Optional; does not block the release gate |
-| **13** | Release gate | `[ ]` | Deploy after Phases 9–11; verified quick start |
+| Phase   | Name                            | Status | Focus                                                                  |
+| ------- | ------------------------------- | ------ | ---------------------------------------------------------------------- |
+| **0**   | Foundation                      | `[x]`  | Vite scaffold, tooling, tests, OpenAPI client                          |
+| **1**   | Agent ecosystem and conventions | `[x]`  | AGENT policy, context, AI docs, adapters                               |
+| **1.5** | Shell and page structure        | `[x]`  | Layout extraction, feature pages, responsive nav, auth route shape     |
+| **2**   | Auth and RBAC chrome            | `[x]`  | Login, permission-aware nav + tests                                    |
+| **2.5** | Forced password change          | `[x]`  | `/change-password`, session flag, API guard integration                |
+| **2.6** | Operator gate + silent refresh  | `[x]`  | Operators-only SPA; domain 401 one-shot refresh                        |
+| **3**   | Products                        | `[x]`  | Table/forms + tests                                                    |
+| **4**   | Inventory                       | `[x]`  | Stock views + tests                                                    |
+| **5**   | Orders                          | `[x]`  | Ops actions + tests                                                    |
+| **6**   | Users                           | `[x]`  | Read views + role filter + tests                                       |
+| **7**   | Dashboard                       | `[x]`  | Operational cockpit (analytics API + Recharts)                         |
+| **8**   | Quality sweep                   | `[x]`  | Journey, a11y, consistency, CI e2e policy                              |
+| **9**   | Query parity                    | `[ ]`  | Expose every list query param this API version already accepts         |
+| **10**  | Existing writes                 | `[ ]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI) |
+| **11**  | API gaps then SPA               | `[ ]`  | Product activate/deactivate + assign user role (API first)             |
+| **12**  | Payments ops                    | `[ ]`  | Optional; does not block the release gate                              |
+| **13**  | Release gate                    | `[ ]`  | Deploy after Phases 9–11; verified quick start                         |
 
 ---
 
@@ -108,15 +108,15 @@ Write tests **with** each feature.
 
 ### Files to create (minimal outline)
 
-| File | Purpose |
-| :--- | :------ |
-| `AGENT.md` | Authority order + non-negotiables |
-| `.agents/PROJECT-CONTEXT.md` | Stack, folders, RBAC UX notes, API links |
-| `docs/ai/README.md` | Index |
-| `docs/ai/CONVENTIONS.md` | Feature folders, Query/Table/forms, 409 handling |
-| `docs/ai/GOVERNANCE-AND-QUALITY-GATES.md` | Merge gates |
-| `docs/ai/WORKFLOW-PLAYBOOK.md` | Task intake -> verify |
-| `AGENTS.md` / `CLAUDE.md` / `.cursor/rules/*` | Thin adapters to `AGENT.md` |
+| File                                          | Purpose                                          |
+| :-------------------------------------------- | :----------------------------------------------- |
+| `AGENT.md`                                    | Authority order + non-negotiables                |
+| `.agents/PROJECT-CONTEXT.md`                  | Stack, folders, RBAC UX notes, API links         |
+| `docs/ai/README.md`                           | Index                                            |
+| `docs/ai/CONVENTIONS.md`                      | Feature folders, Query/Table/forms, 409 handling |
+| `docs/ai/GOVERNANCE-AND-QUALITY-GATES.md`     | Merge gates                                      |
+| `docs/ai/WORKFLOW-PLAYBOOK.md`                | Task intake -> verify                            |
+| `AGENTS.md` / `CLAUDE.md` / `.cursor/rules/*` | Thin adapters to `AGENT.md`                      |
 
 ### `AGENT.md` non-negotiables (must include)
 
@@ -402,7 +402,7 @@ Named fields below were true at planning time. On start, take the **current** li
 - [ ] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
 - [ ] User **address** writes only if OpenAPI still exposes them **and** ops need them
 - [ ] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
-- [ ] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007) — document that the operator may need to re-login or refresh to see nav changes for **their own** account
+- [ ] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007): document that the operator may need to re-login or refresh to see nav changes for **their own** account
 - [ ] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
 
 **Done when:** superadmin can manage roles in the SPA; admin can deactivate a user and delete a product through the API; stub Roles page is gone.
@@ -415,7 +415,7 @@ Named fields below were true at planning time. On start, take the **current** li
 
 **API (required before any SPA toggle):**
 
-- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`) — do not silently add `isActive` to PATCH if the domain treats it as a dedicated action
+- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the domain treats it as a dedicated action
 - [ ] Assign or replace a user’s role over HTTP (today `AssignRoleUseCase` is not on a controller)
 - [ ] OpenAPI + tests in the API repo; regenerate `schema.d.ts` here
 
@@ -431,7 +431,7 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 12: Payments ops (optional)
 
-> The API already lists and mutates payments. v1 only showed payment **on order detail**. This is money movement — ship only if you want it in Control Center. **Does not block Phase 13.**
+> The API already lists and mutates payments. v1 only showed payment **on order detail**. This is money movement: ship only if you want it in Control Center. **Does not block Phase 13.**
 
 **OpenAPI capabilities:** payment list/detail and capture/refund/verify if present (discover in OpenAPI).
 
@@ -456,9 +456,9 @@ Named fields below were true at planning time. On start, take the **current** li
 - [ ] README quick start on a clean machine
 - [ ] Smoke checklist against seeded admin data
 - [ ] README + PROJECT-CONTEXT still accurate
-- [ ] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (runtime is `/api/docs`, not `/api`, unless 14c documents otherwise)
+- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`)
 
-**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign)—not the thin Phase 8 surface.
+**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign): not the thin Phase 8 surface.
 
 ---
 
