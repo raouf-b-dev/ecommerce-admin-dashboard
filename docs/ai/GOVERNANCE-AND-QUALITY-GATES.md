@@ -2,12 +2,15 @@
 
 ## Merge Gates
 
-The baseline gates for this repository (PR and every `validate` CI job) are:
+The baseline gates for this repository (PR and the `ci` GitHub Actions job) are:
 
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
+- `npm audit --omit=dev --audit-level=high`
+
+Those checks run as parallel jobs. Require **CI Status Check** (`ci`) in branch protection, not the individual job names. Pull requests also run GitHub Dependency Review (failure fails `ci`; skipped on push).
 
 Prettier is installed for local formatting. `format:check` is not a merge gate.
 
@@ -20,7 +23,7 @@ The `e2e` GitHub Actions job runs on:
 - `workflow_dispatch`
 - `push` to `main` or `master`
 
-That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md` — do not commit `.secrets`.
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md` — do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 

@@ -71,7 +71,7 @@ Unauthenticated redirect and login-failure tests do not require credentials.
 
 ## CI
 
-The `e2e` GitHub Actions job runs on `workflow_dispatch` and on push to `main`/`master`. Pull requests keep the `validate` job only (lint, typecheck, unit, build). Playwright is optional on PRs because the suite needs a seeded API, `workers: 1`, and a 10/min login throttle.
+The `e2e` GitHub Actions job runs on `workflow_dispatch` and on push to `main`/`master`. Pull requests run the parallel merge gates (lint, typecheck, unit, build, audit) aggregated as `ci`. Playwright is optional on PRs because the suite needs a seeded API, `workers: 1`, and a 10/min login throttle.
 
 Repository secrets (see [`.secrets.example`](../.secrets.example); generate local copy with `npm run env:init:secrets`):
 

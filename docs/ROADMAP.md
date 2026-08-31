@@ -351,7 +351,7 @@ Write tests **with** each feature.
 
 ### D. CI and governance
 
-- [x] Keep PR `validate` job (lint, typecheck, unit, build)
+- [x] PR merge gates (lint, typecheck, unit, build, audit) as parallel jobs plus a `ci` aggregator
 - [x] `e2e` job on `workflow_dispatch` and `push` to `main`/`master`; credentials required (no skip-to-green)
 - [x] GOVERNANCE states when Playwright runs; PR e2e remains optional
 - [x] PROJECT-CONTEXT + README current limits match shipped Phases 2–7

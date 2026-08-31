@@ -27,7 +27,7 @@ Security baseline for this admin SPA. The API remains the authority for authn/au
 
 ## Dependencies and supply chain
 
-- Keep dependencies updated; run audits in CI once continuous integration is in place.
+- Keep dependencies updated. CI runs `npm audit --omit=dev --audit-level=high` and GitHub Dependency Review on pull requests.
 - Prefer an OpenAPI-generated client so request shapes stay aligned with the server.
 
 ## Reporting
