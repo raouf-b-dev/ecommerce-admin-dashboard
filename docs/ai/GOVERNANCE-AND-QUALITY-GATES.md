@@ -20,7 +20,7 @@ The `e2e` GitHub Actions job runs on:
 - `workflow_dispatch`
 - `push` to `main` or `master`
 
-That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). Set those as repository secrets from the API seed accounts in API `docs/development/SEEDING.md` — do not commit passwords here.
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md` — do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 

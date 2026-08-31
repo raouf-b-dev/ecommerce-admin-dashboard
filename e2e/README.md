@@ -73,10 +73,10 @@ Unauthenticated redirect and login-failure tests do not require credentials.
 
 The `e2e` GitHub Actions job runs on `workflow_dispatch` and on push to `main`/`master`. Pull requests keep the `validate` job only (lint, typecheck, unit, build). Playwright is optional on PRs because the suite needs a seeded API, `workers: 1`, and a 10/min login throttle.
 
-Repository secrets:
+Repository secrets (see [`.secrets.example`](../.secrets.example); generate local copy with `npm run env:init:secrets`):
 
 - `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` (required — job fails if unset)
-- `E2E_CUSTOMER_EMAIL`, `E2E_CUSTOMER_PASSWORD`, `E2E_SUPERADMIN_PASSWORD` (needed for operator-gate and change-password specs)
+- `E2E_CUSTOMER_EMAIL`, `E2E_CUSTOMER_PASSWORD`, `E2E_SUPERADMIN_EMAIL`, `E2E_SUPERADMIN_PASSWORD` (operator-gate and change-password specs)
 
 Use the same emails and passwords as API `SEEDING.md`. Do not put those values in this repository.
 

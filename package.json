@@ -15,7 +15,9 @@
     "test:e2e": "playwright test",
     "api:generate": "node ./scripts/generate-api-client.js",
     "env:init": "node ./scripts/generate-env.js",
-    "env:init:force": "node ./scripts/generate-env.js --overwrite"
+    "env:init:force": "node ./scripts/generate-env.js --overwrite",
+    "env:init:secrets": "node ./scripts/generate-env.js --secrets-only",
+    "env:init:secrets:force": "node ./scripts/generate-env.js --secrets-only --overwrite"
   },
   "overrides": {
     "openapi-typescript": {
