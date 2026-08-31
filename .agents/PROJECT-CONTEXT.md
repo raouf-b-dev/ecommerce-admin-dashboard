@@ -61,7 +61,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 10. Existing writes (product delete, user activate, roles UI)
 11. API gaps then SPA (product activate, assign role)
 12. Payments ops (optional; does not block the release gate)
-13. Release gate (hosted deploy / stranger quick start) — after Phases 9–11, not after Phase 8
+13. Release gate (hosted deploy / stranger quick start): after Phases 9–11, not after Phase 8
 
 Prefer API **Phase 14c** (OpenAPI truthfulness) before admin Phase 9. Prefer API **Phase 14d** before admin Phase 11. Those phases live in the API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 

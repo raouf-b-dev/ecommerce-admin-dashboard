@@ -35,11 +35,11 @@ Keep cross-feature primitives in `src/components/` (including `feedback/` for li
 
 Cross-feature layout lives in `src/components/layout/`:
 
-- `app-layout.tsx` — `h-screen overflow-hidden` grid; skip link to `#main`; scroll only on `<main>`
-- `app-sidebar.tsx` — branding (not an `h1`) + `NavLink` items from `src/app/navigation.ts`
-- `app-header.tsx` — header chrome + mobile menu trigger
-- `mobile-nav.tsx` — shadcn `Sheet` for `<lg` viewports; include `SheetTitle` for a11y
-- `page-header.tsx` — page title is the `h1` (+ description and optional actions)
+- `app-layout.tsx`: `h-screen overflow-hidden` grid; skip link to `#main`; scroll only on `<main>`
+- `app-sidebar.tsx`: branding (not an `h1`) + `NavLink` items from `src/app/navigation.ts`
+- `app-header.tsx`: header chrome + mobile menu trigger
+- `mobile-nav.tsx`: shadcn `Sheet` for `<lg` viewports; include `SheetTitle` for a11y
+- `page-header.tsx`: page title is the `h1` (+ description and optional actions)
 
 Nav config is centralized in `src/app/navigation.ts` with optional `permission` per item (filtered by session claims).
 
@@ -49,7 +49,7 @@ Active nav styling uses React Router `NavLink` with a `className` callback and `
 
 Each route gets one exported page component under `src/features/<name>/pages/<name>-page.tsx`.
 
-Pages compose layout sections and feature components. They do not contain API logic directly — use feature hooks and query helpers.
+Pages compose layout sections and feature components. They do not contain API logic directly: use feature hooks and query helpers.
 
 Register pages in `src/app/router.tsx` with a single import; do not define page JSX inline in the router.
 
@@ -152,7 +152,7 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 
 - Naming: `ADR-XXXX-[short-title].md` (4-digit zero-padded).
 - **Body is immutable.** Do not rewrite Context, Decisions, Alternatives, or Consequences on an existing ADR.
-- **Status (and supersede links) may change** in the file header and index only — e.g. set `Superseded` and `Superseded By: ADR-XXXX` when a later ADR fully replaces it.
+- **Status (and supersede links) may change** in the file header and index only: e.g. set `Superseded` and `Superseded By: ADR-XXXX` when a later ADR fully replaces it.
 - Extending a decision (prior ADR still stands) → new ADR with `Does not supersede`; leave the prior ADR `Accepted`.
 - Full replacement → new ADR with `Supersedes`; mark the old ADR `Superseded` (header Status + index). Never rewrite the old Decisions.
 - Lifecycle: `Proposed` | `Accepted` | `Deprecated` | `Superseded`.

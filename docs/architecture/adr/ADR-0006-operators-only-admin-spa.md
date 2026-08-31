@@ -33,11 +33,11 @@ Hardcoding allowed role codes (`SUPER_ADMIN` | `ADMIN`) would block future custo
 
 ## 3. Alternatives Considered
 
-1. **Hardcode `SUPER_ADMIN` / `ADMIN` role codes** — Rejected: couples the SPA to system role names; blocks custom operator roles.
-2. **Admit if any `view_all_*` is present** — Rejected: conflates domain read access with SPA admission.
-3. **`view_admin_dashboard` / `manage_admin_dashboard` pair** — Deferred: one admission permission is enough; domain pages already use `view_*` / `manage_*`.
-4. **Nav filtering only** — Rejected: customers still entered the shell.
-5. **Reuse `ForbiddenPage` inside the shell** — Rejected: that page links back to dashboard and assumes shell chrome.
+1. **Hardcode `SUPER_ADMIN` / `ADMIN` role codes**: Rejected: couples the SPA to system role names; blocks custom operator roles.
+2. **Admit if any `view_all_*` is present**: Rejected: conflates domain read access with SPA admission.
+3. **`view_admin_dashboard` / `manage_admin_dashboard` pair**: Deferred: one admission permission is enough; domain pages already use `view_*` / `manage_*`.
+4. **Nav filtering only**: Rejected: customers still entered the shell.
+5. **Reuse `ForbiddenPage` inside the shell**: Rejected: that page links back to dashboard and assumes shell chrome.
 
 ## 4. Consequences
 

@@ -21,9 +21,9 @@ Seeded and bootstrap credentials require mandatory password rotation before norm
 
 ## 3. Alternatives Considered
 
-1. **Embed change-password inside `AppLayout`** — Rejected: exposes navigation chrome and implies access to domain areas before rotation.
-2. **Public change-password route** — Rejected: change-password requires an authenticated session and current password verification.
-3. **Client-only gate without API enforcement** — Rejected: API hard gate is required; client routing is UX only (see ADR-0003).
+1. **Embed change-password inside `AppLayout`**: Rejected: exposes navigation chrome and implies access to domain areas before rotation.
+2. **Public change-password route**: Rejected: change-password requires an authenticated session and current password verification.
+3. **Client-only gate without API enforcement**: Rejected: API hard gate is required; client routing is UX only (see ADR-0003).
 
 ## 4. Consequences
 

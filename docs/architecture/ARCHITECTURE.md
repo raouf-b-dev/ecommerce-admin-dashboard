@@ -44,10 +44,10 @@ flowchart TD
   Submit --> Shell
 ```
 
-- `/login` — sole public route; no admin chrome
-- Shell routes — `ProtectedRoute` → `RequirePasswordChanged` → `OperatorRoute` → `AppLayout` → feature page
-- `OperatorRoute` — requires `access_admin` ([ADR-0006](adr/ADR-0006-operators-only-admin-spa.md))
-- `PermissionRoute` — optional route-level 403 UX inside the shell (Dashboard/Orders require `view_all_orders`)
+- `/login`: sole public route; no admin chrome
+- Shell routes: `ProtectedRoute` → `RequirePasswordChanged` → `OperatorRoute` → `AppLayout` → feature page
+- `OperatorRoute`: requires `access_admin` ([ADR-0006](adr/ADR-0006-operators-only-admin-spa.md))
+- `PermissionRoute`: optional route-level 403 UX inside the shell (Dashboard/Orders require `view_all_orders`)
 
 ## Auth and session flow
 
@@ -101,10 +101,10 @@ Rationale: [ADR-0007](adr/ADR-0007-auth-response-permissions-for-chrome.md) (sup
 
 ## Data flow
 
-- **Server state** — TanStack Query in feature hooks; TkDodo query-key factories (`all` / `lists()` / `list(filters)` / `details()` / `detail(id)`)
-- **API calls** — `apiClient` wrapper over generated OpenAPI types
-- **Forms** — React Hook Form + Zod aligned to API DTOs
-- **No client domain engine** — business rules stay in the API
+- **Server state**: TanStack Query in feature hooks; TkDodo query-key factories (`all` / `lists()` / `list(filters)` / `details()` / `detail(id)`)
+- **API calls**: `apiClient` wrapper over generated OpenAPI types
+- **Forms**: React Hook Form + Zod aligned to API DTOs
+- **No client domain engine**: business rules stay in the API
 
 ## Source layout
 
@@ -118,7 +118,7 @@ src/
 ├── features/
 │   └── <name>/
 │       ├── api/          # thin OpenAPI wrappers
-│       ├── hooks/        # TanStack Query (auth has none — session is in lib/auth)
+│       ├── hooks/        # TanStack Query (auth has none: session is in lib/auth)
 │       ├── components/
 │       ├── pages/        # route entry components
 │       ├── lib/          # URL filters, pure helpers

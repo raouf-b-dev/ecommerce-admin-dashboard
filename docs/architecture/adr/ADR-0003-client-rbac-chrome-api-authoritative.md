@@ -1,4 +1,4 @@
-# ADR-0003: Client RBAC Chrome — API Authoritative
+# ADR-0003: Client RBAC Chrome: API Authoritative
 
 - **Status**: Superseded
 - **Superseded By**: [ADR-0007](ADR-0007-auth-response-permissions-for-chrome.md)
@@ -23,9 +23,9 @@ JWT access tokens carry `role` but not individual permission codes. The API reso
 
 ## 3. Alternatives Considered
 
-1. **Decode permissions from JWT** — Not available in current API token payload.
-2. **Fetch `/roles` for every session** — Rejected for v1: requires `manage_roles`, which administrators lack by design.
-3. **Show all nav items always** — Rejected: poor UX; operators click into guaranteed 403s.
+1. **Decode permissions from JWT**: Not available in current API token payload.
+2. **Fetch `/roles` for every session**: Rejected for v1: requires `manage_roles`, which administrators lack by design.
+3. **Show all nav items always**: Rejected: poor UX; operators click into guaranteed 403s.
 
 ## 4. Consequences
 

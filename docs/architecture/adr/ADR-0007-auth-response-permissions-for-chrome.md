@@ -41,10 +41,10 @@ Nav filtering, `PermissionRoute`, and “API responses are authoritative” from
 
 ## 3. Alternatives Considered
 
-1. **Keep ADR-0003 UX system-role map** — Rejected: custom `access_admin` roles could not enter; map drifted from API.
-2. **Put permission codes in the JWT** — Deferred: larger token surface; auth response array is enough for chrome.
-3. **Fetch `/roles` (or a profile endpoint) on every session for permissions** — Rejected for chrome: auth already returns the live set; `/roles` remains for name/filter UX only.
-4. **Amend ADR-0003 / ADR-0006 bodies in place** — Rejected: ADR bodies are immutable ([CONVENTIONS.md](../../ai/CONVENTIONS.md) §14).
+1. **Keep ADR-0003 UX system-role map**: Rejected: custom `access_admin` roles could not enter; map drifted from API.
+2. **Put permission codes in the JWT**: Deferred: larger token surface; auth response array is enough for chrome.
+3. **Fetch `/roles` (or a profile endpoint) on every session for permissions**: Rejected for chrome: auth already returns the live set; `/roles` remains for name/filter UX only.
+4. **Amend ADR-0003 / ADR-0006 bodies in place**: Rejected: ADR bodies are immutable ([CONVENTIONS.md](../../ai/CONVENTIONS.md) §14).
 
 ## 4. Consequences
 
