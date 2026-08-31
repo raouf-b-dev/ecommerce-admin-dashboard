@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from './helpers/auth';
+import { loginAsAdmin, adminNav } from './helpers/auth';
 
 test('inventory list opens after login', async ({ page }) => {
   test.skip(
@@ -9,7 +9,7 @@ test('inventory list opens after login', async ({ page }) => {
 
   await loginAsAdmin(page);
 
-  await page.getByRole('link', { name: 'Inventory' }).click();
+  await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
     timeout: 15_000,
   });

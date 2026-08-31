@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from './helpers/auth';
+import { loginAsAdmin, adminNav } from './helpers/auth';
 
 test('products list opens create and edit', async ({ page }) => {
   test.skip(
@@ -9,7 +9,7 @@ test('products list opens create and edit', async ({ page }) => {
 
   await loginAsAdmin(page);
 
-  await page.getByRole('link', { name: 'Products' }).click();
+  await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
     timeout: 15_000,
   });
@@ -21,7 +21,7 @@ test('products list opens create and edit', async ({ page }) => {
   await expect(page.getByLabel('Name')).toBeVisible();
   await expect(page.getByLabel('Price')).toBeVisible();
 
-  await page.getByRole('link', { name: 'Products' }).click();
+  await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
 
   const editLink = page.getByRole('link', { name: 'Edit' }).first();

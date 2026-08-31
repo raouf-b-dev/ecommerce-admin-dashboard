@@ -74,6 +74,9 @@ test.describe('Forced password change', () => {
 
     expect(outcome).toBe('change');
 
+    await expect(page.getByText(`Signed in as ${email}`)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
+
     await page.getByLabel('Current password').fill(password!);
     await page.getByLabel('New password', { exact: true }).fill(newPassword!);
     await page.getByLabel('Confirm new password').fill(newPassword!);

@@ -14,26 +14,34 @@ Typical shape:
 
 ```text
 src/features/products/
-  api/
-  components/
-  hooks/
-  schemas/
-  types/
+  api/          # OpenAPI wrappers only
+  hooks/        # TanStack Query
+  components/   # feature UI
+  pages/        # one route entry each
+  lib/          # URL filters, pure helpers
+  schemas/      # Zod (when there is a form)
+  types.ts      # aliases to generated OpenAPI types
 ```
 
-Keep cross-feature primitives in `src/components/` and cross-feature utilities in `src/lib/`.
+Do **not** add barrel `index.ts` files. Import the concrete module.
+
+Optional folders: `schemas/` and `hooks/` exist only when the feature has forms or server queries.
+
+**Auth exception:** `features/auth` has no `hooks/`. Session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`). Do not invent `useAuthQuery` in the feature.
+
+Keep cross-feature primitives in `src/components/` (including `feedback/` for list query status) and cross-feature utilities in `src/lib/` (`format.ts`, API helpers, auth).
 
 ## 3. Layout and Shell
 
 Cross-feature layout lives in `src/components/layout/`:
 
-- `app-layout.tsx` — `h-screen overflow-hidden` grid; scroll only on `<main>`
-- `app-sidebar.tsx` — branding + `NavLink` items from `src/app/navigation.ts`
+- `app-layout.tsx` — `h-screen overflow-hidden` grid; skip link to `#main`; scroll only on `<main>`
+- `app-sidebar.tsx` — branding (not an `h1`) + `NavLink` items from `src/app/navigation.ts`
 - `app-header.tsx` — header chrome + mobile menu trigger
 - `mobile-nav.tsx` — shadcn `Sheet` for `<lg` viewports; include `SheetTitle` for a11y
-- `page-header.tsx` — reusable page title + description (+ optional actions slot)
+- `page-header.tsx` — page title is the `h1` (+ description and optional actions)
 
-Nav config is centralized in `src/app/navigation.ts` with optional `permission` per item (filtered by claims once auth is wired).
+Nav config is centralized in `src/app/navigation.ts` with optional `permission` per item (filtered by session claims).
 
 Active nav styling uses React Router `NavLink` with a `className` callback and `cn()`.
 
@@ -79,9 +87,23 @@ Rationale: [ADR-0007](../architecture/adr/ADR-0007-auth-response-permissions-for
 ## 7. Query and Mutation Rules
 
 - TanStack Query owns server-state caching.
-- Query keys should be stable tuples with the feature name first.
-- Mutation success handlers must invalidate or update the exact affected queries.
+- Use TkDodo query-key factories per feature (`all` / `lists()` / `list(filters)` / `details()` / `detail(id)`).
+- Mutation success handlers must invalidate `lists()` and `detail(id)`, plus `dashboardKeys.all` when widgets would go stale.
+- Handle `isError` in the page or widget. Do not set QueryClient `throwOnError` or wrap with `QueryErrorResetBoundary` (the dashboard is independent widgets).
 - Do not cache authorization assumptions separately from API-backed session state.
+
+Example:
+
+```ts
+export const productKeys = {
+  all: ['products'] as const,
+  lists: () => [...productKeys.all, 'list'] as const,
+  list: (filters: ProductListFilters) =>
+    [...productKeys.lists(), filters] as const,
+  details: () => [...productKeys.all, 'detail'] as const,
+  detail: (id: number | undefined) => [...productKeys.details(), id] as const,
+};
+```
 
 ## 8. Table Query Mapping
 
@@ -114,8 +136,9 @@ Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-h
 
 ## 12. Testing
 
-- Add component tests alongside the UI they cover.
-- Extend Playwright smoke when a feature joins the critical path.
+- Add component tests alongside the UI they cover (`components/__tests__/`).
+- Page composition tests (empty / error / retry) live under `pages/__tests__/`. Hook-mocked page specs are the intended pattern; do not rewrite them onto `QueryClientProvider` unless you are testing the hook itself.
+- Extend Playwright when a feature joins the critical path. The operator journey lives in `e2e/critical-path.spec.ts`.
 - Keep tests focused on user-visible behavior and contract wiring.
 
 ## 13. Documentation

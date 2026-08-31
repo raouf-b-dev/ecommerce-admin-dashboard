@@ -30,7 +30,7 @@
 
 ## What this is
 
-Vite + React app for store operators. Login, session handling, and permission-aware navigation are in place. Product, inventory, order, and user screens are wired to the API. Dashboard widgets remain Phase 7.
+Vite + React app for store operators. Login, session handling, and permission-aware navigation are in place. Product, inventory, order, user, and dashboard screens are wired to the API.
 
 The UI can hide nav items or show a forbidden page when a permission is missing. That is convenience only; the API still checks every request. There is no BFF: the browser calls the API with a typed OpenAPI client.
 
@@ -40,10 +40,10 @@ The same backend also powers the [customer storefront](https://github.com/raouf-
 
 | Topic | Status |
 | :---- | :----- |
-| Feature screens | Routes exist; CRUD is not wired yet. |
-| Dashboard | No summary widgets yet. |
-| Hosted demo | Local dev only. |
-| Analytics | Numbers will come from API read models when we build them. |
+| Feature screens | Auth, products, inventory, orders, users, and dashboard are wired to OpenAPI. |
+| Dashboard | Operational cockpit (analytics overview, revenue series, alerts, recent orders). |
+| Hosted demo | Local dev only (release-gate work). |
+| Roles admin | Settings stub; role writes are not a product surface yet. |
 
 ---
 
@@ -93,10 +93,10 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
-npm run test:e2e    # needs API + seed for login flows
+npm run test:e2e    # needs API + seed + E2E_ADMIN_* (see e2e/README.md)
 ```
 
-CI runs lint, typecheck, unit tests, and build on every push. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+Pull-request CI runs lint, typecheck, unit tests, build, and a production-dependency audit in parallel. Require the **CI Status Check** job in branch protection. Dependabot opens weekly update PRs ([`.github/dependabot.yml`](.github/dependabot.yml)). Playwright runs on `workflow_dispatch` and on push to `main`/`master`; that job fails if `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`e2e/README.md`](e2e/README.md).
 
 ---
 
@@ -122,6 +122,7 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 | Tables | TanStack Table |
 | Local UI state | React state; Zustand if several trees need the same UI state |
 | Forms | React Hook Form + Zod |
+| Charts | Recharts |
 | API | Typed OpenAPI client (`openapi-fetch`) |
 | Tests | Vitest, Testing Library, Playwright |
 
@@ -162,13 +163,14 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 ```
 src/
 ├── app/                  # router, navigation
-├── features/             # auth, products, orders, etc.
+├── features/             # auth, products, orders, dashboard, etc.
 ├── components/           # layout shell + shared UI
 ├── lib/
 │   ├── api/              # OpenAPI client, HTTP helpers
-│   └── auth/             # session, guards, AuthProvider
+│   ├── auth/             # session, guards, AuthProvider
+│   └── format.ts         # money/date helpers
 docs/                     # architecture, integration, conventions
-e2e/                      # Playwright
+e2e/                      # Playwright (journey, a11y, keyboard, feature specs)
 ```
 
 ---

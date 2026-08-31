@@ -1,8 +1,5 @@
 import { apiClient } from '@/lib/api/client';
-import {
-  readApiErrorFromResponse,
-  toApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   CreateProductDto,
   ListProductsQuery,
@@ -20,12 +17,7 @@ export async function listProductsRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load products',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load products');
   }
 
   return data;
@@ -39,12 +31,7 @@ export async function getProductRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load product',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load product');
   }
 
   return data;
@@ -58,10 +45,8 @@ export async function createProductRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
+    return await throwApiErrorFromResponse(
+      response,
       'Failed to create product',
     );
   }
@@ -79,12 +64,7 @@ export async function updateProductRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to update product',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to update product');
   }
 
   return data;

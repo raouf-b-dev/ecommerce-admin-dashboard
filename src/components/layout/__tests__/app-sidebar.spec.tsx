@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 
@@ -71,5 +72,20 @@ describe('AppSidebar', () => {
     expect(screen.getByRole('link', { name: 'Products' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Orders' })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Roles' })).not.toBeInTheDocument();
+  });
+
+  it('lets keyboard users tab to navigation links', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <AppSidebar />
+      </MemoryRouter>,
+    );
+
+    await user.tab();
+    expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole('link', { name: 'Products' })).toHaveFocus();
   });
 });

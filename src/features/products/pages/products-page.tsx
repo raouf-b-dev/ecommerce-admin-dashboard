@@ -1,9 +1,12 @@
 import { Link, useSearchParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+  QueryListRegion,
+  QueryStateAlert,
+} from '@/components/feedback/query-state';
 import { ProductsTable } from '@/features/products/components/products-table';
-import { useProductsQuery } from '@/features/products/hooks/use-products';
+import { useProductsListQuery } from '@/features/products/hooks/use-products';
 import {
   productListFiltersFromSearchParams,
   productListFiltersToSearchParams,
@@ -17,7 +20,7 @@ export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = productListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
-    useProductsQuery(filters);
+    useProductsListQuery(filters);
 
   function updateFilters(next: ProductListFilters) {
     setSearchParams(productListFiltersToSearchParams(next), { replace: true });
@@ -36,31 +39,21 @@ export function ProductsPage() {
         ) : null}
       </PageHeader>
 
-      {isError ? (
-        <Alert variant="destructive">
-          <AlertTitle>Could not load products</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof Error ? error.message : 'Unexpected error'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
+      <QueryStateAlert
+        isError={isError}
+        hasData={Boolean(data)}
+        error={error}
+        onRetry={() => refetch()}
+        resource="products"
+      />
 
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading products…</p>
-      ) : data ? (
-        <div
-          className={isFetching ? 'opacity-70 transition-opacity' : undefined}
-        >
+      <QueryListRegion
+        isLoading={isLoading}
+        isFetching={isFetching}
+        loadingLabel="Loading products…"
+        hasData={Boolean(data)}
+      >
+        {data ? (
           <ProductsTable
             items={data.items}
             total={data.total}
@@ -68,8 +61,8 @@ export function ProductsPage() {
             canManage={canManage}
             onFiltersChange={updateFilters}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </QueryListRegion>
     </div>
   );
 }

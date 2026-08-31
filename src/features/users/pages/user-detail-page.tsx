@@ -11,14 +11,8 @@ import {
 } from '@/features/users/lib/display-name';
 import { useAuth } from '@/lib/auth/auth-context';
 import { ApiRequestError } from '@/lib/api/parse-api-error';
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
-}
+import { formatDateTime } from '@/lib/format';
+import { QueryLoading } from '@/components/feedback/query-state';
 
 export function UserDetailPage() {
   const { hasPermission } = useAuth();
@@ -41,7 +35,7 @@ export function UserDetailPage() {
   }
 
   if (detailQuery.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading user…</p>;
+    return <QueryLoading>Loading user…</QueryLoading>;
   }
 
   if (detailQuery.isError || !detailQuery.data) {
@@ -114,11 +108,11 @@ export function UserDetailPage() {
         </div>
         <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Created</dt>
-          <dd className="text-sm">{formatDate(user.createdAt)}</dd>
+          <dd className="text-sm">{formatDateTime(user.createdAt)}</dd>
         </div>
         <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Updated</dt>
-          <dd className="text-sm">{formatDate(user.updatedAt)}</dd>
+          <dd className="text-sm">{formatDateTime(user.updatedAt)}</dd>
         </div>
       </dl>
     </div>

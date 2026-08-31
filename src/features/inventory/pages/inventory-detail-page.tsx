@@ -14,17 +14,11 @@ import {
   ApiRequestError,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
+import { formatDateTime } from '@/lib/format';
+import { QueryLoading } from '@/components/feedback/query-state';
 
 const CONFLICT_MESSAGE =
   'Stock was modified by another request. Latest values were reloaded — review and adjust again.';
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
-}
 
 export function InventoryDetailPage() {
   const { hasPermission } = useAuth();
@@ -62,9 +56,7 @@ export function InventoryDetailPage() {
   }
 
   if (detailQuery.isLoading) {
-    return (
-      <p className="text-sm text-muted-foreground">Loading inventory…</p>
-    );
+    return <QueryLoading>Loading inventory…</QueryLoading>;
   }
 
   if (detailQuery.isError) {
@@ -150,7 +142,7 @@ export function InventoryDetailPage() {
         </div>
         <div className="space-y-1 sm:col-span-2 lg:col-span-3">
           <dt className="text-sm text-muted-foreground">Updated</dt>
-          <dd className="text-sm">{formatDate(item.updatedAt)}</dd>
+          <dd className="text-sm">{formatDateTime(item.updatedAt)}</dd>
         </div>
       </dl>
 

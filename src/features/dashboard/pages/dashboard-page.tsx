@@ -104,7 +104,7 @@ export function DashboardPage() {
                 showLowStock={canInventory}
               />
               <div className="space-y-3">
-                <h3 className="text-sm font-medium">Needs attention</h3>
+                <h2 className="text-sm font-medium">Needs attention</h2>
                 <DashboardAttentionList
                   items={overviewQuery.data.ordersNeedingAttention}
                 />

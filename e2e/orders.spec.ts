@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from './helpers/auth';
+import { loginAsAdmin, adminNav } from './helpers/auth';
 
 test('orders list opens detail and can process a confirmed order', async ({
   page,
@@ -11,7 +11,7 @@ test('orders list opens detail and can process a confirmed order', async ({
 
   await loginAsAdmin(page);
 
-  await page.getByRole('link', { name: 'Orders' }).click();
+  await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
     timeout: 15_000,
   });
@@ -30,7 +30,7 @@ test('orders list opens detail and can process a confirmed order', async ({
 
   await viewLink.click();
   await expect(page).toHaveURL(/\/orders\/\d+/);
-  await expect(page.getByText('Status actions')).toBeVisible({
+  await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
     timeout: 15_000,
   });
 

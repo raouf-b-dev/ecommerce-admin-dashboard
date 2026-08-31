@@ -10,6 +10,8 @@ import {
   transitionOrderRequest,
 } from '@/features/orders/api/orders-api';
 import { getOrderPaymentRequest } from '@/features/orders/api/order-payments-api';
+import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
+import { orderKeys } from '@/features/orders/hooks/order-keys';
 import { normalizeOrderListFilters } from '@/features/orders/lib/order-list-filters';
 import type {
   OrderListFilters,
@@ -24,7 +26,7 @@ export function useOrdersListQuery(filters: Partial<OrderListFilters>) {
   const normalized = normalizeOrderListFilters(filters);
 
   return useQuery({
-    queryKey: ['orders', 'list', normalized],
+    queryKey: orderKeys.list(normalized),
     queryFn: () => listOrdersRequest(normalized),
     placeholderData: keepPreviousData,
   });
@@ -32,7 +34,7 @@ export function useOrdersListQuery(filters: Partial<OrderListFilters>) {
 
 export function useOrderDetailQuery(orderId: number | undefined) {
   return useQuery({
-    queryKey: ['orders', 'detail', orderId],
+    queryKey: orderKeys.detail(orderId),
     queryFn: () => getOrderRequest(orderId!),
     enabled: typeof orderId === 'number' && Number.isFinite(orderId),
   });
@@ -43,7 +45,7 @@ export function useOrderPaymentQuery(
   enabled: boolean,
 ) {
   return useQuery({
-    queryKey: ['orders', 'payment', orderId],
+    queryKey: orderKeys.payment(orderId),
     queryFn: () => getOrderPaymentRequest(orderId!),
     enabled:
       enabled && typeof orderId === 'number' && Number.isFinite(orderId),
@@ -58,23 +60,20 @@ export function useOrderTransition(orderId: number) {
       transitionOrderRequest(orderId, action),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['orders', 'list'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['orders', 'detail', orderId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['orders', 'payment', orderId],
-        }),
+        queryClient.invalidateQueries({ queryKey: orderKeys.lists() }),
+        queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) }),
+        queryClient.invalidateQueries({ queryKey: orderKeys.payment(orderId) }),
+        queryClient.invalidateQueries({ queryKey: dashboardKeys.all }),
       ]);
     },
     onError: async (error: Error) => {
       if (isOptimisticLockConflict(error as ApiRequestError)) {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: ['orders', 'detail', orderId],
+            queryKey: orderKeys.detail(orderId),
           }),
           queryClient.invalidateQueries({
-            queryKey: ['orders', 'payment', orderId],
+            queryKey: orderKeys.payment(orderId),
           }),
         ]);
       }

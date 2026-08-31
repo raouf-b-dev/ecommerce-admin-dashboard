@@ -23,28 +23,11 @@ import {
   ApiRequestError,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
+import { formatDateTime, formatMoney } from '@/lib/format';
+import { QueryLoading } from '@/components/feedback/query-state';
 
 const CONFLICT_MESSAGE =
   'Order was modified by another request. Latest values were reloaded — review and try again.';
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
-}
-
-function formatMoney(amount: number, currency: string) {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency,
-    }).format(amount);
-  } catch {
-    return `${amount} ${currency}`;
-  }
-}
 
 export function OrderDetailPage() {
   const { hasPermission } = useAuth();
@@ -83,7 +66,7 @@ export function OrderDetailPage() {
   }
 
   if (detailQuery.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading order…</p>;
+    return <QueryLoading>Loading order…</QueryLoading>;
   }
 
   if (detailQuery.isError || !detailQuery.data) {
@@ -137,7 +120,7 @@ export function OrderDetailPage() {
         </div>
         <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Created</dt>
-          <dd className="text-sm">{formatDate(order.createdAt)}</dd>
+          <dd className="text-sm">{formatDateTime(order.createdAt)}</dd>
         </div>
         <div className="space-y-1 sm:col-span-2 lg:col-span-3">
           <dt className="text-sm text-muted-foreground">Shipping address</dt>

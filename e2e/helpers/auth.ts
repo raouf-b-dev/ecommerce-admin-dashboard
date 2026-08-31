@@ -11,6 +11,10 @@ function shellMarker(page: Page) {
   return page.getByRole('button', { name: 'Log out' });
 }
 
+export function adminNav(page: Page) {
+  return page.getByRole('navigation', { name: 'Admin' });
+}
+
 async function submitCredentials(
   page: Page,
   email: string,

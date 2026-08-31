@@ -1,8 +1,4 @@
 import { apiClient } from '@/lib/api/client';
-import {
-  readApiErrorFromResponse,
-  toApiRequestError,
-} from '@/lib/api/parse-api-error';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   AdjustStockDto,
@@ -17,6 +13,7 @@ export async function listInventoryRequest(
   filters: Partial<InventoryListFilters>,
 ): Promise<PaginatedInventoryResponseDto> {
   const query = normalizeInventoryListFilters(filters);
+
   const { data, error, response } = await apiClient.GET('/v1/inventory', {
     params: {
       query: {
@@ -52,10 +49,8 @@ export async function getInventoryRequest(
   );
 
   if (error || !response.ok) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
+    return await throwApiErrorFromResponse(
+      response,
       'Failed to load inventory details',
     );
   }
@@ -76,12 +71,7 @@ export async function adjustStockRequest(
   );
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to adjust stock',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to adjust stock');
   }
 
   return data;

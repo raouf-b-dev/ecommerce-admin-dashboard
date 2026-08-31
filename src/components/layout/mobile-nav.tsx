@@ -22,7 +22,7 @@ export function MobileNav() {
           className="lg:hidden"
           aria-label="Open navigation menu"
         >
-          <Menu className="h-4 w-4" />
+          <Menu className="h-4 w-4" aria-hidden="true" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[260px] p-0">

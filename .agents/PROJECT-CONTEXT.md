@@ -38,7 +38,9 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `src/components/ui/` -> shadcn-style UI primitives
 - `src/features/` -> feature folders (`dashboard`, `products`, `orders`, `auth`, etc.)
 - `src/features/<name>/pages/` -> route entry components per feature
+- `src/features/<name>/hooks/` -> TanStack Query (auth has none; session is in `lib/auth`)
 - `src/lib/auth/` -> `AuthProvider`, route guards, permission helpers
+- `src/lib/format.ts` -> shared money/date formatting
 - `docs/architecture/` -> SPA architecture overview and ADRs
 - `src/lib/api/` -> generated schema and typed client wrapper
 - `src/test/` -> shared test setup
@@ -47,13 +49,21 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 
 ## Upcoming Feature Order
 
-1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done (Phase 2)**
-2. ~~Operator gate + silent refresh~~ **done (Phase 2.6)**
-3. ~~Products~~ **done (Phase 3)**
-4. ~~Inventory~~ **done (Phase 4)**
-5. ~~Orders~~ **done (Phase 5)**
-6. ~~Users~~ **done (Phase 6)**
-7. Dashboard
+1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done**
+2. ~~Operator gate + silent refresh~~ **done**
+3. ~~Products~~ **done**
+4. ~~Inventory~~ **done**
+5. ~~Orders~~ **done**
+6. ~~Users~~ **done**
+7. ~~Dashboard~~ **done**
+8. ~~Quality sweep (journey, a11y, consistency, CI e2e policy)~~ **done**
+9. Query parity (list filters/sort this API already accepts)
+10. Existing writes (product delete, user activate, roles UI)
+11. API gaps then SPA (product activate, assign role)
+12. Payments ops (optional; does not block the release gate)
+13. Release gate (hosted deploy / stranger quick start) — after Phases 9–11, not after Phase 8
+
+Prefer API **Phase 14c** (OpenAPI truthfulness) before admin Phase 9. Prefer API **Phase 14d** before admin Phase 11. Those phases live in the API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 
 Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for delivery plan and done criteria.
 

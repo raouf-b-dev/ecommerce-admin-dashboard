@@ -17,9 +17,9 @@ Backend context: [ecommerce-store-api ARCHITECTURE.md](https://github.com/raouf-
 | Boundary | Status changes, stock, refunds, and RBAC enforcement live in the API. |
 | Data access | Typed client from OpenAPI (`openapi-fetch` + generated schema). |
 | Client data | TanStack Query for lists, detail, and mutations. |
-| Tables | TanStack Table for admin grids (Phase 3+). |
+| Tables | TanStack Table for admin grids. |
 | Auth / RBAC UX | Hide or disable controls from claims; never treat that as security. |
-| Conflicts | Surface HTTP 409 so the operator can reload and retry (Phase 3+). |
+| Conflicts | Surface HTTP 409 so the operator can reload and retry. |
 
 ## App composition
 
@@ -101,7 +101,7 @@ Rationale: [ADR-0007](adr/ADR-0007-auth-response-permissions-for-chrome.md) (sup
 
 ## Data flow
 
-- **Server state** — TanStack Query in feature hooks; query keys start with feature name
+- **Server state** — TanStack Query in feature hooks; TkDodo query-key factories (`all` / `lists()` / `list(filters)` / `details()` / `detail(id)`)
 - **API calls** — `apiClient` wrapper over generated OpenAPI types
 - **Forms** — React Hook Form + Zod aligned to API DTOs
 - **No client domain engine** — business rules stay in the API
@@ -113,16 +113,21 @@ src/
 ├── app/                  # router.tsx, navigation.ts, app-level pages
 ├── components/
 │   ├── layout/           # AppLayout, sidebar, header, mobile nav
-│   └── ui/               # shadcn-style primitives
+│   ├── feedback/         # QueryState / list loading status
+│   └── ui/               # shadcn-style primitives + TablePagination
 ├── features/
 │   └── <name>/
 │       ├── api/          # thin OpenAPI wrappers
+│       ├── hooks/        # TanStack Query (auth has none — session is in lib/auth)
 │       ├── components/
 │       ├── pages/        # route entry components
-│       └── schemas/      # Zod aligned to DTOs
+│       ├── lib/          # URL filters, pure helpers
+│       ├── schemas/      # Zod aligned to DTOs (when there is a form)
+│       └── types.ts      # aliases to generated OpenAPI types
 ├── lib/
 │   ├── api/              # generated schema + apiClient middleware
-│   └── auth/             # AuthProvider, guards, permissions helpers
+│   ├── auth/             # AuthProvider, guards, permissions helpers
+│   └── format.ts         # money/date helpers (operator locale)
 docs/
 ├── architecture/         # this tree
 ├── API-INTEGRATION.md

@@ -5,6 +5,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  QueryListRegion,
+  QueryStateAlert,
+} from '@/components/feedback/query-state';
 import { UsersTable } from '@/features/users/components/users-table';
 import { useRolesListQuery } from '@/features/users/hooks/use-roles';
 import { useUsersListQuery } from '@/features/users/hooks/use-users';
@@ -152,52 +156,21 @@ export function UsersPage() {
         </Alert>
       ) : null}
 
-      {isError && !data ? (
-        <Alert variant="destructive">
-          <AlertTitle>Could not load users</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof Error ? error.message : 'Unexpected error'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
+      <QueryStateAlert
+        isError={isError}
+        hasData={Boolean(data)}
+        error={error}
+        onRetry={() => refetch()}
+        resource="users"
+      />
 
-      {isError && data ? (
-        <Alert>
-          <AlertTitle>Could not refresh users</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof Error
-                ? error.message
-                : 'Showing the last loaded results.'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading users…</p>
-      ) : data ? (
-        <div
-          className={isFetching ? 'opacity-70 transition-opacity' : undefined}
-        >
+      <QueryListRegion
+        isLoading={isLoading}
+        isFetching={isFetching}
+        loadingLabel="Loading users…"
+        hasData={Boolean(data)}
+      >
+        {data ? (
           <UsersTable
             items={data.items}
             total={data.total}
@@ -205,8 +178,8 @@ export function UsersPage() {
             roleNamesByCode={roleNamesByCode}
             onFiltersChange={updateFilters}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </QueryListRegion>
     </div>
   );
 }

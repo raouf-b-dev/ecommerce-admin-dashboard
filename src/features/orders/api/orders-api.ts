@@ -1,8 +1,4 @@
 import { apiClient } from '@/lib/api/client';
-import {
-  readApiErrorFromResponse,
-  toApiRequestError,
-} from '@/lib/api/parse-api-error';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   OrderDetailResponseDto,
@@ -47,12 +43,7 @@ export async function getOrderRequest(
   });
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to load order',
-    );
+    return await throwApiErrorFromResponse(response, 'Failed to load order');
   }
 
   return data;
@@ -96,10 +87,8 @@ export async function transitionOrderRequest(
   const { data, error, response } = await patchOrderTransition(orderId, action);
 
   if (error || !response.ok || !data) {
-    const parsed = response ? await readApiErrorFromResponse(response) : null;
-    throw toApiRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
+    return await throwApiErrorFromResponse(
+      response,
       `Failed to ${action} order`,
     );
   }
