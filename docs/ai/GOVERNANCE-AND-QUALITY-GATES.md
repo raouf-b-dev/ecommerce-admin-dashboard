@@ -10,7 +10,9 @@ The baseline gates for this repository (PR and the `ci` GitHub Actions job) are:
 - `npm run build`
 - `npm audit --omit=dev --audit-level=high`
 
-Those checks run as parallel jobs. Require **CI Status Check** (`ci`) in branch protection, not the individual job names. Pull requests also run GitHub Dependency Review (failure fails `ci`; skipped on push).
+Those checks run as parallel jobs. Require **CI Status Check** (`ci`) in branch protection, not the individual job names.
+
+Weekly Dependabot version updates (npm + GitHub Actions) live in [`.github/dependabot.yml`](../../.github/dependabot.yml). GitHub Dependency Review is not a gate here: it needs GitHub Advanced Security on a private repository.
 
 Prettier is installed for local formatting. `format:check` is not a merge gate.
 

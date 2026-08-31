@@ -96,7 +96,7 @@ npm run build
 npm run test:e2e    # needs API + seed + E2E_ADMIN_* (see e2e/README.md)
 ```
 
-Pull-request CI runs lint, typecheck, unit tests, build, and a production-dependency audit in parallel, plus GitHub Dependency Review. Require the **CI Status Check** job in branch protection. Playwright runs on `workflow_dispatch` and on push to `main`/`master`; that job fails if `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`e2e/README.md`](e2e/README.md).
+Pull-request CI runs lint, typecheck, unit tests, build, and a production-dependency audit in parallel. Require the **CI Status Check** job in branch protection. Dependabot opens weekly update PRs ([`.github/dependabot.yml`](.github/dependabot.yml)). Playwright runs on `workflow_dispatch` and on push to `main`/`master`; that job fails if `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`e2e/README.md`](e2e/README.md).
 
 ---
 
