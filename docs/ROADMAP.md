@@ -2,7 +2,7 @@
 
 > Delivery plan for the admin SPA. Work top to bottom.
 >
-> Companions: [README.md](../README.md), [API-INTEGRATION.md](API-INTEGRATION.md), [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api)., [ecommerce-store-web](https://github.com/raouf-b-dev/ecommerce-store-web).
+> Companions: [README.md](../README.md), [API-INTEGRATION.md](API-INTEGRATION.md), [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api), [ecommerce-store-web](https://github.com/raouf-b-dev/ecommerce-store-web).
 
 ---
 
@@ -11,7 +11,10 @@
 - `[ ]` not started
 - `[/]` in progress
 - `[x]` done
-- Finish each phase before starting the next. Phase 12 (payments) is optional: skip it or do it after Phase 13.
+- Finish each phase before starting the next.
+  - **Parallel Work Exceptions**: **Phase 8a** (MSW mock mode) and **Phase 13.5** (visual portfolio assets) are DX/showcase enablers that may run in parallel with API-contract Phases 9–11.
+  - **Phase 12.5** (UX, Theme, WebSockets) runs after core screens are stabilized in Phases 9–11.
+  - **Phase 12** (payments) is optional: skip it or do it after Phase 13.
 - Keep domain rules and auth enforcement in the API.
 - Contracts: live OpenAPI/Swagger + generated client. [API-INTEGRATION.md](API-INTEGRATION.md) is client rules only (not an endpoint list).
 
@@ -56,25 +59,28 @@ Write tests **with** each feature.
 
 ## Phase overview
 
-| Phase   | Name                            | Status | Focus                                                                  |
-| ------- | ------------------------------- | ------ | ---------------------------------------------------------------------- |
-| **0**   | Foundation                      | `[x]`  | Vite scaffold, tooling, tests, OpenAPI client                          |
-| **1**   | Agent ecosystem and conventions | `[x]`  | AGENT policy, context, AI docs, adapters                               |
-| **1.5** | Shell and page structure        | `[x]`  | Layout extraction, feature pages, responsive nav, auth route shape     |
-| **2**   | Auth and RBAC chrome            | `[x]`  | Login, permission-aware nav + tests                                    |
-| **2.5** | Forced password change          | `[x]`  | `/change-password`, session flag, API guard integration                |
-| **2.6** | Operator gate + silent refresh  | `[x]`  | Operators-only SPA; domain 401 one-shot refresh                        |
-| **3**   | Products                        | `[x]`  | Table/forms + tests                                                    |
-| **4**   | Inventory                       | `[x]`  | Stock views + tests                                                    |
-| **5**   | Orders                          | `[x]`  | Ops actions + tests                                                    |
-| **6**   | Users                           | `[x]`  | Read views + role filter + tests                                       |
-| **7**   | Dashboard                       | `[x]`  | Operational cockpit (analytics API + Recharts)                         |
-| **8**   | Quality sweep                   | `[x]`  | Journey, a11y, consistency, CI e2e policy                              |
-| **9**   | Query parity                    | `[ ]`  | Expose every list query param this API version already accepts         |
-| **10**  | Existing writes                 | `[ ]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI) |
-| **11**  | API gaps then SPA               | `[ ]`  | Product activate/deactivate + assign user role (API first)             |
-| **12**  | Payments ops                    | `[ ]`  | Optional; does not block the release gate                              |
-| **13**  | Release gate                    | `[ ]`  | Deploy after Phases 9–11; verified quick start                         |
+| Phase    | Name                               | Status | Priority | Focus                                                                           |
+| -------- | ---------------------------------- | ------ | :------: | ------------------------------------------------------------------------------- |
+| **0**    | Foundation                         | `[x]`  |    -     | Vite scaffold, tooling, tests, OpenAPI client                                   |
+| **1**    | Agent ecosystem and conventions    | `[x]`  |    -     | AGENT policy, context, AI docs, adapters                                        |
+| **1.5**  | Shell and page structure           | `[x]`  |    -     | Layout extraction, feature pages, responsive nav, auth route shape              |
+| **2**    | Auth and RBAC chrome               | `[x]`  |    -     | Login, permission-aware nav + tests                                             |
+| **2.5**  | Forced password change             | `[x]`  |    -     | `/change-password`, session flag, API guard integration                         |
+| **2.6**  | Operator gate + silent refresh     | `[x]`  |    -     | Operators-only SPA; domain 401 one-shot refresh                                 |
+| **3**    | Products                           | `[x]`  |    -     | Table/forms + tests                                                             |
+| **4**    | Inventory                          | `[x]`  |    -     | Stock views + tests                                                             |
+| **5**    | Orders                             | `[x]`  |    -     | Ops actions + tests                                                             |
+| **6**    | Users                              | `[x]`  |    -     | Read views + role filter + tests                                                |
+| **7**    | Dashboard                          | `[x]`  |    -     | Operational cockpit (analytics API + Recharts)                                  |
+| **8**    | Quality sweep                      | `[x]`  |    -     | Journey, a11y, consistency, CI e2e policy                                       |
+| **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
+| **9**    | Query parity                       | `[ ]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
+| **10**   | Existing writes                    | `[ ]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
+| **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first)                      |
+| **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
+| **12.5** | Operational UX & Real-Time Sync    | `[ ]`  |  `[P1]`  | **Polish**: Working Theme Provider, WebSocket live toasts, checklists, Cmd+K    |
+| **13**   | Technical release gate             | `[ ]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
+| **13.5** | Visual Showcase & Portfolio Assets | `[ ]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
 
 ---
 
@@ -361,7 +367,35 @@ Write tests **with** each feature.
 
 ---
 
-Phases 9–11 are **this API version**, not new product ideas. Prefer API **Phase 14c** (OpenAPI truthfulness) before regenerating for Phase 9. Prefer API **Phase 14d** before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
+## Phase 8a: Standalone Zero-Backend Preview (MSW Mock Mode) [P0]
+
+> **Goal**: Enable instant 30-second evaluation of the admin dashboard without requiring Docker, PostgreSQL, Redis, or API backend setup.
+>
+> *(Note: Non-blocking DX enabler. Can be executed in parallel with API-contract Phases 9–11).*
+
+**OpenAPI capabilities:** Mirrored mock handlers for `/v1/auth/*`, `/v1/admin/analytics/*`, `/v1/products`, `/v1/orders`, `/v1/inventory`, and `/v1/users`.
+
+### MSW Auth Strategy
+- Provide MSW handlers for `POST /v1/auth/login`, `POST /v1/auth/refresh`, and `POST /v1/auth/logout`.
+- Mock login accepts any password for `admin@ecommerce.local` (and provides a "Demo 1-Click Login" button on the login screen in mock mode).
+- Returns a mock RSA JWT token payload equipped with full operator permissions (`view_all_orders`, `view_all_inventory`, `view_all_payments`, `manage_products`, `manage_users`, `manage_roles`).
+
+### Scope:
+- [ ] Install Mock Service Worker (`msw`) as dev dependency.
+- [ ] Create mock API handlers in `src/lib/mock/handlers/` matching the OpenAPI contract.
+- [ ] Populate realistic seed datasets (15 products, multi-period revenue series, low stock alerts, pending orders).
+- [ ] Add `src/lib/mock/browser.ts` worker initialization.
+- [ ] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
+- [ ] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
+- [ ] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
+- [ ] Add `Dockerfile.quickstart` (multi-stage build with Nginx Alpine serving static SPA) for unified monorepo orchestration.
+
+**Done when:** Running `npm run dev:mock` allows anyone to log in, navigate all screens, interact with filters, and view analytics charts with zero backend running.
+**Location:** `src/lib/mock/`, `src/main.tsx`, `Dockerfile.quickstart`, `package.json`
+
+---
+
+Phases 9–11 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (activate/deactivate, role assignments) before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
 
 Phase 12 (payments) is optional and does **not** block Phase 13.
 
@@ -411,7 +445,7 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 11: API gaps, then SPA
 
-> Capabilities the domain already has but **HTTP does not**. Do this in `ecommerce-store-api` **Phase 14d** first, then regenerate the admin client.
+> Capabilities the domain already has but **HTTP does not**. Ensure these endpoints exist in `ecommerce-store-api` first, then regenerate the admin client.
 
 **API (required before any SPA toggle):**
 
@@ -446,19 +480,64 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ---
 
-## Phase 13: Release gate
+## Phase 12.5: Operational UX, Aesthetics & Real-Time Interaction [P1]
 
-> After Phases 9–11. Do **not** treat this as the next step after Phase 8. Optional Phase 12 may be skipped.
+> **Goal**: Transform the functional SPA into a responsive, polished operational cockpit with real-time feedback and guided workflows.
+
+**OpenAPI capabilities:** WebSocket gateway notifications (`orders.created`, `inventory.low_stock`).
+
+**Scope:**
+- [ ] **Working Theme Provider:** Replace the previously removed non-functional placeholder with an accessible Dark/Light/System theme provider linked to Tailwind CSS tokens and `localStorage` persistence.
+- [ ] **Real-Time WebSocket Feed:** Connect to API WebSocket gateway (`socket.io-client`). Show animated toast notifications and badge increments when new orders arrive or stock drops below threshold.
+- [ ] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
+- [ ] **Command Palette (`Cmd+K` / `Ctrl+K`) [P2]:** Fast keyboard search and quick navigation across products, orders, customers, and setting views.
+- [ ] **Visual Micro-Interactions & Trend Badges [P2]:** Add trend percentage pills (▲/▼ % vs previous period) on dashboard cards and animated skeleton loaders during query transitions.
+
+**Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
+**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`
+
+---
+
+## Phase 13: Technical Release Gate [P0]
+
+> **Goal**: Validate production readiness against a real backend after Phases 9–11. (Does not require external media tools).
 
 **Scope:**
 
 - [ ] Hosted static deploy against a configured API
-- [ ] README quick start on a clean machine
+- [ ] README quick start on a clean machine (`git clone` -> `npm run env:init` -> `npm run dev`)
 - [ ] Smoke checklist against seeded admin data
 - [ ] README + PROJECT-CONTEXT still accurate
 - [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`)
 
 **Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign): not the thin Phase 8 surface.
+
+---
+
+## Phase 13.5: Visual Showcase & Public Portfolio Assets [P0]
+
+> **Goal**: Create high-impact visual media assets and documentation hooks to demonstrate immediate value to stakeholders, hiring managers, and clients outside the code editor.
+>
+> *(Note: Initial recordings and screenshots can be captured early using `npm run dev:mock` from Phase 8a, then re-verified against live production data in Phase 13).*
+
+**Required Tools:** Screen recording software (CleanShot X / OBS / ScreenToGif / browser devtools), Image optimization CLI (`cwebp` / `squoosh`).
+
+**Scope (Step-by-Step Asset Creation):**
+- [ ] **Dashboard Hero Recording (Animated WebP / High-FPS GIF):** Record a 15-second walkthrough:
+  1. Instant login with prefilled operator credentials (or 1-click demo login).
+  2. Switching dashboard time range (7d -> 30d -> 90d) showing smooth Recharts re-render.
+  3. Filtering orders by status and adjusting inventory in a dialog modal.
+  4. Save as optimized WebP (< 2.5MB) in `docs/assets/dashboard-walkthrough.webp`.
+- [ ] **High-Resolution Static Screenshots (Retina 2x):**
+  1. `docs/assets/screenshot-dashboard-dark.png` (Operational pulse cockpit).
+  2. `docs/assets/screenshot-order-detail.png` (Order timeline and item status).
+  3. `docs/assets/screenshot-rbac-matrix.png` (Permission-aware UI in action).
+- [ ] **README Hero Overhaul:**
+  1. Embed the hero animation directly under the repository badges.
+  2. Add a 30-second "Quick Comparison: Why Choose This Admin Dashboard?" matrix.
+  3. Add a prominent "1-Click Live Demo" badge.
+
+**Done when:** All media files exist in `docs/assets/` and the README displays the interactive preview cleanly on GitHub.
 
 ---
 
