@@ -11,6 +11,8 @@ import {
 import { InventoryTable } from '@/features/inventory/components/inventory-table';
 import { useInventoryListQuery } from '@/features/inventory/hooks/use-inventory';
 import {
+  DEFAULT_INVENTORY_LIST_FILTERS,
+  hasActiveInventoryListFilters,
   inventoryListFiltersFromSearchParams,
   inventoryListFiltersToSearchParams,
 } from '@/features/inventory/lib/inventory-list-filters';
@@ -24,6 +26,9 @@ export function InventoryPage() {
 
   const [skuDraft, setSkuDraft] = useState(filters.sku ?? '');
   const [titleDraft, setTitleDraft] = useState(filters.productTitle ?? '');
+  const [productIdDraft, setProductIdDraft] = useState(
+    filters.productId !== undefined ? String(filters.productId) : '',
+  );
 
   function updateFilters(next: InventoryListFilters) {
     setSearchParams(inventoryListFiltersToSearchParams(next), {
@@ -33,11 +38,21 @@ export function InventoryPage() {
 
   function applyTextFilters(event: FormEvent) {
     event.preventDefault();
+    const productId = productIdDraft.trim()
+      ? Number(productIdDraft)
+      : undefined;
+
     updateFilters({
       ...filters,
       page: 1,
       sku: skuDraft.trim() || undefined,
       productTitle: titleDraft.trim() || undefined,
+      productId:
+        productId !== undefined &&
+        Number.isInteger(productId) &&
+        productId > 0
+          ? productId
+          : undefined,
     });
   }
 
@@ -53,6 +68,18 @@ export function InventoryPage() {
           className="flex flex-wrap items-end gap-4"
           onSubmit={applyTextFilters}
         >
+          <div className="space-y-2">
+            <Label htmlFor="inventory-product-id">Product ID</Label>
+            <Input
+              id="inventory-product-id"
+              type="number"
+              min={1}
+              step={1}
+              value={productIdDraft}
+              onChange={(e) => setProductIdDraft(e.target.value)}
+              className="w-32"
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="inventory-sku">SKU</Label>
             <Input
@@ -94,7 +121,39 @@ export function InventoryPage() {
           />
           <Label htmlFor="inventory-low-stock">Low stock only</Label>
         </div>
+
+        {hasActiveInventoryListFilters(filters) ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => updateFilters(DEFAULT_INVENTORY_LIST_FILTERS)}
+          >
+            Clear filters
+          </Button>
+        ) : null}
       </div>
+
+      {filters.productId ? (
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <span className="text-muted-foreground">
+            Filtered by product #{filters.productId}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              updateFilters({
+                ...filters,
+                page: 1,
+                productId: undefined,
+              })
+            }
+          >
+            Clear product filter
+          </Button>
+        </div>
+      ) : null}
 
       <QueryStateAlert
         isError={isError}

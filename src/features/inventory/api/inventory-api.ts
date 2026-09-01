@@ -7,25 +7,15 @@ import type {
   InventoryStockResponseDto,
   PaginatedInventoryResponseDto,
 } from '@/features/inventory/types';
-import { normalizeInventoryListFilters } from '@/features/inventory/lib/inventory-list-filters';
+import { normalizeInventoryListFilters, toInventoryListQuery } from '@/features/inventory/lib/inventory-list-filters';
 
 export async function listInventoryRequest(
   filters: Partial<InventoryListFilters>,
 ): Promise<PaginatedInventoryResponseDto> {
-  const query = normalizeInventoryListFilters(filters);
+  const query = toInventoryListQuery(normalizeInventoryListFilters(filters));
 
   const { data, error, response } = await apiClient.GET('/v1/inventory', {
-    params: {
-      query: {
-        page: query.page,
-        limit: query.limit,
-        sortBy: query.sortBy,
-        sortOrder: query.sortOrder,
-        ...(query.sku ? { sku: query.sku } : {}),
-        ...(query.productTitle ? { productTitle: query.productTitle } : {}),
-        ...(query.lowStockOnly ? { lowStockOnly: true } : {}),
-      },
-    },
+    params: { query },
   });
 
   if (error || !response.ok || !data) {
