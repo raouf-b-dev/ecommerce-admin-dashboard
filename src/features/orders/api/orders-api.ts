@@ -1,5 +1,9 @@
 import { apiClient } from '@/lib/api/client';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
+import {
+  normalizeOrderListFilters,
+  toOrdersListQuery,
+} from '@/features/orders/lib/order-list-filters';
 import type {
   OrderDetailResponseDto,
   OrderListFilters,
@@ -7,25 +11,13 @@ import type {
   OrderStatusAction,
   PaginatedOrdersResponseDto,
 } from '@/features/orders/types';
-import { normalizeOrderListFilters } from '@/features/orders/lib/order-list-filters';
 
 export async function listOrdersRequest(
   filters: Partial<OrderListFilters>,
 ): Promise<PaginatedOrdersResponseDto> {
-  const query = normalizeOrderListFilters(filters);
+  const query = toOrdersListQuery(normalizeOrderListFilters(filters));
   const { data, error, response } = await apiClient.GET('/v1/orders', {
-    params: {
-      query: {
-        page: query.page,
-        limit: query.limit,
-        sortBy: query.sortBy,
-        sortOrder: query.sortOrder,
-        ...(query.status ? { status: query.status } : {}),
-        ...(query.userId ? { userId: query.userId } : {}),
-        ...(query.userEmail ? { userEmail: query.userEmail } : {}),
-        ...(query.userName ? { userName: query.userName } : {}),
-      },
-    },
+    params: { query },
   });
 
   if (error || !response.ok || !data) {

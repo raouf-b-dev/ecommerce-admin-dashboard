@@ -4,6 +4,7 @@ import {
   normalizeOrderListFilters,
   orderListFiltersFromSearchParams,
   orderListFiltersToSearchParams,
+  toOrdersListQuery,
 } from '@/features/orders/lib/order-list-filters';
 
 describe('normalizeOrderListFilters', () => {
@@ -28,7 +29,7 @@ describe('normalizeOrderListFilters', () => {
 
 describe('orderListFiltersFromSearchParams', () => {
   it('parses URL params and defaults omitted values', () => {
-    expect(orderListFiltersFromSearchParams(new URLSearchParams())).toEqual(
+    expect(orderListFiltersFromSearchParams(new URLSearchParams())).toMatchObject(
       DEFAULT_ORDER_LIST_FILTERS,
     );
 
@@ -77,5 +78,35 @@ describe('orderListFiltersToSearchParams', () => {
         status: 'confirmed',
       }).toString(),
     ).toBe('page=2&status=confirmed');
+  });
+
+  it('serializes date and amount filters', () => {
+    const params = orderListFiltersToSearchParams({
+      ...DEFAULT_ORDER_LIST_FILTERS,
+      createdAfter: '2026-01-01',
+      createdBefore: '2026-01-31',
+      minAmount: 50,
+      maxAmount: 200,
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+    });
+
+    expect(params.get('createdAfter')).toBe('2026-01-01');
+    expect(params.get('createdBefore')).toBe('2026-01-31');
+    expect(params.get('minAmount')).toBe('50');
+    expect(params.get('maxAmount')).toBe('200');
+    expect(params.get('firstName')).toBe('Ada');
+    expect(params.get('lastName')).toBe('Lovelace');
+  });
+});
+
+describe('toOrdersListQuery', () => {
+  it('maps createdAfter to API start-of-day ISO', () => {
+    expect(
+      toOrdersListQuery({
+        ...DEFAULT_ORDER_LIST_FILTERS,
+        createdAfter: '2026-03-01',
+      }).createdAfter,
+    ).toBe('2026-03-01T00:00:00.000Z');
   });
 });

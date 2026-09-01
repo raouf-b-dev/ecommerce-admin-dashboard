@@ -26,6 +26,12 @@ export type OrderListFilters = {
   userId?: number;
   userEmail?: string;
   userName?: string;
+  firstName?: string;
+  lastName?: string;
+  createdAfter?: string;
+  createdBefore?: string;
+  minAmount?: number;
+  maxAmount?: number;
 };
 
 export type OrderStatusAction =
