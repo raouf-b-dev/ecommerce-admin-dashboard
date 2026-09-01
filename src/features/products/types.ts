@@ -20,4 +20,8 @@ export type ProductListFilters = {
   sortBy: NonNullable<ListProductsQuery['sortBy']>;
   sortOrder: NonNullable<ListProductsQuery['sortOrder']>;
   search?: string;
+  isActive?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  categoryId?: number;
 };

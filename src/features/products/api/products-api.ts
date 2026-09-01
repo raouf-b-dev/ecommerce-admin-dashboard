@@ -1,17 +1,19 @@
 import { apiClient } from '@/lib/api/client';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
+import { toProductsListQuery } from '@/features/products/lib/product-list-filters';
 import type {
   CreateProductDto,
-  ListProductsQuery,
   PaginatedProductsResponseDto,
   ProductDetailResponseDto,
+  ProductListFilters,
   ProductResponseDto,
   UpdateProductDto,
 } from '@/features/products/types';
 
 export async function listProductsRequest(
-  query: ListProductsQuery,
+  filters: ProductListFilters,
 ): Promise<PaginatedProductsResponseDto> {
+  const query = toProductsListQuery(filters);
   const { data, error, response } = await apiClient.GET('/v1/products', {
     params: { query },
   });
