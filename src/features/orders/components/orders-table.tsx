@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import {
   flexRender,
@@ -6,6 +7,7 @@ import {
   type ColumnDef,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
+import { SortableTableHead } from '@/components/ui/sortable-table-head';
 import {
   Table,
   TableBody,
@@ -17,6 +19,7 @@ import {
 import { TablePagination } from '@/components/ui/table-pagination';
 import { formatDateTime, formatMoney, formatStatusLabel } from '@/lib/format';
 import type {
+  ListOrdersQuery,
   OrderListFilters,
   OrderListItemResponseDto,
 } from '@/features/orders/types';
@@ -30,63 +33,77 @@ type OrdersTableProps = {
 
 const features = tableFeatures({});
 
+type OrderSortBy = NonNullable<ListOrdersQuery['sortBy']>;
+
 export function OrdersTable({
   items,
   total,
   filters,
   onFiltersChange,
 }: OrdersTableProps) {
-  const columns: ColumnDef<typeof features, OrderListItemResponseDto>[] = [
-    {
-      accessorKey: 'orderNumber',
-      header: 'Order',
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.orderNumber}</div>
-      ),
-    },
-    {
-      id: 'customer',
-      header: 'Customer',
-      cell: ({ row }) => (
-        <div>
-          <div>{row.original.userName}</div>
-          <div className="text-muted-foreground">{row.original.userEmail}</div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => (
-        <span className="capitalize">{formatStatusLabel(row.original.status)}</span>
-      ),
-    },
-    {
-      accessorKey: 'itemCount',
-      header: 'Items',
-      cell: ({ row }) => row.original.itemCount,
-    },
-    {
-      accessorKey: 'totalAmount',
-      header: 'Total',
-      cell: ({ row }) =>
-        formatMoney(row.original.totalAmount, row.original.currency),
-    },
-    {
-      accessorKey: 'createdAt',
-      header: 'Created',
-      cell: ({ row }) => formatDateTime(row.original.createdAt),
-    },
-    {
-      id: 'actions',
-      header: '',
-      cell: ({ row }) => (
-        <Button asChild variant="outline" size="sm">
-          <Link to={`/orders/${row.original.id}`}>View</Link>
-        </Button>
-      ),
-    },
-  ];
+  function handleSortChange(sortBy: OrderSortBy, sortOrder: 'asc' | 'desc') {
+    onFiltersChange({ ...filters, page: 1, sortBy, sortOrder });
+  }
+
+  const columns: ColumnDef<typeof features, OrderListItemResponseDto>[] =
+    useMemo(
+      () => [
+        {
+          accessorKey: 'orderNumber',
+          header: 'Order',
+          cell: ({ row }) => (
+            <div className="font-medium">{row.original.orderNumber}</div>
+          ),
+        },
+        {
+          id: 'customer',
+          header: 'Customer',
+          cell: ({ row }) => (
+            <div>
+              <div>{row.original.userName}</div>
+              <div className="text-muted-foreground">
+                {row.original.userEmail}
+              </div>
+            </div>
+          ),
+        },
+        {
+          accessorKey: 'status',
+          header: 'Status',
+          cell: ({ row }) => (
+            <span className="capitalize">
+              {formatStatusLabel(row.original.status)}
+            </span>
+          ),
+        },
+        {
+          accessorKey: 'itemCount',
+          header: 'Items',
+          cell: ({ row }) => row.original.itemCount,
+        },
+        {
+          accessorKey: 'totalAmount',
+          header: 'Total',
+          cell: ({ row }) =>
+            formatMoney(row.original.totalAmount, row.original.currency),
+        },
+        {
+          accessorKey: 'createdAt',
+          header: 'Created',
+          cell: ({ row }) => formatDateTime(row.original.createdAt),
+        },
+        {
+          id: 'actions',
+          header: '',
+          cell: ({ row }) => (
+            <Button asChild variant="outline" size="sm">
+              <Link to={`/orders/${row.original.id}`}>View</Link>
+            </Button>
+          ),
+        },
+      ],
+      [],
+    );
 
   const table = useTable({
     features,
@@ -99,20 +116,27 @@ export function OrdersTable({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableHead>Order</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Items</TableHead>
+              <SortableTableHead
+                label="Total"
+                sortKey="totalPrice"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <SortableTableHead
+                label="Created"
+                sortKey="createdAt"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead />
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (

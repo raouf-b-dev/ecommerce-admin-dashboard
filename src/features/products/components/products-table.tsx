@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import {
   flexRender,
@@ -6,6 +7,7 @@ import {
   type ColumnDef,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
+import { SortableTableHead } from '@/components/ui/sortable-table-head';
 import {
   Table,
   TableBody,
@@ -17,6 +19,7 @@ import {
 import { TablePagination } from '@/components/ui/table-pagination';
 import { formatDate, formatMoney } from '@/lib/format';
 import type {
+  ListProductsQuery,
   ProductListFilters,
   ProductListItemResponseDto,
 } from '@/features/products/types';
@@ -38,6 +41,8 @@ function nullableString(value: unknown): string {
   return '—';
 }
 
+type ProductSortBy = NonNullable<ListProductsQuery['sortBy']>;
+
 export function ProductsTable({
   items,
   total,
@@ -45,45 +50,54 @@ export function ProductsTable({
   canManage,
   onFiltersChange,
 }: ProductsTableProps) {
-  const columns: ColumnDef<typeof features, ProductListItemResponseDto>[] = [
-    {
-      accessorKey: 'name',
-      header: 'Name',
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.name}</div>
-      ),
-    },
-    {
-      accessorKey: 'sku',
-      header: 'SKU',
-      cell: ({ row }) => nullableString(row.original.sku),
-    },
-    {
-      accessorKey: 'price',
-      header: 'Price',
-      cell: ({ row }) => formatMoney(row.original.price, row.original.currency),
-    },
-    {
-      accessorKey: 'isActive',
-      header: 'Status',
-      cell: ({ row }) => (row.original.isActive ? 'Active' : 'Inactive'),
-    },
-    {
-      accessorKey: 'createdAt',
-      header: 'Created',
-      cell: ({ row }) => formatDate(row.original.createdAt),
-    },
-    {
-      id: 'actions',
-      header: '',
-      cell: ({ row }) =>
-        canManage ? (
-          <Button asChild variant="outline" size="sm">
-            <Link to={`/products/${row.original.id}/edit`}>Edit</Link>
-          </Button>
-        ) : null,
-    },
-  ];
+  function handleSortChange(sortBy: ProductSortBy, sortOrder: 'asc' | 'desc') {
+    onFiltersChange({ ...filters, page: 1, sortBy, sortOrder });
+  }
+
+  const columns: ColumnDef<typeof features, ProductListItemResponseDto>[] =
+    useMemo(
+      () => [
+        {
+          accessorKey: 'name',
+          header: 'Name',
+          cell: ({ row }) => (
+            <div className="font-medium">{row.original.name}</div>
+          ),
+        },
+        {
+          accessorKey: 'sku',
+          header: 'SKU',
+          cell: ({ row }) => nullableString(row.original.sku),
+        },
+        {
+          accessorKey: 'price',
+          header: 'Price',
+          cell: ({ row }) =>
+            formatMoney(row.original.price, row.original.currency),
+        },
+        {
+          accessorKey: 'isActive',
+          header: 'Status',
+          cell: ({ row }) => (row.original.isActive ? 'Active' : 'Inactive'),
+        },
+        {
+          accessorKey: 'createdAt',
+          header: 'Created',
+          cell: ({ row }) => formatDate(row.original.createdAt),
+        },
+        {
+          id: 'actions',
+          header: '',
+          cell: ({ row }) =>
+            canManage ? (
+              <Button asChild variant="outline" size="sm">
+                <Link to={`/products/${row.original.id}/edit`}>Edit</Link>
+              </Button>
+            ) : null,
+        },
+      ],
+      [canManage],
+    );
 
   const table = useTable({
     features,
@@ -96,20 +110,32 @@ export function ProductsTable({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
+            <TableRow>
+              <SortableTableHead
+                label="Name"
+                sortKey="name"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead>SKU</TableHead>
+              <SortableTableHead
+                label="Price"
+                sortKey="price"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead>Status</TableHead>
+              <SortableTableHead
+                label="Created"
+                sortKey="createdAt"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead />
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (

@@ -74,7 +74,7 @@ Write tests **with** each feature.
 | **7**    | Dashboard                          | `[x]`  |    -     | Operational cockpit (analytics API + Recharts)                                  |
 | **8**    | Quality sweep                      | `[x]`  |    -     | Journey, a11y, consistency, CI e2e policy                                       |
 | **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
-| **9**    | Query parity                       | `[ ]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
+| **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | `[ ]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
 | **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
@@ -411,14 +411,14 @@ Named fields below were true at planning time. On start, take the **current** li
 
 **Scope:**
 
-- [ ] **Products:** search box (name/SKU/description); `isActive`; `minPrice` / `maxPrice`; `categoryId` as a numeric filter until a categories list exists (do not invent a category picker)
-- [ ] Pass those params through `listProductsRequest` (extend `ProductListFilters`)
-- [ ] **Orders:** date range (`createdAfter` / `createdBefore`); `minAmount` / `maxAmount`; optional `firstName` / `lastName` if you keep `userName`
-- [ ] Pass those params through `listOrdersRequest` (today the client drops them even if they were in the URL)
-- [ ] **Inventory:** `productId` (e.g. from product/detail “view stock”)
-- [ ] Column-sort UI bound to existing `sortBy` / `sortOrder` on products, orders, inventory (still URL-as-source-of-truth)
-- [ ] Hide or relabel the Roles nav item until Phase 10 (stop advertising an empty page)
-- [ ] Tests: each new control updates the URL and the query key; empty filter result still shows the empty table
+- [x] **Products:** search box (name/SKU/description); `isActive`; `minPrice` / `maxPrice`; `categoryId` as a numeric filter until a categories list exists (do not invent a category picker)
+- [x] Pass those params through `listProductsRequest` (extend `ProductListFilters`)
+- [x] **Orders:** date range (`createdAfter` / `createdBefore`); `minAmount` / `maxAmount`; optional `firstName` / `lastName` if you keep `userName`
+- [x] Pass those params through `listOrdersRequest` (today the client drops them even if they were in the URL)
+- [x] **Inventory:** `productId` (e.g. from product/detail “view stock”)
+- [x] Column-sort UI bound to existing `sortBy` / `sortOrder` on products, orders, inventory (still URL-as-source-of-truth)
+- [x] Hide or relabel the Roles nav item until Phase 10 (stop advertising an empty page)
+- [x] Tests: each new control updates the URL and the query key; empty filter result still shows the empty table
 
 **Done when:** an operator can exercise every documented list query field from the UI; no client-side filtering of full pages.
 

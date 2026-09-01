@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ import {
   ApiRequestError,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
+import { useAuth } from '@/lib/auth/auth-context';
 
 const CONFLICT_MESSAGE =
   'This product was modified by another request. The form was reloaded with the latest data — review the values and save again.';
@@ -28,6 +29,8 @@ function nullableToOptionalString(value: unknown): string | undefined {
 
 export function ProductEditPage() {
   const navigate = useNavigate();
+  const { hasPermission } = useAuth();
+  const canViewInventory = hasPermission('view_all_inventory');
   const params = useParams();
   const id = Number(params.id);
   const validId = Number.isFinite(id) && id > 0;
@@ -114,7 +117,13 @@ export function ProductEditPage() {
       <PageHeader
         title="Edit product"
         description={`Update “${productQuery.data.name}”. Price is in major currency units.`}
-      />
+      >
+        {canViewInventory ? (
+          <Button asChild variant="outline">
+            <Link to={`/inventory?productId=${id}`}>View stock</Link>
+          </Button>
+        ) : null}
+      </PageHeader>
       <ProductForm
         mode="edit"
         defaultValues={defaultValues}

@@ -37,7 +37,7 @@ describe('inventoryListFiltersFromSearchParams', () => {
     expect(
       inventoryListFiltersFromSearchParams(
         new URLSearchParams(
-          'page=3&sku=ABC&lowStockOnly=true&sortBy=availableQuantity&sortOrder=asc',
+          'page=3&sku=ABC&lowStockOnly=true&sortBy=availableQuantity&sortOrder=asc&productId=7',
         ),
       ),
     ).toMatchObject({
@@ -47,6 +47,7 @@ describe('inventoryListFiltersFromSearchParams', () => {
       lowStockOnly: true,
       sortBy: 'availableQuantity',
       sortOrder: 'asc',
+      productId: 7,
     });
   });
 });

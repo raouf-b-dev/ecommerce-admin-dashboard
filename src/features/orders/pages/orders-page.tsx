@@ -11,6 +11,8 @@ import {
 import { OrdersTable } from '@/features/orders/components/orders-table';
 import { useOrdersListQuery } from '@/features/orders/hooks/use-orders';
 import {
+  DEFAULT_ORDER_LIST_FILTERS,
+  hasActiveOrderListFilters,
   ORDER_STATUS_OPTIONS,
   orderListFiltersFromSearchParams,
   orderListFiltersToSearchParams,
@@ -25,6 +27,20 @@ export function OrdersPage() {
 
   const [emailDraft, setEmailDraft] = useState(filters.userEmail ?? '');
   const [nameDraft, setNameDraft] = useState(filters.userName ?? '');
+  const [firstNameDraft, setFirstNameDraft] = useState(filters.firstName ?? '');
+  const [lastNameDraft, setLastNameDraft] = useState(filters.lastName ?? '');
+  const [createdAfterDraft, setCreatedAfterDraft] = useState(
+    filters.createdAfter ?? '',
+  );
+  const [createdBeforeDraft, setCreatedBeforeDraft] = useState(
+    filters.createdBefore ?? '',
+  );
+  const [minAmountDraft, setMinAmountDraft] = useState(
+    filters.minAmount !== undefined ? String(filters.minAmount) : '',
+  );
+  const [maxAmountDraft, setMaxAmountDraft] = useState(
+    filters.maxAmount !== undefined ? String(filters.maxAmount) : '',
+  );
 
   function updateFilters(next: OrderListFilters) {
     setSearchParams(orderListFiltersToSearchParams(next), { replace: true });
@@ -32,11 +48,30 @@ export function OrdersPage() {
 
   function applyTextFilters(event: FormEvent) {
     event.preventDefault();
+    const minAmount = minAmountDraft.trim()
+      ? Number(minAmountDraft)
+      : undefined;
+    const maxAmount = maxAmountDraft.trim()
+      ? Number(maxAmountDraft)
+      : undefined;
+
     updateFilters({
       ...filters,
       page: 1,
       userEmail: emailDraft.trim() || undefined,
       userName: nameDraft.trim() || undefined,
+      firstName: firstNameDraft.trim() || undefined,
+      lastName: lastNameDraft.trim() || undefined,
+      createdAfter: createdAfterDraft.trim() || undefined,
+      createdBefore: createdBeforeDraft.trim() || undefined,
+      minAmount:
+        minAmount !== undefined && Number.isFinite(minAmount)
+          ? minAmount
+          : undefined,
+      maxAmount:
+        maxAmount !== undefined && Number.isFinite(maxAmount)
+          ? maxAmount
+          : undefined,
     });
   }
 
@@ -59,7 +94,7 @@ export function OrdersPage() {
               value={emailDraft}
               onChange={(e) => setEmailDraft(e.target.value)}
               placeholder="Filter by email"
-              className="w-56"
+              className="w-48"
             />
           </div>
           <div className="space-y-2">
@@ -68,8 +103,70 @@ export function OrdersPage() {
               id="orders-name"
               value={nameDraft}
               onChange={(e) => setNameDraft(e.target.value)}
-              placeholder="Filter by name"
-              className="w-44"
+              placeholder="First or last"
+              className="w-40"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-first-name">First name</Label>
+            <Input
+              id="orders-first-name"
+              value={firstNameDraft}
+              onChange={(e) => setFirstNameDraft(e.target.value)}
+              className="w-36"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-last-name">Last name</Label>
+            <Input
+              id="orders-last-name"
+              value={lastNameDraft}
+              onChange={(e) => setLastNameDraft(e.target.value)}
+              className="w-36"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-created-after">Created after</Label>
+            <Input
+              id="orders-created-after"
+              type="date"
+              value={createdAfterDraft}
+              onChange={(e) => setCreatedAfterDraft(e.target.value)}
+              className="w-40"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-created-before">Created before</Label>
+            <Input
+              id="orders-created-before"
+              type="date"
+              value={createdBeforeDraft}
+              onChange={(e) => setCreatedBeforeDraft(e.target.value)}
+              className="w-40"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-min-amount">Min amount</Label>
+            <Input
+              id="orders-min-amount"
+              type="number"
+              min={0}
+              step="0.01"
+              value={minAmountDraft}
+              onChange={(e) => setMinAmountDraft(e.target.value)}
+              className="w-28"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orders-max-amount">Max amount</Label>
+            <Input
+              id="orders-max-amount"
+              type="number"
+              min={0}
+              step="0.01"
+              value={maxAmountDraft}
+              onChange={(e) => setMaxAmountDraft(e.target.value)}
+              className="w-28"
             />
           </div>
           <Button type="submit" variant="secondary">
@@ -99,6 +196,16 @@ export function OrdersPage() {
             ))}
           </select>
         </div>
+
+        {hasActiveOrderListFilters(filters) ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => updateFilters(DEFAULT_ORDER_LIST_FILTERS)}
+          >
+            Clear filters
+          </Button>
+        ) : null}
       </div>
 
       {filters.userId ? (

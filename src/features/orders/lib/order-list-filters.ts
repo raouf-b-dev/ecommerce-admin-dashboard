@@ -3,6 +3,11 @@ import type {
   OrderListFilters,
   OrderStatus,
 } from '@/features/orders/types';
+import {
+  parseNonNegativeNumber,
+  parsePositiveInt,
+  toApiDateStart,
+} from '@/lib/list-filters';
 
 export const DEFAULT_ORDER_LIST_FILTERS: OrderListFilters = {
   page: 1,
@@ -44,6 +49,8 @@ const SORT_ORDERS = [
   'desc',
 ] as const satisfies readonly NonNullable<ListOrdersQuery['sortOrder']>[];
 
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 function isOrderStatus(value: string | null): value is OrderStatus {
   return value !== null && (ORDER_STATUSES as readonly string[]).includes(value);
 }
@@ -62,6 +69,21 @@ function isSortOrder(
   return value !== null && (SORT_ORDERS as readonly string[]).includes(value);
 }
 
+function normalizeDateParam(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  if (DATE_ONLY_PATTERN.test(trimmed)) {
+    return trimmed;
+  }
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return undefined;
+  }
+  return trimmed;
+}
+
 export function normalizeOrderListFilters(
   input: Partial<OrderListFilters> = {},
 ): OrderListFilters {
@@ -77,14 +99,15 @@ export function normalizeOrderListFilters(
     sortBy: input.sortBy ?? DEFAULT_ORDER_LIST_FILTERS.sortBy,
     sortOrder: input.sortOrder ?? DEFAULT_ORDER_LIST_FILTERS.sortOrder,
     status: input.status,
-    userId:
-      typeof input.userId === 'number' &&
-      Number.isInteger(input.userId) &&
-      input.userId > 0
-        ? input.userId
-        : undefined,
+    userId: parsePositiveInt(input.userId),
     userEmail: input.userEmail?.trim() ? input.userEmail.trim() : undefined,
     userName: input.userName?.trim() ? input.userName.trim() : undefined,
+    firstName: input.firstName?.trim() ? input.firstName.trim() : undefined,
+    lastName: input.lastName?.trim() ? input.lastName.trim() : undefined,
+    createdAfter: normalizeDateParam(input.createdAfter),
+    createdBefore: normalizeDateParam(input.createdBefore),
+    minAmount: parseNonNegativeNumber(input.minAmount),
+    maxAmount: parseNonNegativeNumber(input.maxAmount),
   };
 }
 
@@ -97,8 +120,8 @@ export function orderListFiltersFromSearchParams(
   const sortOrder = params.get('sortOrder');
   const status = params.get('status');
   const userId = Number(params.get('userId') ?? '');
-  const userEmail = params.get('userEmail') ?? undefined;
-  const userName = params.get('userName') ?? undefined;
+  const minAmountParam = params.get('minAmount');
+  const maxAmountParam = params.get('maxAmount');
 
   return normalizeOrderListFilters({
     page: Number.isFinite(page) ? page : undefined,
@@ -107,8 +130,20 @@ export function orderListFiltersFromSearchParams(
     sortOrder: isSortOrder(sortOrder) ? sortOrder : undefined,
     status: isOrderStatus(status) ? status : undefined,
     userId: Number.isInteger(userId) && userId > 0 ? userId : undefined,
-    userEmail,
-    userName,
+    userEmail: params.get('userEmail') ?? undefined,
+    userName: params.get('userName') ?? undefined,
+    firstName: params.get('firstName') ?? undefined,
+    lastName: params.get('lastName') ?? undefined,
+    createdAfter: params.get('createdAfter') ?? undefined,
+    createdBefore: params.get('createdBefore') ?? undefined,
+    minAmount:
+      minAmountParam !== null && minAmountParam !== ''
+        ? Number(minAmountParam)
+        : undefined,
+    maxAmount:
+      maxAmountParam !== null && maxAmountParam !== ''
+        ? Number(maxAmountParam)
+        : undefined,
   });
 }
 
@@ -142,6 +177,68 @@ export function orderListFiltersToSearchParams(
   if (normalized.userName) {
     params.set('userName', normalized.userName);
   }
+  if (normalized.firstName) {
+    params.set('firstName', normalized.firstName);
+  }
+  if (normalized.lastName) {
+    params.set('lastName', normalized.lastName);
+  }
+  if (normalized.createdAfter) {
+    params.set('createdAfter', normalized.createdAfter);
+  }
+  if (normalized.createdBefore) {
+    params.set('createdBefore', normalized.createdBefore);
+  }
+  if (normalized.minAmount !== undefined) {
+    params.set('minAmount', String(normalized.minAmount));
+  }
+  if (normalized.maxAmount !== undefined) {
+    params.set('maxAmount', String(normalized.maxAmount));
+  }
 
   return params;
+}
+
+export function hasActiveOrderListFilters(filters: OrderListFilters): boolean {
+  const normalized = normalizeOrderListFilters(filters);
+  return Boolean(
+    normalized.status ||
+      normalized.userId ||
+      normalized.userEmail ||
+      normalized.userName ||
+      normalized.firstName ||
+      normalized.lastName ||
+      normalized.createdAfter ||
+      normalized.createdBefore ||
+      normalized.minAmount !== undefined ||
+      normalized.maxAmount !== undefined,
+  );
+}
+
+export function toOrdersListQuery(filters: OrderListFilters): ListOrdersQuery {
+  const normalized = normalizeOrderListFilters(filters);
+  return {
+    page: normalized.page,
+    limit: normalized.limit,
+    sortBy: normalized.sortBy,
+    sortOrder: normalized.sortOrder,
+    ...(normalized.status ? { status: normalized.status } : {}),
+    ...(normalized.userId ? { userId: normalized.userId } : {}),
+    ...(normalized.userEmail ? { userEmail: normalized.userEmail } : {}),
+    ...(normalized.userName ? { userName: normalized.userName } : {}),
+    ...(normalized.firstName ? { firstName: normalized.firstName } : {}),
+    ...(normalized.lastName ? { lastName: normalized.lastName } : {}),
+    ...(normalized.createdAfter
+      ? { createdAfter: toApiDateStart(normalized.createdAfter) }
+      : {}),
+    ...(normalized.createdBefore
+      ? { createdBefore: normalized.createdBefore }
+      : {}),
+    ...(normalized.minAmount !== undefined
+      ? { minAmount: normalized.minAmount }
+      : {}),
+    ...(normalized.maxAmount !== undefined
+      ? { maxAmount: normalized.maxAmount }
+      : {}),
+  };
 }

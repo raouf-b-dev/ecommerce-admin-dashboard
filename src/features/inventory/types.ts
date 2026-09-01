@@ -20,4 +20,5 @@ export type InventoryListFilters = {
   sku?: string;
   productTitle?: string;
   lowStockOnly?: boolean;
+  productId?: number;
 };

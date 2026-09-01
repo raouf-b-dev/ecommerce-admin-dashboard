@@ -2,6 +2,7 @@ import type {
   InventoryListFilters,
   ListInventoryQuery,
 } from '@/features/inventory/types';
+import { parsePositiveInt } from '@/lib/list-filters';
 
 export const DEFAULT_INVENTORY_LIST_FILTERS: InventoryListFilters = {
   page: 1,
@@ -55,6 +56,7 @@ export function normalizeInventoryListFilters(
       ? input.productTitle.trim()
       : undefined,
     lowStockOnly: input.lowStockOnly === true ? true : undefined,
+    productId: parsePositiveInt(input.productId),
   };
 }
 
@@ -68,6 +70,7 @@ export function inventoryListFiltersFromSearchParams(
   const sku = params.get('sku') ?? undefined;
   const productTitle = params.get('productTitle') ?? undefined;
   const lowStockOnly = params.get('lowStockOnly');
+  const productIdParam = params.get('productId');
 
   return normalizeInventoryListFilters({
     page: Number.isFinite(page) ? page : undefined,
@@ -77,6 +80,10 @@ export function inventoryListFiltersFromSearchParams(
     sku,
     productTitle,
     lowStockOnly: lowStockOnly === 'true' || lowStockOnly === '1',
+    productId:
+      productIdParam !== null && productIdParam !== ''
+        ? Number(productIdParam)
+        : undefined,
   });
 }
 
@@ -107,6 +114,41 @@ export function inventoryListFiltersToSearchParams(
   if (normalized.lowStockOnly) {
     params.set('lowStockOnly', 'true');
   }
+  if (normalized.productId !== undefined) {
+    params.set('productId', String(normalized.productId));
+  }
 
   return params;
+}
+
+export function hasActiveInventoryListFilters(
+  filters: InventoryListFilters,
+): boolean {
+  const normalized = normalizeInventoryListFilters(filters);
+  return Boolean(
+    normalized.sku ||
+      normalized.productTitle ||
+      normalized.lowStockOnly ||
+      normalized.productId !== undefined,
+  );
+}
+
+export function toInventoryListQuery(
+  filters: InventoryListFilters,
+): ListInventoryQuery {
+  const normalized = normalizeInventoryListFilters(filters);
+  return {
+    page: normalized.page,
+    limit: normalized.limit,
+    sortBy: normalized.sortBy,
+    sortOrder: normalized.sortOrder,
+    ...(normalized.sku ? { sku: normalized.sku } : {}),
+    ...(normalized.productTitle
+      ? { productTitle: normalized.productTitle }
+      : {}),
+    ...(normalized.lowStockOnly ? { lowStockOnly: true } : {}),
+    ...(normalized.productId !== undefined
+      ? { productId: normalized.productId }
+      : {}),
+  };
 }

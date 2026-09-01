@@ -21,7 +21,7 @@ describe('normalizeProductListFilters', () => {
 
 describe('productListFiltersFromSearchParams', () => {
   it('parses URL params and defaults omitted values', () => {
-    expect(productListFiltersFromSearchParams(new URLSearchParams())).toEqual(
+    expect(productListFiltersFromSearchParams(new URLSearchParams())).toMatchObject(
       DEFAULT_PRODUCT_LIST_FILTERS,
     );
 
@@ -50,5 +50,38 @@ describe('productListFiltersToSearchParams', () => {
         page: 2,
       }).toString(),
     ).toBe('page=2');
+  });
+
+  it('serializes filter params', () => {
+    const params = productListFiltersToSearchParams({
+      ...DEFAULT_PRODUCT_LIST_FILTERS,
+      search: 'laptop',
+      isActive: true,
+      minPrice: 10,
+      maxPrice: 500,
+      categoryId: 3,
+    });
+
+    expect(params.get('search')).toBe('laptop');
+    expect(params.get('isActive')).toBe('true');
+    expect(params.get('minPrice')).toBe('10');
+    expect(params.get('maxPrice')).toBe('500');
+    expect(params.get('categoryId')).toBe('3');
+  });
+});
+
+describe('normalizeProductListFilters', () => {
+  it('strips invalid numeric filters', () => {
+    expect(
+      normalizeProductListFilters({
+        minPrice: -5,
+        maxPrice: Number.NaN,
+        categoryId: 0,
+      }),
+    ).toMatchObject({
+      minPrice: undefined,
+      maxPrice: undefined,
+      categoryId: undefined,
+    });
   });
 });

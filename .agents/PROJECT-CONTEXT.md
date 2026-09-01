@@ -57,7 +57,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 6. ~~Users~~ **done**
 7. ~~Dashboard~~ **done**
 8. ~~Quality sweep (journey, a11y, consistency, CI e2e policy)~~ **done**
-9. Query parity (list filters/sort this API already accepts): regenerate the OpenAPI client before starting
+9. ~~Query parity (list filters/sort this API already accepts)~~ **done**
 10. Existing writes (product delete, user activate, roles UI)
 11. API gaps then SPA (product activate, assign role): ensure the API exposes those operations in OpenAPI first
 12. Payments ops (optional; does not block the release gate)

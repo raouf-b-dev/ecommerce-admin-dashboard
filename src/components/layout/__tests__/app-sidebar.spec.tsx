@@ -36,7 +36,7 @@ describe('AppSidebar', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Products' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Orders' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Roles' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Roles' })).not.toBeInTheDocument();
   });
 
   it('marks the current route as active', () => {

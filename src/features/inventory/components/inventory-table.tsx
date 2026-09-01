@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import {
   flexRender,
@@ -6,6 +7,7 @@ import {
   type ColumnDef,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
+import { SortableTableHead } from '@/components/ui/sortable-table-head';
 import {
   Table,
   TableBody,
@@ -19,6 +21,7 @@ import { formatDateTime } from '@/lib/format';
 import type {
   InventoryListFilters,
   InventoryListItemResponseDto,
+  ListInventoryQuery,
 } from '@/features/inventory/types';
 
 type InventoryTableProps = {
@@ -30,55 +33,68 @@ type InventoryTableProps = {
 
 const features = tableFeatures({});
 
+type InventorySortBy = NonNullable<ListInventoryQuery['sortBy']>;
+
 export function InventoryTable({
   items,
   total,
   filters,
   onFiltersChange,
 }: InventoryTableProps) {
-  const columns: ColumnDef<typeof features, InventoryListItemResponseDto>[] = [
-    {
-      accessorKey: 'sku',
-      header: 'SKU',
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.sku}</div>
-      ),
-    },
-    {
-      accessorKey: 'productTitle',
-      header: 'Product',
-      cell: ({ row }) => row.original.productTitle,
-    },
-    {
-      accessorKey: 'availableQuantity',
-      header: 'Available',
-      cell: ({ row }) => row.original.availableQuantity,
-    },
-    {
-      accessorKey: 'reservedQuantity',
-      header: 'Reserved',
-      cell: ({ row }) => row.original.reservedQuantity,
-    },
-    {
-      accessorKey: 'totalQuantity',
-      header: 'Total',
-      cell: ({ row }) => row.original.totalQuantity,
-    },
-    {
-      accessorKey: 'updatedAt',
-      header: 'Updated',
-      cell: ({ row }) => formatDateTime(row.original.updatedAt),
-    },
-    {
-      id: 'actions',
-      header: '',
-      cell: ({ row }) => (
-        <Button asChild variant="outline" size="sm">
-          <Link to={`/inventory/${row.original.productId}`}>View</Link>
-        </Button>
-      ),
-    },
-  ];
+  function handleSortChange(
+    sortBy: InventorySortBy,
+    sortOrder: 'asc' | 'desc',
+  ) {
+    onFiltersChange({ ...filters, page: 1, sortBy, sortOrder });
+  }
+
+  const columns: ColumnDef<typeof features, InventoryListItemResponseDto>[] =
+    useMemo(
+      () => [
+        {
+          accessorKey: 'sku',
+          header: 'SKU',
+          cell: ({ row }) => (
+            <div className="font-medium">{row.original.sku}</div>
+          ),
+        },
+        {
+          accessorKey: 'productTitle',
+          header: 'Product',
+          cell: ({ row }) => row.original.productTitle,
+        },
+        {
+          accessorKey: 'availableQuantity',
+          header: 'Available',
+          cell: ({ row }) => row.original.availableQuantity,
+        },
+        {
+          accessorKey: 'reservedQuantity',
+          header: 'Reserved',
+          cell: ({ row }) => row.original.reservedQuantity,
+        },
+        {
+          accessorKey: 'totalQuantity',
+          header: 'Total',
+          cell: ({ row }) => row.original.totalQuantity,
+        },
+        {
+          accessorKey: 'updatedAt',
+          header: 'Updated',
+          cell: ({ row }) => formatDateTime(row.original.updatedAt),
+        },
+        {
+          id: 'actions',
+          header: '',
+          cell: ({ row }) => (
+            <Button asChild variant="outline" size="sm">
+              <Link to={`/inventory/${row.original.productId}`}>View</Link>
+            </Button>
+          ),
+        },
+      ],
+      [],
+    );
 
   const table = useTable({
     features,
@@ -91,20 +107,33 @@ export function InventoryTable({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableHead>SKU</TableHead>
+              <TableHead>Product</TableHead>
+              <SortableTableHead
+                label="Available"
+                sortKey="availableQuantity"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead>Reserved</TableHead>
+              <SortableTableHead
+                label="Total"
+                sortKey="totalQuantity"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <SortableTableHead
+                label="Updated"
+                sortKey="updatedAt"
+                activeSortBy={filters.sortBy}
+                activeSortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+              />
+              <TableHead />
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
