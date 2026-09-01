@@ -12,7 +12,7 @@
 - `[/]` in progress
 - `[x]` done
 - Finish each phase before starting the next.
-  - **Parallel Work Exceptions**: **Phase 8a** (MSW mock mode) and **Phase 13.5** (visual portfolio assets) are DX/showcase enablers that may run in parallel with API-contract Phases 9–11.
+  - **Parallel Work Exceptions**: **Phase 8a** (MSW mock mode) and **Phase 13.5** (visual portfolio assets) are DX/showcase enablers that may run in parallel with Phases 9–11.
   - **Phase 12.5** (UX, Theme, WebSockets) runs after core screens are stabilized in Phases 9–11.
   - **Phase 12** (payments) is optional: skip it or do it after Phase 13.
 - Keep domain rules and auth enforcement in the API.
@@ -76,7 +76,7 @@ Write tests **with** each feature.
 | **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
 | **9**    | Query parity                       | `[ ]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | `[ ]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
-| **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first)                      |
+| **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[ ]`  |  `[P1]`  | **Polish**: Working Theme Provider, WebSocket live toasts, checklists, Cmd+K    |
 | **13**   | Technical release gate             | `[ ]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
@@ -199,7 +199,7 @@ Write tests **with** each feature.
 
 ## Phase 2.5: Forced password change
 
-> Requires API Phase 14b (`mustChangePassword` enforcement). Uses seeded accounts from API [`SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md).
+> Requires API `mustChangePassword` enforcement (discover in OpenAPI). Uses seeded accounts from API [`SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md).
 
 **Scope:**
 
@@ -395,7 +395,7 @@ Write tests **with** each feature.
 
 ---
 
-Phases 9–11 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (activate/deactivate, role assignments) before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
+Phases 9–11 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (product activate/deactivate, role assignments) in `ecommerce-store-api` before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
 
 Phase 12 (payments) is optional and does **not** block Phase 13.
 
@@ -445,13 +445,13 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 11: API gaps, then SPA
 
-> Capabilities the domain already has but **HTTP does not**. Ensure these endpoints exist in `ecommerce-store-api` first, then regenerate the admin client.
+> Capabilities the API domain may already model but **HTTP does not expose yet**. Ensure these endpoints exist in `ecommerce-store-api` and appear in OpenAPI first, then regenerate the admin client.
 
 **API (required before any SPA toggle):**
 
-- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the domain treats it as a dedicated action
-- [ ] Assign or replace a user’s role over HTTP (today `AssignRoleUseCase` is not on a controller)
-- [ ] OpenAPI + tests in the API repo; regenerate `schema.d.ts` here
+- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the API treats it as a dedicated action
+- [ ] Assign or replace a user’s role over HTTP
+- [ ] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
 
 **Admin SPA (after the API ships):**
 
