@@ -76,3 +76,16 @@ export function isOptimisticLockConflict(error: unknown): boolean {
     (error.statusCode === 409 || error.code === 'OPTIMISTIC_LOCK_CONFLICT')
   );
 }
+
+export function getErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof ApiRequestError) {
+    if (error.errors && error.errors.length > 0) {
+      return error.errors.join('. ');
+    }
+    if (error.message?.trim()) return error.message;
+  }
+  if (error instanceof Error && error.message?.trim()) {
+    return error.message;
+  }
+  return fallback;
+}
