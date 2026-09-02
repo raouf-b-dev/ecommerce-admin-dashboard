@@ -81,3 +81,35 @@ export async function deleteProductRequest(id: number): Promise<void> {
     return await throwApiErrorFromResponse(response, 'Failed to delete product');
   }
 }
+
+export async function activateProductRequest(id: number): Promise<void> {
+  const { error, response } = await apiClient.POST(
+    '/v1/products/{id}/activate',
+    {
+      params: { path: { id } },
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to activate product',
+    );
+  }
+}
+
+export async function deactivateProductRequest(id: number): Promise<void> {
+  const { error, response } = await apiClient.POST(
+    '/v1/products/{id}/deactivate',
+    {
+      params: { path: { id } },
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to deactivate product',
+    );
+  }
+}
