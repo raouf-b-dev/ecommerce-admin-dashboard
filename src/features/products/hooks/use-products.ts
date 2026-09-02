@@ -6,11 +6,13 @@ import {
 } from '@tanstack/react-query';
 import {
   createProductRequest,
+  deleteProductRequest,
   getProductRequest,
   listProductsRequest,
   updateProductRequest,
 } from '@/features/products/api/products-api';
 import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
+import { inventoryKeys } from '@/features/inventory/hooks/inventory-keys';
 import { productKeys } from '@/features/products/hooks/product-keys';
 import { normalizeProductListFilters } from '@/features/products/lib/product-list-filters';
 import type {
@@ -73,6 +75,22 @@ export function useUpdateProduct(id: number) {
           queryKey: productKeys.detail(id),
         });
       }
+    },
+  });
+}
+
+export function useDeleteProduct(id: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteProductRequest(id),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: productKeys.lists() }),
+        queryClient.removeQueries({ queryKey: productKeys.detail(id) }),
+        queryClient.invalidateQueries({ queryKey: dashboardKeys.all }),
+        queryClient.invalidateQueries({ queryKey: inventoryKeys.all }),
+      ]);
     },
   });
 }
