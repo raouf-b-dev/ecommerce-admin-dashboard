@@ -5,6 +5,7 @@ export type UserListItemResponseDto =
 export type UserDetailResponseDto =
   components['schemas']['UserDetailResponseDto'];
 export type UpdateUserDto = components['schemas']['UpdateUserDto'];
+export type AssignRoleDto = components['schemas']['AssignRoleDto'];
 export type PaginatedUsersResponseDto =
   components['schemas']['PaginatedUsersResponseDto'];
 
