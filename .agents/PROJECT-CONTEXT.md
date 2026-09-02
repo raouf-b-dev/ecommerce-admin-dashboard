@@ -58,12 +58,12 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 7. ~~Dashboard~~ **done**
 8. ~~Quality sweep (journey, a11y, consistency, CI e2e policy)~~ **done**
 9. ~~Query parity (list filters/sort this API already accepts)~~ **done**
-10. Existing writes (product delete, user activate, roles UI)
-11. API gaps then SPA (product activate, assign role): ensure the API exposes those operations in OpenAPI first
+10. ~~Existing writes (product delete, user activate, roles UI)~~ **done**
+11. ~~API gaps then SPA (product activate, assign role)~~ **done**
 12. Payments ops (optional; does not block the release gate)
 13. Release gate (hosted deploy / stranger quick start): after Phases 9–11, not after Phase 8
 
-Prefer accurate OpenAPI schemas in `ecommerce-store-api` before Phase 9 client regeneration. Prefer operator HTTP endpoints (product activate/deactivate, role assignment) in the API before Phase 11. Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
+Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 
 Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for this repo’s delivery plan and done criteria.
 

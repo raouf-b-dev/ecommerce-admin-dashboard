@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   activateUserRequest,
+  assignUserRoleRequest,
   deactivateUserRequest,
   getUserRequest,
   listUsersRequest,
@@ -8,7 +9,11 @@ import {
 } from '@/features/users/api/users-api';
 import { userKeys } from '@/features/users/hooks/user-keys';
 import { normalizeUserListFilters } from '@/features/users/lib/user-list-filters';
-import type { UpdateUserDto, UserListFilters } from '@/features/users/types';
+import type {
+  AssignRoleDto,
+  UpdateUserDto,
+  UserListFilters,
+} from '@/features/users/types';
 
 export function useUsersListQuery(filters: Partial<UserListFilters>) {
   const normalized = normalizeUserListFilters(filters);
@@ -62,6 +67,20 @@ export function useDeactivateUser(userId: number) {
 
   return useMutation({
     mutationFn: () => deactivateUserRequest(userId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
+        queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
+      ]);
+    },
+  });
+}
+
+export function useAssignUserRole(userId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: AssignRoleDto) => assignUserRoleRequest(userId, body),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),

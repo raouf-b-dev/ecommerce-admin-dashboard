@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
+  AssignRoleDto,
   PaginatedUsersResponseDto,
   UpdateUserDto,
   UserDetailResponseDto,
@@ -83,6 +84,23 @@ export async function deactivateUserRequest(userId: number): Promise<void> {
     return await throwApiErrorFromResponse(
       response,
       'Failed to deactivate user',
+    );
+  }
+}
+
+export async function assignUserRoleRequest(
+  userId: number,
+  body: AssignRoleDto,
+): Promise<void> {
+  const { error, response } = await apiClient.PUT('/v1/users/{id}/role', {
+    params: { path: { id: userId } },
+    body,
+  });
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to assign user role',
     );
   }
 }

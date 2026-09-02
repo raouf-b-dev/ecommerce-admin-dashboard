@@ -76,7 +76,7 @@ Write tests **with** each feature.
 | **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
 | **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | `[x]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
-| **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
+| **11**   | API gaps then SPA                  | `[x]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[ ]`  |  `[P1]`  | **Polish**: Working Theme Provider, WebSocket live toasts, checklists, Cmd+K    |
 | **13**   | Technical release gate             | `[ ]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
@@ -445,19 +445,19 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 11: API gaps, then SPA
 
-> Capabilities the API domain may already model but **HTTP does not expose yet**. Ensure these endpoints exist in `ecommerce-store-api` and appear in OpenAPI first, then regenerate the admin client.
+> Capabilities the API domain already modeled; HTTP now exposes dedicated product activate/deactivate and user role assignment. This phase wired those OpenAPI operations in the SPA.
 
 **API (required before any SPA toggle):**
 
-- [ ] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the API treats it as a dedicated action
-- [ ] Assign or replace a user’s role over HTTP
-- [ ] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
+- [x] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the API treats it as a dedicated action
+- [x] Assign or replace a user’s role over HTTP
+- [x] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
 
 **Admin SPA (after the API ships):**
 
-- [ ] Product status control on edit (and/or list row action)
-- [ ] User detail: change assigned role
-- [ ] Tests + Playwright
+- [x] Product status control on edit (and/or list row action)
+- [x] User detail: change assigned role
+- [x] Tests + Playwright
 
 **Done when:** an operator can take a product off the catalog and change a user’s role without SQL or seed scripts.
 

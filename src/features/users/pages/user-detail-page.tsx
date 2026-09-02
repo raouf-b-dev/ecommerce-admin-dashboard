@@ -8,8 +8,10 @@ import {
   toUpdateUserDto,
 } from '@/features/users/components/user-edit-form';
 import { UserStatusActions } from '@/features/users/components/user-status-actions';
+import { UserRoleActions } from '@/features/users/components/user-role-actions';
 import {
   useActivateUser,
+  useAssignUserRole,
   useDeactivateUser,
   useUpdateUser,
   useUserDetailQuery,
@@ -29,6 +31,7 @@ export function UserDetailPage() {
   const { hasPermission } = useAuth();
   const canViewOrders = hasPermission('view_all_orders');
   const canManageUsers = hasPermission('manage_users');
+  const canManageRoles = hasPermission('manage_roles');
   const params = useParams();
   const userId = Number(params.userId);
   const validId = Number.isInteger(userId) && userId > 0;
@@ -37,6 +40,7 @@ export function UserDetailPage() {
   const updateUser = useUpdateUser(userId);
   const activateUser = useActivateUser(userId);
   const deactivateUser = useDeactivateUser(userId);
+  const assignUserRole = useAssignUserRole(userId);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const editDefaults = useMemo(() => {
@@ -177,6 +181,27 @@ export function UserDetailPage() {
             }}
             onDeactivate={async () => {
               await deactivateUser.mutateAsync();
+            }}
+          />
+        </section>
+      ) : null}
+
+      {canManageRoles ? (
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-lg font-semibold">Assigned role</h2>
+            <p className="text-sm text-muted-foreground">
+              Replace this user's role. The API enforces who may assign roles.
+            </p>
+          </div>
+          <UserRoleActions
+            key={`${user.id}-${user.roleCode ?? ''}`}
+            currentRoleCode={user.roleCode ?? null}
+            roles={rolesQuery.data ?? []}
+            rolesLoading={rolesQuery.isLoading}
+            isPending={assignUserRole.isPending}
+            onAssign={async (roleCode) => {
+              await assignUserRole.mutateAsync({ roleCode });
             }}
           />
         </section>

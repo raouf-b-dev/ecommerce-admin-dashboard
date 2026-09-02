@@ -107,6 +107,10 @@ vi.mock('@/features/users/hooks/use-users', () => ({
     mutateAsync: vi.fn(),
     isPending: false,
   }),
+  useAssignUserRole: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
 }));
 
 vi.mock('@/features/roles/hooks/use-roles', () => ({
@@ -244,6 +248,89 @@ describe('UserDetailPage', () => {
       'href',
       '/orders?userId=3',
     );
+  });
+
+  it('shows profile and status actions for manage_users but not role assignment', () => {
+    authMock.mockReturnValue({
+      hasPermission: ((permission: string) =>
+        permission === 'view_all_users' ||
+        permission === 'view_all_orders' ||
+        permission === 'manage_users') as (permission: string) => boolean,
+    });
+    detailQueryMock.mockReturnValue({
+      data: {
+        id: 3,
+        firstName: 'Store',
+        lastName: 'Customer',
+        email: 'customer@store.local',
+        phone: null,
+        isActive: true,
+        roleCode: 'CUSTOMER',
+        addressCount: 1,
+        createdAt: '2025-10-31T10:00:00.000Z',
+        updatedAt: '2025-10-31T12:00:00.000Z',
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/users/3']}>
+        <Routes>
+          <Route path="/users/:userId" element={<UserDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Deactivate user' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Change role' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Assigned role')).not.toBeInTheDocument();
+  });
+
+  it('shows role assignment when manage_roles is granted', () => {
+    authMock.mockReturnValue({
+      hasPermission: ((permission: string) =>
+        permission === 'view_all_users' ||
+        permission === 'manage_roles') as (permission: string) => boolean,
+    });
+    detailQueryMock.mockReturnValue({
+      data: {
+        id: 3,
+        firstName: 'Store',
+        lastName: 'Customer',
+        email: 'customer@store.local',
+        phone: null,
+        isActive: true,
+        roleCode: 'CUSTOMER',
+        addressCount: 1,
+        createdAt: '2025-10-31T10:00:00.000Z',
+        updatedAt: '2025-10-31T12:00:00.000Z',
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/users/3']}>
+        <Routes>
+          <Route path="/users/:userId" element={<UserDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByLabelText('Assigned role')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Change role' })).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: 'Deactivate user' }),
+    ).not.toBeInTheDocument();
   });
 });
 
