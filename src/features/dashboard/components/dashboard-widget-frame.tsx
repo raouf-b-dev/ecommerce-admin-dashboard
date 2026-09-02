@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 
 type DashboardWidgetFrameProps = {
   title: string;
@@ -33,13 +33,7 @@ export function DashboardWidgetFrame({
         <Alert variant="destructive">
           <AlertTitle>Could not load {title.toLowerCase()}</AlertTitle>
           <AlertDescription className="flex flex-wrap items-center gap-3">
-            <span>
-              {error instanceof ApiRequestError
-                ? error.message
-                : error instanceof Error
-                  ? error.message
-                  : 'Request failed'}
-            </span>
+            <span>{getErrorMessage(error, 'Request failed')}</span>
             <Button type="button" variant="outline" size="sm" onClick={onRetry}>
               Retry
             </Button>

@@ -24,7 +24,8 @@ import {
   useUpdateRole,
 } from '@/features/roles/hooks/use-roles';
 import type { RoleResponseDto } from '@/features/roles/types';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { QueryLoading } from '@/components/feedback/query-state';
 import {
   Dialog,
@@ -56,9 +57,7 @@ export function RolesTable() {
       <Alert variant="destructive">
         <AlertTitle>Could not load roles</AlertTitle>
         <AlertDescription>
-          {rolesQuery.error instanceof ApiRequestError
-            ? rolesQuery.error.message
-            : 'Failed to load roles'}
+          {getErrorMessage(rolesQuery.error, 'Failed to load roles')}
         </AlertDescription>
       </Alert>
     );
@@ -73,12 +72,7 @@ export function RolesTable() {
           Create role
         </Button>
       </div>
-      {actionError ? (
-        <Alert variant="destructive">
-          <AlertTitle>Action failed</AlertTitle>
-          <AlertDescription>{actionError}</AlertDescription>
-        </Alert>
-      ) : null}
+      <ActionErrorAlert message={actionError} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -206,9 +200,7 @@ export function RolesTable() {
                   setDeleteTarget(null);
                 } catch (error) {
                   setActionError(
-                    error instanceof ApiRequestError
-                      ? error.message
-                      : 'Failed to delete role',
+                    getErrorMessage(error, 'Failed to delete role'),
                   );
                 }
               }}

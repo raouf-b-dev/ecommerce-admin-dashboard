@@ -20,7 +20,7 @@ import {
 import type { OrderStatusAction } from '@/features/orders/types';
 import { useAuth } from '@/lib/auth/auth-context';
 import {
-  ApiRequestError,
+  getErrorMessage,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
 import { formatDateTime, formatMoney } from '@/lib/format';
@@ -75,9 +75,7 @@ export function OrderDetailPage() {
         <AlertTitle>Could not load order</AlertTitle>
         <AlertDescription className="flex flex-wrap items-center gap-3">
           <span>
-            {detailQuery.error instanceof ApiRequestError
-              ? detailQuery.error.message
-              : 'Order not found'}
+            {getErrorMessage(detailQuery.error, 'Order not found')}
           </span>
           <Button
             type="button"

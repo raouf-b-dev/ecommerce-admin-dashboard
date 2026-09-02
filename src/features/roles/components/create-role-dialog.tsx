@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   PermissionCheckboxList,
   RoleCodeField,
@@ -21,7 +20,8 @@ import {
   type CreateRoleFormValues,
 } from '@/features/roles/schemas/role-form.schema';
 import { usePermissionsListQuery } from '@/features/roles/hooks/use-roles';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { QueryLoading } from '@/components/feedback/query-state';
 
 type CreateRoleDialogProps = {
@@ -51,11 +51,7 @@ export function CreateRoleDialog({
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : 'Failed to create role',
-      );
+      setErrorMessage(getErrorMessage(error, 'Failed to create role'));
     }
   }
 
@@ -113,12 +109,10 @@ export function CreateRoleDialog({
                 </p>
               ) : null}
             </div>
-            {errorMessage ? (
-              <Alert variant="destructive">
-                <AlertTitle>Could not create role</AlertTitle>
-                <AlertDescription>{errorMessage}</AlertDescription>
-              </Alert>
-            ) : null}
+            <ActionErrorAlert
+              title="Could not create role"
+              message={errorMessage}
+            />
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending ? 'Creating…' : 'Create role'}

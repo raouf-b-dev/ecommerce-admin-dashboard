@@ -70,6 +70,17 @@ Confirm version/conflict fields in OpenAPI for each write operation you use.
 | `429` | Retryable banner; keep last good list data when a refresh is rate-limited |
 | `5xx` | Retryable banner/toast |
 
+### Client layering
+
+| Layer | Use |
+| :---- | :-- |
+| `*-api.ts` | `throwApiErrorFromResponse` only — parse API bodies into `ApiRequestError` |
+| Queries | `QueryStateAlert` + `getErrorMessage` |
+| Dialogs / actions | `getErrorMessage` + `ActionErrorAlert` |
+| Forms | `applyApiFormErrors` + field `matchField`; skip inline error on `409` via `isOptimisticLockConflict` (parent reloads entity) |
+
+Helpers live in `src/lib/api/parse-api-error.ts`, `src/lib/api/form-api-errors.ts`, and `src/components/feedback/action-error-alert.tsx`.
+
 ## Capability areas (discover in OpenAPI)
 
 Concrete paths live in Swagger. Typical admin needs:

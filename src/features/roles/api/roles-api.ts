@@ -72,12 +72,12 @@ export async function listPermissionsRequest(): Promise<
 > {
   const { data, error, response } = await apiClient.GET('/v1/permissions');
 
-  if (error || !response.ok) {
+  if (error || !response.ok || !data) {
     return await throwApiErrorFromResponse(
       response,
       'Failed to load permissions',
     );
   }
 
-  return (data ?? []) as PermissionResponseDto[];
+  return data;
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ApiRequestError,
+  getErrorMessage,
   isOptimisticLockConflict,
   parseApiErrorBody,
 } from '@/lib/api/parse-api-error';
@@ -58,5 +59,51 @@ describe('isOptimisticLockConflict', () => {
 
   it('returns false for other errors', () => {
     expect(isOptimisticLockConflict(new Error('fail'))).toBe(false);
+  });
+});
+
+describe('getErrorMessage', () => {
+  it('joins validation errors for ApiRequestError', () => {
+    expect(
+      getErrorMessage(
+        new ApiRequestError({
+          statusCode: 400,
+          message: 'Validation failed',
+          errors: ['Code must be uppercase', 'Name is required'],
+        }),
+        'fallback',
+      ),
+    ).toBe('Code must be uppercase. Name is required');
+  });
+
+  it('returns message when no validation errors', () => {
+    expect(
+      getErrorMessage(
+        new ApiRequestError({
+          statusCode: 404,
+          message: 'Product not found',
+        }),
+        'fallback',
+      ),
+    ).toBe('Product not found');
+  });
+
+  it('returns plain Error message', () => {
+    expect(getErrorMessage(new Error('network down'), 'fallback')).toBe(
+      'network down',
+    );
+  });
+
+  it('returns fallback for unknown errors', () => {
+    expect(getErrorMessage('oops', 'fallback')).toBe('fallback');
+  });
+
+  it('returns fallback when ApiRequestError message is whitespace only', () => {
+    expect(
+      getErrorMessage(
+        new ApiRequestError({ statusCode: 500, message: '   ' }),
+        'fallback',
+      ),
+    ).toBe('fallback');
   });
 });

@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import type { ReactNode } from 'react';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 
 type QueryStateAlertProps = {
   isError: boolean;
@@ -21,12 +22,10 @@ export function QueryStateAlert({
     return null;
   }
 
-  const message =
-    error instanceof Error
-      ? error.message
-      : hasData
-        ? 'Showing the last loaded results.'
-        : 'Unexpected error';
+  const message = getErrorMessage(
+    error,
+    hasData ? 'Showing the last loaded results.' : 'Unexpected error',
+  );
 
   return (
     <Alert

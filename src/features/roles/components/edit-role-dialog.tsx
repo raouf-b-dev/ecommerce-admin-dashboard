@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   PermissionCheckboxList,
   RoleNameField,
@@ -21,7 +20,8 @@ import {
 } from '@/features/roles/schemas/role-form.schema';
 import { usePermissionsListQuery } from '@/features/roles/hooks/use-roles';
 import type { RoleResponseDto } from '@/features/roles/types';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { QueryLoading } from '@/components/feedback/query-state';
 
 type EditRoleDialogProps = {
@@ -62,11 +62,7 @@ export function EditRoleDialog({
       await onSubmit(values);
       onOpenChange(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : 'Failed to update role',
-      );
+      setErrorMessage(getErrorMessage(error, 'Failed to update role'));
     }
   }
 
@@ -129,12 +125,10 @@ export function EditRoleDialog({
                 </p>
               ) : null}
             </div>
-            {errorMessage ? (
-              <Alert variant="destructive">
-                <AlertTitle>Could not update role</AlertTitle>
-                <AlertDescription>{errorMessage}</AlertDescription>
-              </Alert>
-            ) : null}
+            <ActionErrorAlert
+              title="Could not update role"
+              message={errorMessage}
+            />
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending ? 'Saving…' : 'Save changes'}

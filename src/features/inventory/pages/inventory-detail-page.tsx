@@ -11,7 +11,7 @@ import {
 import type { AdjustStockDto } from '@/features/inventory/types';
 import { useAuth } from '@/lib/auth/auth-context';
 import {
-  ApiRequestError,
+  getErrorMessage,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
 import { formatDateTime } from '@/lib/format';
@@ -65,9 +65,7 @@ export function InventoryDetailPage() {
         <AlertTitle>Could not load inventory</AlertTitle>
         <AlertDescription className="flex flex-wrap items-center gap-3">
           <span>
-            {detailQuery.error instanceof ApiRequestError
-              ? detailQuery.error.message
-              : 'Failed to load inventory'}
+            {getErrorMessage(detailQuery.error, 'Failed to load inventory')}
           </span>
           <Button
             type="button"

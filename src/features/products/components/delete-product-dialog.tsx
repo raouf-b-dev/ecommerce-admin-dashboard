@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 
 type DeleteProductDialogProps = {
   open: boolean;
@@ -34,13 +34,7 @@ export function DeleteProductDialog({
       await onConfirm();
       onOpenChange(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : 'Failed to delete product',
-      );
+      setErrorMessage(getErrorMessage(error, 'Failed to delete product'));
     }
   }
 
@@ -64,12 +58,10 @@ export function DeleteProductDialog({
             undone.
           </DialogDescription>
         </DialogHeader>
-        {errorMessage ? (
-          <Alert variant="destructive">
-            <AlertTitle>Could not delete product</AlertTitle>
-            <AlertDescription>{errorMessage}</AlertDescription>
-          </Alert>
-        ) : null}
+        <ActionErrorAlert
+          title="Could not delete product"
+          message={errorMessage}
+        />
         <DialogFooter>
           <Button
             type="button"

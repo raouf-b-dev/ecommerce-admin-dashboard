@@ -21,7 +21,7 @@ import {
   userDisplayName,
 } from '@/features/users/lib/display-name';
 import { useAuth } from '@/lib/auth/auth-context';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 
@@ -73,9 +73,7 @@ export function UserDetailPage() {
         <AlertTitle>Could not load user</AlertTitle>
         <AlertDescription className="flex flex-wrap items-center gap-3">
           <span>
-            {detailQuery.error instanceof ApiRequestError
-              ? detailQuery.error.message
-              : 'User not found'}
+            {getErrorMessage(detailQuery.error, 'User not found')}
           </span>
           <Button
             type="button"
