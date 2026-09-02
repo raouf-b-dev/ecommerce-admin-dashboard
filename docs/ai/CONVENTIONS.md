@@ -119,6 +119,7 @@ export const productKeys = {
 - Align schemas to API DTOs.
 - Display structured API validation errors in the form when possible.
 - Do not invent business validation rules that belong in the API.
+- Map API failures with shared helpers: `getErrorMessage` (dialogs/queries), `applyApiFormErrors` (forms), `ActionErrorAlert` (mutation banners). See [API-INTEGRATION.md](../API-INTEGRATION.md) Error UX.
 
 ## 10. Auth and Security
 
