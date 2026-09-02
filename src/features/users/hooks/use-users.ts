@@ -1,11 +1,14 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  activateUserRequest,
+  deactivateUserRequest,
   getUserRequest,
   listUsersRequest,
+  updateUserRequest,
 } from '@/features/users/api/users-api';
 import { userKeys } from '@/features/users/hooks/user-keys';
 import { normalizeUserListFilters } from '@/features/users/lib/user-list-filters';
-import type { UserListFilters } from '@/features/users/types';
+import type { UpdateUserDto, UserListFilters } from '@/features/users/types';
 
 export function useUsersListQuery(filters: Partial<UserListFilters>) {
   const normalized = normalizeUserListFilters(filters);
@@ -23,5 +26,47 @@ export function useUserDetailQuery(userId: number | undefined) {
     queryFn: () => getUserRequest(userId!),
     enabled:
       typeof userId === 'number' && Number.isInteger(userId) && userId > 0,
+  });
+}
+
+export function useUpdateUser(userId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: UpdateUserDto) => updateUserRequest(userId, body),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
+        queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
+      ]);
+    },
+  });
+}
+
+export function useActivateUser(userId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => activateUserRequest(userId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
+        queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
+      ]);
+    },
+  });
+}
+
+export function useDeactivateUser(userId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deactivateUserRequest(userId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
+        queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
+      ]);
+    },
   });
 }
