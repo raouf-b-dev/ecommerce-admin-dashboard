@@ -5,7 +5,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { DeleteProductDialog } from '@/features/products/components/delete-product-dialog';
 import { ProductForm } from '@/features/products/components/product-form';
+import { ProductStatusActions } from '@/features/products/components/product-status-actions';
 import {
+  useActivateProduct,
+  useDeactivateProduct,
   useDeleteProduct,
   useProductQuery,
   useUpdateProduct,
@@ -40,6 +43,8 @@ export function ProductEditPage() {
   const productQuery = useProductQuery(validId ? id : undefined);
   const updateProduct = useUpdateProduct(id);
   const deleteProduct = useDeleteProduct(id);
+  const activateProduct = useActivateProduct(id);
+  const deactivateProduct = useDeactivateProduct(id);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -144,6 +149,30 @@ export function ProductEditPage() {
         onSubmit={handleSubmit}
         onCancel={() => navigate('/products')}
       />
+      {canManageProducts ? (
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-lg font-semibold">Catalog status</h2>
+            <p className="text-sm text-muted-foreground">
+              {productQuery.data.isActive
+                ? 'This product is active in the catalog.'
+                : 'This product is inactive and hidden from the catalog.'}
+            </p>
+          </div>
+          <ProductStatusActions
+            isActive={productQuery.data.isActive}
+            isPending={
+              activateProduct.isPending || deactivateProduct.isPending
+            }
+            onActivate={async () => {
+              await activateProduct.mutateAsync();
+            }}
+            onDeactivate={async () => {
+              await deactivateProduct.mutateAsync();
+            }}
+          />
+        </section>
+      ) : null}
       {canManageProducts ? (
         <DeleteProductDialog
           open={deleteOpen}
