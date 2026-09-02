@@ -60,8 +60,9 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 9. ~~Query parity (list filters/sort this API already accepts)~~ **done**
 10. ~~Existing writes (product delete, user activate, roles UI)~~ **done**
 11. ~~API gaps then SPA (product activate, assign role)~~ **done**
-12. Payments ops (optional; does not block the release gate)
-13. Release gate (hosted deploy / stranger quick start): after Phases 9–11, not after Phase 8
+12. ~~User address book (list on user detail + existing writes)~~ **done**
+13. Payments ops (optional; does not block the release gate)
+14. Release gate (hosted deploy / stranger quick start): after Phases 9–11.5, not after Phase 8
 
 Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 
