@@ -76,10 +76,11 @@ Concrete paths live in Swagger. Typical admin needs:
 
 - Health for local diagnostics
 - Admin login/session; permission/role reads if needed for chrome
-- Product list/detail and product writes
+- Product list/detail, create/update/delete (`manage_products`)
 - Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust: `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
 - Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`): `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
-- User reads with optional role filter (writes optional)
+- User reads with optional role filter; user PATCH / activate / deactivate (`manage_users`)
+- Roles CRUD + permissions list (`manage_roles`); role assignment on users ships in Phase 11 (`PUT /v1/users/{id}/role`, superadmin-only)
 - Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`): not list `total` fan-out, not Prometheus
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.
@@ -104,7 +105,7 @@ Period is driven by URL `?days=7|30|90` (default 7). Period queries use TanStack
 
 SPA caches with TanStack Query `staleTime` (~45s); no Redis analytics cache in v1.
 
-After API OpenAPI changes: regenerate `src/lib/api/generated/schema.d.ts` via `npm run api:generate` against a running API (or patch types when Swagger is unavailable).
+After API OpenAPI changes: regenerate `src/lib/api/generated/schema.d.ts` via `npm run api:generate` against a running API, or `npx openapi-typescript ../ecommerce-store-api/openapi.json -o src/lib/api/generated/schema.d.ts` from a sibling checkout.
 
 ## When the API changes
 
