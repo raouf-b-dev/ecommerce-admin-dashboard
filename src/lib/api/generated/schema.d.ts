@@ -1901,6 +1901,71 @@ export interface components {
             /** @example 1 */
             totalPages: number;
         };
+        AddressResponseDto: {
+            /**
+             * @description Address ID
+             * @example 123
+             */
+            id: number;
+            /**
+             * @description Street address line 1
+             * @example 123 Main Street
+             */
+            street: string;
+            /**
+             * @description Street address line 2
+             * @example Apt 4B
+             */
+            street2?: string;
+            /**
+             * @description City
+             * @example New York
+             */
+            city: string;
+            /**
+             * @description State/Province
+             * @example NY
+             */
+            state: string;
+            /**
+             * @description Postal/ZIP code
+             * @example 10001
+             */
+            postalCode: string;
+            /**
+             * @description Country code
+             * @example US
+             */
+            country: string;
+            /**
+             * @description Address type
+             * @example HOME
+             * @enum {string}
+             */
+            type: "HOME" | "WORK" | "OTHER" | "BILLING" | "SHIPPING";
+            /**
+             * @description Whether this is the default address
+             * @example true
+             */
+            isDefault: boolean;
+            /**
+             * @description Delivery instructions
+             * @example Leave at front door
+             */
+            deliveryInstructions?: string;
+            /**
+             * Format: date-time
+             * @description Address creation date
+             * @example 2025-10-31T10:00:00Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Last update date
+             * @example 2025-10-31T12:30:00Z
+             */
+            updatedAt: string;
+        };
         UserDetailResponseDto: {
             /**
              * @description User ID
@@ -1947,6 +2012,8 @@ export interface components {
              * @example 2
              */
             addressCount: number;
+            /** @description Addresses on the account */
+            addresses: components["schemas"]["AddressResponseDto"][];
             /**
              * @description Last update date
              * @example 2025-10-31T12:30:00.000Z
@@ -2029,71 +2096,6 @@ export interface components {
              * @example Leave at front door
              */
             deliveryInstructions?: string;
-        };
-        AddressResponseDto: {
-            /**
-             * @description Address ID
-             * @example 123
-             */
-            id: number;
-            /**
-             * @description Street address line 1
-             * @example 123 Main Street
-             */
-            street: string;
-            /**
-             * @description Street address line 2
-             * @example Apt 4B
-             */
-            street2?: string;
-            /**
-             * @description City
-             * @example New York
-             */
-            city: string;
-            /**
-             * @description State/Province
-             * @example NY
-             */
-            state: string;
-            /**
-             * @description Postal/ZIP code
-             * @example 10001
-             */
-            postalCode: string;
-            /**
-             * @description Country code
-             * @example US
-             */
-            country: string;
-            /**
-             * @description Address type
-             * @example HOME
-             * @enum {string}
-             */
-            type: "HOME" | "WORK" | "OTHER" | "BILLING" | "SHIPPING";
-            /**
-             * @description Whether this is the default address
-             * @example true
-             */
-            isDefault: boolean;
-            /**
-             * @description Delivery instructions
-             * @example Leave at front door
-             */
-            deliveryInstructions?: string;
-            /**
-             * Format: date-time
-             * @description Address creation date
-             * @example 2025-10-31T10:00:00Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Last update date
-             * @example 2025-10-31T12:30:00Z
-             */
-            updatedAt: string;
         };
         UpdateAddressDto: {
             /**
