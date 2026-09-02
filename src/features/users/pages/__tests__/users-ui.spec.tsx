@@ -95,9 +95,21 @@ const authMock = vi.hoisted(() =>
 vi.mock('@/features/users/hooks/use-users', () => ({
   useUsersListQuery: listQueryMock,
   useUserDetailQuery: detailQueryMock,
+  useUpdateUser: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useActivateUser: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useDeactivateUser: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
 }));
 
-vi.mock('@/features/users/hooks/use-roles', () => ({
+vi.mock('@/features/roles/hooks/use-roles', () => ({
   useRolesListQuery: rolesQueryMock,
 }));
 

@@ -10,7 +10,7 @@ import {
   QueryStateAlert,
 } from '@/components/feedback/query-state';
 import { UsersTable } from '@/features/users/components/users-table';
-import { useRolesListQuery } from '@/features/users/hooks/use-roles';
+import { useRolesListQuery } from '@/features/roles/hooks/use-roles';
 import { useUsersListQuery } from '@/features/users/hooks/use-users';
 import {
   userListFiltersFromSearchParams,

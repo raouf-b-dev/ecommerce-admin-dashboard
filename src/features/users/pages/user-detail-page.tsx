@@ -1,9 +1,20 @@
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { useUserDetailQuery } from '@/features/users/hooks/use-users';
-import { useRolesListQuery } from '@/features/users/hooks/use-roles';
+import {
+  UserEditForm,
+  toUpdateUserDto,
+} from '@/features/users/components/user-edit-form';
+import { UserStatusActions } from '@/features/users/components/user-status-actions';
+import {
+  useActivateUser,
+  useDeactivateUser,
+  useUpdateUser,
+  useUserDetailQuery,
+} from '@/features/users/hooks/use-users';
+import { useRolesListQuery } from '@/features/roles/hooks/use-roles';
 import {
   formatUserPhone,
   formatUserRole,
@@ -17,11 +28,29 @@ import { QueryLoading } from '@/components/feedback/query-state';
 export function UserDetailPage() {
   const { hasPermission } = useAuth();
   const canViewOrders = hasPermission('view_all_orders');
+  const canManageUsers = hasPermission('manage_users');
   const params = useParams();
   const userId = Number(params.userId);
   const validId = Number.isInteger(userId) && userId > 0;
   const detailQuery = useUserDetailQuery(validId ? userId : undefined);
   const rolesQuery = useRolesListQuery();
+  const updateUser = useUpdateUser(userId);
+  const activateUser = useActivateUser(userId);
+  const deactivateUser = useDeactivateUser(userId);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+  const editDefaults = useMemo(() => {
+    const user = detailQuery.data;
+    if (!user) {
+      return undefined;
+    }
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone ?? '',
+    };
+  }, [detailQuery.data]);
 
   if (!validId) {
     return (
@@ -115,6 +144,45 @@ export function UserDetailPage() {
           <dd className="text-sm">{formatDateTime(user.updatedAt)}</dd>
         </div>
       </dl>
+
+      {canManageUsers ? (
+        <section className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold">Operator actions</h2>
+            <p className="text-sm text-muted-foreground">
+              Update profile fields or change account status.
+            </p>
+          </div>
+          {saveMessage ? (
+            <Alert>
+              <AlertTitle>Saved</AlertTitle>
+              <AlertDescription>{saveMessage}</AlertDescription>
+            </Alert>
+          ) : null}
+          {editDefaults ? (
+            <UserEditForm
+              key={`${user.id}-${user.updatedAt}`}
+              defaultValues={editDefaults}
+              isPending={updateUser.isPending}
+              onSubmit={async (values) => {
+                setSaveMessage(null);
+                await updateUser.mutateAsync(toUpdateUserDto(values));
+                setSaveMessage('Profile updated.');
+              }}
+            />
+          ) : null}
+          <UserStatusActions
+            isActive={user.isActive}
+            isPending={activateUser.isPending || deactivateUser.isPending}
+            onActivate={async () => {
+              await activateUser.mutateAsync();
+            }}
+            onDeactivate={async () => {
+              await deactivateUser.mutateAsync();
+            }}
+          />
+        </section>
+      ) : null}
     </div>
   );
 }
