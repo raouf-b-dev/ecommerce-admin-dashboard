@@ -6,6 +6,9 @@ export type UserDetailResponseDto =
   components['schemas']['UserDetailResponseDto'];
 export type UpdateUserDto = components['schemas']['UpdateUserDto'];
 export type AssignRoleDto = components['schemas']['AssignRoleDto'];
+export type AddAddressDto = components['schemas']['AddAddressDto'];
+export type UpdateAddressDto = components['schemas']['UpdateAddressDto'];
+export type AddressResponseDto = components['schemas']['AddressResponseDto'];
 export type PaginatedUsersResponseDto =
   components['schemas']['PaginatedUsersResponseDto'];
 
