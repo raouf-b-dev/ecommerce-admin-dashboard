@@ -25,6 +25,8 @@ src/features/products/
 
 Do **not** add barrel `index.ts` files. Import the concrete module.
 
+Cross-feature dependencies must be imported directly from the target feature's concrete module (e.g. `@/features/roles/hooks/use-roles`). Do not create re-export shims or adapter files across features.
+
 Optional folders: `schemas/` and `hooks/` exist only when the feature has forms or server queries.
 
 **Auth exception:** `features/auth` has no `hooks/`. Session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`). Do not invent `useAuthQuery` in the feature.
