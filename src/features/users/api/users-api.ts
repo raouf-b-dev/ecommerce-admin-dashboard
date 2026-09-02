@@ -1,8 +1,10 @@
 import { apiClient } from '@/lib/api/client';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
+  AddAddressDto,
   AssignRoleDto,
   PaginatedUsersResponseDto,
+  UpdateAddressDto,
   UpdateUserDto,
   UserDetailResponseDto,
   UserListFilters,
@@ -101,6 +103,79 @@ export async function assignUserRoleRequest(
     return await throwApiErrorFromResponse(
       response,
       'Failed to assign user role',
+    );
+  }
+}
+
+export async function addUserAddressRequest(
+  userId: number,
+  body: AddAddressDto,
+): Promise<void> {
+  const { error, response } = await apiClient.POST('/v1/users/{id}/addresses', {
+    params: { path: { id: userId } },
+    body,
+  });
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(response, 'Failed to add address');
+  }
+}
+
+export async function updateUserAddressRequest(
+  userId: number,
+  addressId: number,
+  body: UpdateAddressDto,
+): Promise<void> {
+  const { error, response } = await apiClient.PATCH(
+    '/v1/users/{id}/addresses/{addressId}',
+    {
+      params: { path: { id: userId, addressId } },
+      body,
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to update address',
+    );
+  }
+}
+
+export async function deleteUserAddressRequest(
+  userId: number,
+  addressId: number,
+): Promise<void> {
+  const { error, response } = await apiClient.DELETE(
+    '/v1/users/{id}/addresses/{addressId}',
+    {
+      params: { path: { id: userId, addressId } },
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to delete address',
+    );
+  }
+}
+
+export async function setDefaultUserAddressRequest(
+  userId: number,
+  addressId: number,
+): Promise<void> {
+  const { error, response } = await apiClient.PATCH(
+    '/v1/users/{id}/addresses/{addressId}/set-default',
+    {
+      params: { path: { id: userId, addressId } },
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to set default address',
     );
   }
 }

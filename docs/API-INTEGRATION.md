@@ -90,7 +90,7 @@ Concrete paths live in Swagger. Typical admin needs:
 - Product list/detail, create/update/delete, dedicated activate/deactivate (`manage_products`)
 - Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust: `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
 - Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`): `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
-- User reads with optional role filter; user PATCH / activate / deactivate (`manage_users`)
+- User reads with optional role filter; user PATCH / activate / deactivate (`manage_users`); address book on `GET /v1/users/{id}` plus add / update / delete / set-default (`manage_users`)
 - Roles CRUD + permissions list (`manage_roles`); assign or replace a user role with `PUT /v1/users/{id}/role` (`manage_roles`)
 - Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`): not list `total` fan-out, not Prometheus
 

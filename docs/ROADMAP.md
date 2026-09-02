@@ -77,6 +77,7 @@ Write tests **with** each feature.
 | **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | `[x]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
 | **11**   | API gaps then SPA                  | `[x]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
+| **11.5** | User address book                  | `[x]`  |  `[P1]`  | User detail address list + existing OpenAPI writes                              |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[ ]`  |  `[P1]`  | **Polish**: Working Theme Provider, WebSocket live toasts, checklists, Cmd+K    |
 | **13**   | Technical release gate             | `[ ]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
@@ -395,7 +396,7 @@ Write tests **with** each feature.
 
 ---
 
-Phases 9–11 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (product activate/deactivate, role assignments) in `ecommerce-store-api` before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
+Phases 9–11.5 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (product activate/deactivate, role assignments) in `ecommerce-store-api` before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
 
 Phase 12 (payments) is optional and does **not** block Phase 13.
 
@@ -434,7 +435,7 @@ Named fields below were true at planning time. On start, take the **current** li
 
 - [x] Product: delete (confirm); keep 409 reload-and-retry on edit
 - [x] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
-- [ ] User **address** writes only if OpenAPI still exposes them **and** ops need them
+- [x] User **address** writes (Phase 11.5: list on GET user detail + add/edit/delete/set-default)
 - [x] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
 - [x] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007): document that the operator may need to re-login or refresh to see nav changes for **their own** account
 - [x] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
@@ -460,6 +461,25 @@ Named fields below were true at planning time. On start, take the **current** li
 - [x] Tests + Playwright
 
 **Done when:** an operator can take a product off the catalog and change a user’s role without SQL or seed scripts.
+
+---
+
+## Phase 11.5: User address book
+
+> Address writes already existed in OpenAPI. This phase added the missing **read** on user detail, then wired list + writes in the SPA. No new collection route.
+
+**API (required before SPA writes):**
+
+- [x] `GET /v1/users/{id}` returns required `addresses[]` (empty book is `[]`)
+- [x] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
+
+**Admin SPA:**
+
+- [x] User detail Addresses section (list + empty state) for `view_all_users`
+- [x] Add / edit / delete / set-default for `manage_users` only (`isDefault` on add only; Set default is a card action)
+- [x] Tests + Playwright (seeded `customer@store.local`; add then delete)
+
+**Done when:** an operator can see and correct a customer address book through the API, with no invented list.
 
 ---
 
@@ -500,7 +520,7 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 13: Technical Release Gate [P0]
 
-> **Goal**: Validate production readiness against a real backend after Phases 9–11. (Does not require external media tools).
+> **Goal**: Validate production readiness against a real backend after Phases 9–11.5. (Does not require external media tools).
 
 **Scope:**
 
@@ -510,7 +530,7 @@ Named fields below were true at planning time. On start, take the **current** li
 - [ ] README + PROJECT-CONTEXT still accurate
 - [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`)
 
-**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign): not the thin Phase 8 surface.
+**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign, address book): not the thin Phase 8 surface.
 
 ---
 

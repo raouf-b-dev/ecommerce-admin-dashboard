@@ -61,22 +61,38 @@ const rolesQueryMock = vi.hoisted(() =>
   })),
 );
 
+const sampleAddress = {
+  id: 1,
+  street: '100 Main Street',
+  street2: 'Apartment 2B',
+  city: 'San Francisco',
+  state: 'CA',
+  postalCode: '94103',
+  country: 'USA',
+  type: 'HOME' as const,
+  isDefault: true,
+  deliveryInstructions: 'Leave packages at front door.',
+  createdAt: '2025-10-31T10:00:00.000Z',
+  updatedAt: '2025-10-31T12:00:00.000Z',
+};
+
+const sampleUser = {
+  id: 3,
+  firstName: 'Store',
+  lastName: 'Customer',
+  email: 'customer@store.local',
+  phone: null as string | null,
+  isActive: true,
+  roleCode: 'CUSTOMER',
+  addressCount: 1,
+  addresses: [sampleAddress],
+  createdAt: '2025-10-31T10:00:00.000Z',
+  updatedAt: '2025-10-31T12:00:00.000Z',
+};
+
 const detailQueryMock = vi.hoisted(() =>
   vi.fn(() => ({
-    data: undefined as
-      | {
-          id: number;
-          firstName: string;
-          lastName: string;
-          email: string;
-          phone: string | null;
-          isActive: boolean;
-          roleCode: string | null;
-          addressCount: number;
-          createdAt: string;
-          updatedAt: string;
-        }
-      | undefined,
+    data: undefined as typeof sampleUser | undefined,
     isLoading: false,
     isError: false,
     error: null as Error | null,
@@ -108,6 +124,22 @@ vi.mock('@/features/users/hooks/use-users', () => ({
     isPending: false,
   }),
   useAssignUserRole: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useAddUserAddress: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useUpdateUserAddress: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useDeleteUserAddress: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useSetDefaultUserAddress: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
   }),
@@ -211,18 +243,7 @@ describe('UserDetailPage', () => {
 
   it('renders user detail and view-orders link', () => {
     detailQueryMock.mockReturnValue({
-      data: {
-        id: 3,
-        firstName: 'Store',
-        lastName: 'Customer',
-        email: 'customer@store.local',
-        phone: null,
-        isActive: true,
-        roleCode: 'CUSTOMER',
-        addressCount: 1,
-        createdAt: '2025-10-31T10:00:00.000Z',
-        updatedAt: '2025-10-31T12:00:00.000Z',
-      },
+      data: sampleUser,
       isLoading: false,
       isError: false,
       error: null,
@@ -248,6 +269,17 @@ describe('UserDetailPage', () => {
       'href',
       '/orders?userId=3',
     );
+    expect(
+      screen.getByRole('heading', { name: 'Addresses' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('100 Main Street')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Add address' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Delete' }),
+    ).not.toBeInTheDocument();
   });
 
   it('shows profile and status actions for manage_users but not role assignment', () => {
@@ -258,18 +290,7 @@ describe('UserDetailPage', () => {
         permission === 'manage_users') as (permission: string) => boolean,
     });
     detailQueryMock.mockReturnValue({
-      data: {
-        id: 3,
-        firstName: 'Store',
-        lastName: 'Customer',
-        email: 'customer@store.local',
-        phone: null,
-        isActive: true,
-        roleCode: 'CUSTOMER',
-        addressCount: 1,
-        createdAt: '2025-10-31T10:00:00.000Z',
-        updatedAt: '2025-10-31T12:00:00.000Z',
-      },
+      data: sampleUser,
       isLoading: false,
       isError: false,
       error: null,
@@ -291,6 +312,12 @@ describe('UserDetailPage', () => {
       screen.queryByRole('button', { name: 'Change role' }),
     ).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Assigned role')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Add address' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Set default' })).toBeDisabled();
   });
 
   it('shows role assignment when manage_roles is granted', () => {
@@ -300,18 +327,7 @@ describe('UserDetailPage', () => {
         permission === 'manage_roles') as (permission: string) => boolean,
     });
     detailQueryMock.mockReturnValue({
-      data: {
-        id: 3,
-        firstName: 'Store',
-        lastName: 'Customer',
-        email: 'customer@store.local',
-        phone: null,
-        isActive: true,
-        roleCode: 'CUSTOMER',
-        addressCount: 1,
-        createdAt: '2025-10-31T10:00:00.000Z',
-        updatedAt: '2025-10-31T12:00:00.000Z',
-      },
+      data: sampleUser,
       isLoading: false,
       isError: false,
       error: null,
@@ -330,6 +346,9 @@ describe('UserDetailPage', () => {
     expect(screen.getByRole('button', { name: 'Change role' })).toBeDisabled();
     expect(
       screen.queryByRole('button', { name: 'Deactivate user' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Add address' }),
     ).not.toBeInTheDocument();
   });
 });

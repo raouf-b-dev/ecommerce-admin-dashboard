@@ -9,11 +9,22 @@ import {
 } from '@/features/users/components/user-edit-form';
 import { UserStatusActions } from '@/features/users/components/user-status-actions';
 import { UserRoleActions } from '@/features/users/components/user-role-actions';
+import { UserAddressForm } from '@/features/users/components/user-address-form';
+import { UserAddressList } from '@/features/users/components/user-address-list';
+import {
+  toAddAddressDto,
+  toUpdateAddressDto,
+  type AddressFormValues,
+} from '@/features/users/schemas/address-schema';
 import {
   useActivateUser,
+  useAddUserAddress,
   useAssignUserRole,
   useDeactivateUser,
+  useDeleteUserAddress,
+  useSetDefaultUserAddress,
   useUpdateUser,
+  useUpdateUserAddress,
   useUserDetailQuery,
 } from '@/features/users/hooks/use-users';
 import { useRolesListQuery } from '@/features/roles/hooks/use-roles';
@@ -22,6 +33,7 @@ import {
   formatUserRole,
   userDisplayName,
 } from '@/features/users/lib/display-name';
+import type { AddressResponseDto } from '@/features/users/types';
 import { useAuth } from '@/lib/auth/auth-context';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime } from '@/lib/format';
@@ -41,7 +53,16 @@ export function UserDetailPage() {
   const activateUser = useActivateUser(userId);
   const deactivateUser = useDeactivateUser(userId);
   const assignUserRole = useAssignUserRole(userId);
+  const addAddress = useAddUserAddress(userId);
+  const updateAddress = useUpdateUserAddress(userId);
+  const deleteAddress = useDeleteUserAddress(userId);
+  const setDefaultAddress = useSetDefaultUserAddress(userId);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [addressFormMode, setAddressFormMode] = useState<'add' | 'edit' | null>(
+    null,
+  );
+  const [editingAddress, setEditingAddress] =
+    useState<AddressResponseDto | null>(null);
 
   const editDefaults = useMemo(() => {
     const user = detailQuery.data;
@@ -134,10 +155,6 @@ export function UserDetailPage() {
           </dd>
         </div>
         <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Addresses</dt>
-          <dd className="text-sm">{user.addressCount}</dd>
-        </div>
-        <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Created</dt>
           <dd className="text-sm">{formatDateTime(user.createdAt)}</dd>
         </div>
@@ -146,6 +163,87 @@ export function UserDetailPage() {
           <dd className="text-sm">{formatDateTime(user.updatedAt)}</dd>
         </div>
       </dl>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold">Addresses</h2>
+            <p className="text-sm text-muted-foreground">
+              Saved addresses for this account.
+            </p>
+          </div>
+          {canManageUsers ? (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setEditingAddress(null);
+                setAddressFormMode('add');
+              }}
+            >
+              Add address
+            </Button>
+          ) : null}
+        </div>
+        <UserAddressList
+          addresses={user.addresses ?? []}
+          canManage={canManageUsers}
+          isPending={
+            addAddress.isPending ||
+            updateAddress.isPending ||
+            deleteAddress.isPending ||
+            setDefaultAddress.isPending
+          }
+          onEdit={(address) => {
+            setEditingAddress(address);
+            setAddressFormMode('edit');
+          }}
+          onDelete={async (addressId) => {
+            await deleteAddress.mutateAsync(addressId);
+          }}
+          onSetDefault={async (addressId) => {
+            await setDefaultAddress.mutateAsync(addressId);
+          }}
+        />
+        {addressFormMode !== null ? (
+          <UserAddressForm
+            mode={addressFormMode}
+            open
+            isPending={addAddress.isPending || updateAddress.isPending}
+            defaultValues={
+              editingAddress
+                ? {
+                    street: editingAddress.street,
+                    street2: editingAddress.street2 ?? '',
+                    city: editingAddress.city,
+                    state: editingAddress.state,
+                    postalCode: editingAddress.postalCode,
+                    country: editingAddress.country,
+                    deliveryInstructions:
+                      editingAddress.deliveryInstructions ?? '',
+                    isDefault: editingAddress.isDefault,
+                  }
+                : undefined
+            }
+            onOpenChange={(open) => {
+              if (!open) {
+                setAddressFormMode(null);
+                setEditingAddress(null);
+              }
+            }}
+            onSubmit={async (values: AddressFormValues) => {
+              if (addressFormMode === 'edit' && editingAddress) {
+                await updateAddress.mutateAsync({
+                  addressId: editingAddress.id,
+                  body: toUpdateAddressDto(values),
+                });
+                return;
+              }
+              await addAddress.mutateAsync(toAddAddressDto(values));
+            }}
+          />
+        ) : null}
+      </section>
 
       {canManageUsers ? (
         <section className="space-y-6">
