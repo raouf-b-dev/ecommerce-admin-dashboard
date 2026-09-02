@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router';
 import { AppLayout } from '@/components/layout/app-layout';
 import { LoginPage } from '@/features/auth/pages/login-page';
 import { ChangePasswordPage } from '@/features/auth/pages/change-password-page';
-import { RolesSettingsPage } from '@/features/auth/pages/roles-settings-page';
+import { RolesSettingsPage } from '@/features/roles/pages/roles-settings-page';
 import { DashboardPage } from '@/features/dashboard/pages/dashboard-page';
 import { OrdersPage } from '@/features/orders/pages/orders-page';
 import { OrderDetailPage } from '@/features/orders/pages/order-detail-page';

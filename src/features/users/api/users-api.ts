@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/api/client';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 import type {
   PaginatedUsersResponseDto,
+  UpdateUserDto,
   UserDetailResponseDto,
   UserListFilters,
 } from '@/features/users/types';
@@ -44,4 +45,44 @@ export async function getUserRequest(
   }
 
   return data;
+}
+
+export async function updateUserRequest(
+  userId: number,
+  body: UpdateUserDto,
+): Promise<void> {
+  const { error, response } = await apiClient.PATCH('/v1/users/{id}', {
+    params: { path: { id: userId } },
+    body,
+  });
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(response, 'Failed to update user');
+  }
+}
+
+export async function activateUserRequest(userId: number): Promise<void> {
+  const { error, response } = await apiClient.POST('/v1/users/{id}/activate', {
+    params: { path: { id: userId } },
+  });
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(response, 'Failed to activate user');
+  }
+}
+
+export async function deactivateUserRequest(userId: number): Promise<void> {
+  const { error, response } = await apiClient.POST(
+    '/v1/users/{id}/deactivate',
+    {
+      params: { path: { id: userId } },
+    },
+  );
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(
+      response,
+      'Failed to deactivate user',
+    );
+  }
 }

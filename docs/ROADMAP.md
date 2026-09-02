@@ -75,7 +75,7 @@ Write tests **with** each feature.
 | **8**    | Quality sweep                      | `[x]`  |    -     | Journey, a11y, consistency, CI e2e policy                                       |
 | **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
 | **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
-| **10**   | Existing writes                    | `[ ]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
+| **10**   | Existing writes                    | `[x]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
 | **11**   | API gaps then SPA                  | `[ ]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[ ]`  |  `[P1]`  | **Polish**: Working Theme Provider, WebSocket live toasts, checklists, Cmd+K    |
@@ -432,12 +432,12 @@ Named fields below were true at planning time. On start, take the **current** li
 
 **Scope:**
 
-- [ ] Product: delete (confirm); keep 409 reload-and-retry on edit
-- [ ] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
+- [x] Product: delete (confirm); keep 409 reload-and-retry on edit
+- [x] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
 - [ ] User **address** writes only if OpenAPI still exposes them **and** ops need them
-- [ ] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
-- [ ] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007): document that the operator may need to re-login or refresh to see nav changes for **their own** account
-- [ ] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
+- [x] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
+- [x] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007): document that the operator may need to re-login or refresh to see nav changes for **their own** account
+- [x] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
 
 **Done when:** superadmin can manage roles in the SPA; admin can deactivate a user and delete a product through the API; stub Roles page is gone.
 

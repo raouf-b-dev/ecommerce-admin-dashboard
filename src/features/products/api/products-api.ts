@@ -71,3 +71,13 @@ export async function updateProductRequest(
 
   return data;
 }
+
+export async function deleteProductRequest(id: number): Promise<void> {
+  const { error, response } = await apiClient.DELETE('/v1/products/{id}', {
+    params: { path: { id } },
+  });
+
+  if (error || !response.ok) {
+    return await throwApiErrorFromResponse(response, 'Failed to delete product');
+  }
+}

@@ -3,8 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DeleteProductDialog } from '@/features/products/components/delete-product-dialog';
 import { ProductForm } from '@/features/products/components/product-form';
 import {
+  useDeleteProduct,
   useProductQuery,
   useUpdateProduct,
 } from '@/features/products/hooks/use-products';
@@ -31,12 +33,15 @@ export function ProductEditPage() {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const canViewInventory = hasPermission('view_all_inventory');
+  const canManageProducts = hasPermission('manage_products');
   const params = useParams();
   const id = Number(params.id);
   const validId = Number.isFinite(id) && id > 0;
   const productQuery = useProductQuery(validId ? id : undefined);
   const updateProduct = useUpdateProduct(id);
+  const deleteProduct = useDeleteProduct(id);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const defaultValues = useMemo<Partial<ProductFormValues> | undefined>(() => {
     const product = productQuery.data;
@@ -123,6 +128,15 @@ export function ProductEditPage() {
             <Link to={`/inventory?productId=${id}`}>View stock</Link>
           </Button>
         ) : null}
+        {canManageProducts ? (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => setDeleteOpen(true)}
+          >
+            Delete product
+          </Button>
+        ) : null}
       </PageHeader>
       <ProductForm
         mode="edit"
@@ -132,6 +146,18 @@ export function ProductEditPage() {
         onSubmit={handleSubmit}
         onCancel={() => navigate('/products')}
       />
+      {canManageProducts ? (
+        <DeleteProductDialog
+          open={deleteOpen}
+          productName={productQuery.data.name}
+          isPending={deleteProduct.isPending}
+          onOpenChange={setDeleteOpen}
+          onConfirm={async () => {
+            await deleteProduct.mutateAsync();
+            navigate('/products');
+          }}
+        />
+      ) : null}
     </div>
   );
 }

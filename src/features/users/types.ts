@@ -4,9 +4,9 @@ export type UserListItemResponseDto =
   components['schemas']['UserListItemResponseDto'];
 export type UserDetailResponseDto =
   components['schemas']['UserDetailResponseDto'];
+export type UpdateUserDto = components['schemas']['UpdateUserDto'];
 export type PaginatedUsersResponseDto =
   components['schemas']['PaginatedUsersResponseDto'];
-export type RoleResponseDto = components['schemas']['RoleResponseDto'];
 
 export type ListUsersQuery = NonNullable<
   operations['UsersController_listUsers_v1']['parameters']['query']

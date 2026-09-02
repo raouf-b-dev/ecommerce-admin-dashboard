@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   Package,
+  Shield,
   ShoppingCart,
   Users,
   Warehouse,
@@ -44,5 +45,11 @@ export const navigation: NavItem[] = [
     label: 'Users',
     icon: Users,
     permission: 'view_all_users',
+  },
+  {
+    to: '/settings/roles',
+    label: 'Roles',
+    icon: Shield,
+    permission: 'manage_roles',
   },
 ];

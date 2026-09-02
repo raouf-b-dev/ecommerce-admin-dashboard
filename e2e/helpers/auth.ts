@@ -125,3 +125,30 @@ export async function loginAsAdmin(page: Page): Promise<void> {
     'Seeded admin login failed. Start the API, run db:seed, and verify credentials in API SEEDING.md.',
   );
 }
+
+export async function loginAsSuperAdmin(page: Page): Promise<void> {
+  const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
+  const password = process.env.E2E_SUPERADMIN_PASSWORD;
+
+  if (!password) {
+    test.skip(
+      true,
+      'Set E2E_SUPERADMIN_PASSWORD for superadmin e2e tests. See e2e/README.md.',
+    );
+    return;
+  }
+
+  await submitCredentials(page, email, password);
+  const outcome = await waitForLoginOutcome(page);
+
+  if (outcome === 'change-password') {
+    const newPassword =
+      process.env.E2E_SUPERADMIN_NEW_PASSWORD ?? `${password}Rotated1!`;
+    await completeForcedPasswordChange(page, password, newPassword);
+    return;
+  }
+
+  if (outcome !== 'shell') {
+    test.skip(true, 'Superadmin login failed. Verify API seed credentials.');
+  }
+}
