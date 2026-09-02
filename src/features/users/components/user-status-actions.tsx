@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 
 type UserStatusActionsProps = {
   isActive: boolean;
@@ -32,11 +32,7 @@ export function UserStatusActions({
     try {
       await onActivate();
     } catch (error) {
-      setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : 'Failed to activate user',
-      );
+      setErrorMessage(getErrorMessage(error, 'Failed to activate user'));
     }
   }
 
@@ -46,11 +42,7 @@ export function UserStatusActions({
       await onDeactivate();
       setConfirmDeactivate(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : 'Failed to deactivate user',
-      );
+      setErrorMessage(getErrorMessage(error, 'Failed to deactivate user'));
     }
   }
 
@@ -77,12 +69,7 @@ export function UserStatusActions({
           </Button>
         )}
       </div>
-      {errorMessage ? (
-        <Alert variant="destructive">
-          <AlertTitle>Action failed</AlertTitle>
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      ) : null}
+      <ActionErrorAlert message={errorMessage} />
       <Dialog open={confirmDeactivate} onOpenChange={setConfirmDeactivate}>
         <DialogContent>
           <DialogHeader>

@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { QueryLoading } from '@/components/feedback/query-state';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime, formatMoney } from '@/lib/format';
 
 type OrderPaymentPanelProps = {
@@ -30,11 +30,7 @@ export function OrderPaymentPanel({
         <AlertTitle>Could not load payment</AlertTitle>
         <AlertDescription className="flex flex-wrap items-center gap-3">
           <span>
-            {error instanceof ApiRequestError
-              ? error.message
-              : error instanceof Error
-                ? error.message
-                : 'Payment not found'}
+            {getErrorMessage(error, 'Payment not found')}
           </span>
           <Button type="button" variant="outline" size="sm" onClick={onRetry}>
             Retry

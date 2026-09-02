@@ -17,7 +17,7 @@ import {
 } from '@/features/products/schemas/product-schema';
 import { QueryLoading } from '@/components/feedback/query-state';
 import {
-  ApiRequestError,
+  getErrorMessage,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
 import { useAuth } from '@/lib/auth/auth-context';
@@ -100,9 +100,7 @@ export function ProductEditPage() {
         <AlertTitle>Could not load product</AlertTitle>
         <AlertDescription className="flex flex-wrap items-center gap-3">
           <span>
-            {productQuery.error instanceof ApiRequestError
-              ? productQuery.error.message
-              : 'Product not found'}
+            {getErrorMessage(productQuery.error, 'Product not found')}
           </span>
           <Button
             type="button"

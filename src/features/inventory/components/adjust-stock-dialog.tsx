@@ -28,10 +28,7 @@ import {
   type AdjustStockFormValues,
 } from '@/features/inventory/schemas/adjust-stock-schema';
 import type { AdjustStockDto } from '@/features/inventory/types';
-import {
-  ApiRequestError,
-  isOptimisticLockConflict,
-} from '@/lib/api/parse-api-error';
+import { applyApiFormErrors } from '@/lib/api/form-api-errors';
 
 type AdjustStockDialogProps = {
   open: boolean;
@@ -86,14 +83,11 @@ function AdjustStockDialogBody({
       await onSubmit(toAdjustStockDto(values));
       onOpenChange(false);
     } catch (error) {
-      if (isOptimisticLockConflict(error)) {
-        return;
-      }
-      if (error instanceof ApiRequestError) {
-        setFormError(error.message);
-        return;
-      }
-      setFormError('Something went wrong. Please try again.');
+      applyApiFormErrors<keyof AdjustStockFormValues>({
+        error,
+        setFormError,
+        setFieldError: (name, message) => form.setError(name, { message }),
+      });
     }
   }
 

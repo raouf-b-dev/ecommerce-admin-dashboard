@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,7 +13,8 @@ import {
   getAllowedOrderActions,
 } from '@/features/orders/lib/order-status-actions';
 import type { OrderStatusAction } from '@/features/orders/types';
-import { ApiRequestError } from '@/lib/api/parse-api-error';
+import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
+import { getErrorMessage } from '@/lib/api/parse-api-error';
 
 type OrderStatusActionsProps = {
   status: string;
@@ -42,11 +42,7 @@ export function OrderStatusActions({
       setConfirmAction(null);
     } catch (error) {
       setErrorMessage(
-        error instanceof ApiRequestError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : `Failed to ${action} order`,
+        getErrorMessage(error, `Failed to ${action} order`),
       );
     }
   }
@@ -83,12 +79,7 @@ export function OrderStatusActions({
         ))}
       </div>
 
-      {errorMessage ? (
-        <Alert variant="destructive">
-          <AlertTitle>Action failed</AlertTitle>
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      ) : null}
+      <ActionErrorAlert message={errorMessage} />
 
       <Dialog
         open={confirmAction !== null}

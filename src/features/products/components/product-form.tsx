@@ -19,10 +19,7 @@ import {
   type ProductFormValues,
   type ProductSubmitValues,
 } from '@/features/products/schemas/product-schema';
-import {
-  ApiRequestError,
-  isOptimisticLockConflict,
-} from '@/lib/api/parse-api-error';
+import { applyApiFormErrors } from '@/lib/api/form-api-errors';
 
 export type ProductFormMode = 'create' | 'edit';
 
@@ -46,42 +43,17 @@ const emptyDefaults: ProductFormValues = {
   categoryId: '',
 };
 
-function mapApiErrorToForm(
-  error: unknown,
-  setFormError: (message: string) => void,
-  setFieldError: (name: keyof ProductFormValues, message: string) => void,
-) {
-  if (isOptimisticLockConflict(error)) {
-    return;
-  }
-
-  if (!(error instanceof ApiRequestError)) {
-    setFormError('Something went wrong. Please try again.');
-    return;
-  }
-
-  if (error.errors && error.errors.length > 0) {
-    setFormError(error.message);
-    for (const item of error.errors) {
-      const lower = item.toLowerCase();
-      if (lower.includes('name')) {
-        setFieldError('name', item);
-      } else if (lower.includes('price')) {
-        setFieldError('price', item);
-      } else if (lower.includes('slug')) {
-        setFieldError('slug', item);
-      } else if (lower.includes('sku')) {
-        setFieldError('sku', item);
-      } else if (lower.includes('image')) {
-        setFieldError('imageUrl', item);
-      } else if (lower.includes('category')) {
-        setFieldError('categoryId', item);
-      }
-    }
-    return;
-  }
-
-  setFormError(error.message);
+function matchProductField(
+  message: string,
+): keyof ProductFormValues | null {
+  const lower = message.toLowerCase();
+  if (lower.includes('name')) return 'name';
+  if (lower.includes('price')) return 'price';
+  if (lower.includes('slug')) return 'slug';
+  if (lower.includes('sku')) return 'sku';
+  if (lower.includes('image')) return 'imageUrl';
+  if (lower.includes('category')) return 'categoryId';
+  return null;
 }
 
 export function ProductForm({
@@ -128,9 +100,12 @@ export function ProductForm({
     try {
       await onSubmit(toProductSubmitValues(values));
     } catch (error) {
-      mapApiErrorToForm(error, setFormError, (name, message) =>
-        form.setError(name, { message }),
-      );
+      applyApiFormErrors({
+        error,
+        setFormError,
+        setFieldError: (name, message) => form.setError(name, { message }),
+        matchField: matchProductField,
+      });
     }
   }
 
