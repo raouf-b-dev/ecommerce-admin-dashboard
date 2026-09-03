@@ -7,10 +7,29 @@
   <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite"></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"></a>
   <a href="https://tanstack.com/query"><img src="https://img.shields.io/badge/TanStack-Query-FF4154?style=flat&logo=react-query&logoColor=white" alt="TanStack Query"></a>
+  <a href="#try-live-demo-zero-setup"><img src="https://img.shields.io/badge/Try%20Live%20Demo-Zero%20Setup-0A7B3E?style=flat" alt="Try Live Demo (Zero Setup)"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
 
 > Admin SPA for the [E-commerce Store API](https://github.com/raouf-b-dev/ecommerce-store-api). Built with React and Vite. Business rules stay in the API.
+
+<a id="try-live-demo-zero-setup"></a>
+
+**Try Live Demo (Zero Setup)** — no Docker, Postgres, Redis, or API required:
+
+```bash
+git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
+cd ecommerce-admin-dashboard
+npm install
+npm run env:init
+npm run dev:mock
+```
+
+Open `http://localhost:5174` and use **Demo 1-Click Login**.
+
+A public hosted demo is not published yet. The mock static build is ready for that (`npm run build:mock`, `vercel.json`, `Dockerfile.quickstart`).
+
+Mock mode is demo-only. Playwright e2e still targets a real API.
 
 ## Table of Contents
 
@@ -40,10 +59,10 @@ The same backend is meant to serve a customer storefront in `ecommerce-store-web
 
 | Topic           | Status                                                                           |
 | :-------------- | :------------------------------------------------------------------------------- |
-| Feature screens | Auth, products, inventory, orders, users, and dashboard are wired to OpenAPI.    |
+| Feature screens | Auth, products, inventory, orders, users, roles, and dashboard are wired to OpenAPI. |
 | Dashboard       | Operational cockpit (analytics overview, revenue series, alerts, recent orders). |
-| Hosted demo     | Local dev only (release-gate work).                                              |
-| Roles admin     | Settings stub; role writes are not a product surface yet.                        |
+| Zero-backend demo | `npm run dev:mock` (MSW) + `Dockerfile.quickstart` / `vercel.json` for static mock builds. |
+| Public hosted demo | Not published yet; local `dev:mock` and static mock packaging are available.     |
 
 ---
 
@@ -63,7 +82,16 @@ Use the API repo for Docker, migrations, and seed accounts. Script names live th
 
 [Local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [Seeding](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (local fixtures only)
 
-### Run this app
+### Run without an API (mock mode)
+
+```bash
+npm run env:init
+npm run dev:mock
+```
+
+Uses MSW handlers and seed data. On the login screen, click **Demo 1-Click Login** (`admin@store.local`, any password). Session survives refresh via `sessionStorage`; mutable mock data resets on full reload.
+
+### Run against the live API
 
 ```bash
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
