@@ -10,7 +10,7 @@ import {
 import { useAuth } from '@/lib/auth/auth-context';
 
 /** Mock-mode-only chrome: banner + 1-click demo login. */
-export function DemoLoginActions() {
+export default function DemoLoginActions() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

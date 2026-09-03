@@ -9,11 +9,7 @@ import {
 import { LoginForm } from '@/features/auth/components/login-form';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
 
-const DemoLoginActions = lazy(() =>
-  import('@/lib/mock/ui/demo-login-actions').then((module) => ({
-    default: module.DemoLoginActions,
-  })),
-);
+const DemoLoginActions = lazy(() => import('@/lib/mock/ui/demo-login-actions'));
 
 export function LoginPage() {
   const mockMode = isMockMode();
