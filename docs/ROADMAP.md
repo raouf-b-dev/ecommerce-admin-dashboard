@@ -389,7 +389,7 @@ Write tests **with** each feature.
 - [x] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
 - [x] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
 - [x] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
-- [x] Add `Dockerfile.quickstart` (multi-stage build with Nginx Alpine serving static SPA) for unified monorepo orchestration.
+- [x] Add `Dockerfile.quickstart` (multi-stage Nginx Alpine image for the static mock SPA). Not used by the API repo.
 
 **Done when:** Running `npm run dev:mock` allows anyone to log in, navigate all screens, interact with filters, and view analytics charts with zero backend running.
 **Location:** `src/lib/mock/`, `src/main.tsx`, `Dockerfile.quickstart`, `package.json`
@@ -525,17 +525,22 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 13: Technical Release Gate [P0]
 
-> **Goal**: Validate production readiness against a real backend after Phases 9–11.5. (Does not require external media tools).
+> **Goal**: Validate production readiness against the live development API (`ecommerce-store-api` bootstrapped via `npm run setup` and running on `:3000`).
 
 **Scope:**
 
-- [ ] Hosted static deploy against a configured API
-- [ ] README quick start on a clean machine (`git clone` -> `npm run env:init` -> `npm run dev`)
-- [ ] Smoke checklist against seeded admin data
-- [ ] README + PROJECT-CONTEXT still accurate
-- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`)
+- [ ] Stranger onboarding validation following `README.md` (`npm run env:init` -> `npm run dev`).
+- [ ] Full live operator smoke loop checklist:
+  - Login as seeded administrator (`admin@store.local` / `Admin123!`).
+  - Products: filter by status, search, edit details, activate / deactivate.
+  - Inventory: stock adjustment dialog and OCC 409 conflict handling.
+  - Orders: status transition actions (`confirm`, `cancel`, `ship`).
+  - Users & Roles: change user role, activate/deactivate account, address book CRUD (add address, set default, delete address).
+- [ ] Validate hosted static packaging against configured live API origin (`npm run build` with `VITE_API_BASE_URL`).
+- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`).
+- [ ] README + PROJECT-CONTEXT verified accurate without tribal knowledge.
 
-**Done when:** A stranger can follow the README and run a **full** operator loop (list filters, writes, roles, product status, role assign, address book): not the thin Phase 8 surface.
+**Done when:** A stranger can follow the README, connect to the live API, and successfully execute all documented operator workflows without manual overrides or code changes.
 
 ---
 
