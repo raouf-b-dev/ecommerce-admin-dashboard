@@ -7,7 +7,7 @@ import {
   type ProductSubmitValues,
 } from '@/features/products/schemas/product-schema';
 
-export function ProductCreatePage() {
+function ProductCreatePage() {
   const navigate = useNavigate();
   const createProduct = useCreateProduct();
 
@@ -31,3 +31,6 @@ export function ProductCreatePage() {
     </div>
   );
 }
+
+export { ProductCreatePage };
+export default ProductCreatePage;

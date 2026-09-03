@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router';
 import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
@@ -23,7 +24,19 @@ export function AppLayout() {
           className="flex-1 overflow-y-auto px-6 py-8 outline-none"
         >
           <RouteErrorBoundary>
-            <Outlet />
+            <Suspense
+              fallback={
+                <p
+                  className="text-sm text-muted-foreground"
+                  role="status"
+                  aria-live="polite"
+                >
+                  Loading…
+                </p>
+              }
+            >
+              <Outlet />
+            </Suspense>
           </RouteErrorBoundary>
         </main>
       </div>

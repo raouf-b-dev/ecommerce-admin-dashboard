@@ -29,7 +29,7 @@ import { QueryLoading } from '@/components/feedback/query-state';
 const CONFLICT_MESSAGE =
   'Order was modified by another request. Latest values were reloaded — review and try again.';
 
-export function OrderDetailPage() {
+function OrderDetailPage() {
   const { hasPermission } = useAuth();
   const canManage = hasPermission('manage_orders');
   const canViewPayments = hasPermission('view_all_payments');
@@ -184,3 +184,6 @@ export function OrderDetailPage() {
     </div>
   );
 }
+
+export { OrderDetailPage };
+export default OrderDetailPage;

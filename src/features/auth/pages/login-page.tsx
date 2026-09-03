@@ -11,7 +11,7 @@ import { isMockMode } from '@/lib/mock/is-mock-mode';
 
 const DemoLoginActions = lazy(() => import('@/lib/mock/ui/demo-login-actions'));
 
-export function LoginPage() {
+function LoginPage() {
   const mockMode = isMockMode();
 
   return (
@@ -39,3 +39,5 @@ export function LoginPage() {
     </div>
   );
 }
+
+export default LoginPage;

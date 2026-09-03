@@ -1,7 +1,7 @@
 import { PageHeader } from '@/components/layout/page-header';
 import { RolesTable } from '@/features/roles/components/roles-table';
 
-export function RolesSettingsPage() {
+function RolesSettingsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
@@ -12,3 +12,6 @@ export function RolesSettingsPage() {
     </div>
   );
 }
+
+export { RolesSettingsPage };
+export default RolesSettingsPage;

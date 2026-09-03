@@ -32,7 +32,7 @@ function nullableToOptionalString(value: unknown): string | undefined {
   return typeof value === 'string' ? value : undefined;
 }
 
-export function ProductEditPage() {
+function ProductEditPage() {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const canViewInventory = hasPermission('view_all_inventory');
@@ -188,3 +188,6 @@ export function ProductEditPage() {
     </div>
   );
 }
+
+export { ProductEditPage };
+export default ProductEditPage;

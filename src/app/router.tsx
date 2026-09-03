@@ -1,18 +1,6 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { AppLayout } from '@/components/layout/app-layout';
-import { LoginPage } from '@/features/auth/pages/login-page';
-import { ChangePasswordPage } from '@/features/auth/pages/change-password-page';
-import { RolesSettingsPage } from '@/features/roles/pages/roles-settings-page';
-import { DashboardPage } from '@/features/dashboard/pages/dashboard-page';
-import { OrdersPage } from '@/features/orders/pages/orders-page';
-import { OrderDetailPage } from '@/features/orders/pages/order-detail-page';
-import { ProductsPage } from '@/features/products/pages/products-page';
-import { ProductCreatePage } from '@/features/products/pages/product-create-page';
-import { ProductEditPage } from '@/features/products/pages/product-edit-page';
-import { InventoryPage } from '@/features/inventory/pages/inventory-page';
-import { InventoryDetailPage } from '@/features/inventory/pages/inventory-detail-page';
-import { UsersPage } from '@/features/users/pages/users-page';
-import { UserDetailPage } from '@/features/users/pages/user-detail-page';
 import { GuestRoute } from '@/lib/auth/guest-route';
 import {
   ChangePasswordRoute,
@@ -24,12 +12,56 @@ import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { NotFoundPage } from '@/app/pages/not-found-page';
 import { RootErrorPage } from '@/app/pages/root-error-page';
 
+const LoginPage = lazy(() => import('@/features/auth/pages/login-page'));
+const ChangePasswordPage = lazy(() =>
+  import('@/features/auth/pages/change-password-page'),
+);
+const RolesSettingsPage = lazy(() =>
+  import('@/features/roles/pages/roles-settings-page'),
+);
+const DashboardPage = lazy(() =>
+  import('@/features/dashboard/pages/dashboard-page'),
+);
+const OrdersPage = lazy(() => import('@/features/orders/pages/orders-page'));
+const OrderDetailPage = lazy(() =>
+  import('@/features/orders/pages/order-detail-page'),
+);
+const ProductsPage = lazy(() =>
+  import('@/features/products/pages/products-page'),
+);
+const ProductCreatePage = lazy(() =>
+  import('@/features/products/pages/product-create-page'),
+);
+const ProductEditPage = lazy(() =>
+  import('@/features/products/pages/product-edit-page'),
+);
+const InventoryPage = lazy(() =>
+  import('@/features/inventory/pages/inventory-page'),
+);
+const InventoryDetailPage = lazy(() =>
+  import('@/features/inventory/pages/inventory-detail-page'),
+);
+const UsersPage = lazy(() => import('@/features/users/pages/users-page'));
+const UserDetailPage = lazy(() =>
+  import('@/features/users/pages/user-detail-page'),
+);
+
+function RouteFallback() {
+  return (
+    <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
+      Loading…
+    </p>
+  );
+}
+
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: (
       <GuestRoute>
-        <LoginPage />
+        <Suspense fallback={<RouteFallback />}>
+          <LoginPage />
+        </Suspense>
       </GuestRoute>
     ),
   },
@@ -38,7 +70,9 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ChangePasswordRoute>
-          <ChangePasswordPage />
+          <Suspense fallback={<RouteFallback />}>
+            <ChangePasswordPage />
+          </Suspense>
         </ChangePasswordRoute>
       </ProtectedRoute>
     ),
