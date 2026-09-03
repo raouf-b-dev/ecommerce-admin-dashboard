@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSettled: () => {
-      queryClient.setQueryData(AUTH_SESSION_QUERY_KEY, null);
+      queryClient.clear();
     },
   });
 
