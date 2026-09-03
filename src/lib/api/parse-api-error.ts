@@ -1,3 +1,5 @@
+import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
+
 export type ParsedApiError = {
   statusCode: number;
   message: string;
@@ -72,10 +74,74 @@ export function toApiRequestError(
 
 export function isOptimisticLockConflict(error: unknown): boolean {
   return (
-    error instanceof ApiRequestError &&
-    (error.statusCode === 409 || error.code === 'OPTIMISTIC_LOCK_CONFLICT')
+    hasHttpStatus(error, 409) ||
+    (error instanceof ApiRequestError && error.code === 'OPTIMISTIC_LOCK_CONFLICT')
   );
 }
+
+/**
+ * Safely extracts the HTTP status code from any error shape
+ * (ApiRequestError, AuthRequestError, Response-like objects, or generic error objects).
+ */
+export function getErrorStatusCode(error: unknown): number | null {
+  if (error instanceof ApiRequestError) {
+    return error.statusCode;
+  }
+  if (error instanceof AuthRequestError) {
+    return error.statusCode;
+  }
+  if (error && typeof error === 'object') {
+    if (
+      'statusCode' in error &&
+      typeof (error as { statusCode: unknown }).statusCode === 'number'
+    ) {
+      return (error as { statusCode: number }).statusCode;
+    }
+    if (
+      'status' in error &&
+      typeof (error as { status: unknown }).status === 'number'
+    ) {
+      return (error as { status: number }).status;
+    }
+  }
+  return null;
+}
+
+/**
+ * Checks if an error's HTTP status code falls within an inclusive [min, max] range.
+ */
+export function isStatusInRange(
+  error: unknown,
+  min: number,
+  max: number,
+): boolean {
+  const status = getErrorStatusCode(error);
+  return status !== null && status >= min && status <= max;
+}
+
+/**
+ * Checks if an error has any of the specified HTTP status codes.
+ * Example: hasHttpStatus(error, 401, 403) or hasHttpStatus(error, 429)
+ */
+export function hasHttpStatus(
+  error: unknown,
+  ...statusCodes: number[]
+): boolean {
+  const status = getErrorStatusCode(error);
+  return status !== null && statusCodes.includes(status);
+}
+
+/**
+ * Semantic RFC 9110 client error check (HTTP 400–499).
+ */
+export const isClientError = (error: unknown): boolean =>
+  isStatusInRange(error, 400, 499);
+
+/**
+ * Semantic RFC 9110 server error check (HTTP 500–599).
+ */
+export const isServerError = (error: unknown): boolean =>
+  isStatusInRange(error, 500, 599);
 
 export function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof ApiRequestError) {
