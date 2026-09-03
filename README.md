@@ -60,7 +60,9 @@ The same backend is meant to serve a customer storefront in `ecommerce-store-web
 | Topic           | Status                                                                           |
 | :-------------- | :------------------------------------------------------------------------------- |
 | Feature screens | Auth, products, inventory, orders, users, roles, and dashboard are wired to OpenAPI. |
+| Operational UX  | Dark / Light / System theme (zero-FOUC) and live WebSocket toast feed for incoming orders/stock. |
 | Dashboard       | Operational cockpit (analytics overview, revenue series, alerts, recent orders). |
+| Navigation      | Safe landing for restricted operators; landing gates prevent 403 loops on `/`.  |
 | Zero-backend demo | `npm run dev:mock` (MSW) + `Dockerfile.quickstart` / `vercel.json` for static mock builds. |
 | Public hosted demo | Not published yet; local `dev:mock` and static mock packaging are available.     |
 
@@ -145,7 +147,8 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 | App            | Vite + React 19                                              |
 | Routing        | React Router                                                 |
 | Language       | TypeScript (strict)                                          |
-| Styling        | Tailwind CSS + shadcn/ui (Radix)                             |
+| Styling        | Tailwind CSS + shadcn/ui (Radix) + Dark/Light Theme Provider |
+| Real-time / UI | Socket.IO client (`socket.io-client`) + Sonner toasts        |
 | Client data    | TanStack Query                                               |
 | Tables         | TanStack Table                                               |
 | Local UI state | React state; Zustand if several trees need the same UI state |
@@ -192,10 +195,11 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 src/
 ├── app/                  # router, navigation
 ├── features/             # auth, products, orders, dashboard, etc.
-├── components/           # layout shell + shared UI
+├── components/           # layout shell, theme provider/toggle, shared UI
 ├── lib/
-│   ├── api/              # OpenAPI client, HTTP helpers
-│   ├── auth/             # session, guards, AuthProvider
+│   ├── api/              # OpenAPI client, RFC 9110 HTTP error helpers
+│   ├── auth/             # session, guards, AuthProvider, safe landing
+│   ├── ws/               # WebSocket gateway client & notification bus
 │   └── format.ts         # money/date helpers
 docs/                     # architecture, integration, conventions
 e2e/                      # Playwright (journey, a11y, keyboard, feature specs)
