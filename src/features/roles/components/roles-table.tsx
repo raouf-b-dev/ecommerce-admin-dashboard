@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -26,7 +25,10 @@ import {
 import type { RoleResponseDto } from '@/features/roles/types';
 import { ActionErrorAlert } from '@/components/feedback/action-error-alert';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
-import { QueryLoading } from '@/components/feedback/query-state';
+import {
+  QueryLoading,
+  QueryStateAlert,
+} from '@/components/feedback/query-state';
 import {
   Dialog,
   DialogContent,
@@ -54,12 +56,15 @@ export function RolesTable() {
 
   if (rolesQuery.isError) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Could not load roles</AlertTitle>
-        <AlertDescription>
-          {getErrorMessage(rolesQuery.error, 'Failed to load roles')}
-        </AlertDescription>
-      </Alert>
+      <QueryStateAlert
+        isError
+        hasData={false}
+        error={rolesQuery.error}
+        onRetry={() => {
+          void rolesQuery.refetch();
+        }}
+        resource="roles"
+      />
     );
   }
 
