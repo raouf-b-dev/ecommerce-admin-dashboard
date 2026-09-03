@@ -73,7 +73,7 @@ Write tests **with** each feature.
 | **6**    | Users                              | `[x]`  |    -     | Read views + role filter + tests                                                |
 | **7**    | Dashboard                          | `[x]`  |    -     | Operational cockpit (analytics API + Recharts)                                  |
 | **8**    | Quality sweep                      | `[x]`  |    -     | Journey, a11y, consistency, CI e2e policy                                       |
-| **8a**   | Standalone Zero-Backend Preview    | `[ ]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
+| **8a**   | Standalone Zero-Backend Preview    | `[x]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
 | **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | `[x]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
 | **11**   | API gaps then SPA                  | `[x]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
@@ -374,22 +374,22 @@ Write tests **with** each feature.
 >
 > *(Note: Non-blocking DX enabler. Can be executed in parallel with API-contract Phases 9–11).*
 
-**OpenAPI capabilities:** Mirrored mock handlers for `/v1/auth/*`, `/v1/admin/analytics/*`, `/v1/products`, `/v1/orders`, `/v1/inventory`, and `/v1/users`.
+**OpenAPI capabilities:** Mirrored mock handlers for `/v1/authentication/*`, `/v1/admin/analytics/*`, `/v1/products`, `/v1/orders`, `/v1/inventory`, `/v1/users`, `/v1/roles`, and `/v1/permissions`.
 
 ### MSW Auth Strategy
-- Provide MSW handlers for `POST /v1/auth/login`, `POST /v1/auth/refresh`, and `POST /v1/auth/logout`.
-- Mock login accepts any password for `admin@ecommerce.local` (and provides a "Demo 1-Click Login" button on the login screen in mock mode).
-- Returns a mock RSA JWT token payload equipped with full operator permissions (`view_all_orders`, `view_all_inventory`, `view_all_payments`, `manage_products`, `manage_users`, `manage_roles`).
+- Provide MSW handlers for `POST /v1/authentication/login`, `POST /v1/authentication/refresh`, and `POST /v1/authentication/logout`.
+- Mock login accepts any password for `admin@store.local` (and provides a "Demo 1-Click Login" button on the login screen in mock mode).
+- Returns a decodeable mock JWT plus full operator permissions (`access_admin`, `view_all_orders`, `view_all_inventory`, `view_all_payments`, `manage_products`, `manage_users`, `manage_roles`, …). Session persistence uses `sessionStorage` (service workers cannot set cookies).
 
 ### Scope:
-- [ ] Install Mock Service Worker (`msw`) as dev dependency.
-- [ ] Create mock API handlers in `src/lib/mock/handlers/` matching the OpenAPI contract.
-- [ ] Populate realistic seed datasets (15 products, multi-period revenue series, low stock alerts, pending orders).
-- [ ] Add `src/lib/mock/browser.ts` worker initialization.
-- [ ] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
-- [ ] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
-- [ ] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
-- [ ] Add `Dockerfile.quickstart` (multi-stage build with Nginx Alpine serving static SPA) for unified monorepo orchestration.
+- [x] Install Mock Service Worker (`msw`) as dev dependency.
+- [x] Create mock API handlers in `src/lib/mock/handlers/` matching the OpenAPI contract.
+- [x] Populate realistic seed datasets (15 products, multi-period revenue series, low stock alerts, pending orders).
+- [x] Add `src/lib/mock/browser.ts` worker initialization.
+- [x] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
+- [x] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
+- [x] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
+- [x] Add `Dockerfile.quickstart` (multi-stage build with Nginx Alpine serving static SPA) for unified monorepo orchestration.
 
 **Done when:** Running `npm run dev:mock` allows anyone to log in, navigate all screens, interact with filters, and view analytics charts with zero backend running.
 **Location:** `src/lib/mock/`, `src/main.tsx`, `Dockerfile.quickstart`, `package.json`
