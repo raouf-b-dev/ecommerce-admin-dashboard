@@ -6,6 +6,7 @@ import {
   ChangePasswordRoute,
   RequirePasswordChanged,
 } from '@/lib/auth/must-change-password-route';
+import { IndexLandingGate } from '@/lib/auth/index-landing-gate';
 import { OperatorRoute } from '@/lib/auth/operator-route';
 import { PermissionRoute } from '@/lib/auth/permission-route';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
@@ -93,9 +94,9 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <PermissionRoute permission="view_all_orders">
+          <IndexLandingGate>
             <DashboardPage />
-          </PermissionRoute>
+          </IndexLandingGate>
         ),
       },
       {
