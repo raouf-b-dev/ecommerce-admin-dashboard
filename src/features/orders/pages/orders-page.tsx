@@ -19,7 +19,20 @@ import {
 } from '@/features/orders/lib/order-list-filters';
 import type { OrderListFilters, OrderStatus } from '@/features/orders/types';
 
-export function OrdersPage() {
+function orderFilterDraftKey(filters: OrderListFilters): string {
+  return [
+    filters.userEmail ?? '',
+    filters.userName ?? '',
+    filters.firstName ?? '',
+    filters.lastName ?? '',
+    filters.createdAfter ?? '',
+    filters.createdBefore ?? '',
+    filters.minAmount ?? '',
+    filters.maxAmount ?? '',
+  ].join('\0');
+}
+
+function OrdersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = orderListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
@@ -41,6 +54,23 @@ export function OrdersPage() {
   const [maxAmountDraft, setMaxAmountDraft] = useState(
     filters.maxAmount !== undefined ? String(filters.maxAmount) : '',
   );
+  const draftKey = orderFilterDraftKey(filters);
+  const [prevDraftKey, setPrevDraftKey] = useState(draftKey);
+  if (draftKey !== prevDraftKey) {
+    setPrevDraftKey(draftKey);
+    setEmailDraft(filters.userEmail ?? '');
+    setNameDraft(filters.userName ?? '');
+    setFirstNameDraft(filters.firstName ?? '');
+    setLastNameDraft(filters.lastName ?? '');
+    setCreatedAfterDraft(filters.createdAfter ?? '');
+    setCreatedBeforeDraft(filters.createdBefore ?? '');
+    setMinAmountDraft(
+      filters.minAmount !== undefined ? String(filters.minAmount) : '',
+    );
+    setMaxAmountDraft(
+      filters.maxAmount !== undefined ? String(filters.maxAmount) : '',
+    );
+  }
 
   function updateFilters(next: OrderListFilters) {
     setSearchParams(orderListFiltersToSearchParams(next), { replace: true });
@@ -256,3 +286,6 @@ export function OrdersPage() {
     </div>
   );
 }
+
+export { OrdersPage };
+export default OrdersPage;

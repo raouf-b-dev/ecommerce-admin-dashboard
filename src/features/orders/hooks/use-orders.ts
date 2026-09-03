@@ -29,6 +29,7 @@ export function useOrdersListQuery(filters: Partial<OrderListFilters>) {
     queryKey: orderKeys.list(normalized),
     queryFn: () => listOrdersRequest(normalized),
     placeholderData: keepPreviousData,
+    staleTime: 45_000,
   });
 }
 
@@ -37,6 +38,7 @@ export function useOrderDetailQuery(orderId: number | undefined) {
     queryKey: orderKeys.detail(orderId),
     queryFn: () => getOrderRequest(orderId!),
     enabled: typeof orderId === 'number' && Number.isFinite(orderId),
+    staleTime: 45_000,
   });
 }
 
@@ -49,6 +51,7 @@ export function useOrderPaymentQuery(
     queryFn: () => getOrderPaymentRequest(orderId!),
     enabled:
       enabled && typeof orderId === 'number' && Number.isFinite(orderId),
+    staleTime: 45_000,
   });
 }
 

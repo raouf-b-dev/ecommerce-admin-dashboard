@@ -28,6 +28,7 @@ export function useInventoryListQuery(filters: Partial<InventoryListFilters>) {
     queryKey: inventoryKeys.list(normalized),
     queryFn: () => listInventoryRequest(normalized),
     placeholderData: keepPreviousData,
+    staleTime: 45_000,
   });
 }
 
@@ -36,6 +37,7 @@ export function useInventoryDetailQuery(productId: number | undefined) {
     queryKey: inventoryKeys.detail(productId),
     queryFn: () => getInventoryRequest(productId!),
     enabled: typeof productId === 'number' && Number.isFinite(productId),
+    staleTime: 45_000,
   });
 }
 

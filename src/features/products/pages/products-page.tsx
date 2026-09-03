@@ -21,7 +21,16 @@ import { useAuth } from '@/lib/auth/auth-context';
 
 type ActiveFilter = '' | 'true' | 'false';
 
-export function ProductsPage() {
+function productFilterDraftKey(filters: ProductListFilters): string {
+  return [
+    filters.search ?? '',
+    filters.minPrice ?? '',
+    filters.maxPrice ?? '',
+    filters.categoryId ?? '',
+  ].join('\0');
+}
+
+function ProductsPage() {
   const { hasPermission } = useAuth();
   const canManage = hasPermission('manage_products');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,6 +48,21 @@ export function ProductsPage() {
   const [categoryIdDraft, setCategoryIdDraft] = useState(
     filters.categoryId !== undefined ? String(filters.categoryId) : '',
   );
+  const draftKey = productFilterDraftKey(filters);
+  const [prevDraftKey, setPrevDraftKey] = useState(draftKey);
+  if (draftKey !== prevDraftKey) {
+    setPrevDraftKey(draftKey);
+    setSearchDraft(filters.search ?? '');
+    setMinPriceDraft(
+      filters.minPrice !== undefined ? String(filters.minPrice) : '',
+    );
+    setMaxPriceDraft(
+      filters.maxPrice !== undefined ? String(filters.maxPrice) : '',
+    );
+    setCategoryIdDraft(
+      filters.categoryId !== undefined ? String(filters.categoryId) : '',
+    );
+  }
 
   function updateFilters(next: ProductListFilters) {
     setSearchParams(productListFiltersToSearchParams(next), { replace: true });
@@ -209,3 +233,6 @@ export function ProductsPage() {
     </div>
   );
 }
+
+export { ProductsPage };
+export default ProductsPage;

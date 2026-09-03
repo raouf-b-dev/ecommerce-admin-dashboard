@@ -32,7 +32,7 @@ function parseDaysParam(raw: string | null): DashboardPeriodDays {
   return 7;
 }
 
-export function DashboardPage() {
+function DashboardPage() {
   const { hasPermission } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const days = parseDaysParam(searchParams.get('days'));
@@ -211,3 +211,6 @@ export function DashboardPage() {
     </div>
   );
 }
+
+export { DashboardPage };
+export default DashboardPage;

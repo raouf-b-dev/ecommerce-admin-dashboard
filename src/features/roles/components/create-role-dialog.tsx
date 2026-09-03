@@ -5,10 +5,19 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   PermissionCheckboxList,
   RoleCodeField,
@@ -37,7 +46,32 @@ export function CreateRoleDialog({
   onOpenChange,
   onSubmit,
 }: CreateRoleDialogProps) {
-  const permissionsQuery = usePermissionsListQuery(open);
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!isPending) {
+          onOpenChange(next);
+        }
+      }}
+    >
+      {open ? (
+        <CreateRoleDialogBody
+          isPending={isPending}
+          onOpenChange={onOpenChange}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Dialog>
+  );
+}
+
+function CreateRoleDialogBody({
+  isPending,
+  onOpenChange,
+  onSubmit,
+}: Omit<CreateRoleDialogProps, 'open'>) {
+  const permissionsQuery = usePermissionsListQuery(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm<CreateRoleFormValues>({
     resolver: zodResolver(createRoleSchema),
@@ -48,7 +82,6 @@ export function CreateRoleDialog({
     setErrorMessage(null);
     try {
       await onSubmit(values);
-      form.reset();
       onOpenChange(false);
     } catch (error) {
       setErrorMessage(getErrorMessage(error, 'Failed to create role'));
@@ -56,59 +89,69 @@ export function CreateRoleDialog({
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!isPending) {
-          onOpenChange(next);
-          if (!next) {
-            setErrorMessage(null);
-            form.reset();
-          }
-        }
-      }}
-    >
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Create role</DialogTitle>
-        </DialogHeader>
-        {permissionsQuery.isLoading ? (
-          <QueryLoading>Loading permissions…</QueryLoading>
-        ) : (
+    <DialogContent className="max-w-lg">
+      <DialogHeader>
+        <DialogTitle>Create role</DialogTitle>
+        <DialogDescription>
+          Define a new role code, display name, and permission set.
+        </DialogDescription>
+      </DialogHeader>
+      {permissionsQuery.isLoading ? (
+        <QueryLoading>Loading permissions…</QueryLoading>
+      ) : (
+        <Form {...form}>
           <form
             className="space-y-4"
             onSubmit={form.handleSubmit((values) => handleSubmit(values))}
           >
-            <RoleCodeField
-              value={form.watch('code')}
-              onChange={(value) =>
-                form.setValue('code', value, { shouldValidate: true })
-              }
-              error={form.formState.errors.code?.message}
+            <FormField
+              control={form.control}
+              name="code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleCodeField
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <RoleNameField
-              id="create-role-name"
-              value={form.watch('name')}
-              onChange={(value) =>
-                form.setValue('name', value, { shouldValidate: true })
-              }
-              error={form.formState.errors.name?.message}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleNameField
+                      id="create-role-name"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Permissions</p>
-              <PermissionCheckboxList
-                permissions={permissionsQuery.data ?? []}
-                selected={form.watch('permissions')}
-                onChange={(codes) =>
-                  form.setValue('permissions', codes, { shouldValidate: true })
-                }
-              />
-              {form.formState.errors.permissions ? (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.permissions.message}
-                </p>
-              ) : null}
-            </div>
+            <FormField
+              control={form.control}
+              name="permissions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Permissions</FormLabel>
+                  <FormControl>
+                    <PermissionCheckboxList
+                      permissions={permissionsQuery.data ?? []}
+                      selected={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <ActionErrorAlert
               title="Could not create role"
               message={errorMessage}
@@ -119,9 +162,9 @@ export function CreateRoleDialog({
               </Button>
             </DialogFooter>
           </form>
-        )}
-      </DialogContent>
-    </Dialog>
+        </Form>
+      )}
+    </DialogContent>
   );
 }
 

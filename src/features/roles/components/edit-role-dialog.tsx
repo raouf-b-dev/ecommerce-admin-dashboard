@@ -1,14 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   PermissionCheckboxList,
   RoleNameField,
@@ -39,22 +48,47 @@ export function EditRoleDialog({
   onOpenChange,
   onSubmit,
 }: EditRoleDialogProps) {
-  const permissionsQuery = usePermissionsListQuery(open);
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!isPending) {
+          onOpenChange(next);
+        }
+      }}
+    >
+      {open && role ? (
+        <EditRoleDialogBody
+          role={role}
+          isPending={isPending}
+          onOpenChange={onOpenChange}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Dialog>
+  );
+}
+
+function EditRoleDialogBody({
+  role,
+  isPending,
+  onOpenChange,
+  onSubmit,
+}: {
+  role: RoleResponseDto;
+  isPending: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (values: UpdateRoleFormValues) => Promise<void>;
+}) {
+  const permissionsQuery = usePermissionsListQuery(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm<UpdateRoleFormValues>({
     resolver: zodResolver(updateRoleSchema),
-    defaultValues: { name: '', permissions: [] },
+    defaultValues: {
+      name: role.name,
+      permissions: role.permissions.codes,
+    },
   });
-
-  useEffect(() => {
-    if (role && open) {
-      form.reset({
-        name: role.name,
-        permissions: role.permissions.codes,
-      });
-      setErrorMessage(null);
-    }
-  }, [role, open, form]);
 
   async function handleSubmit(values: UpdateRoleFormValues) {
     setErrorMessage(null);
@@ -66,33 +100,25 @@ export function EditRoleDialog({
     }
   }
 
-  if (!role) {
-    return null;
-  }
-
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!isPending) {
-          onOpenChange(next);
-        }
-      }}
-    >
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            Edit role
-            {role.isSystem ? (
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                System
-              </span>
-            ) : null}
-          </DialogTitle>
-        </DialogHeader>
-        {permissionsQuery.isLoading ? (
-          <QueryLoading>Loading permissions…</QueryLoading>
-        ) : (
+    <DialogContent className="max-w-lg">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          Edit role
+          {role.isSystem ? (
+            <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+              System
+            </span>
+          ) : null}
+        </DialogTitle>
+        <DialogDescription>
+          Update the display name and permissions for “{role.code}”.
+        </DialogDescription>
+      </DialogHeader>
+      {permissionsQuery.isLoading ? (
+        <QueryLoading>Loading permissions…</QueryLoading>
+      ) : (
+        <Form {...form}>
           <form
             className="space-y-4"
             onSubmit={form.handleSubmit((values) => handleSubmit(values))}
@@ -101,30 +127,40 @@ export function EditRoleDialog({
               <p className="text-muted-foreground">Code</p>
               <p className="font-mono font-medium">{role.code}</p>
             </div>
-            <RoleNameField
-              id="edit-role-name"
-              value={form.watch('name')}
-              onChange={(value) =>
-                form.setValue('name', value, { shouldValidate: true })
-              }
-              readOnly={role.isSystem}
-              error={form.formState.errors.name?.message}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleNameField
+                      id="edit-role-name"
+                      value={field.value}
+                      onChange={field.onChange}
+                      readOnly={role.isSystem}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Permissions</p>
-              <PermissionCheckboxList
-                permissions={permissionsQuery.data ?? []}
-                selected={form.watch('permissions')}
-                onChange={(codes) =>
-                  form.setValue('permissions', codes, { shouldValidate: true })
-                }
-              />
-              {form.formState.errors.permissions ? (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.permissions.message}
-                </p>
-              ) : null}
-            </div>
+            <FormField
+              control={form.control}
+              name="permissions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Permissions</FormLabel>
+                  <FormControl>
+                    <PermissionCheckboxList
+                      permissions={permissionsQuery.data ?? []}
+                      selected={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <ActionErrorAlert
               title="Could not update role"
               message={errorMessage}
@@ -135,9 +171,9 @@ export function EditRoleDialog({
               </Button>
             </DialogFooter>
           </form>
-        )}
-      </DialogContent>
-    </Dialog>
+        </Form>
+      )}
+    </DialogContent>
   );
 }
 

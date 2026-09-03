@@ -18,6 +18,7 @@ import {
 } from '@/features/auth/schemas/change-password-schema';
 import { useAuth } from '@/lib/auth/auth-context';
 import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
+import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
 
 function resolveChangePasswordError(error: unknown): string {
   if (error instanceof AuthRequestError) {
@@ -31,18 +32,6 @@ function resolveChangePasswordError(error: unknown): string {
   }
 
   return 'Could not update password. Check your current password and try again.';
-}
-
-function safeRedirectPath(value: string | null): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//')) {
-    return '/';
-  }
-
-  if (value.startsWith('/change-password') || value.startsWith('/login')) {
-    return '/';
-  }
-
-  return value;
 }
 
 export function ChangePasswordForm() {

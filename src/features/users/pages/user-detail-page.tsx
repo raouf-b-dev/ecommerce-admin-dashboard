@@ -39,7 +39,7 @@ import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 
-export function UserDetailPage() {
+function UserDetailPage() {
   const { hasPermission } = useAuth();
   const canViewOrders = hasPermission('view_all_orders');
   const canManageUsers = hasPermission('manage_users');
@@ -307,3 +307,6 @@ export function UserDetailPage() {
     </div>
   );
 }
+
+export { UserDetailPage };
+export default UserDetailPage;

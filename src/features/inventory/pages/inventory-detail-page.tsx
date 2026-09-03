@@ -20,7 +20,7 @@ import { QueryLoading } from '@/components/feedback/query-state';
 const CONFLICT_MESSAGE =
   'Stock was modified by another request. Latest values were reloaded — review and adjust again.';
 
-export function InventoryDetailPage() {
+function InventoryDetailPage() {
   const { hasPermission } = useAuth();
   const canManage = hasPermission('manage_inventory');
   const params = useParams();
@@ -156,3 +156,6 @@ export function InventoryDetailPage() {
     </div>
   );
 }
+
+export { InventoryDetailPage };
+export default InventoryDetailPage;

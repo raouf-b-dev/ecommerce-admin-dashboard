@@ -69,6 +69,8 @@ Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecomm
 
 Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for this repo’s delivery plan and done criteria.
 
+Mock mode boundaries (who may import `@/lib/mock`, Playwright vs MSW): [`docs/ai/CONVENTIONS.md`](../docs/ai/CONVENTIONS.md) §15.
+
 ## API Integration Rules
 
 - Contract source of truth: API OpenAPI / Swagger

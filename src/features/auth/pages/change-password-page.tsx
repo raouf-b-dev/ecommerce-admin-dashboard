@@ -11,7 +11,7 @@ import {
 import { ChangePasswordForm } from '@/features/auth/components/change-password-form';
 import { useAuth } from '@/lib/auth/auth-context';
 
-export function ChangePasswordPage() {
+function ChangePasswordPage() {
   const { session, logout } = useAuth();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -64,3 +64,6 @@ export function ChangePasswordPage() {
     </div>
   );
 }
+
+export { ChangePasswordPage };
+export default ChangePasswordPage;

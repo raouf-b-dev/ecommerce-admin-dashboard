@@ -18,7 +18,15 @@ import {
 } from '@/features/inventory/lib/inventory-list-filters';
 import type { InventoryListFilters } from '@/features/inventory/types';
 
-export function InventoryPage() {
+function inventoryFilterDraftKey(filters: InventoryListFilters): string {
+  return [
+    filters.sku ?? '',
+    filters.productTitle ?? '',
+    filters.productId ?? '',
+  ].join('\0');
+}
+
+function InventoryPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = inventoryListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
@@ -29,6 +37,16 @@ export function InventoryPage() {
   const [productIdDraft, setProductIdDraft] = useState(
     filters.productId !== undefined ? String(filters.productId) : '',
   );
+  const draftKey = inventoryFilterDraftKey(filters);
+  const [prevDraftKey, setPrevDraftKey] = useState(draftKey);
+  if (draftKey !== prevDraftKey) {
+    setPrevDraftKey(draftKey);
+    setSkuDraft(filters.sku ?? '');
+    setTitleDraft(filters.productTitle ?? '');
+    setProductIdDraft(
+      filters.productId !== undefined ? String(filters.productId) : '',
+    );
+  }
 
   function updateFilters(next: InventoryListFilters) {
     setSearchParams(inventoryListFiltersToSearchParams(next), {
@@ -181,3 +199,6 @@ export function InventoryPage() {
     </div>
   );
 }
+
+export { InventoryPage };
+export default InventoryPage;
