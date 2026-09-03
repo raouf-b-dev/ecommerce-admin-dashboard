@@ -20,7 +20,7 @@ import type { UserListFilters } from '@/features/users/types';
 
 type ActiveFilter = '' | 'true' | 'false';
 
-export function UsersPage() {
+function UsersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = userListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
@@ -28,6 +28,12 @@ export function UsersPage() {
   const rolesQuery = useRolesListQuery();
 
   const [searchDraft, setSearchDraft] = useState(filters.search ?? '');
+  const urlSearch = filters.search ?? '';
+  const [prevUrlSearch, setPrevUrlSearch] = useState(urlSearch);
+  if (urlSearch !== prevUrlSearch) {
+    setPrevUrlSearch(urlSearch);
+    setSearchDraft(urlSearch);
+  }
 
   function updateFilters(next: UserListFilters) {
     setSearchParams(userListFiltersToSearchParams(next), { replace: true });
@@ -183,3 +189,6 @@ export function UsersPage() {
     </div>
   );
 }
+
+export { UsersPage };
+export default UsersPage;

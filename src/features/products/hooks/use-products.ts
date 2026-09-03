@@ -34,6 +34,7 @@ export function useProductsListQuery(filters: Partial<ProductListFilters>) {
     queryKey: productKeys.list(normalized),
     queryFn: () => listProductsRequest(normalized),
     placeholderData: keepPreviousData,
+    staleTime: 45_000,
   });
 }
 
@@ -42,6 +43,7 @@ export function useProductQuery(id: number | undefined) {
     queryKey: productKeys.detail(id),
     queryFn: () => getProductRequest(id!),
     enabled: typeof id === 'number' && Number.isFinite(id),
+    staleTime: 45_000,
   });
 }
 

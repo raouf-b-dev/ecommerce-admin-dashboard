@@ -32,6 +32,7 @@ export function useUsersListQuery(filters: Partial<UserListFilters>) {
     queryKey: userKeys.list(normalized),
     queryFn: () => listUsersRequest(normalized),
     placeholderData: keepPreviousData,
+    staleTime: 45_000,
   });
 }
 
@@ -41,6 +42,7 @@ export function useUserDetailQuery(userId: number | undefined) {
     queryFn: () => getUserRequest(userId!),
     enabled:
       typeof userId === 'number' && Number.isInteger(userId) && userId > 0,
+    staleTime: 45_000,
   });
 }
 
