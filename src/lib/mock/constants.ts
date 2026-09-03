@@ -1,4 +1,5 @@
 export const DEMO_ADMIN_EMAIL = 'admin@store.local';
+export const DEMO_ADMIN_PASSWORD = 'demo';
 export const DEMO_ADMIN_USER_ID = '1';
 export const DEMO_ADMIN_ROLE = 'ADMIN';
 

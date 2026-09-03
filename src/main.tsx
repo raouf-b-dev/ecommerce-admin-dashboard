@@ -8,6 +8,7 @@ import { ApiRequestError } from '@/lib/api/parse-api-error';
 import '@/index.css';
 
 async function enableMocking(): Promise<void> {
+  // Inline env checks so production Rollup can drop the MSW dynamic import.
   if (
     import.meta.env.MODE !== 'mock' &&
     import.meta.env.VITE_ENABLE_MOCK !== 'true'

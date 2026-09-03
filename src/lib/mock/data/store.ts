@@ -17,7 +17,7 @@ import type {
   UserDetailResponseDto,
 } from '@/lib/mock/data/types';
 
-const MOCK_SESSION_KEY = 'es_admin_mock_session';
+const MOCK_SESSION_KEY = 'es_admin_mock_session'; // flag for refresh presence only — not access-token persistence
 
 export type MockStore = {
   products: ProductDetailResponseDto[];

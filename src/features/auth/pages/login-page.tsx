@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import {
   Card,
   CardContent,
@@ -6,8 +7,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { LoginForm } from '@/features/auth/components/login-form';
-import { MockDemoLoginActions } from '@/features/auth/components/mock-demo-login-actions';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
+
+const DemoLoginActions = lazy(() =>
+  import('@/lib/mock/ui/demo-login-actions').then((module) => ({
+    default: module.DemoLoginActions,
+  })),
+);
 
 export function LoginPage() {
   const mockMode = isMockMode();
@@ -25,8 +31,13 @@ export function LoginPage() {
             Use your operator account to access the admin dashboard.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <LoginForm footer={mockMode ? <MockDemoLoginActions /> : null} />
+        <CardContent className="space-y-4">
+          <LoginForm />
+          {mockMode ? (
+            <Suspense fallback={null}>
+              <DemoLoginActions />
+            </Suspense>
+          ) : null}
         </CardContent>
       </Card>
     </div>
