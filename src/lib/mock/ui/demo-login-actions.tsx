@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { NotOperatorError } from '@/features/auth/api/auth-api';
-import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
-import { DEMO_ADMIN_EMAIL } from '@/lib/mock/constants';
+import { navigateAfterLoginPath } from '@/features/auth/lib/navigate-after-login';
+import {
+  DEMO_ADMIN_EMAIL,
+  DEMO_ADMIN_PASSWORD,
+} from '@/lib/mock/constants';
 import { useAuth } from '@/lib/auth/auth-context';
 
-/** Mock-mode-only chrome: banner + 1-click demo login. Kept out of LoginForm. */
-export function MockDemoLoginActions() {
+/** Mock-mode-only chrome: banner + 1-click demo login. */
+export function DemoLoginActions() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -21,12 +24,11 @@ export function MockDemoLoginActions() {
     try {
       const session = await login({
         email: DEMO_ADMIN_EMAIL,
-        password: 'demo',
+        password: DEMO_ADMIN_PASSWORD,
       });
-      const destination = session.mustChangePassword
-        ? '/change-password'
-        : safeRedirectPath(searchParams.get('redirect'));
-      navigate(destination, { replace: true });
+      navigate(navigateAfterLoginPath(session, searchParams.get('redirect')), {
+        replace: true,
+      });
     } catch (err) {
       if (err instanceof NotOperatorError) {
         setError('This account cannot access the admin dashboard.');
