@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -13,21 +13,19 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { NotOperatorError } from '@/features/auth/api/auth-api';
+import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
 import {
   loginSchema,
   type LoginFormValues,
 } from '@/features/auth/schemas/login-schema';
 import { useAuth } from '@/lib/auth/auth-context';
 
-function safeRedirectPath(value: string | null): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//')) {
-    return '/';
-  }
+type LoginFormProps = {
+  /** Optional chrome rendered below the primary submit (e.g. mock demo actions). */
+  footer?: ReactNode;
+};
 
-  return value;
-}
-
-export function LoginForm() {
+export function LoginForm({ footer }: LoginFormProps) {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -112,6 +110,8 @@ export function LoginForm() {
         <Button className="w-full" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Signing in…' : 'Sign in'}
         </Button>
+
+        {footer}
       </form>
     </Form>
   );

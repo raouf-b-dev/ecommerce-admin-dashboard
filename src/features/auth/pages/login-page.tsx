@@ -6,8 +6,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { LoginForm } from '@/features/auth/components/login-form';
+import { MockDemoLoginActions } from '@/features/auth/components/mock-demo-login-actions';
+import { isMockMode } from '@/lib/mock/is-mock-mode';
 
 export function LoginPage() {
+  const mockMode = isMockMode();
+
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-8">
       <Card className="w-full max-w-md">
@@ -22,7 +26,7 @@ export function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <LoginForm footer={mockMode ? <MockDemoLoginActions /> : null} />
         </CardContent>
       </Card>
     </div>
