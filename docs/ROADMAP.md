@@ -512,6 +512,11 @@ Named fields below were true at planning time. On start, take the **current** li
 - [ ] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
 - [ ] **Command Palette (`Cmd+K` / `Ctrl+K`) [P2]:** Fast keyboard search and quick navigation across products, orders, customers, and setting views.
 - [ ] **Visual Micro-Interactions & Trend Badges [P2]:** Add trend percentage pills (▲/▼ % vs previous period) on dashboard cards and animated skeleton loaders during query transitions.
+- [ ] **Silent refresh updates session Query:** After mid-request token refresh, update `AUTH_SESSION_QUERY_KEY` with permissions / `mustChangePassword` (not only `setAccessToken`), so nav chrome stays accurate if roles change mid-session.
+- [ ] **Safe landing for limited operators:** Post-login and Forbidden CTA must not trap accounts with `access_admin` but without `view_all_orders` on `/` (land on first permitted nav item; Forbidden “home” must not loop).
+- [ ] **Auth bootstrap retry:** Distinguish transient refresh/network failures from unauthenticated; avoid hard bounce to login with no retry on boot 5xx.
+- [ ] **UsersTable column memo:** Memoize column defs like products/orders/inventory tables (minor render polish).
+- [ ] **Address form DialogDescription:** Align `user-address-form` dialog a11y with other dialogs.
 
 **Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
 **Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`

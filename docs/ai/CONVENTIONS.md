@@ -160,3 +160,13 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 - Full replacement → new ADR with `Supersedes`; mark the old ADR `Superseded` (header Status + index). Never rewrite the old Decisions.
 - Lifecycle: `Proposed` | `Accepted` | `Deprecated` | `Superseded`.
 - Always update the ADR index (`Supersedes` / `Superseded By` columns) when adding or superseding a record.
+
+## 15. Mock Mode & Boundaries
+
+- Mock infrastructure lives only under `src/lib/mock/` (handlers, seed, worker, demo UI).
+- Feature modules must **not** import `@/lib/mock/*`. Allowed touchpoints:
+  - `src/main.tsx` — dynamic `import('@/lib/mock/browser')` behind an inline `import.meta.env` mock gate (same conditions as `isMockMode()`) so production Rollup drops the MSW chunk
+  - `LoginPage` — lazy-load demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true
+- MSW must never be a static import in production entry paths; production `vite build` must not emit the mock browser/handlers chunk.
+- Playwright e2e targets a real seeded API. Mock mode is for local evaluation and static portfolio demos only.
+- Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature’s concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
