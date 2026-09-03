@@ -34,31 +34,17 @@ function parseTokensResponse(data: unknown): AuthTokensResponse {
   }
 
   const record = data as Record<string, unknown>;
-  const accessToken =
-    typeof record.accessToken === 'string'
-      ? record.accessToken
-      : typeof record.access_token === 'string'
-        ? record.access_token
-        : null;
-
-  if (!accessToken) {
+  if (typeof record.accessToken !== 'string') {
     throw new Error('Authentication response missing access token');
   }
 
-  const refreshToken =
-    typeof record.refreshToken === 'string'
-      ? record.refreshToken
-      : typeof record.refresh_token === 'string'
-        ? record.refresh_token
-        : undefined;
-
-  const mustChangePassword =
-    record.mustChangePassword === true || record.must_change_password === true;
-
   return {
-    accessToken,
-    refreshToken,
-    mustChangePassword,
+    accessToken: record.accessToken,
+    refreshToken:
+      typeof record.refreshToken === 'string'
+        ? record.refreshToken
+        : undefined,
+    mustChangePassword: record.mustChangePassword === true,
     permissions: parsePermissions(record.permissions),
   };
 }
@@ -146,7 +132,12 @@ export async function refreshSessionRequest(): Promise<AuthSession | null> {
   }
 
   if (!response.ok) {
-    throw new Error('Failed to restore session');
+    const parsed = response ? await readAuthErrorFromResponse(response) : null;
+    throw toAuthRequestError(
+      response ?? new Response(null, { status: 500 }),
+      parsed,
+      'Failed to restore session',
+    );
   }
 
   const tokens = parseTokensResponse(data);
