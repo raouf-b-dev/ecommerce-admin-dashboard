@@ -78,24 +78,14 @@ The same backend is meant to serve a customer storefront in `ecommerce-store-web
 - **npm** >= 11
 - A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api)
 
-### Run the API first
+### Option 1: Host Vite against a live API (recommended for development)
 
-Use the API repo for Docker, migrations, and seed accounts. Script names live there so they do not drift in two places.
-
-[Local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [Seeding](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (local fixtures only)
-
-### Run without an API (mock mode)
+Connects to any running API instance (default `http://localhost:3000`). Run the admin SPA directly on your host so port **5174** stays on Vite with instant HMR and browser DevTools.
 
 ```bash
-npm run env:init
-npm run dev:mock
-```
+# 1. Ensure the API is running at http://localhost:3000 (e.g. `npm run setup` then `npm run start:dev` in ecommerce-store-api)
 
-Uses MSW handlers and seed data. On the login screen, click **Demo 1-Click Login** (`admin@store.local`, any password). Session survives refresh via `sessionStorage`; mutable mock data resets on full reload.
-
-### Run against the live API
-
-```bash
+# 2. Clone and start this dashboard
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
 cd ecommerce-admin-dashboard
 npm install
@@ -103,12 +93,25 @@ npm run env:init
 npm run dev
 ```
 
+[API local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [Seeding](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md)
+
 | Service | URL                                                                                            |
 | :------ | :--------------------------------------------------------------------------------------------- |
 | Admin   | `http://localhost:5174`                                                                        |
 | API     | `VITE_API_BASE_URL` in `.env.local` (from `npm run env:init`, default `http://localhost:3000`) |
 
 If you remapped the API port, match that value in `.env.local`. After the API contract changes, run `npm run api:generate` while the API is up.
+
+---
+
+### Option 2: Run without an API (Mock Mode with MSW)
+
+```bash
+npm run env:init
+npm run dev:mock
+```
+
+Uses MSW handlers and seed data. On the login screen, click **Demo 1-Click Login** (`admin@store.local`, any password). Session survives refresh via `sessionStorage`; mutable mock data resets on full reload.
 
 Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security: [`SECURITY.md`](SECURITY.md).
 
@@ -183,7 +186,7 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 | Repository                                                                  | Role                          |
 | :-------------------------------------------------------------------------- | :---------------------------- |
 | [`ecommerce-store-api`](https://github.com/raouf-b-dev/ecommerce-store-api) | Backend API                   |
-| `ecommerce-store-web` | Customer storefront (Next.js). Sibling folder in this workspace; not published on GitHub yet. |
+| `ecommerce-store-web` | Customer storefront (Next.js). Sibling repository; not published on GitHub yet. |
 
 ---
 
