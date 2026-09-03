@@ -69,6 +69,8 @@ export function resetMockStore(): void {
   store = cloneSeed();
 }
 
+const MOCK_USER_EMAIL_KEY = 'es_admin_mock_user_email';
+
 export function isMockSessionActive(): boolean {
   try {
     return sessionStorage.getItem(MOCK_SESSION_KEY) === '1';
@@ -77,12 +79,24 @@ export function isMockSessionActive(): boolean {
   }
 }
 
-export function setMockSessionActive(active: boolean): void {
+export function getMockSessionUserEmail(): string | null {
+  try {
+    return sessionStorage.getItem(MOCK_USER_EMAIL_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setMockSessionActive(active: boolean, userEmail?: string): void {
   try {
     if (active) {
       sessionStorage.setItem(MOCK_SESSION_KEY, '1');
+      if (userEmail) {
+        sessionStorage.setItem(MOCK_USER_EMAIL_KEY, userEmail);
+      }
     } else {
       sessionStorage.removeItem(MOCK_SESSION_KEY);
+      sessionStorage.removeItem(MOCK_USER_EMAIL_KEY);
     }
   } catch {
     // Ignore quota / private-mode failures in demo mode.
