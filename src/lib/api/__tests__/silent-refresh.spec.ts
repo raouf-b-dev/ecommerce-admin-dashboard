@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  onSessionRefreshed,
   resetSilentRefreshLatchForTests,
   silentRefreshAccessToken,
 } from '@/lib/api/silent-refresh';
@@ -17,10 +18,17 @@ describe('silentRefreshAccessToken', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ accessToken: 'new-access' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }),
+        new Response(
+          JSON.stringify({
+            accessToken: 'new-access',
+            permissions: ['access_admin', 'view_all_orders'],
+            mustChangePassword: true,
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        ),
       ),
     );
   });
@@ -36,6 +44,25 @@ describe('silentRefreshAccessToken', () => {
     expect(token).toBe('new-access');
     expect(setAccessToken).toHaveBeenCalledWith('new-access');
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('notifies registered onSessionRefreshed listeners with full payload', async () => {
+    const listener = vi.fn();
+    const unsubscribe = onSessionRefreshed(listener);
+
+    await silentRefreshAccessToken();
+
+    expect(listener).toHaveBeenCalledWith({
+      accessToken: 'new-access',
+      permissions: ['access_admin', 'view_all_orders'],
+      mustChangePassword: true,
+    });
+
+    unsubscribe();
+    resetSilentRefreshLatchForTests();
+
+    await silentRefreshAccessToken();
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 
   it('single-flights concurrent refresh calls', async () => {

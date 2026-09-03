@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { useAuth } from '@/lib/auth/auth-context';
 
 export function AppHeader() {
@@ -25,6 +26,7 @@ export function AppHeader() {
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         {session ? (
           <>
             <span className="hidden text-sm text-muted-foreground sm:inline">

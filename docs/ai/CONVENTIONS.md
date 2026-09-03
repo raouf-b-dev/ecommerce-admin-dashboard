@@ -39,7 +39,7 @@ Cross-feature layout lives in `src/components/layout/`:
 
 - `app-layout.tsx`: `h-screen overflow-hidden` grid; skip link to `#main`; scroll only on `<main>`
 - `app-sidebar.tsx`: branding (not an `h1`) + `NavLink` items from `src/app/navigation.ts`
-- `app-header.tsx`: header chrome + mobile menu trigger
+- `app-header.tsx`: header chrome + mobile menu trigger + `ThemeToggle` (Light/Dark/System)
 - `mobile-nav.tsx`: shadcn `Sheet` for `<lg` viewports; include `SheetTitle` for a11y
 - `page-header.tsx`: page title is the `h1` (+ description and optional actions)
 
@@ -129,7 +129,10 @@ Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-h
 - Access token in memory only; refresh token via HttpOnly cookie + `credentials: 'include'`.
 - Avoid `localStorage` for long-lived tokens.
 - Domain `401`: single-flight silent refresh + one request retry; if that fails, clear session and return to login.
+- Mid-request token refresh updates `AUTH_SESSION_QUERY_KEY` with updated claims and permissions, keeping UI chrome in sync.
 - Never silent-retry `/authentication/*` paths.
+- **Safe landing for limited operators:** Route `/` and post-login redirection use `IndexLandingGate` and `getDefaultLandingRoute(permissions)` to land on the operator's first permitted route. The Forbidden page CTA links to this default route to prevent loops.
+- **Auth bootstrap retry:** Differentiate 4xx rejections (`isClientError`: no retry, route to login) from transient 5xx or network errors (retry 2× with exponential backoff).
 - Treat rendered API strings as untrusted data.
 
 ## 11. Concurrency
@@ -170,3 +173,32 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 - MSW must never be a static import in production entry paths; production `vite build` must not emit the mock browser/handlers chunk.
 - Playwright e2e targets a real seeded API. Mock mode is for local evaluation and static portfolio demos only.
 - Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature’s concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
+
+## 16. Theme System
+
+- Location: `src/components/theme/`
+- Themes: `light` | `dark` | `system` (persisted in `localStorage` under `THEME_STORAGE_KEY = 'vite-ui-theme'`).
+- **Zero-FOUC execution:** An inline script in `index.html` resolves and sets the `.dark` class on `<html>` before React loads.
+- **OS Theme Sync:** `ThemeProvider` uses React's `useSyncExternalStore` to track `window.matchMedia('(prefers-color-scheme: dark)')` safely without tearing or redundant render cycles.
+- **Toaster Integration:** `ThemeAwareToaster` binds `resolvedTheme` to Sonner, guaranteeing alerts match the active UI theme.
+
+## 17. Real-Time WebSocket Feed
+
+- Location: `src/lib/ws/`
+- Connection: `socket.io-client` targeting the API root origin with Bearer token authentication in `auth.token`.
+- Lifecycle: Handled by `WebSocketProvider` in the shell; connects on authenticated session, disconnects on unmount/logout.
+- Event Envelope: `NotificationEnvelope` with type/title matching via `isOrderNotification` and `isInventoryNotification`.
+- Reactivity: Incoming events trigger Sonner toasts and invalidate corresponding TanStack Query caches (`orderKeys.lists()`, `inventoryKeys.all`, `dashboardKeys.all`).
+- Mock Mode: In dev/mock mode, `window.dispatchMockNotification` is exposed for local event simulation without a live WebSocket gateway.
+
+## 18. Composable RFC 9110 Error Helpers
+
+- Location: `src/lib/api/parse-api-error.ts`
+- **Status Extraction:** `getErrorStatusCode(error)` extracts status from `ApiRequestError`, `AuthRequestError`, native `Response`, or error objects with `.statusCode` or `.status`.
+- **Semantic Predicates:**
+  - `isStatusInRange(error, min, max)` — inclusive status range check
+  - `hasHttpStatus(error, ...codes)` — exact status code match (e.g. `hasHttpStatus(error, 429)`)
+  - `isClientError(error)` — RFC 9110 client error (`400–499`)
+  - `isServerError(error)` — RFC 9110 server error (`500–599`)
+  - `isOptimisticLockConflict(error)` — 409 conflict detection
+- Prefer these helpers over ad-hoc type casts (`error as ApiRequestError`) or direct status property access.

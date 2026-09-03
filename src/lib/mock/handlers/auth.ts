@@ -4,14 +4,19 @@ import {
   DEMO_ADMIN_ROLE,
   DEMO_ADMIN_USER_ID,
   DEMO_OPERATOR_PERMISSIONS,
+  DEMO_CATALOG_OPERATOR_EMAIL,
+  DEMO_CATALOG_OPERATOR_ROLE,
+  DEMO_CATALOG_OPERATOR_USER_ID,
+  DEMO_CATALOG_OPERATOR_PERMISSIONS,
 } from '@/lib/mock/constants';
 import {
+  getMockSessionUserEmail,
   isMockSessionActive,
   setMockSessionActive,
 } from '@/lib/mock/data/store';
 import { createMockJwt } from '@/lib/mock/lib/jwt';
 
-function authTokensBody() {
+function adminTokensBody() {
   const accessToken = createMockJwt({
     sub: DEMO_ADMIN_USER_ID,
     email: DEMO_ADMIN_EMAIL,
@@ -25,12 +30,39 @@ function authTokensBody() {
   };
 }
 
+function catalogOperatorTokensBody() {
+  const accessToken = createMockJwt({
+    sub: DEMO_CATALOG_OPERATOR_USER_ID,
+    email: DEMO_CATALOG_OPERATOR_EMAIL,
+    role: DEMO_CATALOG_OPERATOR_ROLE,
+  });
+
+  return {
+    accessToken,
+    mustChangePassword: false,
+    permissions: [...DEMO_CATALOG_OPERATOR_PERMISSIONS],
+  };
+}
+
+function getTokensForCurrentUser(): ReturnType<typeof adminTokensBody> {
+  const email = getMockSessionUserEmail();
+  if (email === DEMO_CATALOG_OPERATOR_EMAIL) {
+    return catalogOperatorTokensBody();
+  }
+  return adminTokensBody();
+}
+
 export const authHandlers = [
   http.post('*/v1/authentication/login', async ({ request }) => {
     const body = (await request.json()) as {
       email?: string;
       password?: string;
     };
+
+    if (body.email === DEMO_CATALOG_OPERATOR_EMAIL && body.password) {
+      setMockSessionActive(true, DEMO_CATALOG_OPERATOR_EMAIL);
+      return HttpResponse.json(catalogOperatorTokensBody());
+    }
 
     if (body.email !== DEMO_ADMIN_EMAIL || !body.password) {
       return HttpResponse.json(
@@ -39,8 +71,8 @@ export const authHandlers = [
       );
     }
 
-    setMockSessionActive(true);
-    return HttpResponse.json(authTokensBody());
+    setMockSessionActive(true, DEMO_ADMIN_EMAIL);
+    return HttpResponse.json(adminTokensBody());
   }),
 
   http.post('*/v1/authentication/refresh', () => {
@@ -48,7 +80,7 @@ export const authHandlers = [
       return new HttpResponse(null, { status: 401 });
     }
 
-    return HttpResponse.json(authTokensBody());
+    return HttpResponse.json(getTokensForCurrentUser());
   }),
 
   http.post('*/v1/authentication/logout', () => {
@@ -73,6 +105,6 @@ export const authHandlers = [
       );
     }
 
-    return HttpResponse.json(authTokensBody());
+    return HttpResponse.json(getTokensForCurrentUser());
   }),
 ];

@@ -1,5 +1,6 @@
 import type { AuthSession } from '@/features/auth/types';
 import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
+import { getDefaultLandingRoute } from '@/lib/auth/safe-landing';
 
 /** Destination after a successful login / demo login. */
 export function navigateAfterLoginPath(
@@ -10,5 +11,10 @@ export function navigateAfterLoginPath(
     return '/change-password';
   }
 
-  return safeRedirectPath(redirectQuery);
+  const rawPath = safeRedirectPath(redirectQuery);
+  if (rawPath === '/') {
+    return getDefaultLandingRoute(session.permissions);
+  }
+
+  return rawPath;
 }

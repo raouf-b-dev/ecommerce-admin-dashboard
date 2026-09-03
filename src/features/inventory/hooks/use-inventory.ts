@@ -16,10 +16,7 @@ import type {
   AdjustStockDto,
   InventoryListFilters,
 } from '@/features/inventory/types';
-import {
-  isOptimisticLockConflict,
-  type ApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { isOptimisticLockConflict } from '@/lib/api/parse-api-error';
 
 export function useInventoryListQuery(filters: Partial<InventoryListFilters>) {
   const normalized = normalizeInventoryListFilters(filters);
@@ -56,7 +53,7 @@ export function useAdjustStock(productId: number) {
       ]);
     },
     onError: async (error: Error) => {
-      if (isOptimisticLockConflict(error as ApiRequestError)) {
+      if (isOptimisticLockConflict(error)) {
         await queryClient.invalidateQueries({
           queryKey: inventoryKeys.detail(productId),
         });

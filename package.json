@@ -58,6 +58,8 @@
     "react-hook-form": "^7.86.0",
     "react-router": "^8.3.0",
     "recharts": "^2.15.4",
+    "socket.io-client": "^4.8.3",
+    "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
     "zod": "^3.25.76"
   },

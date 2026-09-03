@@ -14,3 +14,14 @@ export const DEMO_OPERATOR_PERMISSIONS = [
   'manage_users',
   'manage_roles',
 ] as const;
+
+export const DEMO_CATALOG_OPERATOR_EMAIL = 'catalog@store.local';
+export const DEMO_CATALOG_OPERATOR_PASSWORD = 'demo';
+export const DEMO_CATALOG_OPERATOR_USER_ID = '2';
+export const DEMO_CATALOG_OPERATOR_ROLE = 'CATALOG_MANAGER';
+
+export const DEMO_CATALOG_OPERATOR_PERMISSIONS = [
+  'access_admin',
+  'view_all_products',
+  'manage_products',
+] as const;

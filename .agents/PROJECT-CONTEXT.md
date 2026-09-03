@@ -7,7 +7,8 @@ Read this file first for fast orientation. It summarizes `ecommerce-admin-dashbo
 - Framework: Vite + React 19
 - Language: TypeScript (strict)
 - Routing: React Router data router (`createBrowserRouter`)
-- Styling: Tailwind CSS + shadcn-style tokens
+- Styling: Tailwind CSS + shadcn-style tokens + accessible Dark/Light/System theme provider
+- Real-time: Socket.IO client (`src/lib/ws/`) + Sonner toasts
 - Client data: TanStack Query
 - Tables: TanStack Table
 - Forms: React Hook Form + Zod
@@ -35,11 +36,13 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 
 - `src/app/` -> route configuration (`router.tsx`), nav config (`navigation.ts`), app-level pages
 - `src/components/layout/` -> shared shell (sidebar, header, mobile nav, page header)
+- `src/components/theme/` -> theme provider, toggle, and OS media query sync (`useSyncExternalStore`)
 - `src/components/ui/` -> shadcn-style UI primitives
 - `src/features/` -> feature folders (`dashboard`, `products`, `orders`, `auth`, etc.)
 - `src/features/<name>/pages/` -> route entry components per feature
 - `src/features/<name>/hooks/` -> TanStack Query (auth has none; session is in `lib/auth`)
-- `src/lib/auth/` -> `AuthProvider`, route guards, permission helpers
+- `src/lib/auth/` -> `AuthProvider`, route guards (`IndexLandingGate`, safe landing), permission helpers
+- `src/lib/ws/` -> WebSocket gateway connection (`socket.io-client`), notification envelope, TanStack Query invalidation
 - `src/lib/format.ts` -> shared money/date formatting
 - `docs/architecture/` -> SPA architecture overview and ADRs
 - `src/lib/api/` -> generated schema and typed client wrapper
@@ -62,8 +65,9 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 10. ~~Existing writes (product delete, user activate, roles UI)~~ **done**
 11. ~~API gaps then SPA (product activate, assign role)~~ **done**
 12. ~~User address book (list on user detail + existing writes)~~ **done**
-13. Payments ops (optional; does not block the release gate)
-14. Release gate (hosted deploy / stranger quick start): after Phases 9–11.5, not after Phase 8
+12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **done (core slice)**
+13. Release gate (hosted deploy / stranger quick start): Phase 13 validates against API 14e quickstart
+14. Payments ops (optional; does not block the release gate)
 
 Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 

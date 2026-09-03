@@ -22,10 +22,7 @@ import type {
   ProductListFilters,
   UpdateProductDto,
 } from '@/features/products/types';
-import {
-  isOptimisticLockConflict,
-  type ApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { isOptimisticLockConflict } from '@/lib/api/parse-api-error';
 
 export function useProductsListQuery(filters: Partial<ProductListFilters>) {
   const normalized = normalizeProductListFilters(filters);
@@ -74,7 +71,7 @@ export function useUpdateProduct(id: number) {
       ]);
     },
     onError: async (error: Error) => {
-      if (isOptimisticLockConflict(error as ApiRequestError)) {
+      if (isOptimisticLockConflict(error)) {
         await queryClient.invalidateQueries({
           queryKey: productKeys.detail(id),
         });
@@ -115,7 +112,7 @@ function useProductStatusMutation(
       ]);
     },
     onError: async (error: Error) => {
-      if (isOptimisticLockConflict(error as ApiRequestError)) {
+      if (isOptimisticLockConflict(error)) {
         await queryClient.invalidateQueries({
           queryKey: productKeys.detail(id),
         });

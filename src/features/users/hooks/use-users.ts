@@ -20,10 +20,7 @@ import type {
   UpdateUserDto,
   UserListFilters,
 } from '@/features/users/types';
-import {
-  isOptimisticLockConflict,
-  type ApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { isOptimisticLockConflict } from '@/lib/api/parse-api-error';
 
 export function useUsersListQuery(filters: Partial<UserListFilters>) {
   const normalized = normalizeUserListFilters(filters);
@@ -124,7 +121,7 @@ function useUserAddressMutation<TVariables>(
       await invalidateUserQueries(queryClient, userId);
     },
     onError: async (error: Error) => {
-      if (isOptimisticLockConflict(error as ApiRequestError)) {
+      if (isOptimisticLockConflict(error)) {
         await queryClient.invalidateQueries({
           queryKey: userKeys.detail(userId),
         });

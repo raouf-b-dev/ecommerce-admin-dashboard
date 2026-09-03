@@ -17,10 +17,7 @@ import type {
   OrderListFilters,
   OrderStatusAction,
 } from '@/features/orders/types';
-import {
-  isOptimisticLockConflict,
-  type ApiRequestError,
-} from '@/lib/api/parse-api-error';
+import { isOptimisticLockConflict } from '@/lib/api/parse-api-error';
 
 export function useOrdersListQuery(filters: Partial<OrderListFilters>) {
   const normalized = normalizeOrderListFilters(filters);
@@ -70,7 +67,7 @@ export function useOrderTransition(orderId: number) {
       ]);
     },
     onError: async (error: Error) => {
-      if (isOptimisticLockConflict(error as ApiRequestError)) {
+      if (isOptimisticLockConflict(error)) {
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: orderKeys.detail(orderId),

@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   type ReactNode,
 } from 'react';
@@ -25,6 +26,8 @@ import type {
 } from '@/features/auth/types';
 import { clearAccessToken } from '@/lib/auth/auth-session';
 import { hasPermission as checkPermission } from '@/lib/auth/permissions';
+import { onSessionRefreshed } from '@/lib/api/silent-refresh';
+import { isClientError } from '@/lib/api/parse-api-error';
 
 const AUTH_SESSION_QUERY_KEY = ['auth', 'session'] as const;
 
@@ -47,9 +50,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sessionQuery = useQuery({
     queryKey: AUTH_SESSION_QUERY_KEY,
     queryFn: refreshSessionRequest,
-    retry: false,
+    // Session bootstrap: never retry 4xx (auth/session is final); retry 5xx/network up to 2 times.
+    retry: (failureCount, error) => {
+      if (isClientError(error)) {
+        return false;
+      }
+      return failureCount < 2;
+    },
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    return onSessionRefreshed((result) => {
+      try {
+        const updatedSession = buildSessionFromAccessToken(
+          result.accessToken,
+          result.mustChangePassword,
+          result.permissions,
+        );
+        queryClient.setQueryData(AUTH_SESSION_QUERY_KEY, updatedSession);
+      } catch {
+        // Ignored if token format is invalid
+      }
+    });
+  }, [queryClient]);
 
   const loginMutation = useMutation({
     mutationFn: loginRequest,
@@ -124,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [status, session, login, changePassword, logout, hasPermission],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext value={value}>{children}</AuthContext>;
 }
 
 export function useAuth(): AuthContextValue {

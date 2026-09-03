@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -90,6 +91,11 @@ export function UserAddressForm({
           <DialogTitle>
             {mode === 'add' ? 'Add address' : 'Edit address'}
           </DialogTitle>
+          <DialogDescription>
+            {mode === 'add'
+              ? 'Add a new shipping or billing address for this customer.'
+              : 'Update the customer address details.'}
+          </DialogDescription>
         </DialogHeader>
         <form
           className="space-y-4"

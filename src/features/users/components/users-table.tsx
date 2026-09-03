@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import {
   flexRender,
@@ -43,10 +44,11 @@ export function UsersTable({
   roleNamesByCode,
   onFiltersChange,
 }: UsersTableProps) {
-  const columns: ColumnDef<typeof features, UserListItemResponseDto>[] = [
-    {
-      id: 'name',
-      header: 'Name',
+  const columns = useMemo<ColumnDef<typeof features, UserListItemResponseDto>[]>(
+    () => [
+      {
+        id: 'name',
+        header: 'Name',
       cell: ({ row }) => (
         <div className="font-medium">{userDisplayName(row.original)}</div>
       ),
@@ -91,7 +93,7 @@ export function UsersTable({
         </Button>
       ),
     },
-  ];
+  ], [roleNamesByCode]);
 
   const table = useTable({
     features,
