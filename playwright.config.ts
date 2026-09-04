@@ -14,10 +14,12 @@ if (
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',
-  // Shared seeded admin + auth @Throttle (10 login/min) — parallel workers race
-  // password rotation and trip 429s that the UI maps to "Invalid email or password."
+  // Shared seeded admin + API login throttle — parallel workers race
+  // password rotation and trip 429s.
   fullyParallel: false,
   workers: 1,
+  // Helpers wait out a 429 window; keep this above that wait.
+  timeout: 180_000,
   use: {
     baseURL: 'http://localhost:5174',
     trace: 'on-first-retry',
