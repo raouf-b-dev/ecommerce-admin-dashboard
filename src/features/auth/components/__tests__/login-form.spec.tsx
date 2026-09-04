@@ -61,6 +61,30 @@ describe('LoginForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows a throttle message on HTTP 429', async () => {
+    mockLogin.mockRejectedValue({ statusCode: 429 });
+
+    render(
+      <MemoryRouter>
+        <LoginForm />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Email'), {
+      target: { value: 'admin@store.local' },
+    });
+    fireEvent.change(screen.getByLabelText('Password'), {
+      target: { value: 'Admin123!' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(
+      await screen.findByText(
+        'Too many sign-in attempts. Wait about a minute and try again.',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('shows operator-denied message for non-operator accounts', async () => {
     const { NotOperatorError } = await import('@/features/auth/api/auth-api');
     mockLogin.mockRejectedValue(new NotOperatorError());
