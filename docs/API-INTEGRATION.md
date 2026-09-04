@@ -6,7 +6,7 @@ How `ecommerce-admin-dashboard` consumes [ecommerce-store-api](https://github.co
 
 | Concern | Source of truth |
 | :------ | :-------------- |
-| Paths, methods, DTOs, status codes | API **OpenAPI / Swagger** (`http://localhost:3000/api/docs` locally) |
+| Paths, methods, DTOs, status codes | API **OpenAPI / Swagger** (local URL is in the API README / local setup) |
 | Auth, RBAC, cookies, versioning | API docs + OpenAPI |
 | Local seed users | API [`docs/development/SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) |
 | Local API boot | API [`docs/development/LOCAL-SETUP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) |
@@ -83,40 +83,25 @@ Helpers live in `src/lib/api/parse-api-error.ts`, `src/lib/api/form-api-errors.t
 
 ## Capability areas (discover in OpenAPI)
 
-Concrete paths live in Swagger. Typical admin needs:
+Typical admin surfaces: authentication/session, products, inventory, orders, payments on an order, users and address book, roles, analytics widgets.
 
-- Health for local diagnostics
-- Admin login/session; permission/role reads if needed for chrome
-- Product list/detail, create/update/delete, dedicated activate/deactivate (`manage_products`)
-- Inventory reads, low-stock list filter (`lowStockOnly`), and stock adjust: `GET /v1/inventory/products/{productId}` returns **200 + item** or **200 + `null`** when no stock row exists
-- Order list/detail and allowed status transitions; payment read on order detail (`view_all_payments`): `GET /v1/payments/orders/{orderId}` returns **200 + payment** or **200 + `null`** when no payment exists yet (not an error)
-- User reads with optional role filter; user PATCH / activate / deactivate (`manage_users`); address book on `GET /v1/users/{id}` plus add / update / delete / set-default (`manage_users`)
-- Roles CRUD + permissions list (`manage_roles`); assign or replace a user role with `PUT /v1/users/{id}/role` (`manage_roles`)
-- Dashboard inputs from **API analytics aggregates** (`/v1/admin/analytics/*`): not list `total` fan-out, not Prometheus
+When OpenAPI documents a read that returns **200 + `null`**, treat that as empty (no stock row, no payment yet). Do not map it to an error banner.
 
 Out of scope for this app: customer checkout UI, inventing business metrics in the SPA, anything the operator role is not meant to do.
 
-Build order for these capabilities: [`ROADMAP.md`](ROADMAP.md).
+Build order: [`ROADMAP.md`](ROADMAP.md).
 
 ## Dashboard metrics
 
-Use the analytics OpenAPI operations (UTC periods, max 90 days):
+Bind widgets to the **analytics** operations in OpenAPI (UTC periods). Do **not** sum paginated order rows in the SPA. Grafana/Prometheus is engineering observability only — not an admin data source.
 
-| Widget | Endpoint | Permission |
-| --- | --- | --- |
-| KPI cards + attention + low-stock count | `GET /v1/admin/analytics/overview` | `view_all_orders` |
-| Net revenue chart | `GET /v1/admin/analytics/payments/time-series` | `view_all_payments` |
-| Top products | `GET /v1/admin/analytics/products/top` | `view_all_orders` |
-| Low-stock table | `GET /v1/admin/analytics/inventory/alerts` | `view_all_inventory` |
-| Recent orders queue | `GET /v1/orders` (limit 5) | `view_all_orders` |
+Client rules:
 
-Revenue = CAPTURED / COMPLETED / PARTIALLY_REFUNDED / REFUNDED payments (`gross`, `refunded`, `net`, AOV = net ÷ paid count). Buckets are zero-filled UTC. Do **not** sum paginated order rows in the SPA. Grafana/Prometheus remains engineering observability only.
+- Period comes from the URL (`?days=7|30|90`, default 7). Period queries use TanStack Query `keepPreviousData`.
+- Errors are **per widget** (retry in place). The shared QueryClient skips retries on HTTP `429`.
+- SPA list caches use TanStack Query `staleTime` (~45s).
 
-Period is driven by URL `?days=7|30|90` (default 7). Period queries use TanStack Query `keepPreviousData` to avoid flash on change. Errors are **per widget** (retry in place). Global QueryClient skips retries on HTTP `429`; shared `throwApiErrorFromResponse` / `throwTooManyRequests` in `src/lib/api/`.
-
-SPA caches with TanStack Query `staleTime` (~45s); no Redis analytics cache in v1.
-
-After API OpenAPI changes: regenerate `src/lib/api/generated/schema.d.ts` via `npm run api:generate` against a running API, or `npx openapi-typescript ../ecommerce-store-api/openapi.json -o src/lib/api/generated/schema.d.ts` from a sibling checkout.
+After API OpenAPI changes: regenerate `src/lib/api/generated/schema.d.ts` via `npm run api:generate` against a running API, or `npx openapi-typescript` against the API OpenAPI document from a sibling checkout.
 
 ## When the API changes
 
