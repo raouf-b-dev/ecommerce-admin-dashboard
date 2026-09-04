@@ -91,7 +91,7 @@ jobs:
       - name: Dependency audit (high/critical)
         run: npm audit --omit=dev --audit-level=high
 
-  # Full-stack Playwright: API seed + auth throttle (10/min) + workers: 1.
+  # Full-stack Playwright: seeded API + rate-limited login + workers: 1.
   # Not a PR merge gate. Fail closed when E2E_ADMIN_* secrets are missing.
   e2e:
     name: Playwright
