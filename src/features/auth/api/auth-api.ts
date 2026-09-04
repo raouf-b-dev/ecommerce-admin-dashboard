@@ -111,6 +111,14 @@ export async function loginRequest(
   });
 
   if (error || !response.ok) {
+    if (response?.status === 429) {
+      const parsed = await readAuthErrorFromResponse(response);
+      throw toAuthRequestError(
+        response,
+        parsed,
+        'Too many sign-in attempts. Wait about a minute and try again.',
+      );
+    }
     throw new Error('Invalid credentials');
   }
 
