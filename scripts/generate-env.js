@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Copies .env.example to .env.local for Vite.
-// Also creates .secrets from .secrets.example with demo e2e values (API SEEDING.md).
+// Copies .env.example → .env.local and .secrets.example → .secrets.
+// Passwords are not filled in: copy them from the API seeding guide into .secrets.
 //
 // Usage:
 //   node scripts/generate-env.js
@@ -27,70 +27,48 @@ const ENV_TARGET = path.resolve(process.cwd(), '.env.local');
 const SECRETS_TEMPLATE = path.resolve(process.cwd(), '.secrets.example');
 const SECRETS_TARGET = path.resolve(process.cwd(), '.secrets');
 
-/** Demo seed accounts — keep in sync with API docs/development/SEEDING.md */
-const E2E_SECRET_DEFAULTS = {
-  E2E_ADMIN_EMAIL: 'admin@store.local',
-  E2E_ADMIN_PASSWORD: 'Admin123!',
-  E2E_CUSTOMER_EMAIL: 'customer@store.local',
-  E2E_CUSTOMER_PASSWORD: 'Customer123!',
-  E2E_SUPERADMIN_EMAIL: 'superadmin@store.local',
-  E2E_SUPERADMIN_PASSWORD: 'SuperAdmin123!',
-};
+async function copyTemplate(templatePath, targetPath, missingLabel) {
+  const template = await fsp.readFile(templatePath, 'utf8').catch(() => '');
+  if (!template) {
+    console.error(`⚠️  Template not found or empty: ${missingLabel}`);
+    process.exitCode = 1;
+    return false;
+  }
 
-function isKeyValueLine(line) {
-  return /^[A-Za-z_][A-Za-z0-9_]*=/.test(line);
-}
+  const existed = fs.existsSync(targetPath);
+  if (existed && !FORCE) {
+    console.log(
+      `⏭️  Skipping ${path.basename(targetPath)} (exists). Use --overwrite to overwrite.`,
+    );
+    return false;
+  }
 
-function keyOf(line) {
-  return line.split('=')[0];
-}
-
-function buildLinesForSecrets(lines) {
-  return lines.map((line) => {
-    if (!isKeyValueLine(line)) return line;
-    const key = keyOf(line);
-    const value = E2E_SECRET_DEFAULTS[key];
-    if (value !== undefined) return `${key}=${value}`;
-    return line;
-  });
+  await fsp.writeFile(targetPath, template, { encoding: 'utf8' });
+  console.log(
+    `${existed ? '♻️  Overwrote' : '✅ Created'} ${path.basename(targetPath)}`,
+  );
+  return true;
 }
 
 async function writeSecrets() {
-  const template = await fsp.readFile(SECRETS_TEMPLATE, 'utf8').catch(() => '');
-  if (!template) {
-    console.error('⚠️  Secrets template not found or empty: .secrets.example');
-    process.exitCode = 1;
+  const wrote = await copyTemplate(
+    SECRETS_TEMPLATE,
+    SECRETS_TARGET,
+    '.secrets.example',
+  );
+  if (!wrote) {
     return;
   }
-
-  const existed = fs.existsSync(SECRETS_TARGET);
-  if (existed && !FORCE) {
-    console.log('⏭️  Skipping .secrets (exists). Use --overwrite to overwrite.');
-    return;
-  }
-
-  const lines = buildLinesForSecrets(template.split(/\r?\n/));
-  await fsp.writeFile(SECRETS_TARGET, lines.join('\n'), { encoding: 'utf8' });
-  console.log(`${existed ? '♻️  Overwrote' : '✅ Created'} .secrets`);
-  console.log('   → Copy E2E_* values into GitHub Secrets for the Playwright CI job.');
+  console.log(
+    '   → Fill E2E_* passwords from the API seeding guide. Do not commit .secrets.',
+  );
+  console.log(
+    '   → Copy filled values into GitHub Secrets for the Playwright CI job.',
+  );
 }
 
 async function writeEnvLocal() {
-  const template = await fsp.readFile(ENV_TEMPLATE, 'utf8').catch(() => '');
-  if (!template) {
-    console.error('⚠️  Env template not found or empty: .env.example');
-    process.exitCode = 1;
-    return;
-  }
-
-  const existed = fs.existsSync(ENV_TARGET);
-  if (existed && !FORCE) {
-    console.log('⏭️  Skipping .env.local (exists). Use --overwrite to overwrite.');
-    return;
-  }
-
-  await fsp.writeFile(ENV_TARGET, template, { encoding: 'utf8' });
-  console.log(`${existed ? '♻️  Overwrote' : '✅ Created'} .env.local`);
+  await copyTemplate(ENV_TEMPLATE, ENV_TARGET, '.env.example');
 }
 
 async function main() {
