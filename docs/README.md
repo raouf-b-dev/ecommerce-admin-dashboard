@@ -10,6 +10,7 @@ Entry points for this repo. Backend boot and API contracts stay in [ecommerce-st
 | [architecture/ARCHITECTURE.md](architecture/ARCHITECTURE.md) | Auth flow, folder layout, diagrams |
 | [architecture/adr/README.md](architecture/adr/README.md) | Architecture decision records |
 | [API-INTEGRATION.md](API-INTEGRATION.md) | How the SPA talks to the API |
+| [RELEASE-GATE.md](RELEASE-GATE.md) | Live API stranger boot and operator smoke checklist |
 | [ai/CONVENTIONS.md](ai/CONVENTIONS.md) | Coding patterns for features and guards |
 | [ai/README.md](ai/README.md) | Agent workflow docs |
 | [../AGENT.md](../AGENT.md) | Contributor conventions |

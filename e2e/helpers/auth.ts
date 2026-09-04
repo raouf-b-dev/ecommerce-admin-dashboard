@@ -4,7 +4,14 @@ import { test } from '@playwright/test';
 /** Password that worked in this worker (survives forced rotation mid-suite). */
 let cachedAdminPassword: string | null = null;
 
-type LoginOutcome = 'shell' | 'change-password' | 'invalid' | 'unknown';
+type LoginOutcome =
+  | 'shell'
+  | 'change-password'
+  | 'invalid'
+  | 'throttled'
+  | 'unknown';
+
+const AUTH_THROTTLE_WAIT_MS = 61_000;
 
 function shellMarker(page: Page) {
   // Present on desktop and mobile; "Control Center" is sidebar-only.
@@ -28,6 +35,7 @@ async function submitCredentials(
 
 async function waitForLoginOutcome(page: Page): Promise<LoginOutcome> {
   const loginError = page.getByText('Invalid email or password.');
+  const throttleError = page.getByText('Too many sign-in attempts');
   const changePasswordHeading = page.getByRole('heading', {
     name: 'Change your password',
   });
@@ -36,6 +44,7 @@ async function waitForLoginOutcome(page: Page): Promise<LoginOutcome> {
   await Promise.race([
     shell.waitFor({ state: 'visible', timeout: 15_000 }),
     changePasswordHeading.waitFor({ state: 'visible', timeout: 15_000 }),
+    throttleError.waitFor({ state: 'visible', timeout: 15_000 }),
     loginError.waitFor({ state: 'visible', timeout: 15_000 }),
   ]).catch(() => undefined);
 
@@ -44,6 +53,9 @@ async function waitForLoginOutcome(page: Page): Promise<LoginOutcome> {
   }
   if (await changePasswordHeading.isVisible()) {
     return 'change-password';
+  }
+  if (await throttleError.isVisible()) {
+    return 'throttled';
   }
   if (await loginError.isVisible()) {
     return 'invalid';
@@ -99,6 +111,8 @@ export async function loginAsAdmin(page: Page): Promise<void> {
     rotatedPassword,
   );
 
+  test.setTimeout(180_000);
+
   for (let round = 0; round < 2; round++) {
     for (const password of candidates) {
       await submitCredentials(page, email, password);
@@ -114,10 +128,17 @@ export async function loginAsAdmin(page: Page): Promise<void> {
         cachedAdminPassword = rotatedPassword;
         return;
       }
+
+      if (outcome === 'throttled') {
+        await new Promise((resolve) =>
+          setTimeout(resolve, AUTH_THROTTLE_WAIT_MS),
+        );
+        continue;
+      }
     }
 
-    // Likely login rate-limit (10/min) or brief race — brief backoff then retry.
-    await new Promise((resolve) => setTimeout(resolve, 3_000));
+    // Likely login rate-limit or brief race — wait out the window.
+    await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
   }
 
   test.skip(
@@ -128,9 +149,9 @@ export async function loginAsAdmin(page: Page): Promise<void> {
 
 export async function loginAsSuperAdmin(page: Page): Promise<void> {
   const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
-  const password = process.env.E2E_SUPERADMIN_PASSWORD;
+  const seedPassword = process.env.E2E_SUPERADMIN_PASSWORD;
 
-  if (!password) {
+  if (!seedPassword) {
     test.skip(
       true,
       'Set E2E_SUPERADMIN_PASSWORD for superadmin e2e tests. See e2e/README.md.',
@@ -138,17 +159,30 @@ export async function loginAsSuperAdmin(page: Page): Promise<void> {
     return;
   }
 
-  await submitCredentials(page, email, password);
-  const outcome = await waitForLoginOutcome(page);
+  test.setTimeout(180_000);
+  const rotatedPassword =
+    process.env.E2E_SUPERADMIN_NEW_PASSWORD ?? `${seedPassword}Rotated1!`;
+  const candidates = uniquePasswords(seedPassword, rotatedPassword);
 
-  if (outcome === 'change-password') {
-    const newPassword =
-      process.env.E2E_SUPERADMIN_NEW_PASSWORD ?? `${password}Rotated1!`;
-    await completeForcedPasswordChange(page, password, newPassword);
-    return;
+  for (const password of candidates) {
+    await submitCredentials(page, email, password);
+    let outcome = await waitForLoginOutcome(page);
+
+    if (outcome === 'throttled') {
+      await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
+      await submitCredentials(page, email, password);
+      outcome = await waitForLoginOutcome(page);
+    }
+
+    if (outcome === 'shell') {
+      return;
+    }
+
+    if (outcome === 'change-password') {
+      await completeForcedPasswordChange(page, password, rotatedPassword);
+      return;
+    }
   }
 
-  if (outcome !== 'shell') {
-    test.skip(true, 'Superadmin login failed. Verify API seed credentials.');
-  }
+  test.skip(true, 'Superadmin login failed. Verify API seed credentials.');
 }

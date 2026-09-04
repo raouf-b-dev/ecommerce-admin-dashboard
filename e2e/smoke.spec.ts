@@ -22,7 +22,11 @@ test('login failure shows error', async ({ page }) => {
   await page.getByLabel('Password').fill('not-the-password');
   await page.getByRole('button', { name: 'Sign in' }).click();
 
-  await expect(page.getByText('Invalid email or password.')).toBeVisible();
+  await expect(
+    page.getByText(
+      /Invalid email or password\.|Too many sign-in attempts/,
+    ),
+  ).toBeVisible();
   await expect(page).toHaveURL('/login');
 });
 

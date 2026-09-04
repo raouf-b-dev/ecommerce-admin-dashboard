@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { NotOperatorError } from '@/features/auth/api/auth-api';
 import { navigateAfterLoginPath } from '@/features/auth/lib/navigate-after-login';
+import { hasHttpStatus } from '@/lib/api/parse-api-error';
 import {
   loginSchema,
   type LoginFormValues,
@@ -47,6 +48,13 @@ export function LoginForm() {
     } catch (error) {
       if (error instanceof NotOperatorError) {
         setFormError('This account cannot access the admin dashboard.');
+        return;
+      }
+
+      if (hasHttpStatus(error, 429)) {
+        setFormError(
+          'Too many sign-in attempts. Wait about a minute and try again.',
+        );
         return;
       }
 

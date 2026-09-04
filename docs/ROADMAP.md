@@ -80,7 +80,7 @@ Write tests **with** each feature.
 | **11.5** | User address book                  | `[x]`  |  `[P1]`  | User detail address list + existing OpenAPI writes                              |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | **Polish**: Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K deferred |
-| **13**   | Technical release gate             | `[ ]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
+| **13**   | Technical release gate             | `[x]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
 | **13.5** | Visual Showcase & Portfolio Assets | `[ ]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
 
 ---
@@ -389,10 +389,10 @@ Write tests **with** each feature.
 - [x] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
 - [x] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
 - [x] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
-- [x] Add `Dockerfile.quickstart` (multi-stage Nginx Alpine image for the static mock SPA). Not used by the API repo.
+- [x] Static mock packaging: `npm run build:mock` and `vercel.json` for a hosted demo target.
 
 **Done when:** Running `npm run dev:mock` allows anyone to log in, navigate all screens, interact with filters, and view analytics charts with zero backend running.
-**Location:** `src/lib/mock/`, `src/main.tsx`, `Dockerfile.quickstart`, `package.json`
+**Location:** `src/lib/mock/`, `src/main.tsx`, `vercel.json`, `package.json`
 
 ---
 
@@ -525,20 +525,23 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ## Phase 13: Technical Release Gate [P0]
 
-> **Goal**: Validate production readiness against the live development API (`ecommerce-store-api` bootstrapped via `npm run setup` and running on `:3000`).
+> **Goal**: Validate production readiness against a live `ecommerce-store-api` instance (boot and ports: API README / local setup).
+
+**Executable checklist:** [`RELEASE-GATE.md`](RELEASE-GATE.md) (no passwords; seed-accurate transitions).
 
 **Scope:**
 
-- [ ] Stranger onboarding validation following `README.md` (`npm run env:init` -> `npm run dev`).
-- [ ] Full live operator smoke loop checklist:
-  - Login as seeded administrator (`admin@store.local` / `Admin123!`).
+- [x] Stranger onboarding validation following `README.md` (`npm run env:init` → `npm run dev` against a live API started from the API repo’s own docs).
+- [x] Full live operator smoke loop (see [`RELEASE-GATE.md`](RELEASE-GATE.md)):
+  - Login as seeded administrator (credentials in API `SEEDING.md` only). First login is a forced password change.
   - Products: filter by status, search, edit details, activate / deactivate.
-  - Inventory: stock adjustment dialog and OCC 409 conflict handling.
-  - Orders: status transition actions (`confirm`, `cancel`, `ship`).
-  - Users & Roles: change user role, activate/deactivate account, address book CRUD (add address, set default, delete address).
-- [ ] Validate hosted static packaging against configured live API origin (`npm run build` with `VITE_API_BASE_URL`).
-- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) local Swagger URL matches the API (`/api/docs`).
-- [ ] README + PROJECT-CONTEXT verified accurate without tribal knowledge.
+  - Inventory: submit a stock adjustment; OCC 409 is unit-covered (concurrent writes; no client version field).
+  - Orders: Process the seeded confirmed order, then Ship (Confirm on pending-payment needs a completed payment; do not add a payments capture step).
+  - Users (administrator): activate/deactivate account; address book add, set default, delete.
+  - Roles (super administrator only): change assigned role. Administrator chrome hides that control (`manage_roles`).
+- [x] Validate hosted static packaging: stop `npm run dev`, then `npm run build` with `VITE_API_BASE_URL` and `npm run preview` on **5174**.
+- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) points at API OpenAPI / Swagger as the contract (no copied boot recipe).
+- [x] README + PROJECT-CONTEXT verified accurate without tribal knowledge.
 
 **Done when:** A stranger can follow the README, connect to the live API, and successfully execute all documented operator workflows without manual overrides or code changes.
 

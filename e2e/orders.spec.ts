@@ -46,6 +46,42 @@ test('orders list opens detail and can process a confirmed order', async ({
   ).toBeVisible({ timeout: 15_000 });
 });
 
+test('orders can ship a processing order', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md). Requires a processing order.',
+  );
+
+  await loginAsAdmin(page);
+
+  await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await page.getByLabel('Status').selectOption('processing');
+  await expect(page).toHaveURL(/status=processing/);
+
+  const viewLink = page.getByRole('link', { name: 'View' }).first();
+  const hasProcessing = await viewLink.isVisible().catch(() => false);
+  test.skip(
+    !hasProcessing,
+    'No processing orders — run the confirmed-order process spec first or API db:seed.',
+  );
+
+  await viewLink.click();
+  await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  const shipButton = page.getByRole('button', { name: 'Ship' });
+  await expect(shipButton).toBeVisible();
+  await shipButton.click();
+  await expect(page.getByText(/shipped/i).first()).toBeVisible({
+    timeout: 15_000,
+  });
+});
+
 test('orders status filter updates URL', async ({ page }) => {
   test.skip(
     !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,

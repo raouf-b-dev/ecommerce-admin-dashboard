@@ -18,14 +18,14 @@ Prettier is installed for local formatting. `format:check` is not a merge gate.
 
 ## Playwright
 
-Playwright is **not** a pull-request merge gate. A full run needs a seeded API (Postgres, Redis, migrations, `db:seed`), shares one admin account, and must use `workers: 1` because login is throttled at 10/min.
+Playwright is **not** a pull-request merge gate. A full run needs a live seeded API (start and seed it from the API repo’s docs), shares one admin account, and must use `workers: 1` because the API rate-limits login.
 
 The `e2e` GitHub Actions job runs on:
 
 - `workflow_dispatch`
 - `push` to `main` or `master`
 
-That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local reference file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)); copy into GitHub Secrets. Demo values match API `docs/development/SEEDING.md`: do not commit `.secrets`.
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local `.secrets` file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)), fill passwords from the API seeding guide, and copy into GitHub Secrets. Do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 
