@@ -27,7 +27,7 @@ npm run dev:mock
 
 Open `http://localhost:5174` and use **Demo 1-Click Login**.
 
-A public hosted demo is not published yet. The mock static build is ready for that (`npm run build:mock`, `vercel.json`, `Dockerfile.quickstart`).
+A public hosted demo is not published yet. The mock static build is ready for that (`npm run build:mock`, `vercel.json`).
 
 Mock mode is demo-only. Playwright e2e still targets a real API.
 
@@ -35,6 +35,7 @@ Mock mode is demo-only. Playwright e2e still targets a real API.
 
 - [What this is](#what-this-is)
 - [Quick start](#quick-start)
+- [Live static build](#live-static-build)
 - [Verify](#verify)
 - [Architecture](#architecture)
 - [Tech stack](#tech-stack)
@@ -63,7 +64,7 @@ The same backend is meant to serve a customer storefront in `ecommerce-store-web
 | Operational UX  | Dark / Light / System theme (zero-FOUC) and live WebSocket toast feed for incoming orders/stock. |
 | Dashboard       | Operational cockpit (analytics overview, revenue series, alerts, recent orders). |
 | Navigation      | Safe landing for restricted operators; landing gates prevent 403 loops on `/`.  |
-| Zero-backend demo | `npm run dev:mock` (MSW) + `Dockerfile.quickstart` / `vercel.json` for static mock builds. |
+| Zero-backend demo | `npm run dev:mock` (MSW) + `npm run build:mock` / `vercel.json` for static mock builds. |
 | Public hosted demo | Not published yet; local `dev:mock` and static mock packaging are available.     |
 
 ---
@@ -76,16 +77,17 @@ The same backend is meant to serve a customer storefront in `ecommerce-store-web
 
 - **Node.js** >= 24
 - **npm** >= 11
-- A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api)
+- A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) instance. Follow that repository’s [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) (or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md)) so commands, ports, and Docker requirements stay current there.
 
 ### Option 1: Host Vite against a live API (recommended for development)
 
-Connects to any running API instance (default `http://localhost:3000`). Run the admin SPA directly on your host so port **5174** stays on Vite with instant HMR and browser DevTools.
+Connects to a running API instance (default `http://localhost:3000`). Run the admin SPA on your host so port **5174** stays on Vite with instant HMR and browser DevTools.
+
+**1. Start the API** from a separate clone, following the API repository’s own docs (linked above).
+
+**2. Start this dashboard:**
 
 ```bash
-# 1. Ensure the API is running at http://localhost:3000 (e.g. `npm run setup` then `npm run start:dev` in ecommerce-store-api)
-
-# 2. Clone and start this dashboard
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
 cd ecommerce-admin-dashboard
 npm install
@@ -93,7 +95,9 @@ npm run env:init
 npm run dev
 ```
 
-[API local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [Seeding](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md)
+Open `http://localhost:5174`. Sign in as the seeded **administrator** from the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (do not copy passwords into this repo). The first login **requires a password change** before the admin shell. After that, you should see the dashboard and a Log out control.
+
+Operator walkthrough (search, stock adjust, order Process/Ship, addresses, superadmin role change): [`docs/RELEASE-GATE.md`](docs/RELEASE-GATE.md).
 
 | Service | URL                                                                                            |
 | :------ | :--------------------------------------------------------------------------------------------- |
@@ -101,6 +105,29 @@ npm run dev
 | API     | `VITE_API_BASE_URL` in `.env.local` (from `npm run env:init`, default `http://localhost:3000`) |
 
 If you remapped the API port, match that value in `.env.local`. After the API contract changes, run `npm run api:generate` while the API is up.
+
+---
+
+<a id="live-static-build"></a>
+
+## Live static build
+
+Prove a production bundle against a configured API origin. `npm run dev` and `npm run preview` both bind port **5174** with `strictPort` — **stop the Vite dev server first**.
+
+```bash
+VITE_API_BASE_URL="http://localhost:3000" npm run build
+npm run preview
+```
+
+```powershell
+$env:VITE_API_BASE_URL="http://localhost:3000"
+npm run build
+npm run preview
+```
+
+Open `http://localhost:5174`, sign in (complete forced password change if the seed flag is still set), and load one list page.
+
+`npm run build:mock` and `vercel.json` package the **mock** SPA only. They do not validate a live API origin.
 
 ---
 
@@ -126,7 +153,7 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
-npm run test:e2e    # needs API + seed + E2E_ADMIN_* (see e2e/README.md)
+npm run test:e2e    # live API + E2E_* (see e2e/README.md). Run before manual order Process/Ship.
 ```
 
 Pull-request CI runs lint, typecheck, unit tests, build, and a production-dependency audit in parallel. Require the **CI Status Check** job in branch protection. Dependabot opens weekly update PRs ([`.github/dependabot.yml`](.github/dependabot.yml)). Playwright runs on `workflow_dispatch` and on push to `main`/`master`; that job fails if `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`e2e/README.md`](e2e/README.md).
@@ -172,6 +199,7 @@ Browser → Vite SPA (React Router) → versioned HTTP API. Auth flow, RBAC chro
 | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) | SPA architecture, auth flow, folder map                                                           |
 | [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md)     | Architecture decision records                                                                     |
 | [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md)                     | Client integration rules (OpenAPI is the contract)                                                |
+| [`docs/RELEASE-GATE.md`](docs/RELEASE-GATE.md)                           | Live API stranger boot and operator smoke checklist                                               |
 | [`docs/ai/CONVENTIONS.md`](docs/ai/CONVENTIONS.md)                       | Feature layout, Query, forms, guards                                                              |
 | [`AGENT.md`](AGENT.md)                                                   | Contributor and agent conventions                                                                 |
 | [`docs/README.md`](docs/README.md)                                       | Docs index                                                                                        |
