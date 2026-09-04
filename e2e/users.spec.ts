@@ -91,6 +91,12 @@ test('customer detail shows addresses and can add then delete one', async ({
     await form.getByLabel('Country').fill('DZ');
     await form.getByRole('button', { name: 'Add address' }).click();
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 });
+
+    const card = page.getByRole('listitem').filter({ hasText: street });
+    await card.getByRole('button', { name: 'Set default' }).click();
+    await expect(card.getByText('Default', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    });
   } finally {
     const card = page.getByRole('listitem').filter({ hasText: street });
     if (await card.count()) {
@@ -102,4 +108,37 @@ test('customer detail shows addresses and can add then delete one', async ({
       await expect(page.getByText(street)).toHaveCount(0, { timeout: 15_000 });
     }
   }
+});
+
+test('customer detail can deactivate then reactivate', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+  await openCustomerDetail(page);
+
+  await expect(
+    page.getByRole('heading', { name: 'Operator actions' }),
+  ).toBeVisible({ timeout: 15_000 });
+
+  const deactivate = page.getByRole('button', {
+    name: 'Deactivate user',
+    exact: true,
+  });
+  const activate = page.getByRole('button', {
+    name: 'Activate user',
+    exact: true,
+  });
+
+  await expect(deactivate).toBeVisible({ timeout: 15_000 });
+  await deactivate.click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Deactivate', exact: true })
+    .click();
+  await expect(activate).toBeVisible({ timeout: 15_000 });
+  await activate.click();
+  await expect(deactivate).toBeVisible({ timeout: 15_000 });
 });

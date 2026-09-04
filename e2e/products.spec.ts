@@ -95,6 +95,23 @@ test('products search filter updates URL', async ({ page }) => {
   await expect(page).toHaveURL(/search=seed/);
 });
 
+test('products status filter updates URL', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+
+  await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await page.getByLabel('Status').selectOption('true');
+  await expect(page).toHaveURL(/isActive=true/);
+});
+
 test('products column sort updates URL', async ({ page }) => {
   test.skip(
     !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
