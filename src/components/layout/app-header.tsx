@@ -17,12 +17,6 @@ export function AppHeader() {
     <header className="flex shrink-0 items-center justify-between border-b bg-background/95 px-6 py-4 backdrop-blur">
       <div className="flex items-center gap-3">
         <MobileNav />
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Admin shell
-          </p>
-          <p className="text-lg font-medium">Operator workspace</p>
-        </div>
       </div>
 
       <div className="flex items-center gap-2">
