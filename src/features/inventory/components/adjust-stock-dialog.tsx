@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -34,6 +34,7 @@ type AdjustStockDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productTitle: string;
+  availableQuantity?: number;
   conflictMessage?: string | null;
   onSubmit: (body: AdjustStockDto) => Promise<void>;
 };
@@ -48,6 +49,7 @@ export function AdjustStockDialog({
   open,
   onOpenChange,
   productTitle,
+  availableQuantity,
   conflictMessage,
   onSubmit,
 }: AdjustStockDialogProps) {
@@ -57,6 +59,7 @@ export function AdjustStockDialog({
         <AdjustStockDialogBody
           onOpenChange={onOpenChange}
           productTitle={productTitle}
+          availableQuantity={availableQuantity}
           conflictMessage={conflictMessage}
           onSubmit={onSubmit}
         />
@@ -68,6 +71,7 @@ export function AdjustStockDialog({
 function AdjustStockDialogBody({
   onOpenChange,
   productTitle,
+  availableQuantity,
   conflictMessage,
   onSubmit,
 }: Omit<AdjustStockDialogProps, 'open'>) {
@@ -76,6 +80,28 @@ function AdjustStockDialogBody({
     resolver: zodResolver(adjustStockSchema),
     defaultValues: emptyDefaults,
   });
+
+  const watchedType = useWatch({ control: form.control, name: 'type' });
+  const watchedQuantity = useWatch({ control: form.control, name: 'quantity' });
+
+  const parsedQty = Number(watchedQuantity);
+  const isValidQty = Number.isInteger(parsedQty) && parsedQty > 0;
+  let computedAvailable: number | null = null;
+  let deltaLabel: string | null = null;
+
+  if (availableQuantity !== undefined && isValidQty) {
+    if (watchedType === 'ADD') {
+      computedAvailable = availableQuantity + parsedQty;
+      deltaLabel = `+${parsedQty}`;
+    } else if (watchedType === 'SUBTRACT') {
+      computedAvailable = Math.max(0, availableQuantity - parsedQty);
+      deltaLabel = `-${parsedQty}`;
+    } else if (watchedType === 'SET') {
+      computedAvailable = parsedQty;
+      const diff = parsedQty - availableQuantity;
+      deltaLabel = diff >= 0 ? `+${diff}` : `${diff}`;
+    }
+  }
 
   async function handleSubmit(values: AdjustStockFormValues) {
     setFormError(null);
@@ -156,6 +182,7 @@ function AdjustStockDialogBody({
                     min={1}
                     step={1}
                     inputMode="numeric"
+                    placeholder="Enter quantity…"
                     {...field}
                   />
                 </FormControl>
@@ -164,6 +191,27 @@ function AdjustStockDialogBody({
             )}
           />
 
+          {availableQuantity !== undefined ? (
+            <div className="rounded-md border border-border bg-muted/40 p-2.5 text-xs text-muted-foreground space-y-1">
+              <div>
+                <span className="font-medium text-foreground">Stock preview: </span>
+                Current available: <span className="font-mono font-medium text-foreground">{availableQuantity}</span>
+                {computedAvailable !== null ? (
+                  <>
+                    {' → '}
+                    New available: <span className="font-mono font-semibold text-foreground">{computedAvailable}</span>{' '}
+                    <span className="text-muted-foreground">({deltaLabel})</span>
+                  </>
+                ) : null}
+              </div>
+              {watchedType === 'SUBTRACT' && isValidQty && parsedQty > availableQuantity ? (
+                <p className="text-[11px] text-destructive">
+                  Note: Subtract quantity exceeds current available stock.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
           <FormField
             control={form.control}
             name="reason"
@@ -171,7 +219,7 @@ function AdjustStockDialogBody({
               <FormItem>
                 <FormLabel>Reason (optional)</FormLabel>
                 <FormControl>
-                  <Textarea rows={2} {...field} />
+                  <Textarea rows={2} placeholder="Optional reason for adjustment…" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
