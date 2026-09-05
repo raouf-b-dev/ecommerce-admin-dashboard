@@ -43,3 +43,13 @@ export function formatDateTime(value: string | null | undefined): string {
 export function formatStatusLabel(status: string): string {
   return status.replaceAll('_', ' ');
 }
+
+export function formatPercentDelta(delta: number | null): string {
+  if (delta === null) {
+    return 'n/a';
+  }
+  const rounded = Math.round(delta * 10) / 10;
+  const sign = rounded > 0 ? '+' : '';
+  return `${sign}${rounded}%`;
+}
+
