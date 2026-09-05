@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
 import { formatDate, formatMoney } from '@/lib/format';
+import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   ListProductsQuery,
   ProductListFilters,
@@ -78,7 +79,9 @@ export function ProductsTable({
         {
           accessorKey: 'isActive',
           header: 'Status',
-          cell: ({ row }) => (row.original.isActive ? 'Active' : 'Inactive'),
+          cell: ({ row }) => (
+            <StatusBadge variant="product" isActive={row.original.isActive} />
+          ),
         },
         {
           accessorKey: 'createdAt',
