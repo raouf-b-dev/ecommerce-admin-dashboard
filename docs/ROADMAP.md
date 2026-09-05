@@ -81,7 +81,7 @@ Write tests **with** each feature.
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | **Polish**: Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K deferred |
 | **13**   | Technical release gate             | `[x]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
-| **13.5** | Visual Showcase & Portfolio Assets | `[ ]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
+| **13.5** | Visual Showcase & Portfolio Assets | `[x]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
 | **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields (failed-payment attention, payment mix, sell-through) |
 
 ---
@@ -557,16 +557,16 @@ Named fields below were true at planning time. On start, take the **current** li
 **Required Tools:** Screen recording software (CleanShot X / OBS / ScreenToGif / browser devtools), Image optimization CLI (`cwebp` / `squoosh`).
 
 **Scope (Step-by-Step Asset Creation):**
-- [ ] **Dashboard Hero Recording (Animated WebP / High-FPS GIF):** Record a 15-second walkthrough:
+- [x] **Dashboard Hero Recording (Animated WebP / High-FPS GIF):** Record a 15-second walkthrough:
   1. Instant login with prefilled operator credentials (or 1-click demo login).
   2. Switching dashboard time range (7d -> 30d -> 90d) showing smooth Recharts re-render.
   3. Filtering orders by status and adjusting inventory in a dialog modal.
   4. Save as optimized WebP (< 2.5MB) in `docs/assets/dashboard-walkthrough.webp`.
-- [ ] **High-Resolution Static Screenshots (Retina 2x):**
+- [x] **High-Resolution Static Screenshots (Retina 2x):**
   1. `docs/assets/screenshot-dashboard-dark.png` (Operational pulse cockpit).
   2. `docs/assets/screenshot-order-detail.png` (Order timeline and item status).
   3. `docs/assets/screenshot-rbac-matrix.png` (Permission-aware UI in action).
-- [ ] **README Hero Overhaul:**
+- [x] **README Hero Overhaul:**
   1. Embed the hero animation directly under the repository badges.
   2. Add a 30-second "Quick Comparison: Why Choose This Admin Dashboard?" matrix.
   3. Add a prominent "1-Click Live Demo" badge.
