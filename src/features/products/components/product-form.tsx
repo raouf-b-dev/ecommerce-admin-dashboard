@@ -19,6 +19,7 @@ import {
   type ProductFormValues,
   type ProductSubmitValues,
 } from '@/features/products/schemas/product-schema';
+import { PRODUCT_CATEGORIES } from '@/features/products/constants/categories';
 import { applyApiFormErrors } from '@/lib/api/form-api-errors';
 
 export type ProductFormMode = 'create' | 'edit';
@@ -263,14 +264,24 @@ export function ProductForm({
           name="categoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category ID</FormLabel>
+              <FormLabel>Category</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  {...field}
+                <select
+                  id="product-category"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
                   value={field.value ?? ''}
-                />
+                  onChange={(e) => field.onChange(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select category (optional)</option>
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>
