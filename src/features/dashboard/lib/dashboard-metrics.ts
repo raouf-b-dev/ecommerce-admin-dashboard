@@ -1,4 +1,4 @@
-import { formatMoney, formatStatusLabel } from '@/lib/format';
+import { formatStatusLabel } from '@/lib/format';
 
 export type DashboardPeriodDays = 7 | 30 | 90;
 
@@ -15,8 +15,6 @@ export function buildDashboardPeriod(
   };
 }
 
-export { formatMoney };
-
 export function percentChange(current: number, previous: number): number | null {
   if (previous === 0) {
     return current === 0 ? 0 : null;
@@ -24,15 +22,20 @@ export function percentChange(current: number, previous: number): number | null 
   return ((current - previous) / Math.abs(previous)) * 100;
 }
 
-export function formatPercentDelta(delta: number | null): string {
-  if (delta === null) {
-    return 'n/a';
-  }
-  const rounded = Math.round(delta * 10) / 10;
-  const sign = rounded > 0 ? '+' : '';
-  return `${sign}${rounded}%`;
-}
-
 export function attentionStatusLabel(status: string): string {
   return formatStatusLabel(status);
+}
+
+export function calculateRefundRate(refunded: number, gross: number): number | null {
+  if (gross <= 0) {
+    return 0;
+  }
+  return Math.min(100, Math.max(0, (refunded / gross) * 100));
+}
+
+export function formatPercent(value: number | null): string {
+  if (value === null) {
+    return 'n/a';
+  }
+  return `${Math.round(value * 10) / 10}%`;
 }
