@@ -10,6 +10,7 @@ import {
   QueryStateAlert,
 } from '@/components/feedback/query-state';
 import { ProductsTable } from '@/features/products/components/products-table';
+import { useCategoriesListQuery } from '@/features/products/hooks/use-categories';
 import { useProductsListQuery } from '@/features/products/hooks/use-products';
 import {
   DEFAULT_PRODUCT_LIST_FILTERS,
@@ -18,10 +19,6 @@ import {
   productListFiltersToSearchParams,
 } from '@/features/products/lib/product-list-filters';
 import type { ProductListFilters } from '@/features/products/types';
-import {
-  PRODUCT_CATEGORIES,
-  getCategoryName,
-} from '@/features/products/constants/categories';
 import { useAuth } from '@/lib/auth/auth-context';
 
 type ActiveFilter = '' | 'true' | 'false';
@@ -42,6 +39,7 @@ function ProductsPage() {
   const filters = productListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
     useProductsListQuery(filters);
+  const { data: categories } = useCategoriesListQuery();
 
   const [searchDraft, setSearchDraft] = useState(filters.search ?? '');
   const [minPriceDraft, setMinPriceDraft] = useState(
@@ -123,6 +121,9 @@ function ProductsPage() {
         title="Products"
         description="Browse the catalog and manage product details."
       >
+        <Button asChild variant="outline">
+          <Link to="/products/categories">Manage categories</Link>
+        </Button>
         {canManage ? (
           <Button asChild>
             <Link to="/products/new">New product</Link>
@@ -252,7 +253,7 @@ function ProductsPage() {
                   className="h-8 rounded-md border border-input bg-background px-2.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
                   <option value="">All categories</option>
-                  {PRODUCT_CATEGORIES.map((cat) => (
+                  {(categories ?? []).map((cat) => (
                     <option key={cat.id} value={String(cat.id)}>
                       {cat.name}
                     </option>
@@ -332,7 +333,9 @@ function ProductsPage() {
             ) : null}
             {filters.categoryId !== undefined ? (
               <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                Category: {getCategoryName(filters.categoryId)}
+                Category:{' '}
+                {categories?.find((cat) => cat.id === filters.categoryId)
+                  ?.name ?? `Category #${filters.categoryId}`}
                 <button
                   type="button"
                   onClick={() =>

@@ -42,6 +42,21 @@ const authMock = vi.hoisted(() =>
   })),
 );
 
+vi.mock('@/features/products/hooks/use-categories', () => ({
+  useCategoriesListQuery: () => ({
+    data: [
+      { id: 1, name: 'Electronics', slug: 'electronics', description: null, isActive: true },
+      { id: 2, name: 'Clothing', slug: 'clothing', description: null, isActive: true },
+      { id: 3, name: 'Home & Garden', slug: 'home-garden', description: null, isActive: true },
+      { id: 4, name: 'Sports', slug: 'sports', description: null, isActive: true },
+      { id: 5, name: 'Books', slug: 'books', description: null, isActive: true },
+    ],
+    isLoading: false,
+    isError: false,
+    error: null,
+  }),
+}));
+
 vi.mock('@/features/products/hooks/use-products', () => ({
   useProductQuery: productQueryMock,
   useUpdateProduct: () => ({

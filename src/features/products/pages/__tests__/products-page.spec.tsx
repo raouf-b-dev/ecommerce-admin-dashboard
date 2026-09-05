@@ -36,8 +36,27 @@ const authMock = vi.hoisted(() =>
   })),
 );
 
+const categoriesQueryMock = vi.hoisted(() =>
+  vi.fn(() => ({
+    data: [
+      { id: 1, name: 'Electronics', slug: 'electronics', description: null, isActive: true },
+      { id: 2, name: 'Clothing', slug: 'clothing', description: null, isActive: true },
+      { id: 3, name: 'Home & Garden', slug: 'home-garden', description: null, isActive: true },
+      { id: 4, name: 'Sports', slug: 'sports', description: null, isActive: true },
+      { id: 5, name: 'Books', slug: 'books', description: null, isActive: true },
+    ],
+    isLoading: false,
+    isError: false,
+    error: null,
+  })),
+);
+
 vi.mock('@/features/products/hooks/use-products', () => ({
   useProductsListQuery: listQueryMock,
+}));
+
+vi.mock('@/features/products/hooks/use-categories', () => ({
+  useCategoriesListQuery: categoriesQueryMock,
 }));
 
 vi.mock('@/lib/auth/auth-context', () => ({
@@ -70,7 +89,37 @@ describe('ProductsPage', () => {
 
     expect(screen.getByRole('heading', { name: 'Products' })).toBeInTheDocument();
     expect(screen.getByText('No products found.')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Manage categories' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'New product' })).toBeInTheDocument();
+  });
+
+  it('shows Manage categories when manage_products is missing', () => {
+    authMock.mockReturnValue({
+      hasPermission: () => false,
+    });
+    listQueryMock.mockReturnValue({
+      data: { items: [], total: 0, page: 1, limit: 10, totalPages: 0 },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isFetching: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <ProductsPage />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Manage categories' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'New product' }),
+    ).not.toBeInTheDocument();
   });
 
   it('shows error alert with retry when the query fails', () => {
