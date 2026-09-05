@@ -56,7 +56,7 @@ export function UserEditForm({
 
   return (
     <form
-      className="max-w-xl space-y-4 rounded-lg border p-6"
+      className="space-y-5"
       onSubmit={form.handleSubmit((values) => handleSubmit(values))}
     >
       {formError ? (
@@ -65,45 +65,51 @@ export function UserEditForm({
           <AlertDescription>{formError}</AlertDescription>
         </Alert>
       ) : null}
-      <div className="space-y-2">
-        <Label htmlFor="firstName">First name</Label>
-        <Input id="firstName" {...form.register('firstName')} />
-        {form.formState.errors.firstName ? (
-          <p className="text-sm text-destructive">
-            {form.formState.errors.firstName.message}
-          </p>
-        ) : null}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">First name</Label>
+          <Input id="firstName" autoComplete="given-name" {...form.register('firstName')} />
+          {form.formState.errors.firstName ? (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.firstName.message}
+            </p>
+          ) : null}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="lastName">Last name</Label>
+          <Input id="lastName" autoComplete="family-name" {...form.register('lastName')} />
+          {form.formState.errors.lastName ? (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.lastName.message}
+            </p>
+          ) : null}
+        </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="lastName">Last name</Label>
-        <Input id="lastName" {...form.register('lastName')} />
-        {form.formState.errors.lastName ? (
-          <p className="text-sm text-destructive">
-            {form.formState.errors.lastName.message}
-          </p>
-        ) : null}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" autoComplete="email" {...form.register('email')} />
+          {form.formState.errors.email ? (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.email.message}
+            </p>
+          ) : null}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone</Label>
+          <Input id="phone" type="tel" autoComplete="tel" placeholder="+1 (555) 000-0000" {...form.register('phone')} />
+          {form.formState.errors.phone ? (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.phone.message}
+            </p>
+          ) : null}
+        </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" {...form.register('email')} />
-        {form.formState.errors.email ? (
-          <p className="text-sm text-destructive">
-            {form.formState.errors.email.message}
-          </p>
-        ) : null}
+      <div className="flex justify-end pt-1">
+        <Button type="submit" disabled={isPending}>
+          {isPending ? 'Saving…' : 'Save profile'}
+        </Button>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="phone">Phone</Label>
-        <Input id="phone" {...form.register('phone')} />
-        {form.formState.errors.phone ? (
-          <p className="text-sm text-destructive">
-            {form.formState.errors.phone.message}
-          </p>
-        ) : null}
-      </div>
-      <Button type="submit" disabled={isPending}>
-        {isPending ? 'Saving…' : 'Save profile'}
-      </Button>
     </form>
   );
 }
