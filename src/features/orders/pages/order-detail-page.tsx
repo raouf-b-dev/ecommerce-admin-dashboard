@@ -29,7 +29,7 @@ import { QueryLoading } from '@/components/feedback/query-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 
 const CONFLICT_MESSAGE =
-  'Order was modified by another request. Latest values were reloaded — review and try again.';
+  'Order was modified by another request. Latest values were reloaded - review and try again.';
 
 function OrderDetailPage() {
   const { hasPermission } = useAuth();

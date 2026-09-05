@@ -1,5 +1,8 @@
 import type { components, operations } from '@/lib/api/generated/schema';
 
+export type CategoryResponseDto = components['schemas']['CategoryResponseDto'];
+export type CreateCategoryDto = components['schemas']['CreateCategoryDto'];
+export type UpdateCategoryDto = components['schemas']['UpdateCategoryDto'];
 export type CreateProductDto = components['schemas']['CreateProductDto'];
 export type UpdateProductDto = components['schemas']['UpdateProductDto'];
 export type ProductResponseDto = components['schemas']['ProductResponseDto'];

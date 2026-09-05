@@ -36,7 +36,7 @@ export function TrendPill({ delta, className }: TrendPillProps) {
         className,
       )}
     >
-      <span aria-hidden="true">{isPositive ? '▲' : isNeutral ? '—' : '▼'}</span>
+      <span aria-hidden="true">{isPositive ? '▲' : isNeutral ? '-' : '▼'}</span>
       <span>{formatPercentDelta(delta)}</span>
     </span>
   );

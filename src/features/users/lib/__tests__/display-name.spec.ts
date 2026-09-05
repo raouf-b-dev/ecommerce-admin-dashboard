@@ -13,16 +13,16 @@ describe('userDisplayName', () => {
   });
 
   it('falls back when names are empty', () => {
-    expect(userDisplayName({ firstName: '', lastName: '  ' })).toBe('—');
-    expect(userDisplayName({})).toBe('—');
+    expect(userDisplayName({ firstName: '', lastName: '  ' })).toBe('-');
+    expect(userDisplayName({})).toBe('-');
   });
 });
 
 describe('formatUserPhone', () => {
   it('returns phone strings and dashes otherwise', () => {
     expect(formatUserPhone('+15551212')).toBe('+15551212');
-    expect(formatUserPhone(null)).toBe('—');
-    expect(formatUserPhone(undefined)).toBe('—');
+    expect(formatUserPhone(null)).toBe('-');
+    expect(formatUserPhone(undefined)).toBe('-');
   });
 });
 
@@ -33,6 +33,6 @@ describe('formatUserRole', () => {
 
   it('formats role codes when name is missing', () => {
     expect(formatUserRole('SUPER_ADMIN')).toBe('SUPER ADMIN');
-    expect(formatUserRole(null)).toBe('—');
+    expect(formatUserRole(null)).toBe('-');
   });
 });

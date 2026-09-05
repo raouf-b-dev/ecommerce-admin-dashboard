@@ -31,7 +31,14 @@ export const createProductSchema = z.object({
         z.string().url().safeParse(value.trim()).success,
       'Enter a valid URL',
     ),
-  categoryId: z.string().optional(),
+  categoryId: z
+    .string()
+    .trim()
+    .min(1, 'Category is required')
+    .refine((value) => {
+      const parsed = Number(value);
+      return Number.isInteger(parsed) && parsed > 0;
+    }, 'Category is required'),
 });
 
 /** Edit uses the same full-form schema (name + price required with loaded defaults). */
@@ -45,7 +52,7 @@ export type ProductSubmitValues = {
   sku?: string;
   currency?: string;
   imageUrl?: string;
-  categoryId?: number;
+  categoryId: number;
 };
 
 /** Normalize form values for API DTOs. */
@@ -57,10 +64,6 @@ export function toProductSubmitValues(
     return trimmed && trimmed.length > 0 ? trimmed : undefined;
   };
 
-  const categoryRaw = values.categoryId?.trim();
-  const categoryParsed =
-    categoryRaw && categoryRaw.length > 0 ? Number(categoryRaw) : undefined;
-
   return {
     name: values.name.trim(),
     price: Number(values.price),
@@ -69,10 +72,7 @@ export function toProductSubmitValues(
     sku: trimOrUndefined(values.sku),
     currency: trimOrUndefined(values.currency),
     imageUrl: trimOrUndefined(values.imageUrl),
-    categoryId:
-      categoryParsed !== undefined && Number.isFinite(categoryParsed)
-        ? categoryParsed
-        : undefined,
+    categoryId: Number(values.categoryId),
   };
 }
 
@@ -82,14 +82,12 @@ export function toCreateProductDto(
   return {
     name: values.name,
     price: values.price,
+    categoryId: values.categoryId,
     ...(values.slug ? { slug: values.slug } : {}),
     ...(values.description ? { description: values.description } : {}),
     ...(values.sku ? { sku: values.sku } : {}),
     ...(values.currency ? { currency: values.currency } : {}),
     ...(values.imageUrl ? { imageUrl: values.imageUrl } : {}),
-    ...(values.categoryId !== undefined
-      ? { categoryId: values.categoryId }
-      : {}),
   };
 }
 

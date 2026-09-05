@@ -168,8 +168,8 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 
 - Mock infrastructure lives only under `src/lib/mock/` (handlers, seed, worker, demo UI).
 - Feature modules must **not** import `@/lib/mock/*`. Allowed touchpoints:
-  - `src/main.tsx` — dynamic `import('@/lib/mock/browser')` behind an inline `import.meta.env` mock gate (same conditions as `isMockMode()`) so production Rollup drops the MSW chunk
-  - `LoginPage` — lazy-load demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true
+  - `src/main.tsx` - dynamic `import('@/lib/mock/browser')` behind an inline `import.meta.env` mock gate (same conditions as `isMockMode()`) so production Rollup drops the MSW chunk
+  - `LoginPage` - lazy-load demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true
 - MSW must never be a static import in production entry paths; production `vite build` must not emit the mock browser/handlers chunk.
 - Playwright e2e targets a real seeded API. Mock mode is for local evaluation and static portfolio demos only.
 - Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature’s concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
@@ -196,9 +196,9 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 - Location: `src/lib/api/parse-api-error.ts`
 - **Status Extraction:** `getErrorStatusCode(error)` extracts status from `ApiRequestError`, `AuthRequestError`, native `Response`, or error objects with `.statusCode` or `.status`.
 - **Semantic Predicates:**
-  - `isStatusInRange(error, min, max)` — inclusive status range check
-  - `hasHttpStatus(error, ...codes)` — exact status code match (e.g. `hasHttpStatus(error, 429)`)
-  - `isClientError(error)` — RFC 9110 client error (`400–499`)
-  - `isServerError(error)` — RFC 9110 server error (`500–599`)
-  - `isOptimisticLockConflict(error)` — 409 conflict detection
+  - `isStatusInRange(error, min, max)` - inclusive status range check
+  - `hasHttpStatus(error, ...codes)` - exact status code match (e.g. `hasHttpStatus(error, 429)`)
+  - `isClientError(error)` - RFC 9110 client error (`400–499`)
+  - `isServerError(error)` - RFC 9110 server error (`500–599`)
+  - `isOptimisticLockConflict(error)` - 409 conflict detection
 - Prefer these helpers over ad-hoc type casts (`error as ApiRequestError`) or direct status property access.

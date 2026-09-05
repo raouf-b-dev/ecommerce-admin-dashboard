@@ -25,16 +25,16 @@ There is only one seeded **confirmed** demo order. Playwright’s orders spec ne
 
 Use the seeded **administrator** unless a row says otherwise.
 
-- [ ] **Products — search:** Apply a search; the URL includes the `search` query param and the table updates.
-- [ ] **Products — status:** Set Status to Active or Inactive; the URL includes `isActive`.
-- [ ] **Products — edit:** Open an existing product. Name and price are populated.
-- [ ] **Products — catalog status:** Deactivate then activate (or the reverse) from product edit. Confirm dialogs complete without a client-side error.
-- [ ] **Inventory — adjust:** Open a high-stock row, **Adjust stock**, ADD 1, apply. Available quantity increases by 1. SUBTRACT 1 to restore the seed value.
-- [ ] **Inventory — conflict banner:** Open the adjust dialog and confirm the conflict alert slot exists. A live HTTP 409 needs two concurrent writes; unit tests cover `isOptimisticLockConflict`. Do not invent a client `version` field.
-- [ ] **Orders — process then ship:** Filter to **confirmed**, open the demo order, **Process**, then **Ship**. Confirm on the pending-payment order needs a completed payment (not in this loop). Do not add a payments capture step here.
-- [ ] **Users — status:** Open `customer@store.local`, deactivate, then reactivate so the account stays usable.
-- [ ] **Users — addresses:** Add an address, **Set default**, then delete the address you added (leave the seeded home address).
-- [ ] **Roles — hidden for administrator:** User detail must **not** show Change role / Assigned role. The seeded administrator does not have `manage_roles`.
+- [ ] **Products - search:** Apply a search; the URL includes the `search` query param and the table updates.
+- [ ] **Products - status:** Set Status to Active or Inactive; the URL includes `isActive`.
+- [ ] **Products - edit:** Open an existing product. Name and price are populated.
+- [ ] **Products - catalog status:** Deactivate then activate (or the reverse) from product edit. Confirm dialogs complete without a client-side error.
+- [ ] **Inventory - adjust:** Open a high-stock row, **Adjust stock**, ADD 1, apply. Available quantity increases by 1. SUBTRACT 1 to restore the seed value.
+- [ ] **Inventory - conflict banner:** Open the adjust dialog and confirm the conflict alert slot exists. A live HTTP 409 needs two concurrent writes; unit tests cover `isOptimisticLockConflict`. Do not invent a client `version` field.
+- [ ] **Orders - process then ship:** Filter to **confirmed**, open the demo order, **Process**, then **Ship**. Confirm on the pending-payment order needs a completed payment (not in this loop). Do not add a payments capture step here.
+- [ ] **Users - status:** Open `customer@store.local`, deactivate, then reactivate so the account stays usable.
+- [ ] **Users - addresses:** Add an address, **Set default**, then delete the address you added (leave the seeded home address).
+- [ ] **Roles - hidden for administrator:** User detail must **not** show Change role / Assigned role. The seeded administrator does not have `manage_roles`.
 
 ## Operator loop (super administrator)
 

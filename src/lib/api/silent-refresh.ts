@@ -104,7 +104,7 @@ export function silentRefreshAccessToken(): Promise<string | null> {
   return inFlightRefresh;
 }
 
-/** Test helper — resets the in-flight latch and registered listeners. */
+/** Test helper - resets the in-flight latch and registered listeners. */
 export function resetSilentRefreshLatchForTests(): void {
   inFlightRefresh = null;
   listeners.clear();

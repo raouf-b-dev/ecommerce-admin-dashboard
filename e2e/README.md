@@ -19,7 +19,7 @@ The journey is glue, not a replacement for per-feature specs.
 1. A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) instance. Follow that repository’s [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md).
 2. Seeded administrator account (credentials stay in API [SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) only).
 3. `VITE_API_BASE_URL` pointing at the API origin (this repo defaults to `http://localhost:3000`; match the API `PORT` if you remapped it).
-4. **Sibling checkout:** [`global-setup.ts`](./global-setup.ts) runs `npm run db:seed:auth` in `../ecommerce-store-api`. That script name is this repo’s integration contract — if the API renames it, update `global-setup.ts`. Clone the API next to this repo, or set `E2E_SKIP_DB_SEED=1` and seed the API yourself (setup fails if the sibling path is missing and the skip flag is unset).
+4. **Sibling checkout:** [`global-setup.ts`](./global-setup.ts) runs `npm run db:seed:auth` in `../ecommerce-store-api`. That script name is this repo’s integration contract - if the API renames it, update `global-setup.ts`. Clone the API next to this repo, or set `E2E_SKIP_DB_SEED=1` and seed the API yourself (setup fails if the sibling path is missing and the skip flag is unset).
 
 Live operator checklist (when to run e2e vs manual Process/Ship): [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md).
 
@@ -29,7 +29,7 @@ Playwright runs [`global-setup.ts`](./global-setup.ts) before the suite, which e
 
 Auth-only seed does **not** restore products or the confirmed demo order. Run `npm run test:e2e` **before** a manual Process/Ship walk. If that order was already mutated, restore catalog and orders from the API seeding guide first.
 
-The API rate-limits login and register. A browser smoke plus an immediate `npm run test:e2e` can 429 — wait about a minute, or run e2e first. Current limits: API docs.
+The API rate-limits login and register. A browser smoke plus an immediate `npm run test:e2e` can 429 - wait about a minute, or run e2e first. Current limits: API docs.
 
 Tests that sign in require environment variables (never commit passwords):
 

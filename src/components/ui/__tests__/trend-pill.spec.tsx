@@ -17,7 +17,7 @@ describe('TrendPill', () => {
   it('renders neutral delta when delta is 0', () => {
     render(<TrendPill delta={0} />);
     expect(screen.getByText('0%')).toBeInTheDocument();
-    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.getByText('-')).toBeInTheDocument();
   });
 
   it('renders n/a when delta is null', () => {

@@ -70,7 +70,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 11. ~~API gaps then SPA (product activate, assign role)~~ **done**
 12. ~~User address book (list on user detail + existing writes)~~ **done**
 12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **done (core slice)**
-13. ~~Release gate (live API stranger quick start + operator smoke)~~ **done** — see [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md)
+13. ~~Release gate (live API stranger quick start + operator smoke)~~ **done** - see [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md)
 13.5. ~~Visual showcase (hero WebP walkthrough, 3 retina stills, README hero & matrix, UI/UX polish)~~ **done**
 12. Payments ops (optional; does not block the release gate)
 

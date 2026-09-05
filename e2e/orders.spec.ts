@@ -25,7 +25,7 @@ test('orders list opens detail and can process a confirmed order', async ({
   const hasConfirmed = await viewLink.isVisible().catch(() => false);
   test.skip(
     !hasConfirmed,
-    'No confirmed seeded orders — run API npm run db:seed.',
+    'No confirmed seeded orders - run API npm run db:seed.',
   );
 
   await viewLink.click();
@@ -66,7 +66,7 @@ test('orders can ship a processing order', async ({ page }) => {
   const hasProcessing = await viewLink.isVisible().catch(() => false);
   test.skip(
     !hasProcessing,
-    'No processing orders — run the confirmed-order process spec first or API db:seed.',
+    'No processing orders - run the confirmed-order process spec first or API db:seed.',
   );
 
   await viewLink.click();

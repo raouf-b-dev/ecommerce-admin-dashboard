@@ -1,4 +1,5 @@
 import {
+  createSeedCategories,
   createSeedInventory,
   createSeedOrders,
   createSeedPayments,
@@ -9,6 +10,7 @@ import {
   type SeedInventoryRow,
 } from '@/lib/mock/data/seed';
 import type {
+  CategoryResponseDto,
   OrderDetailResponseDto,
   PaymentDetailResponseDto,
   PermissionResponseDto,
@@ -17,10 +19,11 @@ import type {
   UserDetailResponseDto,
 } from '@/lib/mock/data/types';
 
-const MOCK_SESSION_KEY = 'es_admin_mock_session'; // flag for refresh presence only — not access-token persistence
+const MOCK_SESSION_KEY = 'es_admin_mock_session'; // flag for refresh presence only - not access-token persistence
 
 export type MockStore = {
   products: ProductDetailResponseDto[];
+  categories: CategoryResponseDto[];
   inventory: SeedInventoryRow[];
   users: UserDetailResponseDto[];
   orders: OrderDetailResponseDto[];
@@ -28,12 +31,14 @@ export type MockStore = {
   roles: RoleResponseDto[];
   permissions: PermissionResponseDto[];
   nextProductId: number;
+  nextCategoryId: number;
   nextUserAddressId: number;
   nextRoleId: number;
 };
 
 function cloneSeed(): MockStore {
   const products = structuredClone(createSeedProducts());
+  const categories = structuredClone(createSeedCategories());
   const inventory = structuredClone(createSeedInventory());
   const users = structuredClone(createSeedUsers());
   const orders = structuredClone(createSeedOrders());
@@ -43,6 +48,7 @@ function cloneSeed(): MockStore {
 
   return {
     products,
+    categories,
     inventory,
     users,
     orders,
@@ -50,6 +56,7 @@ function cloneSeed(): MockStore {
     roles,
     permissions,
     nextProductId: Math.max(...products.map((p) => p.id)) + 1,
+    nextCategoryId: Math.max(...categories.map((c) => c.id)) + 1,
     nextUserAddressId:
       Math.max(
         0,

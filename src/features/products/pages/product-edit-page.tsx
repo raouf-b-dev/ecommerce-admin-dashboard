@@ -35,7 +35,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { formatMoney } from '@/lib/format';
 
 const CONFLICT_MESSAGE =
-  'This product was modified by another request. The form was reloaded with the latest data — review the values and save again.';
+  'This product was modified by another request. The form was reloaded with the latest data - review the values and save again.';
 
 function nullableToOptionalString(value: unknown): string | undefined {
   return typeof value === 'string' ? value : undefined;

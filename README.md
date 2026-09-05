@@ -19,7 +19,7 @@
 
 <a id="try-live-demo-zero-setup"></a>
 
-**Try Live Demo (Zero Setup)** — no Docker, Postgres, Redis, or API required:
+**Try Live Demo (Zero Setup)** - no Docker, Postgres, Redis, or API required:
 
 ```bash
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
@@ -164,7 +164,7 @@ If you remapped the API port, match that value in `.env.local`. After the API co
 
 ## Live static build
 
-Prove a production bundle against a configured API origin. `npm run dev` and `npm run preview` both bind port **5174** with `strictPort` — **stop the Vite dev server first**.
+Prove a production bundle against a configured API origin. `npm run dev` and `npm run preview` both bind port **5174** with `strictPort` - **stop the Vite dev server first**.
 
 ```bash
 VITE_API_BASE_URL="http://localhost:3000" npm run build

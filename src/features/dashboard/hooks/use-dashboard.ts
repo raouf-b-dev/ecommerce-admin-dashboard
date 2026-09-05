@@ -18,7 +18,7 @@ function seriesBucket(days: DashboardPeriodDays): 'day' | 'week' {
 }
 
 /**
- * Query keys use `days` only — never wall-clock ISO strings.
+ * Query keys use `days` only - never wall-clock ISO strings.
  * Computing `from`/`to` inside queryFn avoids refetch storms when `new Date()`
  * changes every render (which previously exhausted the API throttle).
  */
