@@ -232,7 +232,10 @@ describe('DashboardPage', () => {
 
   it('reads period from ?days= URL param', () => {
     renderDashboard('/?days=30');
-    expect(screen.getByLabelText('Period')).toHaveValue('30');
+    expect(screen.getByRole('radio', { name: '30 days' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
   });
 
   it('shows section error with retry when overview fails', () => {
