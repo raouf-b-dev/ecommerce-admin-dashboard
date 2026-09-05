@@ -26,11 +26,7 @@ export function OperatorDeniedPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>
-            <h1 className="text-2xl font-semibold leading-none tracking-tight">
-              Access denied
-            </h1>
-          </CardTitle>
+          <CardTitle as="h1">Access denied</CardTitle>
           <CardDescription>
             This account cannot access the admin dashboard. Sign out and use an
             operator account.

@@ -30,11 +30,7 @@ function ChangePasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>
-            <h1 className="text-2xl font-semibold leading-none tracking-tight">
-              Change your password
-            </h1>
-          </CardTitle>
+          <CardTitle as="h1">Change your password</CardTitle>
           <CardDescription>
             Your account requires a new password before you can use the admin
             dashboard. Sign out if this is the wrong account or you do not
