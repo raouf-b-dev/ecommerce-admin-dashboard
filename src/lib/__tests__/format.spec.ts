@@ -20,8 +20,8 @@ describe('format', () => {
   });
 
   it('returns an em dash for empty dates and passes through invalid strings', () => {
-    expect(formatDate(null)).toBe('—');
-    expect(formatDateTime(undefined)).toBe('—');
+    expect(formatDate(null)).toBe('-');
+    expect(formatDateTime(undefined)).toBe('-');
     expect(formatDate('not-a-date')).toBe('not-a-date');
   });
 

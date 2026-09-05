@@ -14,7 +14,7 @@ if (
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',
-  // Shared seeded admin + API login throttle — parallel workers race
+  // Shared seeded admin + API login throttle - parallel workers race
   // password rotation and trip 429s.
   fullyParallel: false,
   workers: 1,

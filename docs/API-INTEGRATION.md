@@ -74,7 +74,7 @@ Confirm version/conflict fields in OpenAPI for each write operation you use.
 
 | Layer | Use |
 | :---- | :-- |
-| `*-api.ts` | `throwApiErrorFromResponse` only — parse API bodies into `ApiRequestError` |
+| `*-api.ts` | `throwApiErrorFromResponse` only - parse API bodies into `ApiRequestError` |
 | Queries | `QueryStateAlert` + `getErrorMessage` |
 | Dialogs / actions | `getErrorMessage` + `ActionErrorAlert` |
 | Forms | `applyApiFormErrors` + field `matchField`; skip inline error on `409` via `isOptimisticLockConflict` (parent reloads entity) |
@@ -93,7 +93,7 @@ Build order: [`ROADMAP.md`](ROADMAP.md).
 
 ## Dashboard metrics
 
-Bind widgets to the **analytics** operations in OpenAPI (UTC periods). Do **not** sum paginated order rows in the SPA. Grafana/Prometheus is engineering observability only — not an admin data source.
+Bind widgets to the **analytics** operations in OpenAPI (UTC periods). Do **not** sum paginated order rows in the SPA. Grafana/Prometheus is engineering observability only - not an admin data source.
 
 Client rules:
 

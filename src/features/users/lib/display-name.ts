@@ -6,14 +6,14 @@ export function userDisplayName(user: {
     .map((part) => part?.trim())
     .filter(Boolean)
     .join(' ');
-  return name || '—';
+  return name || '-';
 }
 
 export function formatUserPhone(phone: string | null | undefined): string {
   if (typeof phone === 'string' && phone.trim()) {
     return phone;
   }
-  return '—';
+  return '-';
 }
 
 export function formatUserRole(
@@ -24,7 +24,7 @@ export function formatUserRole(
     return roleName.trim();
   }
   if (!roleCode) {
-    return '—';
+    return '-';
   }
   return roleCode.replaceAll('_', ' ');
 }

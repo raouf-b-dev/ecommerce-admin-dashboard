@@ -60,7 +60,7 @@ test.describe('Forced password change', () => {
         await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
         return;
       }
-      // Seed password rejected — try rotated, then back off (login throttle).
+      // Seed password rejected - try rotated, then back off (login throttle).
       outcome = await tryPassword(newPassword!);
       if (outcome === 'change') {
         break;

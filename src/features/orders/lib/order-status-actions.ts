@@ -1,7 +1,7 @@
 import type { OrderStatus, OrderStatusAction } from '@/features/orders/types';
 
 /**
- * UX chrome only — mirrors the API order workflow for enabling/disabling
+ * UX chrome only - mirrors the API order workflow for enabling/disabling
  * controls. Illegal transitions are still rejected by the API.
  */
 const ACTIONS_BY_STATUS = {

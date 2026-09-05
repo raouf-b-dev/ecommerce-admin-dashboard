@@ -43,7 +43,7 @@ export default function DemoLoginActions() {
   return (
     <div className="space-y-3">
       <p className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
-        Mock mode — no API required.
+        Mock mode - no API required.
       </p>
       {error ? (
         <p className="text-sm text-destructive" role="alert">

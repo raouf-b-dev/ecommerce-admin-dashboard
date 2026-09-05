@@ -20,7 +20,7 @@ export function formatMoney(
 
 export function formatDate(value: string | null | undefined): string {
   if (!value) {
-    return '—';
+    return '-';
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -31,7 +31,7 @@ export function formatDate(value: string | null | undefined): string {
 
 export function formatDateTime(value: string | null | undefined): string {
   if (!value) {
-    return '—';
+    return '-';
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {

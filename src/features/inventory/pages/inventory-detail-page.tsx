@@ -26,7 +26,7 @@ import { formatDateTime } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 
 const CONFLICT_MESSAGE =
-  'Stock was modified by another request. Latest values were reloaded — review and adjust again.';
+  'Stock was modified by another request. Latest values were reloaded - review and adjust again.';
 
 function InventoryDetailPage() {
   const { hasPermission } = useAuth();

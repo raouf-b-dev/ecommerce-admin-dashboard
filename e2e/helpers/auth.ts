@@ -137,7 +137,7 @@ export async function loginAsAdmin(page: Page): Promise<void> {
       }
     }
 
-    // Likely login rate-limit or brief race — wait out the window.
+    // Likely login rate-limit or brief race - wait out the window.
     await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
   }
 
