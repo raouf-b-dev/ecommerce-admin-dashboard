@@ -7,10 +7,37 @@ import {
 } from '@/features/products/schemas/product-schema';
 
 describe('createProductSchema', () => {
-  it('requires name and positive price', () => {
+  it('requires name, positive price, and category', () => {
     const result = createProductSchema.safeParse({
       name: '',
       price: '',
+      categoryId: '',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects missing category', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: 'USD',
+      categoryId: '',
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((issue) => issue.path[0] === 'categoryId'))
+        .toBe(true);
+    }
+  });
+
+  it('rejects non-positive category id', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: 'USD',
+      categoryId: '0',
     });
 
     expect(result.success).toBe(false);
@@ -35,11 +62,14 @@ describe('createProductSchema', () => {
         categoryId: 3,
         imageUrl: 'https://example.com/laptop.jpg',
       });
-      expect(toCreateProductDto(submit)).toMatchObject({
-        name: 'Laptop',
-        price: 49.99,
-        categoryId: 3,
-      });
+      expect(toCreateProductDto(submit)).toEqual(
+        expect.objectContaining({
+          name: 'Laptop',
+          price: 49.99,
+          categoryId: 3,
+        }),
+      );
+      expect(toCreateProductDto(submit).categoryId).toBe(3);
       expect(toUpdateProductDto(submit)).toMatchObject({
         name: 'Laptop',
         price: 49.99,
