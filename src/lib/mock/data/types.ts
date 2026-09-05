@@ -20,6 +20,7 @@ export type ProductDetailResponseDto =
 export type ProductListItemResponseDto =
   components['schemas']['ProductListItemResponseDto'];
 export type ProductResponseDto = components['schemas']['ProductResponseDto'];
+export type CategoryResponseDto = components['schemas']['CategoryResponseDto'];
 export type PermissionResponseDto =
   components['schemas']['PermissionResponseDto'];
 export type RoleResponseDto = components['schemas']['RoleResponseDto'];

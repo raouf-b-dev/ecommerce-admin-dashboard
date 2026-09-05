@@ -13,6 +13,14 @@ import {
   sortByKey,
 } from '@/lib/mock/lib/paginate-filter';
 
+function categoryNameForId(categoryId?: number | null): string | null {
+  if (categoryId == null) return null;
+  return (
+    getMockStore().categories.find((category) => category.id === categoryId)
+      ?.name ?? null
+  );
+}
+
 function toListItem(
   product: ProductDetailResponseDto,
 ): ProductListItemResponseDto {
@@ -25,6 +33,7 @@ function toListItem(
     currency: product.currency,
     imageUrl: product.imageUrl,
     categoryId: product.categoryId,
+    categoryName: product.categoryName ?? categoryNameForId(product.categoryId),
     isActive: product.isActive,
     createdAt: product.createdAt,
   };
@@ -124,6 +133,13 @@ export const productsHandlers = [
       categoryId?: number;
     };
 
+    if (body.categoryId == null) {
+      return HttpResponse.json(
+        { message: 'categoryId is required', statusCode: 400 },
+        { status: 400 },
+      );
+    }
+
     const store = getMockStore();
     const createdAt = isoNow();
     const product: ProductDetailResponseDto = {
@@ -134,7 +150,8 @@ export const productsHandlers = [
       price: body.price,
       currency: body.currency ?? 'USD',
       imageUrl: body.imageUrl ?? null,
-      categoryId: body.categoryId ?? null,
+      categoryId: body.categoryId,
+      categoryName: categoryNameForId(body.categoryId),
       isActive: true,
       createdAt,
       description: body.description ?? null,
@@ -176,10 +193,20 @@ export const productsHandlers = [
       price: number;
       currency: string;
       imageUrl: string;
-      categoryId: number;
+      categoryId: number | null;
     }>;
 
+    if (body.categoryId === null) {
+      return HttpResponse.json(
+        { message: 'categoryId cannot be null', statusCode: 400 },
+        { status: 400 },
+      );
+    }
+
     Object.assign(product, body, { updatedAt: isoNow() });
+    if (body.categoryId !== undefined) {
+      product.categoryName = categoryNameForId(body.categoryId);
+    }
     const inventory = store.inventory.find((row) => row.productId === id);
     if (inventory) {
       inventory.productTitle = product.name;
@@ -212,6 +239,15 @@ export const productsHandlers = [
       return HttpResponse.json(
         { message: 'Product not found', statusCode: 404 },
         { status: 404 },
+      );
+    }
+    if (product.categoryId == null) {
+      return HttpResponse.json(
+        {
+          message: 'Cannot activate a product without a category',
+          statusCode: 400,
+        },
+        { status: 400 },
       );
     }
     product.isActive = true;
