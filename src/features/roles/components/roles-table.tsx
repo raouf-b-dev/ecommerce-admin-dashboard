@@ -82,8 +82,7 @@ export function RolesTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead>Role</TableHead>
               <TableHead>Permissions</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -91,25 +90,31 @@ export function RolesTable() {
           <TableBody>
             {roles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={3} className="text-center text-muted-foreground">
                   No roles found.
                 </TableCell>
               </TableRow>
             ) : (
               roles.map((role) => (
                 <TableRow key={role.id}>
-                  <TableCell className="font-mono">
+                  <TableCell>
                     <div className="flex items-center gap-2">
-                      {role.code}
+                      <span className="font-medium text-foreground">{role.name}</span>
                       {role.isSystem ? (
                         <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                           System
                         </span>
                       ) : null}
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-muted-foreground">
+                        {role.code}
+                      </code>
                     </div>
                   </TableCell>
-                  <TableCell>{role.name}</TableCell>
-                  <TableCell>{role.permissions.codes.length}</TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {role.permissions.codes.length} {role.permissions.codes.length === 1 ? 'permission' : 'permissions'}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

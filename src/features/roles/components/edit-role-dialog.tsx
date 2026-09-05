@@ -104,15 +104,18 @@ function EditRoleDialogBody({
     <DialogContent className="max-w-lg">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          Edit role
+          Edit {role.name}
           {role.isSystem ? (
             <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
               System
             </span>
           ) : null}
+          <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-muted-foreground font-normal">
+            {role.code}
+          </code>
         </DialogTitle>
         <DialogDescription>
-          Update the display name and permissions for “{role.code}”.
+          Update display name and assign permissions for this role.
         </DialogDescription>
       </DialogHeader>
       {permissionsQuery.isLoading ? (
@@ -123,10 +126,6 @@ function EditRoleDialogBody({
             className="space-y-4"
             onSubmit={form.handleSubmit((values) => handleSubmit(values))}
           >
-            <div className="space-y-1 text-sm">
-              <p className="text-muted-foreground">Code</p>
-              <p className="font-mono font-medium">{role.code}</p>
-            </div>
             <FormField
               control={form.control}
               name="name"
