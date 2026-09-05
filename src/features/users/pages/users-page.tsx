@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -39,7 +39,7 @@ function UsersPage() {
     setSearchParams(userListFiltersToSearchParams(next), { replace: true });
   }
 
-  function applyTextFilters(event: FormEvent) {
+  function applyTextFilters(event: SubmitEvent) {
     event.preventDefault();
     updateFilters({
       ...filters,

@@ -1,8 +1,17 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { PageHeader } from '@/components/layout/page-header';
+import { ArrowLeft, Check, Copy, Plus } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { UserAvatar } from '@/features/users/components/user-avatar';
 import {
   UserEditForm,
   toUpdateUserDto,
@@ -63,6 +72,7 @@ function UserDetailPage() {
   );
   const [editingAddress, setEditingAddress] =
     useState<AddressResponseDto | null>(null);
+  const [copiedId, setCopiedId] = useState(false);
 
   const editDefaults = useMemo(() => {
     const user = detailQuery.data;
@@ -76,6 +86,13 @@ function UserDetailPage() {
       phone: user.phone ?? '',
     };
   }, [detailQuery.data]);
+
+  function handleCopyId() {
+    if (!detailQuery.data) return;
+    navigator.clipboard.writeText(String(detailQuery.data.id));
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 2000);
+  }
 
   if (!validId) {
     return (
@@ -119,191 +136,298 @@ function UserDetailPage() {
   )?.name;
 
   return (
-    <div className="space-y-8">
-      <PageHeader title={userDisplayName(user)} description={user.email}>
-        <div className="flex flex-wrap gap-2">
-          {canViewOrders ? (
-            <Button asChild variant="secondary">
-              <Link to={`/orders?userId=${user.id}`}>View orders</Link>
-            </Button>
-          ) : null}
-          <Button asChild variant="outline">
-            <Link to="/users">Back to list</Link>
-          </Button>
+    <div className="space-y-6">
+      {/* Navigation & Header */}
+      <div className="space-y-4">
+        <div>
+          <Link
+            to="/users"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to users
+          </Link>
         </div>
-      </PageHeader>
 
-      <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Email</dt>
-          <dd className="text-sm font-medium">{user.email}</dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Phone</dt>
-          <dd className="text-sm">{formatUserPhone(user.phone)}</dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Role</dt>
-          <dd className="text-sm font-medium">
-            {formatUserRole(user.roleCode, roleName)}
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Status</dt>
-          <dd className="text-sm font-medium">
-            {user.isActive ? 'Active' : 'Inactive'}
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Created</dt>
-          <dd className="text-sm">{formatDateTime(user.createdAt)}</dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Updated</dt>
-          <dd className="text-sm">{formatDateTime(user.updatedAt)}</dd>
-        </div>
-      </dl>
-
-      <section className="space-y-3">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">Addresses</h2>
-            <p className="text-sm text-muted-foreground">
-              Saved addresses for this account.
-            </p>
-          </div>
-          {canManageUsers ? (
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                setEditingAddress(null);
-                setAddressFormMode('add');
-              }}
-            >
-              Add address
-            </Button>
-          ) : null}
-        </div>
-        <UserAddressList
-          addresses={user.addresses ?? []}
-          canManage={canManageUsers}
-          isPending={
-            addAddress.isPending ||
-            updateAddress.isPending ||
-            deleteAddress.isPending ||
-            setDefaultAddress.isPending
-          }
-          onEdit={(address) => {
-            setEditingAddress(address);
-            setAddressFormMode('edit');
-          }}
-          onDelete={async (addressId) => {
-            await deleteAddress.mutateAsync(addressId);
-          }}
-          onSetDefault={async (addressId) => {
-            await setDefaultAddress.mutateAsync(addressId);
-          }}
-        />
-        {addressFormMode !== null ? (
-          <UserAddressForm
-            mode={addressFormMode}
-            open
-            isPending={addAddress.isPending || updateAddress.isPending}
-            defaultValues={
-              editingAddress
-                ? {
-                    street: editingAddress.street,
-                    street2: editingAddress.street2 ?? '',
-                    city: editingAddress.city,
-                    state: editingAddress.state,
-                    postalCode: editingAddress.postalCode,
-                    country: editingAddress.country,
-                    deliveryInstructions:
-                      editingAddress.deliveryInstructions ?? '',
-                    isDefault: editingAddress.isDefault,
-                  }
-                : undefined
-            }
-            onOpenChange={(open) => {
-              if (!open) {
-                setAddressFormMode(null);
-                setEditingAddress(null);
-              }
-            }}
-            onSubmit={async (values: AddressFormValues) => {
-              if (addressFormMode === 'edit' && editingAddress) {
-                await updateAddress.mutateAsync({
-                  addressId: editingAddress.id,
-                  body: toUpdateAddressDto(values),
-                });
-                return;
-              }
-              await addAddress.mutateAsync(toAddAddressDto(values));
-            }}
-          />
-        ) : null}
-      </section>
-
-      {canManageUsers ? (
-        <section className="space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold">Operator actions</h2>
-            <p className="text-sm text-muted-foreground">
-              Update profile fields or change account status.
-            </p>
-          </div>
-          {saveMessage ? (
-            <Alert>
-              <AlertTitle>Saved</AlertTitle>
-              <AlertDescription>{saveMessage}</AlertDescription>
-            </Alert>
-          ) : null}
-          {editDefaults ? (
-            <UserEditForm
-              key={`${user.id}-${user.updatedAt}`}
-              defaultValues={editDefaults}
-              isPending={updateUser.isPending}
-              onSubmit={async (values) => {
-                setSaveMessage(null);
-                await updateUser.mutateAsync(toUpdateUserDto(values));
-                setSaveMessage('Profile updated.');
-              }}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-3.5">
+            <UserAvatar
+              firstName={user.firstName}
+              lastName={user.lastName}
+              email={user.email}
+              size="lg"
             />
-          ) : null}
-          <UserStatusActions
-            isActive={user.isActive}
-            isPending={activateUser.isPending || deactivateUser.isPending}
-            onActivate={async () => {
-              await activateUser.mutateAsync();
-            }}
-            onDeactivate={async () => {
-              await deactivateUser.mutateAsync();
-            }}
-          />
-        </section>
-      ) : null}
-
-      {canManageRoles ? (
-        <section className="space-y-3">
-          <div>
-            <h2 className="text-lg font-semibold">Assigned role</h2>
-            <p className="text-sm text-muted-foreground">
-              Replace this user's role. The API enforces who may assign roles.
-            </p>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                  {userDisplayName(user)}
+                </h1>
+                <StatusBadge variant="user" isActive={user.isActive} />
+                <span className="inline-flex items-center rounded-full border border-border bg-secondary/80 px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
+                  {formatUserRole(user.roleCode, roleName)}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span>{user.email}</span>
+                <span>•</span>
+                <span className="inline-flex items-center gap-1">
+                  <span>ID: #{user.id}</span>
+                  <button
+                    type="button"
+                    onClick={handleCopyId}
+                    aria-label="Copy user ID"
+                    className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  >
+                    {copiedId ? (
+                      <Check className="h-3 w-3 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </button>
+                </span>
+              </div>
+            </div>
           </div>
-          <UserRoleActions
-            key={`${user.id}-${user.roleCode ?? ''}`}
-            currentRoleCode={user.roleCode ?? null}
-            roles={rolesQuery.data ?? []}
-            rolesLoading={rolesQuery.isLoading}
-            isPending={assignUserRole.isPending}
-            onAssign={async (roleCode) => {
-              await assignUserRole.mutateAsync({ roleCode });
-            }}
-          />
-        </section>
-      ) : null}
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            {canViewOrders ? (
+              <Button asChild variant="secondary" size="sm">
+                <Link to={`/orders?userId=${user.id}`}>View orders</Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" size="sm">
+              <Link to="/users">Back to list</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2-Column Responsive Dashboard Layout */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Main Column (2/3) */}
+        <div className="space-y-6 lg:col-span-2">
+          {/* Profile Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle as="h2" className="text-xl">Profile details</CardTitle>
+              <CardDescription>
+                {canManageUsers
+                  ? 'Update personal and contact information for this account.'
+                  : 'Personal and contact information for this account.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {saveMessage ? (
+                <Alert className="mb-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                  <AlertTitle>Saved</AlertTitle>
+                  <AlertDescription>{saveMessage}</AlertDescription>
+                </Alert>
+              ) : null}
+
+              {canManageUsers && editDefaults ? (
+                <UserEditForm
+                  key={`${user.id}-${user.updatedAt}`}
+                  defaultValues={editDefaults}
+                  isPending={updateUser.isPending}
+                  onSubmit={async (values) => {
+                    setSaveMessage(null);
+                    await updateUser.mutateAsync(toUpdateUserDto(values));
+                    setSaveMessage('Profile updated.');
+                  }}
+                />
+              ) : (
+                <dl className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <dt className="text-xs font-medium text-muted-foreground">Full name</dt>
+                    <dd className="text-sm font-medium">{userDisplayName(user)}</dd>
+                  </div>
+                  <div className="space-y-1">
+                    <dt className="text-xs font-medium text-muted-foreground">Email</dt>
+                    <dd className="text-sm font-medium">{user.email}</dd>
+                  </div>
+                  <div className="space-y-1">
+                    <dt className="text-xs font-medium text-muted-foreground">Phone</dt>
+                    <dd className="text-sm">{formatUserPhone(user.phone)}</dd>
+                  </div>
+                </dl>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Addresses Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <div>
+                <CardTitle as="h2" className="text-xl">Addresses</CardTitle>
+                <CardDescription className="mt-1">
+                  Saved shipping and billing locations.
+                </CardDescription>
+              </div>
+              {canManageUsers ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setEditingAddress(null);
+                    setAddressFormMode('add');
+                  }}
+                  className="gap-1.5"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add address
+                </Button>
+              ) : null}
+            </CardHeader>
+            <CardContent>
+              <UserAddressList
+                addresses={user.addresses ?? []}
+                canManage={canManageUsers}
+                isPending={
+                  addAddress.isPending ||
+                  updateAddress.isPending ||
+                  deleteAddress.isPending ||
+                  setDefaultAddress.isPending
+                }
+                onEdit={(address) => {
+                  setEditingAddress(address);
+                  setAddressFormMode('edit');
+                }}
+                onDelete={async (addressId) => {
+                  await deleteAddress.mutateAsync(addressId);
+                }}
+                onSetDefault={async (addressId) => {
+                  await setDefaultAddress.mutateAsync(addressId);
+                }}
+              />
+              {addressFormMode !== null ? (
+                <UserAddressForm
+                  mode={addressFormMode}
+                  open
+                  isPending={addAddress.isPending || updateAddress.isPending}
+                  defaultValues={
+                    editingAddress
+                      ? {
+                          street: editingAddress.street,
+                          street2: editingAddress.street2 ?? '',
+                          city: editingAddress.city,
+                          state: editingAddress.state,
+                          postalCode: editingAddress.postalCode,
+                          country: editingAddress.country,
+                          deliveryInstructions:
+                            editingAddress.deliveryInstructions ?? '',
+                          isDefault: editingAddress.isDefault,
+                        }
+                      : undefined
+                  }
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setAddressFormMode(null);
+                      setEditingAddress(null);
+                    }
+                  }}
+                  onSubmit={async (values: AddressFormValues) => {
+                    if (addressFormMode === 'edit' && editingAddress) {
+                      await updateAddress.mutateAsync({
+                        addressId: editingAddress.id,
+                        body: toUpdateAddressDto(values),
+                      });
+                      return;
+                    }
+                    await addAddress.mutateAsync(toAddAddressDto(values));
+                  }}
+                />
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar Column (1/3) */}
+        <div className="space-y-6">
+          {/* Account Overview Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Account overview</CardTitle>
+              <CardDescription>
+                System timestamps and identifiers.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <dl className="space-y-3.5 text-sm">
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-muted-foreground">User ID</dt>
+                  <dd className="font-mono text-xs font-semibold text-foreground">#{user.id}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-muted-foreground">Registered</dt>
+                  <dd className="text-xs font-medium text-foreground">
+                    {formatDateTime(user.createdAt)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-muted-foreground">Last updated</dt>
+                  <dd className="text-xs font-medium text-foreground">
+                    {formatDateTime(user.updatedAt)}
+                  </dd>
+                </div>
+              </dl>
+            </CardContent>
+          </Card>
+
+          {/* Assigned Role Card (Only if canManageRoles) */}
+          {canManageRoles ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Assigned role</CardTitle>
+                <CardDescription>
+                  Replace this user's role. Changes take effect on next sign in.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UserRoleActions
+                  key={`${user.id}-${user.roleCode ?? ''}`}
+                  currentRoleCode={user.roleCode ?? null}
+                  roles={rolesQuery.data ?? []}
+                  rolesLoading={rolesQuery.isLoading}
+                  isPending={assignUserRole.isPending}
+                  onAssign={async (roleCode) => {
+                    await assignUserRole.mutateAsync({ roleCode });
+                  }}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Danger Zone Card (Only if canManageUsers) */}
+          {canManageUsers ? (
+            <Card className="border-destructive/30 bg-destructive/5">
+              <CardHeader>
+                <CardTitle className="text-base text-destructive">Danger Zone</CardTitle>
+                <CardDescription>
+                  Actions that affect this user's account access.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  {user.isActive
+                    ? 'Deactivating this user will revoke their session and prevent them from signing in.'
+                    : 'Reactivating this user will restore their sign-in capability and account access.'}
+                </p>
+                <UserStatusActions
+                  isActive={user.isActive}
+                  isPending={activateUser.isPending || deactivateUser.isPending}
+                  onActivate={async () => {
+                    await activateUser.mutateAsync();
+                  }}
+                  onDeactivate={async () => {
+                    await deactivateUser.mutateAsync();
+                  }}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
