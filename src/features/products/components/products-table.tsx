@@ -39,7 +39,13 @@ function nullableString(value: unknown): string {
   if (typeof value === 'string') {
     return value;
   }
-  return '—';
+  return '-';
+}
+
+function categoryLabel(item: ProductListItemResponseDto): string {
+  if (item.categoryName) return item.categoryName;
+  if (item.categoryId == null) return '-';
+  return `Category #${item.categoryId}`;
 }
 
 type ProductSortBy = NonNullable<ListProductsQuery['sortBy']>;
@@ -69,6 +75,11 @@ export function ProductsTable({
           accessorKey: 'sku',
           header: 'SKU',
           cell: ({ row }) => nullableString(row.original.sku),
+        },
+        {
+          accessorKey: 'categoryName',
+          header: 'Category',
+          cell: ({ row }) => categoryLabel(row.original),
         },
         {
           accessorKey: 'price',
@@ -122,6 +133,7 @@ export function ProductsTable({
                 onSortChange={handleSortChange}
               />
               <TableHead>SKU</TableHead>
+              <TableHead>Category</TableHead>
               <SortableTableHead
                 label="Price"
                 sortKey="price"
