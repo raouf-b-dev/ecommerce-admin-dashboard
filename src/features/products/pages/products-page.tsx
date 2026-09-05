@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { Link, useSearchParams } from 'react-router';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,10 @@ import {
   productListFiltersToSearchParams,
 } from '@/features/products/lib/product-list-filters';
 import type { ProductListFilters } from '@/features/products/types';
+import {
+  PRODUCT_CATEGORIES,
+  getCategoryName,
+} from '@/features/products/constants/categories';
 import { useAuth } from '@/lib/auth/auth-context';
 
 type ActiveFilter = '' | 'true' | 'false';
@@ -48,6 +53,7 @@ function ProductsPage() {
   const [categoryIdDraft, setCategoryIdDraft] = useState(
     filters.categoryId !== undefined ? String(filters.categoryId) : '',
   );
+
   const draftKey = productFilterDraftKey(filters);
   const [prevDraftKey, setPrevDraftKey] = useState(draftKey);
   if (draftKey !== prevDraftKey) {
@@ -68,7 +74,7 @@ function ProductsPage() {
     setSearchParams(productListFiltersToSearchParams(next), { replace: true });
   }
 
-  function applyTextFilters(event: FormEvent) {
+  function applyTextFilters(event: SubmitEvent) {
     event.preventDefault();
     const minPrice = minPriceDraft.trim()
       ? Number(minPriceDraft)
@@ -104,8 +110,15 @@ function ProductsPage() {
         ? 'false'
         : '';
 
+  const secondaryCount = [
+    filters.minPrice,
+    filters.maxPrice,
+    filters.categoryId,
+  ].filter((v) => v !== undefined).length;
+  const [filtersOpen, setFiltersOpen] = useState(secondaryCount > 0);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <PageHeader
         title="Products"
         description="Browse the catalog and manage product details."
@@ -117,92 +130,226 @@ function ProductsPage() {
         ) : null}
       </PageHeader>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <form
-          className="flex flex-wrap items-end gap-4"
-          onSubmit={applyTextFilters}
-        >
-          <div className="space-y-2">
-            <Label htmlFor="products-search">Search</Label>
+      <div className="space-y-3">
+        {/* Primary Toolbar */}
+        <div className="flex flex-wrap items-center gap-3">
+          <form
+            onSubmit={applyTextFilters}
+            className="flex flex-1 items-center gap-2 min-w-[240px] max-w-md"
+          >
             <Input
               id="products-search"
               value={searchDraft}
               onChange={(e) => setSearchDraft(e.target.value)}
-              placeholder="Name, SKU, or description"
-              className="w-56"
+              placeholder="Search name, SKU, or description…"
+              className="h-9"
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="products-min-price">Min price</Label>
-            <Input
-              id="products-min-price"
-              type="number"
-              min={0}
-              step="0.01"
-              value={minPriceDraft}
-              onChange={(e) => setMinPriceDraft(e.target.value)}
-              className="w-28"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="products-max-price">Max price</Label>
-            <Input
-              id="products-max-price"
-              type="number"
-              min={0}
-              step="0.01"
-              value={maxPriceDraft}
-              onChange={(e) => setMaxPriceDraft(e.target.value)}
-              className="w-28"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="products-category-id">Category ID</Label>
-            <Input
-              id="products-category-id"
-              type="number"
-              min={1}
-              step={1}
-              value={categoryIdDraft}
-              onChange={(e) => setCategoryIdDraft(e.target.value)}
-              className="w-28"
-            />
-          </div>
-          <Button type="submit" variant="secondary">
-            Apply filters
-          </Button>
-        </form>
+            <Button type="submit" size="sm" variant="secondary" className="h-9 shrink-0">
+              Search
+            </Button>
+          </form>
 
-        <div className="space-y-2">
-          <Label htmlFor="products-active">Status</Label>
-          <select
-            id="products-active"
-            className="flex h-10 w-40 rounded-md border border-input bg-background px-3 py-2 text-sm"
-            value={activeValue}
-            onChange={(e) => {
-              const value = e.target.value as ActiveFilter;
-              updateFilters({
-                ...filters,
-                page: 1,
-                isActive:
-                  value === 'true' ? true : value === 'false' ? false : undefined,
-              });
-            }}
-          >
-            <option value="">All statuses</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <select
+              id="products-active"
+              aria-label="Status filter"
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+              value={activeValue}
+              onChange={(e) => {
+                const value = e.target.value as ActiveFilter;
+                updateFilters({
+                  ...filters,
+                  page: 1,
+                  isActive:
+                    value === 'true'
+                      ? true
+                      : value === 'false'
+                        ? false
+                        : undefined,
+                });
+              }}
+            >
+              <option value="">All statuses</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+
+            <Button
+              type="button"
+              variant={filtersOpen || secondaryCount > 0 ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              className="h-9 gap-1.5"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Filters
+              {secondaryCount > 0 ? (
+                <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-xs font-semibold text-primary">
+                  {secondaryCount}
+                </span>
+              ) : null}
+            </Button>
+
+            {hasActiveProductListFilters(filters) ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => updateFilters(DEFAULT_PRODUCT_LIST_FILTERS)}
+                className="h-9 text-muted-foreground hover:text-foreground"
+              >
+                Clear filters
+              </Button>
+            ) : null}
+          </div>
         </div>
 
+        {/* Collapsible Advanced Filters Drawer */}
+        {filtersOpen ? (
+          <div className="rounded-lg border border-border bg-card/60 p-3.5">
+            <form
+              onSubmit={applyTextFilters}
+              className="flex flex-wrap items-end gap-3"
+            >
+              <div className="space-y-1">
+                <Label htmlFor="products-min-price" className="text-xs text-muted-foreground">
+                  Min price
+                </Label>
+                <Input
+                  id="products-min-price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={minPriceDraft}
+                  onChange={(e) => setMinPriceDraft(e.target.value)}
+                  placeholder="0.00"
+                  className="h-8 w-28 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="products-max-price" className="text-xs text-muted-foreground">
+                  Max price
+                </Label>
+                <Input
+                  id="products-max-price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={maxPriceDraft}
+                  onChange={(e) => setMaxPriceDraft(e.target.value)}
+                  placeholder="0.00"
+                  className="h-8 w-28 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="products-category-id" className="text-xs text-muted-foreground">
+                  Category
+                </Label>
+                <select
+                  id="products-category-id"
+                  value={categoryIdDraft}
+                  onChange={(e) => setCategoryIdDraft(e.target.value)}
+                  className="h-8 rounded-md border border-input bg-background px-2.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">All categories</option>
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button type="submit" size="sm" variant="secondary" className="h-8">
+                Apply price & category
+              </Button>
+            </form>
+          </div>
+        ) : null}
+
+        {/* Active Filter Chips */}
         {hasActiveProductListFilters(filters) ? (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => updateFilters(DEFAULT_PRODUCT_LIST_FILTERS)}
-          >
-            Clear filters
-          </Button>
+          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            <span className="text-xs text-muted-foreground">Active:</span>
+            {filters.search ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
+                Search: "{filters.search}"
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ ...filters, page: 1, search: undefined })
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Remove search filter</span>
+                </button>
+              </span>
+            ) : null}
+            {filters.isActive !== undefined ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
+                Status: {filters.isActive ? 'Active' : 'Inactive'}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ ...filters, page: 1, isActive: undefined })
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Remove status filter</span>
+                </button>
+              </span>
+            ) : null}
+            {filters.minPrice !== undefined ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
+                Min: ${filters.minPrice}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ ...filters, page: 1, minPrice: undefined })
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Remove min price filter</span>
+                </button>
+              </span>
+            ) : null}
+            {filters.maxPrice !== undefined ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
+                Max: ${filters.maxPrice}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ ...filters, page: 1, maxPrice: undefined })
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Remove max price filter</span>
+                </button>
+              </span>
+            ) : null}
+            {filters.categoryId !== undefined ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
+                Category: {getCategoryName(filters.categoryId)}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({
+                      ...filters,
+                      page: 1,
+                      categoryId: undefined,
+                    })
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Remove category filter</span>
+                </button>
+              </span>
+            ) : null}
+          </div>
         ) : null}
       </div>
 
