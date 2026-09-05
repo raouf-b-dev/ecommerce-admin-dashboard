@@ -82,6 +82,7 @@ Write tests **with** each feature.
 | **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | **Polish**: Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K deferred |
 | **13**   | Technical release gate             | `[x]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
 | **13.5** | Visual Showcase & Portfolio Assets | `[ ]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
+| **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields (failed-payment attention, payment mix, sell-through) |
 
 ---
 
@@ -571,6 +572,23 @@ Named fields below were true at planning time. On start, take the **current** li
   3. Add a prominent "1-Click Live Demo" badge.
 
 **Done when:** All media files exist in `docs/assets/` and the README displays the interactive preview cleanly on GitHub.
+
+---
+
+## Phase 14: Dashboard Operational Facts [P2]
+
+> **Goal**: Display operational order age, payment mix, and inventory sell-through facts once live storefront and payment flows exist.
+
+**Blocked on:** OpenAPI contracts exposing `payment_failed` on attention, order age (`oldestCreatedAt` / `oldestUpdatedAt`), payment counts (`failedPaymentCount` / `pendingPaymentCount`), and inventory fields (`unitsSold7d` / `reservedQuantity`).
+
+**Planning reference:** Sibling API roadmap section *Analytics Attention & Operational Facts* (currently tracked as API 17d).
+
+**Scope:**
+- [ ] **Attention Pulse**: Surface `payment_failed` orders with direct links to cancel/manage; display order age chips (`oldestCreatedAt` / `oldestUpdatedAt`).
+- [ ] **Payment Mix**: Show period `failedPaymentCount` and `pendingPaymentCount` on the dashboard overview.
+- [ ] **Inventory Sell-Through**: Display `unitsSold7d` and `reservedQuantity` on low-stock alert rows.
+
+**Done when:** Dashboard cards and attention chips display these operational fields directly from the API without client-side guessing.
 
 ---
 
