@@ -32,7 +32,8 @@ const listQueryMock = vi.hoisted(() =>
 
 const authMock = vi.hoisted(() =>
   vi.fn(() => ({
-    hasPermission: (permission: string) => permission === 'manage_products',
+    hasPermission: (permission?: string): boolean =>
+      permission === 'manage_products',
   })),
 );
 
@@ -67,7 +68,8 @@ describe('ProductsPage', () => {
   beforeEach(() => {
     listQueryMock.mockReset();
     authMock.mockReturnValue({
-      hasPermission: (permission: string) => permission === 'manage_products',
+      hasPermission: (permission?: string) =>
+        permission === 'manage_products',
     });
   });
 

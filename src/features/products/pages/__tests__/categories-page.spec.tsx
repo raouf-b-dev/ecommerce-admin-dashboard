@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { CategoriesPage } from '@/features/products/pages/categories-page';
 
@@ -116,18 +116,18 @@ describe('CategoriesPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Create category' }));
 
-    expect(
-      await screen.findByRole('heading', { name: 'Create category' }),
-    ).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Create category',
+    });
+    expect(dialog).toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText('Name'), {
+    fireEvent.change(within(dialog).getByLabelText('Name'), {
       target: { value: 'Toys' },
     });
 
-    const submitButtons = screen.getAllByRole('button', {
-      name: 'Create category',
-    });
-    fireEvent.click(submitButtons[submitButtons.length - 1]);
+    fireEvent.click(
+      within(dialog).getByRole('button', { name: 'Create category' }),
+    );
 
     await waitFor(() => {
       expect(createMutate).toHaveBeenCalledWith({ name: 'Toys' });
@@ -137,17 +137,18 @@ describe('CategoriesPage', () => {
   it('warns that delete unassigns products before confirming', async () => {
     renderPage();
 
-    fireEvent.click(screen.getAllByRole('button', { name: 'Delete' })[0]);
+    const row = screen.getByRole('row', { name: /electronics/i });
+    fireEvent.click(within(row).getByRole('button', { name: 'Delete' }));
 
-    expect(
-      await screen.findByRole('heading', { name: 'Delete category' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/become unassigned/i)).toBeInTheDocument();
-    expect(screen.getByText(/cannot be activated/i)).toBeInTheDocument();
-    expect(screen.getByText(/recategorized/i)).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Delete category',
+    });
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText(/become unassigned/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/cannot be activated/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/recategorized/i)).toBeInTheDocument();
 
-    const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
-    fireEvent.click(deleteButtons[deleteButtons.length - 1]);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
     await waitFor(() => {
       expect(deleteMutate).toHaveBeenCalledWith(1);
