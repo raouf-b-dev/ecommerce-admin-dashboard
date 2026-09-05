@@ -36,6 +36,9 @@ const ProductCreatePage = lazy(() =>
 const ProductEditPage = lazy(() =>
   import('@/features/products/pages/product-edit-page'),
 );
+const CategoriesPage = lazy(() =>
+  import('@/features/products/pages/categories-page'),
+);
 const InventoryPage = lazy(() =>
   import('@/features/inventory/pages/inventory-page'),
 );
@@ -118,6 +121,10 @@ export const router = createBrowserRouter([
                 <ProductCreatePage />
               </PermissionRoute>
             ),
+          },
+          {
+            path: 'categories',
+            element: <CategoriesPage />,
           },
           {
             path: ':id/edit',
