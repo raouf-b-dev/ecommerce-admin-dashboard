@@ -589,8 +589,10 @@ export function createSeedPermissions(): PermissionResponseDto[] {
     { id: 5, code: 'view_all_users', description: 'View all users' },
     { id: 6, code: 'view_all_payments', description: 'View payments' },
     { id: 7, code: 'manage_products', description: 'Manage products' },
-    { id: 8, code: 'manage_users', description: 'Manage users' },
-    { id: 9, code: 'manage_roles', description: 'Manage roles' },
+    { id: 8, code: 'manage_orders', description: 'Process, ship, and cancel orders' },
+    { id: 9, code: 'manage_inventory', description: 'Adjust and manage inventory stock' },
+    { id: 10, code: 'manage_users', description: 'Manage users' },
+    { id: 11, code: 'manage_roles', description: 'Manage roles' },
   ];
 }
 

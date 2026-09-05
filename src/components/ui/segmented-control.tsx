@@ -1,9 +1,11 @@
-import type { KeyboardEvent } from 'react';
+import { useRef, type KeyboardEvent } from 'react';
 import { cn } from '@/lib/utils';
 
 export type SegmentOption<T extends string | number> = {
   value: T;
-  label: string;
+  label: React.ReactNode;
+  ariaLabel?: string;
+  title?: string;
 };
 
 type SegmentedControlProps<T extends string | number> = {
@@ -23,6 +25,8 @@ export function SegmentedControl<T extends string | number>({
   size = 'md',
   ariaLabel = 'Segmented selector',
 }: SegmentedControlProps<T>) {
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   function handleKeyDown(e: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex = index;
 
@@ -43,12 +47,7 @@ export function SegmentedControl<T extends string | number>({
     const targetOption = options[nextIndex];
     if (nextIndex !== index && targetOption) {
       onChange(targetOption.value);
-      const parent = e.currentTarget.parentElement;
-      if (parent) {
-        const buttons =
-          parent.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
-        buttons[nextIndex]?.focus();
-      }
+      buttonRefs.current[nextIndex]?.focus();
     }
   }
 
@@ -63,13 +62,22 @@ export function SegmentedControl<T extends string | number>({
     >
       {options.map((option, index) => {
         const isSelected = option.value === value;
+        const ariaLabelText =
+          option.ariaLabel ??
+          (typeof option.label === 'string' ? option.label : undefined);
+        const titleText = option.title ?? ariaLabelText;
         return (
           <button
             key={String(option.value)}
+            ref={(el) => {
+              buttonRefs.current[index] = el;
+            }}
             type="button"
             role="radio"
             tabIndex={isSelected ? 0 : -1}
             aria-checked={isSelected}
+            aria-label={ariaLabelText}
+            title={titleText}
             onClick={() => onChange(option.value)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             className={cn(

@@ -11,6 +11,8 @@ export const DEMO_OPERATOR_PERMISSIONS = [
   'view_all_users',
   'view_all_payments',
   'manage_products',
+  'manage_orders',
+  'manage_inventory',
   'manage_users',
   'manage_roles',
 ] as const;

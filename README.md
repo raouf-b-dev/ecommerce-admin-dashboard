@@ -13,6 +13,10 @@
 
 > Admin SPA for the [E-commerce Store API](https://github.com/raouf-b-dev/ecommerce-store-api). Built with React and Vite. Business rules stay in the API.
 
+<p align="center">
+  <img src="docs/assets/dashboard-walkthrough.webp" alt="E-commerce Admin Dashboard Walkthrough" width="100%" />
+</p>
+
 <a id="try-live-demo-zero-setup"></a>
 
 **Try Live Demo (Zero Setup)** — no Docker, Postgres, Redis, or API required:
@@ -33,6 +37,8 @@ Mock mode is demo-only. Playwright e2e still targets a real API.
 
 ## Table of Contents
 
+- [Visual Showcase](#visual-showcase)
+- [Architecture Comparison](#architecture-comparison)
 - [What this is](#what-this-is)
 - [Quick start](#quick-start)
 - [Live static build](#live-static-build)
@@ -43,6 +49,52 @@ Mock mode is demo-only. Playwright e2e still targets a real API.
 - [Related repositories](#related-repositories)
 - [Project layout](#project-layout)
 - [License](#license)
+
+---
+
+<a id="visual-showcase"></a>
+
+## Visual Showcase
+
+### Operational Cockpit (Dark Theme)
+
+![Dark Theme Analytics Dashboard](docs/assets/screenshot-dashboard-dark.png)
+
+*High-contrast dark mode with elevated card tokens (`--card: 224 45% 9%`), responsive multi-period selector (`7 days` / `30 days` / `90 days`), revenue trend visualization with tooltip breakdowns, attention-needed order badges, low-stock replenishment alert lists, and header theme segmented control (`Light` / `Dark` / `System`).*
+
+---
+
+### Order Fulfillment & Lifecycle Detail
+
+![Order Fulfillment & Lifecycle Detail](docs/assets/screenshot-order-detail.png)
+
+*Strict 2-column layout adhering to backend DTO contracts. Left pane itemizes line products, SKUs, unit rates, item counts, and financial totals. Right pane orchestrates allowed lifecycle transitions (`Confirm`, `Cancel`, `Process`, `Ship`), customer metadata, shipping address, and payment audit logs.*
+
+---
+
+### Fine-Grained Role-Based Access Control (RBAC)
+
+![Fine-Grained RBAC & IAM Matrix](docs/assets/screenshot-rbac-matrix.png)
+
+*Human-first role taxonomy (`Super Admin`, `Admin`, `Customer`) with protected system badges and monospace code pills. Edit dialog groups permission capabilities by functional domain (*Catalog & Products*, *Inventory & Stock*, *Orders & Fulfillment*, *Users & Accounts*, *System & Administration*) with descriptive labels and technical claim codes.*
+
+---
+
+<a id="architecture-comparison"></a>
+
+## Architecture Comparison
+
+How this production-grade admin SPA compares to typical template starter kits:
+
+| Capability / Dimension | Generic Admin Starter Template | This Production Admin SPA |
+| :--- | :--- | :--- |
+| **Type Safety & Contract** | Hand-rolled interfaces or loose `fetch()` calls prone to schema drift | **Strict OpenAPI TypeScript generation** (`openapi-fetch` + `openapi-typescript`), zero runtime-contract mismatch |
+| **Permissions & IAM** | Hardcoded string checks in client routes (`role === 'admin'`) | **Claim-based permission matrix** (`manage_orders`, `view_all_payments`, etc.) with route-level and UI-level gating backed by server enforcement |
+| **State & Cache Strategy** | Uncached `useEffect` calls or bloated global stores | **TanStack Query (v5)** with declarative query keys, background revalidation, stale-time caching, and optimistic 409 lock recovery |
+| **Real-Time Telemetry** | Polling intervals or manual reload prompts | **WebSocket gateway** with automatic reconnect backoff and toast notifications on new orders and critical inventory changes |
+| **Theme & Visual Polish** | Flat canvas without elevation or harsh FOUC | **Zero-FOUC inline script**, elevated dark card tokens, and inline 3-choice `SegmentedControl` (`Light`, `Dark`, `System`) |
+| **Zero-Backend Demo Mode** | Fake static JSON or missing routes breaking mutation flows | **In-browser MSW mock engine** (`npm run dev:mock`) with 1-click login, local stateful updates, and zero external requirements |
+| **Quality & Assurance** | Minimal smoke tests or skipped accessibility | **60 Vitest suites (238 tests)**, Playwright e2e with `@axe-core/playwright` accessibility audits, strict ESLint flat config, zero compiler warnings |
 
 ---
 

@@ -18,11 +18,7 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center px-6 py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>
-            <h1 className="text-2xl font-semibold leading-none tracking-tight">
-              Sign in
-            </h1>
-          </CardTitle>
+          <CardTitle as="h1">Sign in</CardTitle>
           <CardDescription>
             Use your operator account to access the admin dashboard.
           </CardDescription>

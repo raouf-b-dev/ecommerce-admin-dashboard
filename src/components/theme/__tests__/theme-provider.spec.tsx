@@ -75,7 +75,7 @@ describe('ThemeProvider and ThemeToggle', () => {
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
   });
 
-  it('ThemeToggle cycles themes on click', async () => {
+  it('ThemeToggle allows selecting themes directly', async () => {
     const user = userEvent.setup();
 
     render(
@@ -88,17 +88,16 @@ describe('ThemeProvider and ThemeToggle', () => {
     // Initial light
     expect(screen.getByTestId('current-theme')).toHaveTextContent('light');
 
-    // Click toggle -> should become dark
-    const toggleButton = screen.getByRole('button', { name: /switch theme/i });
-    await user.click(toggleButton);
+    // Click dark option -> should become dark
+    await user.click(screen.getByRole('radio', { name: /dark theme/i }));
     expect(screen.getByTestId('current-theme')).toHaveTextContent('dark');
 
-    // Click toggle -> should become system
-    await user.click(toggleButton);
+    // Click system option -> should become system
+    await user.click(screen.getByRole('radio', { name: /system theme/i }));
     expect(screen.getByTestId('current-theme')).toHaveTextContent('system');
 
-    // Click toggle -> should become light
-    await user.click(toggleButton);
+    // Click light option -> should become light
+    await user.click(screen.getByRole('radio', { name: /light theme/i }));
     expect(screen.getByTestId('current-theme')).toHaveTextContent('light');
   });
 });

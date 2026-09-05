@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -94,7 +95,7 @@ function OrderDetailPage() {
   const order = detailQuery.data;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <PageHeader
         title={order.orderNumber}
         description={`${order.userName} · ${order.userEmail}`}
@@ -104,84 +105,154 @@ function OrderDetailPage() {
         </Button>
       </PageHeader>
 
-      <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Status</dt>
-          <dd className="pt-0.5">
-            <StatusBadge variant="order" status={order.status} />
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Total</dt>
-          <dd className="text-lg font-medium">
-            {formatMoney(order.totalPrice, order.currency)}
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt className="text-sm text-muted-foreground">Created</dt>
-          <dd className="text-sm">{formatDateTime(order.createdAt)}</dd>
-        </div>
-        <div className="space-y-1 sm:col-span-2 lg:col-span-3">
-          <dt className="text-sm text-muted-foreground">Shipping address</dt>
-          <dd className="text-sm">{order.shippingAddress}</dd>
-        </div>
-      </dl>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left 2 cols: Line items & Financial Summary */}
+        <div className="space-y-6 lg:col-span-2">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <div>
+                <CardTitle className="text-base font-semibold">Line items</CardTitle>
+                <CardDescription className="text-xs">
+                  Products and quantities ordered
+                </CardDescription>
+              </div>
+              <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+              </span>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="pl-6">SKU</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead className="text-right">Qty</TableHead>
+                    <TableHead className="text-right">Unit</TableHead>
+                    <TableHead className="pr-6 text-right">Subtotal</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {order.items.map((item) => (
+                    <TableRow key={`${item.productId}-${item.sku}`}>
+                      <TableCell className="pl-6 font-mono text-xs font-medium text-muted-foreground">
+                        {item.sku}
+                      </TableCell>
+                      <TableCell className="font-medium">{item.title}</TableCell>
+                      <TableCell className="text-right tabular-nums">{item.quantity}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatMoney(item.unitPrice, order.currency)}
+                      </TableCell>
+                      <TableCell className="pr-6 text-right font-medium tabular-nums">
+                        {formatMoney(item.subtotal, order.currency)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
-      {canManage ? (
-        <section className="space-y-3">
-          <h2 className="text-lg font-medium">Status actions</h2>
-          <OrderStatusActions
-            status={order.status}
-            isPending={transition.isPending}
-            onAction={handleAction}
-          />
-        </section>
-      ) : null}
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-medium">Line items</h2>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead>Subtotal</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {order.items.map((item) => (
-                <TableRow key={`${item.productId}-${item.sku}`}>
-                  <TableCell className="font-medium">{item.sku}</TableCell>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>
-                    {formatMoney(item.unitPrice, order.currency)}
-                  </TableCell>
-                  <TableCell>
-                    {formatMoney(item.subtotal, order.currency)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold">Financial summary</CardTitle>
+              <CardDescription className="text-xs">
+                Total billed amount for this order
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex items-center justify-between border-b border-border pb-2 text-sm">
+                <span className="text-muted-foreground">Currency</span>
+                <span className="font-mono font-medium text-foreground">{order.currency}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border pb-2 text-sm">
+                <span className="text-muted-foreground">Item count</span>
+                <span className="font-medium text-foreground">{order.items.length}</span>
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-base font-semibold text-foreground">Order total</span>
+                <span className="text-2xl font-bold tracking-tight text-foreground">
+                  {formatMoney(order.totalPrice, order.currency)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </section>
 
-      {canViewPayments ? (
-        <section className="space-y-3">
-          <h2 className="text-lg font-medium">Payment</h2>
-          <OrderPaymentPanel
-            isLoading={paymentQuery.isLoading}
-            isError={paymentQuery.isError}
-            error={paymentQuery.error}
-            payment={paymentQuery.data}
-            onRetry={() => paymentQuery.refetch()}
-          />
-        </section>
-      ) : null}
+        {/* Right 1 col: Status & Actions, Customer, Payment */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold">Order status</CardTitle>
+              <CardDescription className="text-xs">
+                Lifecycle status and transitions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Status</span>
+                <StatusBadge variant="order" status={order.status} />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Created</span>
+                <span className="text-foreground">{formatDateTime(order.createdAt)}</span>
+              </div>
+              {canManage ? (
+                <div className="border-t border-border pt-3 space-y-2">
+                  <h2 className="text-sm font-medium text-foreground">Status actions</h2>
+                  <OrderStatusActions
+                    status={order.status}
+                    isPending={transition.isPending}
+                    onAction={handleAction}
+                  />
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold">Customer & shipping</CardTitle>
+              <CardDescription className="text-xs">
+                Recipient and delivery destination
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <div>
+                <span className="text-xs text-muted-foreground">Customer</span>
+                <p className="font-medium text-foreground">{order.userName}</p>
+                <p className="text-xs text-muted-foreground">{order.userEmail}</p>
+                <p className="text-xs text-muted-foreground">User #{order.userId}</p>
+              </div>
+              <div className="border-t border-border pt-3">
+                <span className="text-xs text-muted-foreground">Shipping address</span>
+                <p className="mt-1 whitespace-pre-wrap rounded-md bg-muted/40 p-2.5 text-xs text-foreground">
+                  {order.shippingAddress}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {canViewPayments ? (
+            <Card>
+              <CardHeader className="pb-3">
+                <h2 className="text-base font-semibold text-card-foreground">Payment</h2>
+                <CardDescription className="text-xs">
+                  Payment record and transaction status
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <OrderPaymentPanel
+                  isLoading={paymentQuery.isLoading}
+                  isError={paymentQuery.isError}
+                  error={paymentQuery.error}
+                  payment={paymentQuery.data}
+                  onRetry={() => paymentQuery.refetch()}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }

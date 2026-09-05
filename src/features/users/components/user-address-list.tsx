@@ -59,36 +59,41 @@ export function UserAddressList({
   if (addresses.length === 0) {
     return (
       <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">No addresses on file.</p>
+        <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+          <p className="text-sm font-medium text-muted-foreground">No addresses on file.</p>
+          <p className="text-xs text-muted-foreground/80 mt-1">
+            Shipping and billing addresses will appear here once added.
+          </p>
+        </div>
         <ActionErrorAlert message={errorMessage} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <ul className="space-y-3">
+    <div className="space-y-4">
+      <ul className="grid gap-3 sm:grid-cols-1">
         {addresses.map((address) => (
           <li
             key={address.id}
-            className="space-y-3 rounded-lg border p-4"
+            className="space-y-3 rounded-lg border border-border bg-card/60 p-4 transition-colors hover:border-border/90"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="space-y-1 text-sm">
-                <p className="font-medium">{address.street}</p>
-                {address.street2 ? <p>{address.street2}</p> : null}
-                <p>
+                <p className="font-semibold text-foreground">{address.street}</p>
+                {address.street2 ? <p className="text-muted-foreground">{address.street2}</p> : null}
+                <p className="text-muted-foreground">
                   {address.city}, {address.state} {address.postalCode}
                 </p>
-                <p>{address.country}</p>
+                <p className="text-muted-foreground">{address.country}</p>
                 {address.deliveryInstructions ? (
-                  <p className="text-muted-foreground">
-                    {address.deliveryInstructions}
+                  <p className="mt-1 text-xs italic text-muted-foreground/90">
+                    Instructions: {address.deliveryInstructions}
                   </p>
                 ) : null}
               </div>
               {address.isDefault ? (
-                <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium">
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20">
                   Default
                 </span>
               ) : null}
