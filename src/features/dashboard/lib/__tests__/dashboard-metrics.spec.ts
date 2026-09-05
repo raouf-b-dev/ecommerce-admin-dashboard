@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
 import {
   buildDashboardPeriod,
-  formatPercentDelta,
+  calculateRefundRate,
+  formatPercent,
   percentChange,
 } from '@/features/dashboard/lib/dashboard-metrics';
 
@@ -14,11 +14,19 @@ describe('dashboard-metrics', () => {
     expect(period.from).toBe('2026-08-23T12:00:00.000Z');
   });
 
-  it('computes percent change and formats deltas', () => {
+  it('computes percent change accurately', () => {
     expect(percentChange(130, 100)).toBe(30);
+    expect(percentChange(80, 100)).toBe(-20);
     expect(percentChange(0, 0)).toBe(0);
     expect(percentChange(10, 0)).toBeNull();
-    expect(formatPercentDelta(30)).toBe('+30%');
-    expect(formatPercentDelta(null)).toBe('n/a');
+  });
+
+  it('computes refund rate and formats percentages', () => {
+    expect(calculateRefundRate(50, 1000)).toBe(5);
+    expect(calculateRefundRate(0, 1000)).toBe(0);
+    expect(calculateRefundRate(50, 0)).toBe(0);
+    expect(calculateRefundRate(200, 100)).toBe(100);
+    expect(formatPercent(5.23)).toBe('5.2%');
+    expect(formatPercent(null)).toBe('n/a');
   });
 });

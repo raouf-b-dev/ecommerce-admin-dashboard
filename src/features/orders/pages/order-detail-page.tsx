@@ -25,6 +25,7 @@ import {
 } from '@/lib/api/parse-api-error';
 import { formatDateTime, formatMoney } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 const CONFLICT_MESSAGE =
   'Order was modified by another request. Latest values were reloaded — review and try again.';
@@ -106,8 +107,8 @@ function OrderDetailPage() {
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-1">
           <dt className="text-sm text-muted-foreground">Status</dt>
-          <dd className="text-lg font-medium capitalize">
-            {order.status.replaceAll('_', ' ')}
+          <dd className="pt-0.5">
+            <StatusBadge variant="order" status={order.status} />
           </dd>
         </div>
         <div className="space-y-1">

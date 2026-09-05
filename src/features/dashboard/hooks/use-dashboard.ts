@@ -85,7 +85,7 @@ export function useDashboardTopProductsQuery(
 export function useDashboardInventoryAlertsQuery(enabled: boolean) {
   return useQuery({
     queryKey: dashboardKeys.inventoryAlerts(),
-    queryFn: () => getInventoryAlertsRequest({ limit: 20 }),
+    queryFn: () => getInventoryAlertsRequest({ limit: 5 }),
     enabled,
     staleTime: DASHBOARD_STALE_MS,
   });

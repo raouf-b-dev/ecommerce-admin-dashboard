@@ -17,7 +17,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
-import { formatDateTime, formatMoney, formatStatusLabel } from '@/lib/format';
+import { formatDateTime, formatMoney } from '@/lib/format';
+import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   ListOrdersQuery,
   OrderListFilters,
@@ -71,9 +72,7 @@ export function OrdersTable({
           accessorKey: 'status',
           header: 'Status',
           cell: ({ row }) => (
-            <span className="capitalize">
-              {formatStatusLabel(row.original.status)}
-            </span>
+            <StatusBadge variant="order" status={row.original.status} />
           ),
         },
         {

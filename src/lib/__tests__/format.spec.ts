@@ -3,6 +3,7 @@ import {
   formatDate,
   formatDateTime,
   formatMoney,
+  formatPercentDelta,
   formatStatusLabel,
 } from '@/lib/format';
 
@@ -33,5 +34,13 @@ describe('format', () => {
 
   it('humanizes status codes', () => {
     expect(formatStatusLabel('NEEDS_ATTENTION')).toBe('NEEDS ATTENTION');
+  });
+
+  it('formats percentage deltas with signs and n/a fallback', () => {
+    expect(formatPercentDelta(30)).toBe('+30%');
+    expect(formatPercentDelta(12.34)).toBe('+12.3%');
+    expect(formatPercentDelta(-5.67)).toBe('-5.7%');
+    expect(formatPercentDelta(0)).toBe('0%');
+    expect(formatPercentDelta(null)).toBe('n/a');
   });
 });

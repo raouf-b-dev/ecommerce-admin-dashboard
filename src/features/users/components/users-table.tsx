@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
+import { StatusBadge } from '@/components/ui/status-badge';
 import { formatDateTime } from '@/lib/format';
 import {
   formatUserPhone,
@@ -77,7 +78,9 @@ export function UsersTable({
     {
       accessorKey: 'isActive',
       header: 'Status',
-      cell: ({ row }) => (row.original.isActive ? 'Active' : 'Inactive'),
+      cell: ({ row }) => (
+        <StatusBadge variant="user" isActive={row.original.isActive} />
+      ),
     },
     {
       accessorKey: 'createdAt',

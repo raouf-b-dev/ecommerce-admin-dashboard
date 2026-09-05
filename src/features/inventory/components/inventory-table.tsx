@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
 import { formatDateTime } from '@/lib/format';
+import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   InventoryListFilters,
   InventoryListItemResponseDto,
@@ -66,7 +67,16 @@ export function InventoryTable({
         {
           accessorKey: 'availableQuantity',
           header: 'Available',
-          cell: ({ row }) => row.original.availableQuantity,
+          cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+              <span className="tabular-nums font-medium">
+                {row.original.availableQuantity}
+              </span>
+              {row.original.availableQuantity <= 0 ? (
+                <StatusBadge variant="inventory" status="critical" />
+              ) : null}
+            </div>
+          ),
         },
         {
           accessorKey: 'reservedQuantity',

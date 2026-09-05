@@ -7,8 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { StatusBadge } from '@/components/ui/status-badge';
 import type { OrderListItemResponseDto } from '@/features/orders/types';
-import { formatMoney } from '@/features/dashboard/lib/dashboard-metrics';
+import { formatMoney } from '@/lib/format';
 
 type Props = {
   items: OrderListItemResponseDto[];
@@ -22,36 +23,40 @@ export function DashboardRecentOrders({ items }: Props) {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Order</TableHead>
-          <TableHead>Customer</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Total</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items.map((order) => (
-          <TableRow key={order.id}>
-            <TableCell>
-              <Link
-                to={`/orders/${order.id}`}
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                {order.orderNumber}
-              </Link>
-            </TableCell>
-            <TableCell>{order.userEmail}</TableCell>
-            <TableCell className="capitalize">
-              {order.status.replaceAll('_', ' ')}
-            </TableCell>
-            <TableCell className="tabular-nums">
-              {formatMoney(order.totalAmount, order.currency)}
-            </TableCell>
+    <div className="overflow-hidden rounded-md border border-border/80">
+      <Table>
+        <TableHeader className="bg-muted/40">
+          <TableRow>
+            <TableHead>Order</TableHead>
+            <TableHead>Customer</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Total</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {items.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>
+                <Link
+                  to={`/orders/${order.id}`}
+                  className="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                >
+                  {order.orderNumber}
+                </Link>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {order.userEmail}
+              </TableCell>
+              <TableCell>
+                <StatusBadge variant="order" status={order.status} />
+              </TableCell>
+              <TableCell className="text-right font-medium tabular-nums text-foreground">
+                {formatMoney(order.totalAmount, order.currency)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
