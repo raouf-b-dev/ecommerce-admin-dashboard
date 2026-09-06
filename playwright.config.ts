@@ -14,10 +14,10 @@ if (
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',
-  // Shared seeded admin + API login throttle - parallel workers race
-  // password rotation and trip 429s.
+  // Guest specs can share the pool. Admin and superadmin stay at 1 worker each
+  // (shared seed accounts, refresh-token rotation, mutating catalog/orders).
   fullyParallel: false,
-  workers: 1,
+  workers: 2,
   // Helpers wait out a 429 window; keep this above that wait.
   timeout: 180_000,
   use: {
@@ -33,4 +33,37 @@ export default defineConfig({
       VITE_API_BASE_URL: apiBaseUrl,
     },
   },
+  projects: [
+    {
+      name: 'guest',
+      testMatch: [
+        'smoke.spec.ts',
+        'a11y.spec.ts',
+        'operator-gate.spec.ts',
+        'safe-landing.spec.ts',
+      ],
+      fullyParallel: true,
+    },
+    {
+      name: 'admin',
+      testMatch: [
+        'products.spec.ts',
+        'inventory.spec.ts',
+        'orders.spec.ts',
+        'users.spec.ts',
+        'keyboard.spec.ts',
+        'critical-path.spec.ts',
+        'shell.spec.ts',
+        'a11y-shell.spec.ts',
+      ],
+      fullyParallel: false,
+      workers: 1,
+    },
+    {
+      name: 'superadmin',
+      testMatch: ['roles.spec.ts', 'change-password.spec.ts'],
+      fullyParallel: false,
+      workers: 1,
+    },
+  ],
 });
