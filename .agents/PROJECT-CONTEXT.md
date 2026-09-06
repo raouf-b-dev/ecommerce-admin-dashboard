@@ -51,7 +51,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `docs/architecture/` -> SPA architecture overview and ADRs
 - `src/lib/api/` -> generated schema and typed client wrapper
 - `src/test/` -> shared test setup
-- `e2e/` -> Playwright smoke and later end-to-end flows
+- `e2e/` -> Playwright (guest, admin, and superadmin projects)
 - `docs/` -> roadmap, API integration notes, AI conventions
 
 ## Upcoming Feature Order
