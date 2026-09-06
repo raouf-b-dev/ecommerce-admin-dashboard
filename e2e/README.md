@@ -97,7 +97,7 @@ Two workers, three projects:
 | `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y |
 | `superadmin` | 1 | Roles, forced password change |
 
-Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and open a new page from that `BrowserContext`. The refresh cookie stays in the context jar, so silent refresh can rotate it. A Playwright `storageState` file would freeze the first cookie and collide with refresh reuse detection.
+Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.
 
 Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other’s refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
 

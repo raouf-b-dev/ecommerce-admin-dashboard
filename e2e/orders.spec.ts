@@ -1,77 +1,91 @@
+import { type Page } from '@playwright/test';
 import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 
-test('orders list opens detail and can process a confirmed order', async ({
-  page,
-}) => {
-  await openAdminShell(page);
-
+async function openFirstOrderWithStatus(
+  page: Page,
+  status: 'confirmed' | 'processing',
+): Promise<boolean> {
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
     timeout: 15_000,
   });
-  await expect(page.getByPlaceholder('Search by customer email…')).toBeVisible();
-  await expect(page.getByLabel('Status')).toBeVisible();
 
-  await page.getByLabel('Status').selectOption('confirmed');
-  await expect(page.getByText('Page')).toBeVisible({ timeout: 15_000 });
+  await page.getByLabel('Status filter').selectOption(status);
+  await expect(page).toHaveURL(new RegExp(`status=${status}`));
 
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  const hasConfirmed = await viewLink.isVisible().catch(() => false);
-  test.skip(
-    !hasConfirmed,
-    'No confirmed seeded orders - run API npm run db:seed.',
-  );
+  const row = page
+    .getByRole('row')
+    .filter({
+      has: page.getByText(status.replaceAll('_', ' '), { exact: false }),
+    })
+    .first();
 
-  const href = await viewLink.getAttribute('href');
-  expect(href).toBeTruthy();
-  await page.goto(href!);
+  try {
+    await row.waitFor({ state: 'visible', timeout: 15_000 });
+  } catch {
+    return false;
+  }
+
+  const href = await row.getByRole('link', { name: 'View' }).getAttribute('href');
+  if (!href) {
+    return false;
+  }
+  await page.goto(href);
   await expect(page).toHaveURL(/\/orders\/\d+/);
   await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
     timeout: 15_000,
   });
+  return true;
+}
 
-  const processButton = page.getByRole('button', { name: 'Process' });
-  await expect(processButton).toBeVisible();
-  await processButton.click();
+test.describe('order status transitions', () => {
+  test.describe.configure({ mode: 'serial' });
 
-  await expect(page.getByText(/processing/i).first()).toBeVisible({
-    timeout: 15_000,
-  });
-  await expect(
-    page.getByRole('button', { name: 'Ship' }),
-  ).toBeVisible({ timeout: 15_000 });
-});
+  test('orders list opens detail and can process a confirmed order', async ({
+    page,
+  }) => {
+    await openAdminShell(page);
 
-test('orders can ship a processing order', async ({ page }) => {
-  await openAdminShell(page);
+    await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByPlaceholder('Search by customer email…')).toBeVisible();
+    await expect(page.getByLabel('Status filter')).toBeVisible();
 
-  await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
-    timeout: 15_000,
-  });
+    const opened = await openFirstOrderWithStatus(page, 'confirmed');
+    test.skip(
+      !opened,
+      'No confirmed seeded orders - run API npm run db:seed.',
+    );
 
-  await page.getByLabel('Status').selectOption('processing');
-  await expect(page).toHaveURL(/status=processing/);
+    const processButton = page.getByRole('button', { name: 'Process' });
+    await expect(processButton).toBeVisible({ timeout: 15_000 });
+    await processButton.click();
 
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  const hasProcessing = await viewLink.isVisible().catch(() => false);
-  test.skip(
-    !hasProcessing,
-    'No processing orders - run the confirmed-order process spec first or API db:seed.',
-  );
-
-  const href = await viewLink.getAttribute('href');
-  expect(href).toBeTruthy();
-  await page.goto(href!);
-  await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
-    timeout: 15_000,
+    await expect(page.getByText(/processing/i).first()).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(
+      page.getByRole('button', { name: 'Ship' }),
+    ).toBeVisible({ timeout: 15_000 });
   });
 
-  const shipButton = page.getByRole('button', { name: 'Ship' });
-  await expect(shipButton).toBeVisible();
-  await shipButton.click();
-  await expect(page.getByText(/shipped/i).first()).toBeVisible({
-    timeout: 15_000,
+  test('orders can ship a processing order', async ({ page }) => {
+    await openAdminShell(page);
+
+    const opened = await openFirstOrderWithStatus(page, 'processing');
+    test.skip(
+      !opened,
+      'No processing orders - run the confirmed-order process spec first or API db:seed.',
+    );
+
+    const shipButton = page.getByRole('button', { name: 'Ship' });
+    await expect(shipButton).toBeVisible({ timeout: 15_000 });
+    await shipButton.click();
+    await expect(page.getByText(/shipped/i).first()).toBeVisible({
+      timeout: 15_000,
+    });
   });
 });
 
@@ -83,7 +97,7 @@ test('orders status filter updates URL', async ({ page }) => {
     timeout: 15_000,
   });
 
-  await page.getByLabel('Status').selectOption('confirmed');
+  await page.getByLabel('Status filter').selectOption('confirmed');
   await expect(page).toHaveURL(/status=confirmed/);
 });
 
