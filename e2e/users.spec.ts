@@ -1,19 +1,6 @@
-import { type Page } from '@playwright/test';
 import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 import { SEEDED_CUSTOMER_EMAIL } from './helpers/seed';
-
-async function openUserDetailByEmail(page: Page, email: string): Promise<void> {
-  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
-    timeout: 15_000,
-  });
-  await page.getByLabel('Search').fill(email);
-  await page.getByRole('button', { name: 'Apply filters' }).click();
-  const row = page.getByRole('row').filter({ hasText: email });
-  await expect(row).toBeVisible({ timeout: 15_000 });
-  await row.getByRole('link', { name: 'View' }).click();
-  await expect(page).toHaveURL(/\/users\/\d+/);
-}
+import { openUserDetailByEmail, userRowByEmail } from './helpers/users';
 
 test('users list opens after login', async ({ page }) => {
   await openAdminShell(page);
@@ -29,7 +16,7 @@ test('users list opens after login', async ({ page }) => {
   await page.getByLabel('Search').fill(SEEDED_CUSTOMER_EMAIL);
   await page.getByRole('button', { name: 'Apply filters' }).click();
   await expect(
-    page.getByRole('row').filter({ hasText: SEEDED_CUSTOMER_EMAIL }),
+    userRowByEmail(page, SEEDED_CUSTOMER_EMAIL),
   ).toBeVisible({ timeout: 15_000 });
 });
 
