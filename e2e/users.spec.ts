@@ -1,5 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
+import { type Page } from '@playwright/test';
+import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 
 async function openCustomerDetail(page: Page): Promise<void> {
   await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
@@ -15,12 +15,7 @@ async function openCustomerDetail(page: Page): Promise<void> {
 }
 
 test('users list opens after login', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
@@ -37,12 +32,7 @@ test('users list opens after login', async ({ page }) => {
 });
 
 test('admin user detail does not show role assignment', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
@@ -63,12 +53,7 @@ test('admin user detail does not show role assignment', async ({ page }) => {
 test('customer detail shows addresses and can add then delete one', async ({
   page,
 }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
   await openCustomerDetail(page);
 
   await expect(
@@ -111,12 +96,7 @@ test('customer detail shows addresses and can add then delete one', async ({
 });
 
 test('customer detail can deactivate then reactivate', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
   await openCustomerDetail(page);
 
   await expect(

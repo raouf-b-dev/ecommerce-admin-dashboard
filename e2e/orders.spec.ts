@@ -1,15 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
+import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 
 test('orders list opens detail and can process a confirmed order', async ({
   page,
 }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md). Requires API db:seed demo orders.',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
@@ -49,12 +43,7 @@ test('orders list opens detail and can process a confirmed order', async ({
 });
 
 test('orders can ship a processing order', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md). Requires a processing order.',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
@@ -87,12 +76,7 @@ test('orders can ship a processing order', async ({ page }) => {
 });
 
 test('orders status filter updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
@@ -104,12 +88,7 @@ test('orders status filter updates URL', async ({ page }) => {
 });
 
 test('orders column sort updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({

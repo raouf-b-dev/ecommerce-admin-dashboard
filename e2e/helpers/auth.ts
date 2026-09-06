@@ -91,8 +91,9 @@ function uniquePasswords(...values: Array<string | null | undefined>): string[] 
 /**
  * Signs in as the seeded admin. Handles forced password change and the case
  * where another worker already rotated the seed password.
+ * Throws on failure (worker fixtures should fail the suite, not skip).
  */
-export async function loginAsAdmin(page: Page): Promise<void> {
+export async function signInAsAdmin(page: Page): Promise<void> {
   const email = process.env.E2E_ADMIN_EMAIL;
   const seedPassword = process.env.E2E_ADMIN_PASSWORD;
 
@@ -110,8 +111,6 @@ export async function loginAsAdmin(page: Page): Promise<void> {
     seedPassword,
     rotatedPassword,
   );
-
-  test.setTimeout(180_000);
 
   for (let round = 0; round < 2; round++) {
     for (const password of candidates) {
@@ -137,14 +136,26 @@ export async function loginAsAdmin(page: Page): Promise<void> {
       }
     }
 
-    // Likely login rate-limit or brief race - wait out the window.
     await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
   }
 
-  test.skip(
-    true,
+  throw new Error(
     'Seeded admin login failed. Start the API, run db:seed, and verify credentials in API SEEDING.md.',
   );
+}
+
+/** Local specs: skip instead of failing when the seeded admin cannot sign in. */
+export async function loginAsAdmin(page: Page): Promise<void> {
+  test.setTimeout(180_000);
+  try {
+    await signInAsAdmin(page);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes('E2E_ADMIN_EMAIL')) {
+      throw error;
+    }
+    test.skip(true, message);
+  }
 }
 
 export async function loginAsSuperAdmin(page: Page): Promise<void> {

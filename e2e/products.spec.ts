@@ -1,13 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
+import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 
 test('products list opens create and edit', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
@@ -36,12 +30,7 @@ test('products list opens create and edit', async ({ page }) => {
 test('product edit can deactivate then reactivate catalog status', async ({
   page,
 }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
@@ -78,12 +67,7 @@ test('product edit can deactivate then reactivate catalog status', async ({
 });
 
 test('products search filter updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
@@ -96,12 +80,7 @@ test('products search filter updates URL', async ({ page }) => {
 });
 
 test('products status filter updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
@@ -113,12 +92,7 @@ test('products status filter updates URL', async ({ page }) => {
 });
 
 test('products column sort updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({

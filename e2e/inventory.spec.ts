@@ -1,13 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
+import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 
 test('inventory list opens after login', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -18,12 +12,7 @@ test('inventory list opens after login', async ({ page }) => {
 });
 
 test('inventory productId filter updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -37,12 +26,7 @@ test('inventory productId filter updates URL', async ({ page }) => {
 });
 
 test('inventory column sort updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -54,12 +38,7 @@ test('inventory column sort updates URL', async ({ page }) => {
 });
 
 test('inventory adjust adds then subtracts one unit', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md). Requires API db:seed catalog.',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
