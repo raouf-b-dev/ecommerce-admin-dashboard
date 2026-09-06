@@ -60,27 +60,27 @@ After the API contract changes, run `npm run api:generate` while the API is up.
 ## Screenshots
 
 <p align="center">
-  <img
-    src="https://raw.githubusercontent.com/raouf-b-dev/ecommerce-admin-dashboard/master/docs/assets/screenshot-dashboard-dark.png"
-    alt="Admin dashboard"
-    width="800"
-  />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-dashboard-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-dashboard-light.png">
+    <img alt="Dashboard" src="docs/assets/screenshot-dashboard-dark.png" width="800" />
+  </picture>
 </p>
 
 <p align="center">
-  <img
-    src="https://raw.githubusercontent.com/raouf-b-dev/ecommerce-admin-dashboard/master/docs/assets/screenshot-inventory-detail-dark.png"
-    alt="Inventory management"
-    width="800"
-  />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-inventory-detail-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-inventory-detail-light.png">
+    <img alt="Inventory" src="docs/assets/screenshot-inventory-detail-dark.png" width="800" />
+  </picture>
 </p>
 
 <p align="center">
-  <img
-    src="https://raw.githubusercontent.com/raouf-b-dev/ecommerce-admin-dashboard/master/docs/assets/screenshot-rbac-matrix-dark.png"
-    alt="Roles and permissions"
-    width="800"
-  />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-rbac-matrix-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-rbac-matrix-light.png">
+    <img alt="Roles and permissions" src="docs/assets/screenshot-rbac-matrix-dark.png" width="800" />
+  </picture>
 </p>
 
 ## Where to look
