@@ -1,0 +1,6 @@
+# Required reviews for this owner only work when the GitHub ruleset
+# has "Require review from Code Owners" enabled.
+# Last matching pattern wins.
+
+* @raouf-b-dev
+.github/CODEOWNERS @raouf-b-dev
