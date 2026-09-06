@@ -88,7 +88,7 @@ async function captureWalkthrough() {
   const context = await browser.newContext({
     viewport: { width, height },
     deviceScaleFactor: 1,
-    colorScheme: 'dark',
+    colorScheme: 'light',
   });
 
   const page = await context.newPage();
@@ -97,123 +97,153 @@ async function captureWalkthrough() {
 
   async function snap(description) {
     console.log(`Capturing frame: ${description}`);
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(400);
     const buf = await page.screenshot({ type: 'webp', quality: 80 });
     frames.push(buf);
   }
 
   // Frame 1: Login page
+  console.log(`Navigating to ${baseUrl}/login...`);
   await page.goto(`${baseUrl}/login`);
-  await page.waitForSelector('text=Demo 1-Click Login', { timeout: 10_000 });
+  await page.evaluate(() => {
+    localStorage.setItem('admin-ui-theme', 'light');
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  });
+  await page.waitForSelector('text=Demo 1-Click Login', { timeout: 15_000 });
   await snap('1. Login page with Demo 1-Click button');
 
   // Login
-  await page.addInitScript(() => {
-    localStorage.setItem('admin-ui-theme', 'dark');
-  });
   await page.click('text=Demo 1-Click Login');
-  await page.waitForURL(`${baseUrl}/`, { timeout: 10_000 });
-  await page.evaluate(() => {
-    document.documentElement.classList.add('dark');
-  });
+  await page.waitForURL(`${baseUrl}/`, { timeout: 15_000 });
 
-  // Frame 2: Dashboard 30 days
+  // Frame 2: Dashboard in Light mode (30-day overview)
   await page.waitForSelector('button:has-text("30 days")', { timeout: 10_000 });
-  await snap('2. Dashboard with 30-day KPI overview');
+  await page.waitForTimeout(600);
+  await snap('2. Dashboard overview in Light mode');
 
-  // Frame 3: Dashboard 7 days period toggle
+  // Frame 3: Theme Toggle transition to Dark mode
+  console.log('Toggling theme to Dark mode...');
+  const darkRadio = page.locator('button[role="radio"][aria-label*="Dark"]');
+  if (await darkRadio.count() > 0) {
+    await darkRadio.first().click();
+  }
+  await page.evaluate(() => {
+    localStorage.setItem('admin-ui-theme', 'dark');
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  });
+  await page.waitForTimeout(600);
+  await snap('3. Interactive theme toggle - elevated Dark mode activated');
+
+  // Frame 4: Dashboard 7 days period toggle
   const btn7d = page.locator('button:has-text("7 days")');
   await btn7d.click();
   await page.waitForTimeout(500);
-  await snap('3. Dashboard period toggled to 7 days');
+  await snap('4. Dashboard period toggled to 7 days');
 
-  // Frame 4: Products list
+  // Frame 5: Products list (with Category column)
   await page.goto(`${baseUrl}/products`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
-  await snap('4. Products catalog list with toolbar');
+  await snap('5. Products catalog list with toolbar and Category column');
 
-  // Frame 5: Products collapsible filter drawer opened
+  // Frame 6: Products collapsible filter drawer opened
   const filterToggle = page.locator('button:has-text("Filters")');
   await filterToggle.click();
   await page.waitForSelector('label:has-text("Min price")', { timeout: 10_000 });
-  await page.waitForSelector('select#products-category-id', { timeout: 5000 });
-  await snap('5. Products collapsible filters drawer with category dropdown');
+  await page.waitForSelector('select#products-category-id', { timeout: 5000 }).catch(() => {});
+  await snap('6. Products collapsible filters drawer with category selector');
 
-  // Frame 6: Product edit page (2-column layout with Media asset & Category dropdown)
+  // Frame 7: Categories management page
+  await page.goto(`${baseUrl}/products/categories`);
+  await page.waitForSelector('table tbody tr', { timeout: 10_000 });
+  await snap('7. Categories taxonomy management with slug badges and status');
+
+  // Frame 8: Create Category modal dialog
+  const createCatBtn = page.locator('button:has-text("Create category")');
+  await createCatBtn.click();
+  await page.waitForSelector('[role="dialog"]', { timeout: 10_000 });
+  await snap('8. Create Category modal dialog');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+
+  // Frame 9: Product edit page (2-column layout with Media asset & Category dropdown)
+  await page.goto(`${baseUrl}/products`);
+  await page.waitForSelector('table tbody tr', { timeout: 10_000 });
   const productEditLink = page.locator('table tbody tr a:has-text("Edit")').first();
   await productEditLink.click();
   await page.waitForURL(/\/products\/\d+\/edit/, { timeout: 10_000 });
   await page.waitForSelector('text=Media asset', { timeout: 10_000 });
-  await snap('6. Product edit 2-column layout with media asset and category selector');
+  await snap('9. Product edit 2-column layout with media asset and category selector');
 
-  // Frame 7: Inventory list
+  // Frame 10: Inventory list
   await page.goto(`${baseUrl}/inventory`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
-  await snap('7. Inventory management list');
+  await snap('10. Inventory management list');
 
-  // Frame 8: Inventory detail page
+  // Frame 11: Inventory detail page
   const invDetailLink = page.locator('table tbody tr a:has-text("View")').first();
   await invDetailLink.click();
   await page.waitForURL(/\/inventory\/\d+/, { timeout: 10_000 });
   await page.waitForSelector('text=Available', { timeout: 10_000 });
-  await snap('8. Inventory detail with 3 metric cards and allocation breakdown');
+  await snap('11. Inventory detail with 3 metric cards and allocation breakdown');
 
-  // Frame 9: Adjust stock dialog with live calculation preview
+  // Frame 12: Adjust stock dialog with live calculation preview
   const adjustStockBtn = page.locator('button:has-text("Adjust stock")').first();
   await adjustStockBtn.click();
   await page.waitForSelector('[role="dialog"]', { timeout: 10_000 });
   const qtyInput = page.locator('input[placeholder="Enter quantity…"]');
-  await qtyInput.fill('10');
-  await page.waitForSelector('text=Stock preview:', { timeout: 5000 });
-  await snap('9. Adjust stock dialog with live calculation preview');
-
-  // Close dialog
-  const cancelBtn = page.locator('button:has-text("Cancel")');
-  await cancelBtn.click();
+  if (await qtyInput.count() > 0) {
+    await qtyInput.fill('10');
+  }
+  await page.waitForTimeout(400);
+  await snap('12. Adjust stock dialog with live calculation preview');
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
 
-  // Frame 10: Orders list
+  // Frame 13: Orders list
   await page.goto(`${baseUrl}/orders`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
-  await snap('10. Orders list with quick search');
+  await snap('13. Orders list with quick search');
 
-  // Frame 11: Order detail 2-column layout
+  // Frame 14: Order detail 2-column layout
   const orderDetailLink = page.locator('table tbody tr a:has-text("View")').first();
   await orderDetailLink.click();
   await page.waitForURL(/\/orders\/\d+/, { timeout: 10_000 });
   await page.waitForSelector('text=Line items', { timeout: 10_000 });
   await page.waitForSelector('text=Financial summary', { timeout: 10_000 });
-  await snap('11. Order detail 2-column card layout');
+  await snap('14. Order detail 2-column card layout');
 
-  // Frame 12: Users list
+  // Frame 15: Users list
   await page.goto(`${baseUrl}/users`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
-  await snap('12. Users directory with role filters');
+  await snap('15. Users directory with role filters');
 
-  // Frame 13: User detail page (2-column layout with UserAvatar, Addresses & Danger Zone)
+  // Frame 16: User detail page (2-column layout with UserAvatar, Addresses & Danger Zone)
   const userDetailLink = page.locator('table tbody tr a:has-text("View")').first();
   await userDetailLink.click();
   await page.waitForURL(/\/users\/\d+/, { timeout: 10_000 });
   await page.waitForSelector('text=Profile details', { timeout: 10_000 });
   await page.waitForSelector('text=Addresses', { timeout: 10_000 });
-  await snap('13. User detail 2-column layout with initials avatar & address book');
+  await snap('16. User detail 2-column layout with initials avatar & address book');
 
-  // Frame 14: Settings Roles list
+  // Frame 17: Settings Roles list
   await page.goto(`${baseUrl}/settings/roles`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
-  await snap('14. Role management with human-friendly typography');
+  await snap('17. Role management with human-friendly typography');
 
-  // Frame 15: Edit Admin Role Dialog with domain-grouped permissions
+  // Frame 18: Edit Admin Role Dialog with domain-grouped permissions
   const editRoleBtn = page.locator('table tbody tr button:has-text("Edit")').nth(1);
   await editRoleBtn.click();
   await page.waitForSelector('[role="dialog"]', { timeout: 10_000 });
   await page.waitForSelector('text=Catalog & Products', { timeout: 10_000 });
-  await snap('15. Edit Role dialog with domain-grouped permissions');
+  await snap('18. Edit Role dialog with domain-grouped permissions');
+  await page.keyboard.press('Escape');
 
   await browser.close();
 
   console.log(`Encoding ${frames.length} frames into animated WebP...`);
-  const animWebp = createAnimatedWebp(frames, width, height, 1200); // ~15s total loop
+  const animWebp = createAnimatedWebp(frames, width, height, 1100);
 
   const destPath = path.resolve('docs/assets/dashboard-walkthrough.webp');
   fs.writeFileSync(destPath, animWebp);
@@ -225,3 +255,4 @@ captureWalkthrough().catch((err) => {
   console.error('Failed to create walkthrough:', err);
   process.exit(1);
 });
+
