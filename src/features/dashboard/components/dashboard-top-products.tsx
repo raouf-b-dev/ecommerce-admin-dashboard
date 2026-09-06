@@ -30,7 +30,7 @@ export function DashboardTopProducts({ items, currency }: Props) {
           <li key={item.productId} className="space-y-1.5">
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold text-foreground">
                   {index + 1}
                 </span>
                 <div className="min-w-0 truncate">

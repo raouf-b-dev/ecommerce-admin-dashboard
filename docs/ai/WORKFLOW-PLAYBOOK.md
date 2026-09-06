@@ -22,7 +22,7 @@
 ## 4. Verify
 
 - Run lint, typecheck, unit tests, and any relevant manual checks.
-- Run Playwright when the flow affects the critical path (`e2e/critical-path.spec.ts`) or keyboard/a11y. PR CI does not run Playwright; use `workflow_dispatch` or a main-branch push.
+- Run Playwright when the flow affects the critical path (`e2e/critical-path.spec.ts`) or keyboard/a11y. CI runs Playwright on PRs into `main`/`master`; feature PRs into `develop` skip it.
 - If OpenAPI-driven code changed, verify generation still works.
 
 ## 5. Handoff

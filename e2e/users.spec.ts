@@ -1,26 +1,9 @@
-import { test, expect, type Page } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
-
-async function openCustomerDetail(page: Page): Promise<void> {
-  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
-    timeout: 15_000,
-  });
-  await page.getByLabel('Search').fill('customer@store.local');
-  await page.getByRole('button', { name: 'Apply filters' }).click();
-  const row = page.getByRole('row').filter({ hasText: 'customer@store.local' });
-  await expect(row).toBeVisible({ timeout: 15_000 });
-  await row.getByRole('link', { name: 'View' }).click();
-  await expect(page).toHaveURL(/\/users\/\d+/);
-}
+import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
+import { SEEDED_CUSTOMER_EMAIL } from './helpers/seed';
+import { openUserDetailByEmail, userRowByEmail } from './helpers/users';
 
 test('users list opens after login', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
@@ -30,30 +13,19 @@ test('users list opens after login', async ({ page }) => {
   await expect(page.getByLabel('Status')).toBeVisible();
   await expect(page.getByLabel('Role')).toBeVisible();
 
-  const customerEmail = page.getByText('customer@store.local');
-  if (await customerEmail.count()) {
-    await expect(customerEmail.first()).toBeVisible();
-  }
+  await page.getByLabel('Search').fill(SEEDED_CUSTOMER_EMAIL);
+  await page.getByRole('button', { name: 'Apply filters' }).click();
+  await expect(
+    userRowByEmail(page, SEEDED_CUSTOMER_EMAIL),
+  ).toBeVisible({ timeout: 15_000 });
 });
 
 test('admin user detail does not show role assignment', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
+  await openAdminShell(page);
 
-  await loginAsAdmin(page);
+  const adminEmail = process.env.E2E_ADMIN_EMAIL ?? 'admin@store.local';
+  await openUserDetailByEmail(page, adminEmail);
 
-  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
-    timeout: 15_000,
-  });
-
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  await expect(viewLink).toBeVisible({ timeout: 15_000 });
-  await viewLink.click();
-
-  await expect(page).toHaveURL(/\/users\/\d+/);
   await expect(
     page.getByRole('button', { name: 'Change role' }),
   ).toHaveCount(0);
@@ -63,13 +35,8 @@ test('admin user detail does not show role assignment', async ({ page }) => {
 test('customer detail shows addresses and can add then delete one', async ({
   page,
 }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
-  await openCustomerDetail(page);
+  await openAdminShell(page);
+  await openUserDetailByEmail(page, SEEDED_CUSTOMER_EMAIL);
 
   await expect(
     page.getByRole('heading', { name: 'Addresses' }),
@@ -111,13 +78,8 @@ test('customer detail shows addresses and can add then delete one', async ({
 });
 
 test('customer detail can deactivate then reactivate', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
-  await openCustomerDetail(page);
+  await openAdminShell(page);
+  await openUserDetailByEmail(page, SEEDED_CUSTOMER_EMAIL);
 
   await expect(
     page.getByRole('heading', { name: 'Danger Zone' }),

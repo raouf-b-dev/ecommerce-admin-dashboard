@@ -35,7 +35,7 @@ export function DashboardAttentionList({ items }: Props) {
             <span className="capitalize text-foreground/90">
               {attentionStatusLabel(item.status)}
             </span>
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground">
+            <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums text-foreground">
               {item.count}
             </span>
           </Link>

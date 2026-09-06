@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test } from '@playwright/test';
+import { skipUnlessEnv } from './env';
 
 /** Password that worked in this worker (survives forced rotation mid-suite). */
 let cachedAdminPassword: string | null = null;
@@ -91,8 +92,9 @@ function uniquePasswords(...values: Array<string | null | undefined>): string[] 
 /**
  * Signs in as the seeded admin. Handles forced password change and the case
  * where another worker already rotated the seed password.
+ * Throws on failure (worker fixtures should fail the suite, not skip).
  */
-export async function loginAsAdmin(page: Page): Promise<void> {
+export async function signInAsAdmin(page: Page): Promise<void> {
   const email = process.env.E2E_ADMIN_EMAIL;
   const seedPassword = process.env.E2E_ADMIN_PASSWORD;
 
@@ -110,8 +112,6 @@ export async function loginAsAdmin(page: Page): Promise<void> {
     seedPassword,
     rotatedPassword,
   );
-
-  test.setTimeout(180_000);
 
   for (let round = 0; round < 2; round++) {
     for (const password of candidates) {
@@ -137,27 +137,19 @@ export async function loginAsAdmin(page: Page): Promise<void> {
       }
     }
 
-    // Likely login rate-limit or brief race - wait out the window.
     await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
   }
 
-  test.skip(
-    true,
+  throw new Error(
     'Seeded admin login failed. Start the API, run db:seed, and verify credentials in API SEEDING.md.',
   );
 }
 
 export async function loginAsSuperAdmin(page: Page): Promise<void> {
-  const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
-  const seedPassword = process.env.E2E_SUPERADMIN_PASSWORD;
+  skipUnlessEnv('E2E_SUPERADMIN_PASSWORD');
 
-  if (!seedPassword) {
-    test.skip(
-      true,
-      'Set E2E_SUPERADMIN_PASSWORD for superadmin e2e tests. See e2e/README.md.',
-    );
-    return;
-  }
+  const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
+  const seedPassword = process.env.E2E_SUPERADMIN_PASSWORD!;
 
   test.setTimeout(180_000);
   const rotatedPassword =
@@ -184,5 +176,7 @@ export async function loginAsSuperAdmin(page: Page): Promise<void> {
     }
   }
 
-  test.skip(true, 'Superadmin login failed. Verify API seed credentials.');
+  throw new Error(
+    'Superadmin login failed. Verify API seed credentials in SEEDING.md.',
+  );
 }

@@ -361,8 +361,8 @@ Write tests **with** each feature.
 
 - [x] PR merge gates (lint, typecheck, unit, build, audit) as parallel jobs plus a `ci` aggregator
 - [x] Dependabot weekly npm + GitHub Actions updates (`.github/dependabot.yml`)
-- [x] `e2e` job on `workflow_dispatch` and `push` to `main`/`master`; credentials required (no skip-to-green)
-- [x] GOVERNANCE states when Playwright runs; PR e2e remains optional
+- [x] `e2e` job on PRs into `main`/`master`, `push` to those branches, and `workflow_dispatch`; credentials required (no skip-to-green)
+- [x] GOVERNANCE states when Playwright runs; feature PRs into `develop` skip e2e; `ci` treats skipped e2e as pass
 - [x] PROJECT-CONTEXT + README current limits match shipped Phases 2–7
 
 **Done when:** journey spec green locally against seeded API; axe/keyboard tests pass; lint includes hooks + jsx-a11y; query/API helper drift is gone; CI policy is documented and the e2e job does not skip-to-green.

@@ -6,11 +6,11 @@ Playwright runs against the Vite dev server (`http://localhost:5174`) and a live
 
 | Spec | Role |
 | :--- | :--- |
-| `critical-path.spec.ts` | Same-session journey: login → dashboard widgets → products → edit → orders → detail |
-| `a11y.spec.ts` | axe-core (serious/critical) on login, dashboard, products, order detail |
+| `critical-path.spec.ts` | Same-session journey: dashboard widgets → products → edit → orders → detail |
+| `a11y.spec.ts` / `a11y-shell.spec.ts` | axe-core (serious/critical) on login, then dashboard, products, order detail |
 | `keyboard.spec.ts` | Skip link, sidebar Enter, mobile sheet Esc, adjust-stock Esc |
-| `smoke.spec.ts` | Unauthenticated login page, failed login, login success, mobile nav, forbidden route |
-| Per-feature specs | Products, inventory, orders, users, operator gate, change-password |
+| `smoke.spec.ts` / `shell.spec.ts` | Unauthenticated login page, failed login, signed-in shell, mobile nav, forbidden route |
+| Per-feature specs | Products, inventory, orders, users, roles, operator gate, change-password |
 
 The journey is glue, not a replacement for per-feature specs.
 
@@ -48,13 +48,13 @@ $env:VITE_API_BASE_URL="http://localhost:3000"
 npm run test:e2e
 ```
 
-**Locally**, authenticated specs `test.skip` when `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset.
+**Locally**, the admin worker `test.skip`s when `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` are unset. Customer and superadmin specs skip when their variables are unset.
 
-**In CI**, missing those variables fails the job (`playwright.config.ts` throws when `CI` is set). There is no skip-to-green.
+**In CI**, missing admin, customer, or superadmin variables fails the job (`playwright.config.ts` throws when `CI` is set). Process/Ship fail if the seeded orders are missing. There is no skip-to-green for those.
 
 ### Forced password change spec
 
-`e2e/change-password.spec.ts` uses **superadmin** so smoke tests can keep using **admin** via `loginAsAdmin`:
+`e2e/change-password.spec.ts` uses **superadmin** so the admin worker session can keep using **admin**:
 
 ```powershell
 $env:E2E_SUPERADMIN_PASSWORD="..."   # from API SEEDING.md
@@ -74,21 +74,32 @@ $env:E2E_CUSTOMER_EMAIL="customer@store.local"
 $env:E2E_CUSTOMER_PASSWORD="..."   # from API SEEDING.md
 ```
 
-Unauthenticated redirect and login-failure tests do not require credentials.
+Unauthenticated redirect and login-failure tests do not require credentials. The admin **login form** is exercised by the worker fixture (`signInAsAdmin`); `shell.spec.ts` asserts the signed-in dashboard, not the form.
 
 ## CI
 
-The `e2e` GitHub Actions job runs on `workflow_dispatch` and on push to `main`/`master`. Pull requests run the parallel merge gates (lint, typecheck, unit, build, audit) aggregated as `ci`. Playwright is optional on PRs because the suite needs a seeded API, `workers: 1`, and a rate-limited login.
+The `e2e` GitHub Actions job runs on PRs into `main`/`master`, on push to those branches, and on `workflow_dispatch`. Feature PRs into other branches skip it. The `ci` aggregator waits on Playwright: skipped is a pass; failure or cancelled is a fail. On `main`/`master` PRs and pushes, Playwright must succeed.
 
 Repository secrets (see [`.secrets.example`](../.secrets.example); generate a local `.secrets` with `npm run env:init:secrets`, then fill passwords from API `SEEDING.md`):
 
-- `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` (required: job fails if unset)
-- `E2E_CUSTOMER_EMAIL`, `E2E_CUSTOMER_PASSWORD`, `E2E_SUPERADMIN_EMAIL`, `E2E_SUPERADMIN_PASSWORD` (operator-gate and change-password specs)
+- `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD` (required)
+- `E2E_CUSTOMER_EMAIL`, `E2E_CUSTOMER_PASSWORD` (required: operator-gate)
+- `E2E_SUPERADMIN_PASSWORD` (required: roles, change-password). `E2E_SUPERADMIN_EMAIL` is optional and defaults to `superadmin@store.local`.
 
 Do not commit `.secrets`.
 
 ## Parallelism
 
-Playwright runs with `workers: 1` and `fullyParallel: false`. Authenticated specs share one seeded admin account; parallel workers raced forced password rotation and the API login throttle. Prefer a single worker unless you introduce isolated e2e users.
+Two workers, three projects:
 
-The API rate-limits login and register (see the API repo for the current window). Rapid local re-runs can still 429; prefer `workers: 1` and avoid re-logging in every spec when possible. The login form shows a distinct throttle message (not “invalid password”). Playwright’s default timeout is **180s** so helpers can wait out a 429.
+| Project | Workers | Specs |
+| :--- | :--- | :--- |
+| `guest` | remaining pool | Login page, failed login, customer operator-gate |
+| `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y |
+| `superadmin` | 1 | Roles, forced password change |
+
+Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.
+
+Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other’s refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
+
+Guest and superadmin may run beside the admin worker because they use other accounts (or no account). Login and register are still rate-limited per IP (~10/min). The remaining guest/superadmin logins plus one admin login stay under that. Rapid local re-runs can still 429; the login form shows a distinct throttle message (not “invalid password”). Playwright’s default timeout is **180s** so helpers can wait out a 429.

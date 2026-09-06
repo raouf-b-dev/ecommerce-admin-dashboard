@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, adminNav } from './helpers/auth';
+import {
+  test,
+  expect,
+  openAdminShell,
+  adminNav,
+  openInventoryDetailBySku,
+} from './helpers/admin-fixtures';
+import { SEEDED_PRODUCT_SKU } from './helpers/seed';
 
 test('inventory list opens after login', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -18,12 +19,7 @@ test('inventory list opens after login', async ({ page }) => {
 });
 
 test('inventory productId filter updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -37,12 +33,7 @@ test('inventory productId filter updates URL', async ({ page }) => {
 });
 
 test('inventory column sort updates URL', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
-  );
-
-  await loginAsAdmin(page);
+  await openAdminShell(page);
 
   await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
@@ -54,24 +45,9 @@ test('inventory column sort updates URL', async ({ page }) => {
 });
 
 test('inventory adjust adds then subtracts one unit', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
-    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md). Requires API db:seed catalog.',
-  );
+  await openAdminShell(page);
 
-  await loginAsAdmin(page);
-
-  await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
-    timeout: 15_000,
-  });
-
-  await page.getByPlaceholder('Filter by SKU…').fill('ELEC-ANC-001');
-  await page.getByRole('button', { name: 'Search' }).click();
-
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  await expect(viewLink).toBeVisible({ timeout: 15_000 });
-  await viewLink.click();
+  await openInventoryDetailBySku(page, SEEDED_PRODUCT_SKU);
 
   const available = page
     .getByText('Available Stock', { exact: true })

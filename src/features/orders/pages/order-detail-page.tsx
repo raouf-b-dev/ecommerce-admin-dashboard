@@ -116,7 +116,7 @@ function OrderDetailPage() {
                   Products and quantities ordered
                 </CardDescription>
               </div>
-              <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+              <span className="rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
                 {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
               </span>
             </CardHeader>

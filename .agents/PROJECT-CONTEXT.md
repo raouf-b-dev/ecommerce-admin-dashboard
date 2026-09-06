@@ -34,7 +34,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - Cross-origin local development assumes the API allows `http://localhost:5174` with `credentials: true`.
 - `npm run dev` and `npm run preview` both bind **5174** (`strictPort`). Stop one before starting the other.
 - Browser configuration must use `VITE_*` env vars only. Do not expose secrets.
-- Playwright `e2e/global-setup.ts` runs `npm run db:seed:auth` in sibling `../ecommerce-store-api`. Set `E2E_SKIP_DB_SEED=1` if that checkout is missing or the API is already seeded. Login is rate-limited; helpers wait on HTTP 429 (see [`e2e/README.md`](../e2e/README.md)).
+- Playwright `e2e/global-setup.ts` runs `npm run db:seed:auth` in sibling `../ecommerce-store-api`. Set `E2E_SKIP_DB_SEED=1` if that checkout is missing or the API is already seeded. Login is rate-limited; admin specs share one worker-scoped session (see [`e2e/README.md`](../e2e/README.md)).
 
 ## Directory Map
 
@@ -51,7 +51,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `docs/architecture/` -> SPA architecture overview and ADRs
 - `src/lib/api/` -> generated schema and typed client wrapper
 - `src/test/` -> shared test setup
-- `e2e/` -> Playwright smoke and later end-to-end flows
+- `e2e/` -> Playwright (guest, admin, and superadmin projects)
 - `docs/` -> roadmap, API integration notes, AI conventions
 
 ## Upcoming Feature Order
