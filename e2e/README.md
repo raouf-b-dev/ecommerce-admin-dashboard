@@ -78,7 +78,7 @@ Unauthenticated redirect and login-failure tests do not require credentials. The
 
 ## CI
 
-The `e2e` GitHub Actions job runs on PRs into `main`/`master`, on push to those branches, and on `workflow_dispatch`. Feature PRs into other branches skip it. The `ci` aggregator waits on Playwright: skipped is a pass; failure or cancelled is a fail. On `main`/`master` PRs and pushes, Playwright must succeed.
+The `e2e` GitHub Actions job runs on PRs into `main`/`master` and on `workflow_dispatch`. Push to those branches skips it (the merge PR already ran it). Feature PRs into other branches skip it. The `ci` aggregator waits on Playwright: skipped is a pass; failure or cancelled is a fail. On `main`/`master` PRs, Playwright must succeed.
 
 Repository secrets (see [`.secrets.example`](../.secrets.example); generate a local `.secrets` with `npm run env:init:secrets`, then fill passwords from API `SEEDING.md`):
 

@@ -92,13 +92,13 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
 
   # Full-stack Playwright: seeded API + rate-limited login.
-  # Runs on PRs into main/master (release gate), push to main/master, and dispatch.
-  # Skipped on PRs into other branches. Fail closed when required E2E_* secrets are missing.
+  # Release gate on PRs into main/master. Manual re-run via workflow_dispatch.
+  # Skipped on push (merge already ran the PR) and on PRs into other branches.
+  # Fail closed when required E2E_* secrets are missing.
   e2e:
     name: Playwright
     if: >
       github.event_name == 'workflow_dispatch'
-      || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
       || (github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -217,8 +217,6 @@ jobs:
 
           e2e_required=false
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            e2e_required=true
-          elif [ "${{ github.event_name }}" = "push" ]; then
             e2e_required=true
           elif [ "${{ github.event_name }}" = "pull_request" ] && { [ "${{ github.base_ref }}" = "master" ] || [ "${{ github.base_ref }}" = "main" ]; }; then
             e2e_required=true
