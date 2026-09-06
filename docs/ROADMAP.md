@@ -361,7 +361,7 @@ Write tests **with** each feature.
 
 - [x] PR merge gates (lint, typecheck, unit, build, audit) as parallel jobs plus a `ci` aggregator
 - [x] Dependabot weekly npm + GitHub Actions updates (`.github/dependabot.yml`)
-- [x] `e2e` job on PRs into `main`/`master`, `push` to those branches, and `workflow_dispatch`; credentials required (no skip-to-green)
+- [x] `e2e` job on PRs into `main`/`master` and `workflow_dispatch`; credentials required (no skip-to-green); push after merge skips Playwright
 - [x] GOVERNANCE states when Playwright runs; feature PRs into `develop` skip e2e; `ci` treats skipped e2e as pass
 - [x] PROJECT-CONTEXT + README current limits match shipped Phases 2–7
 

@@ -24,10 +24,10 @@ The `e2e` GitHub Actions job runs on:
 | --- | --- |
 | PR into `develop` (or any non-`main`/`master` branch) | No |
 | PR into `master` or `main` | Yes |
-| Push to `master` or `main` | Yes |
+| Push to `master` or `main` | No (the merge PR already ran it) |
 | `workflow_dispatch` | Yes |
 
-That job **fails** if required e2e secrets are unset (admin, customer, and superadmin password; no skip-to-green). It is part of the `ci` aggregator. A skipped Playwright job (feature PRs into `develop`) does not fail `ci`; a failed or cancelled run does. On PRs into `master`/`main`, push to those branches, and `workflow_dispatch`, Playwright must succeed for `ci` to pass.
+That job **fails** if required e2e secrets are unset (admin, customer, and superadmin password; no skip-to-green). It is part of the `ci` aggregator. A skipped Playwright job (feature PRs into `develop`, or push after merge) does not fail `ci`; a failed or cancelled run does. On PRs into `master`/`main` and `workflow_dispatch`, Playwright must succeed for `ci` to pass.
 
 Require **CI Status Check** (`ci`) in branch protection, not the Playwright job by name. Requiring Playwright itself would block `develop` PRs where the job is skipped.
 
