@@ -1,4 +1,11 @@
-import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
+import {
+  test,
+  expect,
+  openAdminShell,
+  adminNav,
+  openProductEditBySku,
+} from './helpers/admin-fixtures';
+import { SEEDED_PRODUCT_SKU } from './helpers/seed';
 
 test('products list opens create and edit', async ({ page }) => {
   await openAdminShell(page);
@@ -15,15 +22,7 @@ test('products list opens create and edit', async ({ page }) => {
   await expect(page.getByLabel('Name')).toBeVisible();
   await expect(page.getByLabel('Price')).toBeVisible();
 
-  await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
-
-  const editLink = page.getByRole('link', { name: 'Edit' }).first();
-  await expect(editLink).toBeVisible({ timeout: 15_000 });
-  await editLink.click();
-
-  await expect(page).toHaveURL(/\/products\/\d+\/edit/);
-  await expect(page.getByRole('heading', { name: 'Edit product' })).toBeVisible();
+  await openProductEditBySku(page, SEEDED_PRODUCT_SKU);
   await expect(page.getByLabel('Name')).not.toHaveValue('');
 });
 
@@ -31,16 +30,8 @@ test('product edit can deactivate then reactivate catalog status', async ({
   page,
 }) => {
   await openAdminShell(page);
+  await openProductEditBySku(page, SEEDED_PRODUCT_SKU);
 
-  await adminNav(page).getByRole('link', { name: 'Products', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible({
-    timeout: 15_000,
-  });
-
-  const editLink = page.getByRole('link', { name: 'Edit' }).first();
-  await expect(editLink).toBeVisible({ timeout: 15_000 });
-  await editLink.click();
-  await expect(page.getByRole('heading', { name: 'Edit product' })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'Catalog status' }),
   ).toBeVisible();
@@ -50,20 +41,12 @@ test('product edit can deactivate then reactivate catalog status', async ({
   });
   const activateButton = page.getByRole('button', { name: 'Activate product' });
 
-  if (await deactivateButton.isVisible()) {
-    await deactivateButton.click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Deactivate' }).click();
-    await expect(activateButton).toBeVisible({ timeout: 15_000 });
-    await activateButton.click();
-    await expect(deactivateButton).toBeVisible({ timeout: 15_000 });
-  } else {
-    await expect(activateButton).toBeVisible();
-    await activateButton.click();
-    await expect(deactivateButton).toBeVisible({ timeout: 15_000 });
-    await deactivateButton.click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Deactivate' }).click();
-    await expect(activateButton).toBeVisible({ timeout: 15_000 });
-  }
+  await expect(deactivateButton).toBeVisible({ timeout: 15_000 });
+  await deactivateButton.click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Deactivate' }).click();
+  await expect(activateButton).toBeVisible({ timeout: 15_000 });
+  await activateButton.click();
+  await expect(deactivateButton).toBeVisible({ timeout: 15_000 });
 });
 
 test('products search filter updates URL', async ({ page }) => {

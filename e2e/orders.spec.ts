@@ -4,7 +4,7 @@ import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures
 async function openFirstOrderWithStatus(
   page: Page,
   status: 'confirmed' | 'processing',
-): Promise<boolean> {
+): Promise<void> {
   await adminNav(page).getByRole('link', { name: 'Orders', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
     timeout: 15_000,
@@ -19,23 +19,18 @@ async function openFirstOrderWithStatus(
       has: page.getByText(status.replaceAll('_', ' '), { exact: false }),
     })
     .first();
-
-  try {
-    await row.waitFor({ state: 'visible', timeout: 15_000 });
-  } catch {
-    return false;
-  }
+  await expect(
+    row,
+    `Expected a seeded ${status} order. Run API npm run db:seed.`,
+  ).toBeVisible({ timeout: 15_000 });
 
   const href = await row.getByRole('link', { name: 'View' }).getAttribute('href');
-  if (!href) {
-    return false;
-  }
-  await page.goto(href);
+  expect(href, 'Order View link should have an href').toBeTruthy();
+  await page.goto(href!);
   await expect(page).toHaveURL(/\/orders\/\d+/);
   await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
     timeout: 15_000,
   });
-  return true;
 }
 
 test.describe('order status transitions', () => {
@@ -53,11 +48,7 @@ test.describe('order status transitions', () => {
     await expect(page.getByPlaceholder('Search by customer email…')).toBeVisible();
     await expect(page.getByLabel('Status filter')).toBeVisible();
 
-    const opened = await openFirstOrderWithStatus(page, 'confirmed');
-    test.skip(
-      !opened,
-      'No confirmed seeded orders - run API npm run db:seed.',
-    );
+    await openFirstOrderWithStatus(page, 'confirmed');
 
     const processButton = page.getByRole('button', { name: 'Process' });
     await expect(processButton).toBeVisible({ timeout: 15_000 });
@@ -74,11 +65,7 @@ test.describe('order status transitions', () => {
   test('orders can ship a processing order', async ({ page }) => {
     await openAdminShell(page);
 
-    const opened = await openFirstOrderWithStatus(page, 'processing');
-    test.skip(
-      !opened,
-      'No processing orders - run the confirmed-order process spec first or API db:seed.',
-    );
+    await openFirstOrderWithStatus(page, 'processing');
 
     const shipButton = page.getByRole('button', { name: 'Ship' });
     await expect(shipButton).toBeVisible({ timeout: 15_000 });

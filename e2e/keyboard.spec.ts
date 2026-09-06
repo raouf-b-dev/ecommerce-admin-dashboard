@@ -1,4 +1,11 @@
-import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
+import {
+  test,
+  expect,
+  openAdminShell,
+  adminNav,
+  openInventoryDetailBySku,
+} from './helpers/admin-fixtures';
+import { SEEDED_PRODUCT_SKU } from './helpers/seed';
 
 test('skip link moves focus to main', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -42,14 +49,7 @@ test('mobile sheet opens from keyboard and closes on Escape', async ({ page }) =
 test('adjust stock dialog closes on Escape', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await openAdminShell(page);
-  await adminNav(page).getByRole('link', { name: 'Inventory', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible({
-    timeout: 15_000,
-  });
-
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  await expect(viewLink).toBeVisible({ timeout: 15_000 });
-  await viewLink.click();
+  await openInventoryDetailBySku(page, SEEDED_PRODUCT_SKU);
 
   const adjust = page.getByRole('button', { name: 'Adjust stock' }).first();
   await expect(adjust).toBeVisible({ timeout: 15_000 });

@@ -1,12 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { loginAsSuperAdmin, adminNav } from './helpers/auth';
+import { SEEDED_CUSTOMER_EMAIL } from './helpers/seed';
 
 test('superadmin can open roles settings', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_SUPERADMIN_PASSWORD,
-    'Set E2E_SUPERADMIN_PASSWORD (see e2e/README.md).',
-  );
-
   await loginAsSuperAdmin(page);
   await page.goto('/settings/roles');
 
@@ -19,11 +15,6 @@ test('superadmin can open roles settings', async ({ page }) => {
 });
 
 test('superadmin can open role assignment on user detail', async ({ page }) => {
-  test.skip(
-    !process.env.E2E_SUPERADMIN_PASSWORD,
-    'Set E2E_SUPERADMIN_PASSWORD (see e2e/README.md).',
-  );
-
   await loginAsSuperAdmin(page);
 
   await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
@@ -31,9 +22,11 @@ test('superadmin can open role assignment on user detail', async ({ page }) => {
     timeout: 15_000,
   });
 
-  const viewLink = page.getByRole('link', { name: 'View' }).first();
-  await expect(viewLink).toBeVisible({ timeout: 15_000 });
-  await viewLink.click();
+  await page.getByLabel('Search').fill(SEEDED_CUSTOMER_EMAIL);
+  await page.getByRole('button', { name: 'Apply filters' }).click();
+  const row = page.getByRole('row').filter({ hasText: SEEDED_CUSTOMER_EMAIL });
+  await expect(row).toBeVisible({ timeout: 15_000 });
+  await row.getByRole('link', { name: 'View' }).click();
 
   await expect(page).toHaveURL(/\/users\/\d+/);
   await expect(page.getByLabel('Assigned role')).toBeVisible();

@@ -1,6 +1,6 @@
 import { test, expect, openAdminShell } from './helpers/admin-fixtures';
 
-test('login success reaches admin shell', async ({ page }) => {
+test('signed-in session shows the admin shell', async ({ page }) => {
   await openAdminShell(page);
 
   await expect(page.getByText('Control Center')).toBeVisible();
@@ -26,7 +26,6 @@ test('forbidden route shows access denied inside shell', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
 
   await page.goto('/settings/roles');
-  // Full navigation re-bootstraps the session via refresh cookie.
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
     timeout: 15_000,
   });
