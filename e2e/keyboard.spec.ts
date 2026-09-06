@@ -3,6 +3,12 @@ import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures
 test('skip link moves focus to main', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await openAdminShell(page);
+  // Reused session + client-side nav focuses #main (FocusOnRouteChange).
+  // Tab from there never hits the skip link. Reload so Tab starts at the document.
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+    timeout: 15_000,
+  });
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused();
   await page.keyboard.press('Enter');
