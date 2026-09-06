@@ -1,0 +1,100 @@
+import { describe, expect, it } from 'vitest';
+import {
+  createProductSchema,
+  toCreateProductDto,
+  toProductSubmitValues,
+  toUpdateProductDto,
+} from '@/features/products/schemas/product-schema';
+
+describe('createProductSchema', () => {
+  it('requires name, positive price, and category', () => {
+    const result = createProductSchema.safeParse({
+      name: '',
+      price: '',
+      categoryId: '',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects missing category', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: 'USD',
+      categoryId: '',
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((issue) => issue.path[0] === 'categoryId'))
+        .toBe(true);
+    }
+  });
+
+  it('rejects non-positive category id', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: 'USD',
+      categoryId: '0',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts valid create payload', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '49.99',
+      currency: 'USD',
+      imageUrl: 'https://example.com/laptop.jpg',
+      categoryId: '3',
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.price).toBe('49.99');
+      const submit = toProductSubmitValues(result.data);
+      expect(submit).toMatchObject({
+        name: 'Laptop',
+        price: 49.99,
+        categoryId: 3,
+        imageUrl: 'https://example.com/laptop.jpg',
+      });
+      expect(toCreateProductDto(submit)).toEqual(
+        expect.objectContaining({
+          name: 'Laptop',
+          price: 49.99,
+          categoryId: 3,
+        }),
+      );
+      expect(toCreateProductDto(submit).categoryId).toBe(3);
+      expect(toUpdateProductDto(submit)).toMatchObject({
+        name: 'Laptop',
+        price: 49.99,
+      });
+    }
+  });
+
+  it('rejects missing currency', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: '',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid image URL', () => {
+    const result = createProductSchema.safeParse({
+      name: 'Laptop',
+      price: '10',
+      currency: 'USD',
+      imageUrl: 'not-a-url',
+    });
+
+    expect(result.success).toBe(false);
+  });
+});

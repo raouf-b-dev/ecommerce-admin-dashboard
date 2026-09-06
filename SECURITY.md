@@ -27,7 +27,7 @@ Security baseline for this admin SPA. The API remains the authority for authn/au
 
 ## Dependencies and supply chain
 
-- Keep dependencies updated; run audits in CI once continuous integration is in place.
+- Keep dependencies updated. CI blocks on `npm audit --omit=dev --audit-level=high`. Dependabot opens weekly grouped PRs for npm and GitHub Actions (see [`.github/dependabot.yml`](.github/dependabot.yml)).
 - Prefer an OpenAPI-generated client so request shapes stay aligned with the server.
 
 ## Reporting

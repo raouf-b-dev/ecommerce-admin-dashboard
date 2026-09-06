@@ -1,6 +1,7 @@
 # E-commerce Admin Dashboard
 
 <p align="center">
+  <a href="https://github.com/raouf-b-dev/ecommerce-admin-dashboard/actions"><img src="https://github.com/raouf-b-dev/ecommerce-admin-dashboard/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white" alt="TypeScript"></a>
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black" alt="React"></a>
   <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite"></a>
@@ -9,172 +10,132 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
 
-> Admin SPA for the [E-commerce Store API](https://github.com/raouf-b-dev/ecommerce-store-api). Built with React and Vite. Business rules stay in the API.
+> Admin UI for the [E-commerce Store API](https://github.com/raouf-b-dev/ecommerce-store-api). Operators manage catalog, stock, orders, and access. Business rules stay in the API.
 
-## Table of Contents
-
-- [What this is](#what-this-is)
-- [Quick start](#quick-start)
-- [Architecture](#architecture)
-- [Tech stack](#tech-stack)
-- [Documentation](#documentation)
-- [Related repositories](#related-repositories)
-- [Project layout](#project-layout)
-- [License](#license)
-
----
-
-<a id="what-this-is"></a>
+<p align="center">
+  <img src="docs/assets/dashboard-walkthrough.webp" alt="Admin dashboard walkthrough" width="800" />
+</p>
 
 ## What this is
 
-Vite + React single-page app for store operators. Product and inventory management, order handling, customer views, and navigation that respects RBAC.
+A Vite + React operator console. Screens are typed from the API OpenAPI spec: dashboard, products, categories, inventory, orders, users, and roles.
 
-It calls the NestJS ecommerce API (versioned HTTP; see OpenAPI). The UI can hide or disable actions based on permissions, but the API authorizes every request. The same API also serves the customer storefront and can serve mobile later.
+The UI hides nav or shows a forbidden page when a permission is missing. Authorization still happens on the API. There is no BFF.
 
-**Current limits**
-
-| Topic | Status |
-| :---- | :----- |
-| Application code | Not scaffolded yet. Build order: [`docs/ROADMAP.md`](docs/ROADMAP.md). |
-| Hosted demo | None yet. Run locally. |
-| Analytics | Dashboard numbers come from API read models when those exist. |
-| BFF | Not used. Talks to the API directly. |
-
----
-
-<a id="quick-start"></a>
+No hosted demo. Payments on order detail are read-only. `npm run dev:mock` is for UI work; Playwright still needs a live API.
 
 ## Quick start
 
-### Prerequisites
-
-- **Node.js** >= 24
-- **npm** >= 11
-- Local [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) on `http://localhost:3000`
-
-### Run the API first
-
-Follow the API local boot guide (do not fork script names here; they can change):
-
-[`docs/development/LOCAL-SETUP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md)
-
-Seeded admin account: API [`docs/development/SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (local fixtures only; never production).
-
-### Run this app (after scaffold)
+Tested against Node.js 24 and npm 11.
 
 ```bash
-cd ../ecommerce-admin-dashboard
+git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git
+cd ecommerce-admin-dashboard
 npm install
-cp .env.example .env
+npm run env:init
+```
+
+### Without the API
+
+MSW. No Docker, Postgres, Redis, or API process.
+
+```bash
+npm run dev:mock
+```
+
+Open `http://localhost:5174` and use **Demo 1-Click Login**. Mock data resets on full reload.
+
+### Against a local API
+
+Needs a running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) (default `http://localhost:3000`).
+
+```bash
 npm run dev
 ```
 
-| Service | URL |
-| :------ | :-- |
-| Admin | `http://localhost:3200` (confirm in project config) |
-| API | `http://localhost:3000` |
-| Swagger (contract) | `http://localhost:3000/api` |
+Open `http://localhost:5174`. Sign in with a seeded administrator from the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). The first login requires a password change.
 
-Client rules: [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md). Security baseline: [`SECURITY.md`](SECURITY.md).
+After the API contract changes, run `npm run api:generate` while the API is up.
 
----
+## Screenshots
 
-<a id="architecture"></a>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-dashboard-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-dashboard-light.png">
+    <img alt="Dashboard" src="docs/assets/screenshot-dashboard-dark.png" width="800" />
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-inventory-detail-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-inventory-detail-light.png">
+    <img alt="Inventory" src="docs/assets/screenshot-inventory-detail-dark.png" width="800" />
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshot-rbac-matrix-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshot-rbac-matrix-light.png">
+    <img alt="Roles and permissions" src="docs/assets/screenshot-rbac-matrix-dark.png" width="800" />
+  </picture>
+</p>
+
+## Where to look
+
+| Topic | Path |
+| :---- | :--- |
+| OpenAPI client and silent refresh | [`src/lib/api/client.ts`](src/lib/api/client.ts) |
+| Session and permission chrome | [`src/lib/auth/auth-context.tsx`](src/lib/auth/auth-context.tsx) |
+| Role permission editor | [`src/features/roles/components/edit-role-dialog.tsx`](src/features/roles/components/edit-role-dialog.tsx) |
+
+Checkout SAGA, inventory locks, and module boundaries: [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api).
 
 ## Architecture
 
-```text
-Browser -> Vite SPA (React Router) -> versioned HTTP API -> ecommerce-store-api
-                                                          ^
-Storefront / mobile apps ---------------------------------+
+Browser → Vite SPA (React Router) → versioned HTTP API.
+
+- Access token in memory; refresh cookie is HttpOnly.
+- Permissions come from the API session. The UI hides chrome; it does not grant access.
+- Lists and mutations use TanStack Query and the generated OpenAPI client.
+- `dev:mock` is an in-browser MSW replica of those same HTTP contracts.
+
+Longer write-up: [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md).
+
+## Verify
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run test:e2e    # live API; see e2e/README.md
 ```
 
-| Rule | Detail |
-| :--- | :----- |
-| Boundary | Status changes, stock, refunds, and RBAC live in the API. |
-| Data access | Typed client from the API OpenAPI/Swagger spec. |
-| Client data | TanStack Query for lists, detail, and mutations. |
-| Tables | TanStack Table for admin grids. |
-| Auth / RBAC UX | Hide or disable controls from claims. Do not treat that as security. |
-| Conflicts | Show HTTP 409 so the operator can reload and retry. |
+PR CI runs lint, typecheck, unit tests, build, and `npm audit`. Playwright runs on `main`/`master` and `workflow_dispatch`.
 
----
+## Stack
 
-<a id="tech-stack"></a>
+Vite, React 19, TypeScript, Tailwind + shadcn/ui, TanStack Query, TanStack Table, React Hook Form + Zod, Recharts, Socket.IO, `openapi-fetch`, Vitest, Playwright.
 
-## Tech stack
+## Docs
 
-| Layer | Choice |
-| :---- | :----- |
-| App | Vite + React 19 |
-| Routing | React Router |
-| Language | TypeScript (strict) |
-| Styling | Tailwind CSS + shadcn/ui (Radix) |
-| Client data | TanStack Query |
-| Tables | TanStack Table |
-| Local UI state | React state; Zustand only when several trees need the same UI state |
-| Forms | React Hook Form + Zod |
-| Charts | Recharts (dashboard widgets) |
-| API | Typed OpenAPI client |
-| Tests | Vitest, Testing Library, Playwright |
+[`docs/README.md`](docs/README.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
 
----
-
-<a id="documentation"></a>
-
-## Documentation
-
-| Document | Description |
-| :------- | :---------- |
-| [`SECURITY.md`](SECURITY.md) | Frontend security baseline |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Delivery plan, tests-with-features, ship gates |
-| [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) | Client integration rules (OpenAPI is the contract) |
-| [`docs/README.md`](docs/README.md) | Docs index |
-| [`docs/ai/README.md`](docs/ai/README.md) | Agent and conventions docs |
-| API docs | [`ecommerce-store-api/docs`](https://github.com/raouf-b-dev/ecommerce-store-api/tree/master/docs) |
-
----
-
-<a id="related-repositories"></a>
-
-## Related repositories
-
-| Repository | Role |
-| :--------- | :--- |
-| [`ecommerce-store-api`](https://github.com/raouf-b-dev/ecommerce-store-api) | Backend API |
-| [`ecommerce-store-web`](https://github.com/raouf-b-dev/ecommerce-store-web) | Customer storefront (Next.js) |
-
----
-
-<a id="project-layout"></a>
-
-## Project layout
-
-Target layout (may shift slightly with the scaffold):
+Related: [`ecommerce-store-api`](https://github.com/raouf-b-dev/ecommerce-store-api) (backend). `ecommerce-store-web` (storefront) is not published yet.
 
 ```
 src/
-├── app/                  # router, providers, shell
-├── features/             # products, orders, etc.
-├── components/           # shared UI
-├── lib/
-│   ├── api/              # OpenAPI client, HTTP helpers
-│   └── auth/             # session helpers matching the API
-docs/
-  API-INTEGRATION.md
-  ROADMAP.md
-  ai/                     # agent conventions
+├── app/          # router, navigation
+├── features/     # auth, products, orders, dashboard, ...
+├── components/   # shell, theme, shared UI
+└── lib/          # OpenAPI client, auth, WebSocket
 ```
-
----
-
-<a id="license"></a>
 
 ## License
 
 [MIT](LICENSE)
 
----
-
-Built by [Abderaouf .B](https://github.com/raouf-b-dev) | [Issues](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues) | [Repository](https://github.com/raouf-b-dev/ecommerce-admin-dashboard)
+Built by [Abderaouf .B](https://github.com/raouf-b-dev) · [Issues](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues)

@@ -1,0 +1,144 @@
+import { test, expect, type Page } from '@playwright/test';
+import { loginAsAdmin, adminNav } from './helpers/auth';
+
+async function openCustomerDetail(page: Page): Promise<void> {
+  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByLabel('Search').fill('customer@store.local');
+  await page.getByRole('button', { name: 'Apply filters' }).click();
+  const row = page.getByRole('row').filter({ hasText: 'customer@store.local' });
+  await expect(row).toBeVisible({ timeout: 15_000 });
+  await row.getByRole('link', { name: 'View' }).click();
+  await expect(page).toHaveURL(/\/users\/\d+/);
+}
+
+test('users list opens after login', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+
+  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByLabel('Search')).toBeVisible();
+  await expect(page.getByLabel('Status')).toBeVisible();
+  await expect(page.getByLabel('Role')).toBeVisible();
+
+  const customerEmail = page.getByText('customer@store.local');
+  if (await customerEmail.count()) {
+    await expect(customerEmail.first()).toBeVisible();
+  }
+});
+
+test('admin user detail does not show role assignment', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+
+  await adminNav(page).getByRole('link', { name: 'Users', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  const viewLink = page.getByRole('link', { name: 'View' }).first();
+  await expect(viewLink).toBeVisible({ timeout: 15_000 });
+  await viewLink.click();
+
+  await expect(page).toHaveURL(/\/users\/\d+/);
+  await expect(
+    page.getByRole('button', { name: 'Change role' }),
+  ).toHaveCount(0);
+  await expect(page.getByLabel('Assigned role')).toHaveCount(0);
+});
+
+test('customer detail shows addresses and can add then delete one', async ({
+  page,
+}) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+  await openCustomerDetail(page);
+
+  await expect(
+    page.getByRole('heading', { name: 'Addresses' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Add address' }),
+  ).toBeVisible();
+
+  const street = `E2E ${Date.now()} Test St`;
+
+  try {
+    await page.getByRole('button', { name: 'Add address' }).click();
+    const form = page.getByRole('dialog');
+    await form.getByLabel('Street', { exact: true }).fill(street);
+    await form.getByLabel('Street line 2').fill('Suite 1');
+    await form.getByLabel('City').fill('Algiers');
+    await form.getByLabel('State').fill('Algiers');
+    await form.getByLabel('Postal code').fill('16000');
+    await form.getByLabel('Country').fill('DZ');
+    await form.getByRole('button', { name: 'Add address' }).click();
+    await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 });
+
+    const card = page.getByRole('listitem').filter({ hasText: street });
+    await card.getByRole('button', { name: 'Set default' }).click();
+    await expect(card.getByText('Default', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    });
+  } finally {
+    const card = page.getByRole('listitem').filter({ hasText: street });
+    if (await card.count()) {
+      await card.getByRole('button', { name: 'Delete' }).click();
+      await page
+        .getByRole('dialog')
+        .getByRole('button', { name: 'Delete' })
+        .click();
+      await expect(page.getByText(street)).toHaveCount(0, { timeout: 15_000 });
+    }
+  }
+});
+
+test('customer detail can deactivate then reactivate', async ({ page }) => {
+  test.skip(
+    !process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD,
+    'Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+  );
+
+  await loginAsAdmin(page);
+  await openCustomerDetail(page);
+
+  await expect(
+    page.getByRole('heading', { name: 'Operator actions' }),
+  ).toBeVisible({ timeout: 15_000 });
+
+  const deactivate = page.getByRole('button', {
+    name: 'Deactivate user',
+    exact: true,
+  });
+  const activate = page.getByRole('button', {
+    name: 'Activate user',
+    exact: true,
+  });
+
+  await expect(deactivate).toBeVisible({ timeout: 15_000 });
+  await deactivate.click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Deactivate', exact: true })
+    .click();
+  await expect(activate).toBeVisible({ timeout: 15_000 });
+  await activate.click();
+  await expect(deactivate).toBeVisible({ timeout: 15_000 });
+});

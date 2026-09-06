@@ -1,0 +1,42 @@
+import { useNavigate } from 'react-router';
+import { Button } from '@/components/ui/button';
+import { MobileNav } from '@/components/layout/mobile-nav';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { useAuth } from '@/lib/auth/auth-context';
+
+export function AppHeader() {
+  const { session, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await logout();
+    navigate('/login', { replace: true });
+  }
+
+  return (
+    <header className="flex shrink-0 items-center justify-between border-b bg-background/95 px-6 py-4 backdrop-blur">
+      <div className="flex items-center gap-3">
+        <MobileNav />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        {session ? (
+          <>
+            <span className="hidden text-sm text-muted-foreground sm:inline">
+              {session.email}
+            </span>
+            <Button
+              size="sm"
+              type="button"
+              variant="outline"
+              onClick={handleLogout}
+            >
+              Log out
+            </Button>
+          </>
+        ) : null}
+      </div>
+    </header>
+  );
+}
