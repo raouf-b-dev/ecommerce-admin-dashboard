@@ -10,7 +10,7 @@ The baseline gates for this repository (PR and the `ci` GitHub Actions job) are:
 - `npm run build`
 - `npm audit --omit=dev --audit-level=high`
 
-Those checks run as parallel jobs. Require **CI Status Check** (`ci`) in branch protection, not the individual job names.
+Those checks run as parallel jobs. Require **CI Status Check** (`ci`) in branch protection, not the individual job names. Playwright joins that aggregator when the e2e job is scheduled (see below); a skipped e2e job does not fail `ci`.
 
 Weekly Dependabot version updates (npm + GitHub Actions) live in [`.github/dependabot.yml`](../../.github/dependabot.yml). GitHub Dependency Review is not a gate here: it needs GitHub Advanced Security on a private repository.
 
@@ -18,14 +18,20 @@ Prettier is installed for local formatting. `format:check` is not a merge gate.
 
 ## Playwright
 
-Playwright is **not** a pull-request merge gate. A full run needs a live seeded API (start and seed it from the API repo’s docs), shares one admin account, and must use `workers: 1` because the API rate-limits login.
-
 The `e2e` GitHub Actions job runs on:
 
-- `workflow_dispatch`
-- `push` to `main` or `master`
+| Event | Playwright |
+| --- | --- |
+| PR into `develop` (or any non-`main`/`master` branch) | No |
+| PR into `master` or `main` | Yes |
+| Push to `master` or `main` | Yes |
+| `workflow_dispatch` | Yes |
 
-That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is not part of the `ci` aggregator, so merge-gate status stays independent of Playwright. Generate a local `.secrets` file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)), fill passwords from the API seeding guide, and copy into GitHub Secrets. Do not commit `.secrets`.
+That job **fails** if `E2E_ADMIN_EMAIL` or `E2E_ADMIN_PASSWORD` are unset (no skip-to-green). It is part of the `ci` aggregator. A skipped Playwright job (feature PRs into `develop`) does not fail `ci`; a failed or cancelled run does. On PRs into `master`/`main`, push to those branches, and `workflow_dispatch`, Playwright must succeed for `ci` to pass.
+
+Require **CI Status Check** (`ci`) in branch protection, not the Playwright job by name. Requiring Playwright itself would block `develop` PRs where the job is skipped.
+
+A full run needs a live seeded API (start and seed it from the API repo’s docs). Login is rate-limited; see [`e2e/README.md`](../../e2e/README.md) for worker layout. Generate a local `.secrets` file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)), fill passwords from the API seeding guide, and copy into GitHub Secrets. Do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 

@@ -114,7 +114,7 @@ npm run build
 npm run test:e2e    # live API; see e2e/README.md
 ```
 
-PR CI runs lint, typecheck, unit tests, build, and `npm audit`. Playwright runs on `main`/`master` and `workflow_dispatch`.
+PR CI runs lint, typecheck, unit tests, build, and `npm audit`. Playwright runs on PRs into `main`/`master`, on push to those branches, and on `workflow_dispatch`. Feature PRs into `develop` skip Playwright.
 
 ## Stack
 
