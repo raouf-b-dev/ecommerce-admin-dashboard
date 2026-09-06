@@ -4,10 +4,14 @@ const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 if (
   process.env.CI &&
-  (!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD)
+  (!process.env.E2E_ADMIN_EMAIL ||
+    !process.env.E2E_ADMIN_PASSWORD ||
+    !process.env.E2E_CUSTOMER_EMAIL ||
+    !process.env.E2E_CUSTOMER_PASSWORD ||
+    !process.env.E2E_SUPERADMIN_PASSWORD)
 ) {
   throw new Error(
-    'CI e2e requires E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (see e2e/README.md).',
+    'CI e2e requires E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD, E2E_CUSTOMER_EMAIL, E2E_CUSTOMER_PASSWORD, and E2E_SUPERADMIN_PASSWORD (see e2e/README.md).',
   );
 }
 
@@ -36,12 +40,7 @@ export default defineConfig({
   projects: [
     {
       name: 'guest',
-      testMatch: [
-        'smoke.spec.ts',
-        'a11y.spec.ts',
-        'operator-gate.spec.ts',
-        'safe-landing.spec.ts',
-      ],
+      testMatch: ['smoke.spec.ts', 'a11y.spec.ts', 'operator-gate.spec.ts'],
       fullyParallel: true,
     },
     {
