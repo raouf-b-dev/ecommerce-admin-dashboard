@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test } from '@playwright/test';
+import { skipUnlessEnv } from './env';
 
 /** Password that worked in this worker (survives forced rotation mid-suite). */
 let cachedAdminPassword: string | null = null;
@@ -144,31 +145,11 @@ export async function signInAsAdmin(page: Page): Promise<void> {
   );
 }
 
-/** Local specs: skip instead of failing when the seeded admin cannot sign in. */
-export async function loginAsAdmin(page: Page): Promise<void> {
-  test.setTimeout(180_000);
-  try {
-    await signInAsAdmin(page);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (message.includes('E2E_ADMIN_EMAIL')) {
-      throw error;
-    }
-    test.skip(true, message);
-  }
-}
-
 export async function loginAsSuperAdmin(page: Page): Promise<void> {
-  const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
-  const seedPassword = process.env.E2E_SUPERADMIN_PASSWORD;
+  skipUnlessEnv('E2E_SUPERADMIN_PASSWORD');
 
-  if (!seedPassword) {
-    test.skip(
-      true,
-      'Set E2E_SUPERADMIN_PASSWORD for superadmin e2e tests. See e2e/README.md.',
-    );
-    return;
-  }
+  const email = process.env.E2E_SUPERADMIN_EMAIL ?? 'superadmin@store.local';
+  const seedPassword = process.env.E2E_SUPERADMIN_PASSWORD!;
 
   test.setTimeout(180_000);
   const rotatedPassword =
@@ -195,5 +176,7 @@ export async function loginAsSuperAdmin(page: Page): Promise<void> {
     }
   }
 
-  test.skip(true, 'Superadmin login failed. Verify API seed credentials.');
+  throw new Error(
+    'Superadmin login failed. Verify API seed credentials in SEEDING.md.',
+  );
 }
