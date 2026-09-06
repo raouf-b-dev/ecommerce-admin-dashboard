@@ -93,7 +93,7 @@ jobs:
 
   # Full-stack Playwright: seeded API + rate-limited login.
   # Runs on PRs into main/master (release gate), push to main/master, and dispatch.
-  # Skipped on PRs into other branches. Fail closed when E2E_ADMIN_* secrets are missing.
+  # Skipped on PRs into other branches. Fail closed when required E2E_* secrets are missing.
   e2e:
     name: Playwright
     if: >
@@ -116,8 +116,11 @@ jobs:
       - name: Require e2e credentials
         working-directory: ${{ github.workspace }}
         run: |
-          if [ -z "$E2E_ADMIN_EMAIL" ] || [ -z "$E2E_ADMIN_PASSWORD" ]; then
-            echo "Set repository secrets E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD."
+          if [ -z "$E2E_ADMIN_EMAIL" ] || [ -z "$E2E_ADMIN_PASSWORD" ] \
+            || [ -z "$E2E_CUSTOMER_EMAIL" ] || [ -z "$E2E_CUSTOMER_PASSWORD" ] \
+            || [ -z "$E2E_SUPERADMIN_PASSWORD" ]; then
+            echo "Set repository secrets E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD,"
+            echo "E2E_CUSTOMER_EMAIL, E2E_CUSTOMER_PASSWORD, and E2E_SUPERADMIN_PASSWORD."
             echo "Do not skip tests when credentials are missing in CI."
             exit 1
           fi
