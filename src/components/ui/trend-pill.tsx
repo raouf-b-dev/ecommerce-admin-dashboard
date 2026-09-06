@@ -11,7 +11,7 @@ export function TrendPill({ delta, className }: TrendPillProps) {
     return (
       <span
         className={cn(
-          'inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium text-muted-foreground bg-muted',
+          'inline-flex items-center rounded-md border border-border bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground',
           className,
         )}
       >
@@ -27,7 +27,8 @@ export function TrendPill({ delta, className }: TrendPillProps) {
     <span
       className={cn(
         'inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums',
-        isNeutral && 'bg-muted text-muted-foreground',
+        isNeutral &&
+          'border border-border bg-muted text-foreground',
         isPositive &&
           'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
         !isPositive &&

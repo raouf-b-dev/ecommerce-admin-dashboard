@@ -90,8 +90,8 @@ test('products search filter updates URL', async ({ page }) => {
     timeout: 15_000,
   });
 
-  await page.getByLabel('Search').fill('seed');
-  await page.getByRole('button', { name: 'Apply filters' }).click();
+  await page.getByPlaceholder('Search name, SKU, or description…').fill('seed');
+  await page.getByRole('button', { name: 'Search' }).click();
   await expect(page).toHaveURL(/search=seed/);
 });
 

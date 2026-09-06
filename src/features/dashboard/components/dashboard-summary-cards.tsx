@@ -40,7 +40,7 @@ function KpiCard({ title, value, delta, detail, hint }: KpiCardProps) {
         {detail ? (
           <p className="font-medium text-foreground/90">{detail}</p>
         ) : null}
-        {hint ? <p className="text-muted-foreground/80">{hint}</p> : null}
+        {hint ? <p>{hint}</p> : null}
       </CardContent>
     </Card>
   );

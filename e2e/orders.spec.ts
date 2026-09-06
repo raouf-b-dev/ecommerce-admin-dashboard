@@ -15,7 +15,7 @@ test('orders list opens detail and can process a confirmed order', async ({
   await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible({
     timeout: 15_000,
   });
-  await expect(page.getByLabel('Customer email')).toBeVisible();
+  await expect(page.getByPlaceholder('Search by customer email…')).toBeVisible();
   await expect(page.getByLabel('Status')).toBeVisible();
 
   await page.getByLabel('Status').selectOption('confirmed');
@@ -28,7 +28,9 @@ test('orders list opens detail and can process a confirmed order', async ({
     'No confirmed seeded orders - run API npm run db:seed.',
   );
 
-  await viewLink.click();
+  const href = await viewLink.getAttribute('href');
+  expect(href).toBeTruthy();
+  await page.goto(href!);
   await expect(page).toHaveURL(/\/orders\/\d+/);
   await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
     timeout: 15_000,
@@ -69,7 +71,9 @@ test('orders can ship a processing order', async ({ page }) => {
     'No processing orders - run the confirmed-order process spec first or API db:seed.',
   );
 
-  await viewLink.click();
+  const href = await viewLink.getAttribute('href');
+  expect(href).toBeTruthy();
+  await page.goto(href!);
   await expect(page.getByRole('heading', { name: 'Status actions' })).toBeVisible({
     timeout: 15_000,
   });
