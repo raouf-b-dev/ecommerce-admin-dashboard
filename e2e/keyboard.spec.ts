@@ -66,7 +66,7 @@ test('adjust stock dialog closes on Escape', async ({ page }) => {
   await expect(viewLink).toBeVisible({ timeout: 15_000 });
   await viewLink.click();
 
-  const adjust = page.getByRole('button', { name: 'Adjust stock' });
+  const adjust = page.getByRole('button', { name: 'Adjust stock' }).first();
   await expect(adjust).toBeVisible({ timeout: 15_000 });
   await adjust.click();
   await expect(page.getByRole('heading', { name: 'Adjust stock' })).toBeVisible();

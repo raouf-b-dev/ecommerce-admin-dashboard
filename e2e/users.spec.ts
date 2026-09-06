@@ -120,7 +120,7 @@ test('customer detail can deactivate then reactivate', async ({ page }) => {
   await openCustomerDetail(page);
 
   await expect(
-    page.getByRole('heading', { name: 'Operator actions' }),
+    page.getByRole('heading', { name: 'Danger Zone' }),
   ).toBeVisible({ timeout: 15_000 });
 
   const deactivate = page.getByRole('button', {
