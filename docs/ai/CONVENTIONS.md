@@ -123,16 +123,17 @@ export const productKeys = {
 
 ## 10. Auth and Security
 
-Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](../architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md).
+Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](../architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md), [ADR-0008](../architecture/adr/ADR-0008-keep-session-alive-for-refresh-token-lifetime.md).
 
 - Browser configuration uses `VITE_*` public values only.
 - Access token in memory only; refresh token via HttpOnly cookie + `credentials: 'include'`.
 - Avoid `localStorage` for long-lived tokens.
-- Domain `401`: single-flight silent refresh + one request retry; if that fails, clear session and return to login.
+- Refresh the access token whenever it is missing, malformed, or near JWT `exp` (before domain requests; session query timer while authenticated).
+- Domain `401`: single-flight silent refresh + one request retry; redirect to login **only** when refresh itself is 401. Transient refresh failures keep the session.
 - Mid-request token refresh updates `AUTH_SESSION_QUERY_KEY` with updated claims and permissions, keeping UI chrome in sync.
-- Never silent-retry `/authentication/*` paths.
+- Never silent-retry `/authentication/*` paths. Never pre-refresh login, register, or refresh requests.
 - **Safe landing for limited operators:** Route `/` and post-login redirection use `IndexLandingGate` and `getDefaultLandingRoute(permissions)` to land on the operator's first permitted route. The Forbidden page CTA links to this default route to prevent loops.
-- **Auth bootstrap retry:** Differentiate 4xx rejections (`isClientError`: no retry, route to login) from transient 5xx or network errors (retry 2× with exponential backoff).
+- **Auth bootstrap retry:** `refreshSessionRequest` returns `null` on 401 (unauthenticated). Other failures throw. Differentiate 4xx rejections (`isClientError`: no retry) from transient 5xx or network errors (retry 2×). If the session query still errors with no data, guards show a retry surface — do not bounce to login.
 - Treat rendered API strings as untrusted data.
 
 ## 11. Concurrency
