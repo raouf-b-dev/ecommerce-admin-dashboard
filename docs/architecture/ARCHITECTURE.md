@@ -51,7 +51,7 @@ flowchart TD
 
 ## Auth and session flow
 
-Rationale: [ADR-0002](adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](adr/ADR-0005-silent-one-shot-access-token-refresh.md).
+Rationale: [ADR-0002](adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](adr/ADR-0005-silent-one-shot-access-token-refresh.md), [ADR-0008](adr/ADR-0008-keep-session-alive-for-refresh-token-lifetime.md).
 
 ```mermaid
 sequenceDiagram
@@ -61,8 +61,7 @@ sequenceDiagram
     participant API
 
     Browser->>AuthProvider: App mount
-    AuthProvider->>ApiClient: POST /v1/authentication/refresh
-    ApiClient->>API: HttpOnly cookie (credentials include)
+    AuthProvider->>API: POST /v1/authentication/refresh
     alt Valid refresh cookie and operator role
         API-->>AuthProvider: accessToken
         AuthProvider-->>Browser: authenticated
@@ -72,14 +71,17 @@ sequenceDiagram
     end
 
     Browser->>ApiClient: Domain request
+    ApiClient->>ApiClient: Refresh if access token missing or near exp
     ApiClient->>API: Authorization Bearer accessToken
     alt 401 on domain request
         API-->>ApiClient: 401
         ApiClient->>API: POST refresh once single-flight
         alt Refresh ok
             ApiClient->>API: Retry original request once
-        else Refresh or retry fails
+        else Refresh 401
             ApiClient-->>Browser: clear token, redirect /login?redirect=...
+        else Refresh 5xx / 429 / network
+            ApiClient-->>Browser: keep session, fail the request
         end
     end
 ```

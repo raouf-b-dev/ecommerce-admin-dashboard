@@ -60,7 +60,7 @@ export default defineConfig({
     },
     {
       name: 'superadmin',
-      testMatch: ['roles.spec.ts', 'change-password.spec.ts'],
+      testMatch: ['roles.spec.ts', 'change-password.spec.ts', 'session.spec.ts'],
       fullyParallel: false,
       workers: 1,
     },

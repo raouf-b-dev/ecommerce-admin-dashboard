@@ -18,4 +18,4 @@ export type AuthSession = {
   mustChangePassword: boolean;
 };
 
-export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
+export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated' | 'error';

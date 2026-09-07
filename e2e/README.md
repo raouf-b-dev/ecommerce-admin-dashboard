@@ -10,6 +10,7 @@ Playwright runs against the Vite dev server (`http://localhost:5174`) and a live
 | `a11y.spec.ts` / `a11y-shell.spec.ts` | axe-core (serious/critical) on login, then dashboard, products, order detail |
 | `keyboard.spec.ts` | Skip link, sidebar Enter, mobile sheet Esc, adjust-stock Esc |
 | `smoke.spec.ts` / `shell.spec.ts` | Unauthenticated login page, failed login, signed-in shell, mobile nav, forbidden route |
+| `session.spec.ts` | Superadmin: reload restores session from the refresh cookie; clearing cookies returns to login |
 | Per-feature specs | Products, inventory, orders, users, roles, operator gate, change-password |
 
 The journey is glue, not a replacement for per-feature specs.
@@ -96,9 +97,11 @@ Two workers, three projects:
 | :--- | :--- | :--- |
 | `guest` | remaining pool | Login page, failed login, customer operator-gate |
 | `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y |
-| `superadmin` | 1 | Roles, forced password change |
+| `superadmin` | 1 | Roles, forced password change, session cookie restore |
 
 Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.
+
+`session.spec.ts` lives in the **superadmin** project so a reload (and cookie-clear) cannot rotate the admin worker’s refresh cookie. Access-token expiry is covered in Vitest with JWTs that are already expired — do not lower `JWT_ACCESS_TOKEN_TTL` for e2e.
 
 Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other’s refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
 

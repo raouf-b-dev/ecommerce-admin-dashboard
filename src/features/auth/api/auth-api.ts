@@ -8,6 +8,7 @@ import type {
 } from '@/features/auth/types';
 import { clearAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
+import { silentRefreshSession } from '@/lib/api/silent-refresh';
 import {
   readAuthErrorFromResponse,
   toAuthRequestError,
@@ -131,34 +132,21 @@ export async function loginRequest(
 }
 
 export async function refreshSessionRequest(): Promise<AuthSession | null> {
-  const { data, error, response } = await apiClient.POST('/v1/authentication/refresh', {
-    body: {},
-  });
-
-  if (error || response.status === 401) {
+  const result = await silentRefreshSession();
+  if (!result) {
     return null;
   }
 
-  if (!response.ok) {
-    const parsed = response ? await readAuthErrorFromResponse(response) : null;
-    throw toAuthRequestError(
-      response ?? new Response(null, { status: 500 }),
-      parsed,
-      'Failed to restore session',
-    );
-  }
-
-  const tokens = parseTokensResponse(data);
-  if (!hasAdminAccess(tokens.permissions)) {
-    setAccessToken(tokens.accessToken);
+  if (!hasAdminAccess(result.permissions)) {
+    setAccessToken(result.accessToken);
     await clearNonOperatorSession();
     return null;
   }
 
   return buildSessionFromAccessToken(
-    tokens.accessToken,
-    tokens.mustChangePassword,
-    tokens.permissions,
+    result.accessToken,
+    result.mustChangePassword,
+    result.permissions,
   );
 }
 
