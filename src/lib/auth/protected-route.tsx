@@ -1,6 +1,9 @@
 import { Navigate, useLocation } from 'react-router';
 import type { ReactNode } from 'react';
-import { AuthLoadingScreen } from '@/lib/auth/auth-loading-screen';
+import {
+  AuthLoadingScreen,
+  AuthSessionErrorScreen,
+} from '@/lib/auth/auth-loading-screen';
 import { useAuth } from '@/lib/auth/auth-context';
 
 type ProtectedRouteProps = {
@@ -8,11 +11,17 @@ type ProtectedRouteProps = {
 };
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { status } = useAuth();
+  const { status, sessionError, retrySession } = useAuth();
   const location = useLocation();
 
   if (status === 'loading') {
     return <AuthLoadingScreen />;
+  }
+
+  if (status === 'error') {
+    return (
+      <AuthSessionErrorScreen error={sessionError} onRetry={retrySession} />
+    );
   }
 
   if (status === 'unauthenticated') {

@@ -94,4 +94,17 @@ describe('GuestRoute', () => {
 
     expect(screen.getByText('Products page')).toBeInTheDocument();
   });
+
+  it('does not show login when session bootstrap fails', () => {
+    mockUseAuth.mockReturnValue({
+      status: 'error',
+      sessionError: new Error('Failed to restore session'),
+      retrySession: vi.fn(),
+    });
+
+    renderGuestRoute('/login');
+
+    expect(screen.getByText('Could not load session')).toBeInTheDocument();
+    expect(screen.queryByText('Login form')).not.toBeInTheDocument();
+  });
 });
