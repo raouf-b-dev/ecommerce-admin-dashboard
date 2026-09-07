@@ -54,4 +54,18 @@ describe('ProtectedRoute', () => {
 
     expect(screen.getByText('Protected content')).toBeInTheDocument();
   });
+
+  it('stays on an error surface instead of login when bootstrap fails', () => {
+    mockUseAuth.mockReturnValue({
+      status: 'error',
+      sessionError: new Error('Failed to restore session'),
+      retrySession: vi.fn(),
+    });
+
+    renderProtected('/products');
+
+    expect(screen.getByText('Could not load session')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(screen.queryByText('Login page')).not.toBeInTheDocument();
+  });
 });

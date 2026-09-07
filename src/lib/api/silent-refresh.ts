@@ -1,4 +1,6 @@
-import { setAccessToken } from '@/lib/auth/auth-session';
+import { getAccessToken, setAccessToken } from '@/lib/auth/auth-session';
+import { isAccessTokenUsable } from '@/lib/auth/access-token';
+import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -22,7 +24,7 @@ export function onSessionRefreshed(listener: SessionRefreshListener): () => void
   };
 }
 
-let inFlightRefresh: Promise<string | null> | null = null;
+let inFlightRefresh: Promise<SilentRefreshResult | null> | null = null;
 
 function parseAccessToken(data: unknown): string | null {
   if (!data || typeof data !== 'object') {
@@ -44,57 +46,63 @@ function parseMustChangePassword(record: Record<string, unknown>): boolean {
   return record.mustChangePassword === true;
 }
 
-async function performSilentRefresh(): Promise<string | null> {
-  try {
-    const response = await fetch(`${baseUrl}/v1/authentication/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: '{}',
-    });
-
-    if (!response.ok) {
-      return null;
+function notifySessionRefreshed(result: SilentRefreshResult): void {
+  listeners.forEach((listener) => {
+    try {
+      listener(result);
+    } catch {
+      // Listener exceptions should not affect token return
     }
+  });
+}
 
-    const data: unknown = await response.json();
-    const accessToken = parseAccessToken(data);
-    if (!accessToken) {
-      return null;
-    }
+async function performSilentRefresh(): Promise<SilentRefreshResult | null> {
+  const response = await fetch(`${baseUrl}/v1/authentication/refresh`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
+  });
 
-    setAccessToken(accessToken);
-
-    const record =
-      data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
-    const refreshResult: SilentRefreshResult = {
-      accessToken,
-      permissions: parsePermissions(record),
-      mustChangePassword: parseMustChangePassword(record),
-    };
-
-    listeners.forEach((listener) => {
-      try {
-        listener(refreshResult);
-      } catch {
-        // Listener exceptions should not affect token return
-      }
-    });
-
-    return accessToken;
-  } catch {
+  if (response.status === 401) {
     return null;
   }
+
+  if (!response.ok) {
+    await throwApiErrorFromResponse(response, 'Failed to restore session');
+  }
+
+  const data: unknown = await response.json();
+  const accessToken = parseAccessToken(data);
+  if (!accessToken) {
+    throw new Error('Authentication response missing access token');
+  }
+
+  setAccessToken(accessToken);
+
+  const record =
+    data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
+  const refreshResult: SilentRefreshResult = {
+    accessToken,
+    permissions: parsePermissions(record),
+    mustChangePassword: parseMustChangePassword(record),
+  };
+
+  notifySessionRefreshed(refreshResult);
+  return refreshResult;
 }
 
 /**
- * Single-flight silent refresh for mid-request 401 recovery.
+ * Single-flight silent refresh for boot and mid-request 401 recovery.
  * Uses raw fetch so it does not re-enter apiClient middleware.
+ *
+ * `null` means the refresh cookie is gone or invalid (unauthenticated).
+ * HTTP 5xx / 429 / network failures throw so callers keep the current session.
  */
-export function silentRefreshAccessToken(): Promise<string | null> {
+export function silentRefreshSession(): Promise<SilentRefreshResult | null> {
   if (!inFlightRefresh) {
     inFlightRefresh = performSilentRefresh().finally(() => {
       inFlightRefresh = null;
@@ -102,6 +110,28 @@ export function silentRefreshAccessToken(): Promise<string | null> {
   }
 
   return inFlightRefresh;
+}
+
+/**
+ * Single-flight silent refresh for mid-request 401 recovery.
+ * Uses raw fetch so it does not re-enter apiClient middleware.
+ */
+export async function silentRefreshAccessToken(): Promise<string | null> {
+  const result = await silentRefreshSession();
+  return result?.accessToken ?? null;
+}
+
+/**
+ * Return a usable in-memory access token, refreshing via the HttpOnly cookie
+ * when the current token is missing, malformed, or near expiry.
+ */
+export async function ensureFreshAccessToken(): Promise<string | null> {
+  const current = getAccessToken();
+  if (isAccessTokenUsable(current)) {
+    return current;
+  }
+
+  return silentRefreshAccessToken();
 }
 
 /** Test helper - resets the in-flight latch and registered listeners. */

@@ -45,7 +45,7 @@ See also root [`SECURITY.md`](../SECURITY.md).
 - Login, refresh, and change-password responses include `mustChangePassword`. When `true`, route to `/change-password` before the app shell.
 - **Operators only:** require permission `access_admin` from the auth response `permissions` array. Accounts without it call logout (clear cookie), clear the access token, and show a dedicated login error. See [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md) and [ADR-0007](architecture/adr/ADR-0007-auth-response-permissions-for-chrome.md).
 - Permissions for chrome come from auth token responses (live from DB) per ADR-0007. Filter/form enums lock to OpenAPI via `satisfies`. Order status action buttons are UX chrome (API still rejects illegal transitions). Nav filtering is UX only.
-- On domain `401`, attempt a single-flight silent refresh and one request retry ([ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)); if that fails, return to login. On successful mid-request refresh, propagate fresh claims and permissions to `AUTH_SESSION_QUERY_KEY` so nav chrome stays accurate. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
+- On domain `401`, attempt a single-flight silent refresh and one request retry ([ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md)); if refresh returns `401`, return to login. If refresh fails with 5xx, 429, or network error, **keep the session** and fail the request ([ADR-0008](architecture/adr/ADR-0008-keep-session-alive-for-refresh-token-lifetime.md)). Refresh the access token whenever it is missing or near JWT `exp` (session query timer, window focus, and `onRequest`). Do not persist access or refresh tokens in `localStorage`. On successful mid-request refresh, propagate fresh claims and permissions to `AUTH_SESSION_QUERY_KEY` so nav chrome stays accurate. On `403` with code `MUST_CHANGE_PASSWORD`, redirect to change-password. Other `403` responses show forbidden; do not invent a bypass.
 - Seeded **administrator** / **customer** accounts: API seeding doc only (no passwords in this repo).
 
 ## Concurrency (`409`)
@@ -63,7 +63,7 @@ Confirm version/conflict fields in OpenAPI for each write operation you use.
 | Class | Typical admin behavior |
 | :---- | :--------------------- |
 | Validation | Form/field errors from payload |
-| `401` | Silent refresh + one retry; then login |
+| `401` | Refresh if access token missing/expired; silent refresh + one retry; login only when refresh is 401 |
 | `403` | Forbidden; hide nav that requires the permission |
 | `404` | Empty / not found |
 | `409` | Reload and retry |

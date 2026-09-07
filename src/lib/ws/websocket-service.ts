@@ -70,10 +70,7 @@ class WebSocketService {
       import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
     this.socket = io(baseUrl, {
-      query: { token },
-      extraHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+      auth: { token },
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

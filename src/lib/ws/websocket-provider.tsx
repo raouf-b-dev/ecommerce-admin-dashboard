@@ -17,6 +17,12 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated || !session) {
       webSocketService.disconnect();
       return;
@@ -24,7 +30,15 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
     const token = getAccessToken();
     if (token) {
+      // connect() no-ops when the socket is already up with this token; it
+      // reconnects only when the access token actually changed (JWT handshake).
       webSocketService.connect(token);
+    }
+  }, [isAuthenticated, session]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
     }
 
     const unsubscribe = webSocketService.subscribe((notification) => {
@@ -52,11 +66,8 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
       });
     });
 
-    return () => {
-      unsubscribe();
-      webSocketService.disconnect();
-    };
-  }, [isAuthenticated, session, queryClient]);
+    return unsubscribe;
+  }, [isAuthenticated, queryClient]);
 
   return <>{children}</>;
 }

@@ -20,13 +20,19 @@ vi.mock('@/lib/api/client', () => ({
   },
 }));
 
+vi.mock('@/lib/api/silent-refresh', () => ({
+  silentRefreshSession: vi.fn(),
+}));
+
 import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
 import { clearAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
+import { silentRefreshSession } from '@/lib/api/silent-refresh';
 
 describe('admin access gate in auth-api', () => {
   beforeEach(() => {
     vi.mocked(apiClient.POST).mockReset();
+    vi.mocked(silentRefreshSession).mockReset();
     vi.mocked(decodeAccessTokenClaims).mockReset();
     vi.mocked(setAccessToken).mockReset();
     vi.mocked(clearAccessToken).mockReset();
@@ -70,23 +76,15 @@ describe('admin access gate in auth-api', () => {
   });
 
   it('refreshSessionRequest returns null when access_admin is missing', async () => {
-    vi.mocked(apiClient.POST).mockImplementation(async (path) => {
-      if (path === '/v1/authentication/refresh') {
-        return {
-          data: {
-            accessToken: 'customer-token',
-            permissions: ['view_own_orders'],
-          },
-          error: undefined,
-          response: new Response(null, { status: 200 }),
-        };
-      }
-
-      return {
-        data: {},
-        error: undefined,
-        response: new Response(null, { status: 200 }),
-      };
+    vi.mocked(silentRefreshSession).mockResolvedValue({
+      accessToken: 'customer-token',
+      permissions: ['view_own_orders'],
+      mustChangePassword: false,
+    });
+    vi.mocked(apiClient.POST).mockResolvedValue({
+      data: {},
+      error: undefined,
+      response: new Response(null, { status: 200 }),
     });
 
     vi.mocked(decodeAccessTokenClaims).mockReturnValue({
@@ -97,6 +95,23 @@ describe('admin access gate in auth-api', () => {
 
     await expect(refreshSessionRequest()).resolves.toBeNull();
     expect(clearAccessToken).toHaveBeenCalled();
+  });
+
+  it('refreshSessionRequest returns null when the refresh cookie is gone', async () => {
+    vi.mocked(silentRefreshSession).mockResolvedValue(null);
+
+    await expect(refreshSessionRequest()).resolves.toBeNull();
+    expect(apiClient.POST).not.toHaveBeenCalled();
+  });
+
+  it('refreshSessionRequest throws when silent refresh hits a transient failure', async () => {
+    vi.mocked(silentRefreshSession).mockRejectedValue(
+      Object.assign(new Error('Failed to restore session'), { statusCode: 500 }),
+    );
+
+    await expect(refreshSessionRequest()).rejects.toMatchObject({
+      statusCode: 500,
+    });
   });
 
   it('loginRequest accepts sessions with access_admin from the auth response', async () => {

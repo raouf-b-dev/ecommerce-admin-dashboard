@@ -1,11 +1,13 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import {
+  attachAccessToken,
   recoverFromDomain401,
   shouldRedirectToChangePassword,
 } from '@/lib/api/client';
 
 vi.mock('@/lib/api/silent-refresh', () => ({
   silentRefreshAccessToken: vi.fn(),
+  ensureFreshAccessToken: vi.fn(),
 }));
 
 vi.mock('@/lib/auth/auth-session', () => ({
@@ -14,7 +16,10 @@ vi.mock('@/lib/auth/auth-session', () => ({
   setAccessToken: vi.fn(),
 }));
 
-import { silentRefreshAccessToken } from '@/lib/api/silent-refresh';
+import {
+  ensureFreshAccessToken,
+  silentRefreshAccessToken,
+} from '@/lib/api/silent-refresh';
 import { clearAccessToken } from '@/lib/auth/auth-session';
 
 describe('shouldRedirectToChangePassword', () => {
@@ -113,5 +118,58 @@ describe('recoverFromDomain401', () => {
 
     expect(recovered).toBeNull();
     expect(clearAccessToken).toHaveBeenCalled();
+  });
+
+  it('does not redirect to login when refresh throws a transient error', async () => {
+    vi.mocked(silentRefreshAccessToken).mockRejectedValue(
+      Object.assign(new Error('Failed to restore session'), { statusCode: 500 }),
+    );
+
+    await expect(
+      recoverFromDomain401(new Request('http://localhost:3000/v1/products')),
+    ).rejects.toMatchObject({ statusCode: 500 });
+    expect(clearAccessToken).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe('attachAccessToken', () => {
+  beforeEach(() => {
+    vi.mocked(ensureFreshAccessToken).mockReset();
+  });
+
+  it.each([
+    'http://localhost:3000/v1/authentication/login',
+    'http://localhost:3000/v1/authentication/register',
+    'http://localhost:3000/v1/authentication/refresh',
+  ])('skips credential auth path %s', async (url) => {
+    const request = new Request(url, { method: 'POST' });
+
+    await attachAccessToken(request);
+
+    expect(ensureFreshAccessToken).not.toHaveBeenCalled();
+    expect(request.headers.get('Authorization')).toBeNull();
+  });
+
+  it('refreshes and attaches a Bearer token on domain requests', async () => {
+    vi.mocked(ensureFreshAccessToken).mockResolvedValue('fresh-token');
+    const request = new Request('http://localhost:3000/v1/products');
+
+    await attachAccessToken(request);
+
+    expect(ensureFreshAccessToken).toHaveBeenCalledTimes(1);
+    expect(request.headers.get('Authorization')).toBe('Bearer fresh-token');
+  });
+
+  it('refreshes before logout and change-password so expired access tokens still work', async () => {
+    vi.mocked(ensureFreshAccessToken).mockResolvedValue('fresh-token');
+    const request = new Request('http://localhost:3000/v1/authentication/logout', {
+      method: 'POST',
+    });
+
+    await attachAccessToken(request);
+
+    expect(ensureFreshAccessToken).toHaveBeenCalledTimes(1);
+    expect(request.headers.get('Authorization')).toBe('Bearer fresh-token');
   });
 });

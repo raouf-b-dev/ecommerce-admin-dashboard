@@ -24,22 +24,28 @@ import type {
   ChangePasswordInput,
   LoginCredentials,
 } from '@/features/auth/types';
-import { clearAccessToken } from '@/lib/auth/auth-session';
+import { clearAccessToken, getAccessToken } from '@/lib/auth/auth-session';
 import { hasPermission as checkPermission } from '@/lib/auth/permissions';
 import { onSessionRefreshed } from '@/lib/api/silent-refresh';
 import { isClientError } from '@/lib/api/parse-api-error';
+import {
+  getSessionRefetchInterval,
+  getSessionRefetchOnFocusOrReconnect,
+} from '@/lib/auth/session-query-policy';
 
 const AUTH_SESSION_QUERY_KEY = ['auth', 'session'] as const;
 
 type AuthContextValue = {
   status: AuthStatus;
   session: AuthSession | null;
+  sessionError: unknown;
   isAuthenticated: boolean;
   mustChangePassword: boolean;
   login: (credentials: LoginCredentials) => Promise<AuthSession>;
   changePassword: (input: ChangePasswordInput) => Promise<AuthSession>;
   logout: () => Promise<void>;
   hasPermission: (permission?: string) => boolean;
+  retrySession: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -50,7 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sessionQuery = useQuery({
     queryKey: AUTH_SESSION_QUERY_KEY,
     queryFn: refreshSessionRequest,
-    // Session bootstrap: never retry 4xx (auth/session is final); retry 5xx/network up to 2 times.
+    // Session bootstrap: never retry 4xx (auth/session is final, including 429);
+    // retry 5xx/network up to 2 times. 401 is returned as null, not thrown.
     retry: (failureCount, error) => {
       if (isClientError(error)) {
         return false;
@@ -58,6 +65,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return failureCount < 2;
     },
     staleTime: Infinity,
+    refetchInterval: (query) =>
+      getSessionRefetchInterval({
+        hasSession: Boolean(query.state.data),
+        hasError: Boolean(query.state.error),
+        accessToken: getAccessToken(),
+      }),
+    refetchOnWindowFocus: (query) =>
+      getSessionRefetchOnFocusOrReconnect({
+        hasSession: Boolean(query.state.data),
+        accessToken: getAccessToken(),
+      }),
+    refetchOnReconnect: (query) =>
+      getSessionRefetchOnFocusOrReconnect({
+        hasSession: Boolean(query.state.data),
+        accessToken: getAccessToken(),
+      }),
   });
 
   useEffect(() => {
@@ -102,13 +125,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const status: AuthStatus = sessionQuery.isPending
-    ? 'loading'
-    : sessionQuery.data
-      ? 'authenticated'
-      : 'unauthenticated';
+  const status: AuthStatus = sessionQuery.data
+    ? 'authenticated'
+    : sessionQuery.isPending
+      ? 'loading'
+      : sessionQuery.isError
+        ? 'error'
+        : 'unauthenticated';
 
   const session = sessionQuery.data ?? null;
+
+  const retrySession = useCallback(() => {
+    void queryClient.refetchQueries({ queryKey: AUTH_SESSION_QUERY_KEY });
+  }, [queryClient]);
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
@@ -138,14 +167,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       status,
       session,
+      sessionError: sessionQuery.error,
       isAuthenticated: status === 'authenticated',
       mustChangePassword: session?.mustChangePassword ?? false,
       login,
       changePassword,
       logout,
       hasPermission,
+      retrySession,
     }),
-    [status, session, login, changePassword, logout, hasPermission],
+    [
+      status,
+      session,
+      sessionQuery.error,
+      login,
+      changePassword,
+      logout,
+      hasPermission,
+      retrySession,
+    ],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
