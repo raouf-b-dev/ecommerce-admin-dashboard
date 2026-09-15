@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { ChangePasswordForm } from '@/features/auth/components/change-password-form';
-import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
+import { AuthRequestError } from '@/lib/api/parse-auth-error';
 
 const mockChangePassword = vi.fn();
 const mockNavigate = vi.fn();

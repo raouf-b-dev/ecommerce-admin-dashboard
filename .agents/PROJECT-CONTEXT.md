@@ -28,7 +28,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 ## Local Environment
 
 - Admin dev server intent: `http://localhost:5174`
-- API origin: `VITE_API_BASE_URL` (this repo’s default is `http://localhost:3000`; match the API `PORT` if remapped)
+- API origin: `VITE_API_BASE_URL` (this repo's default is `http://localhost:3000`; match the API `PORT` if remapped)
 - Live API boot, Docker, and seed credentials: API [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start), [LOCAL-SETUP.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md), and [SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md)
 - Seeded operator accounts start with `mustChangePassword: true`. First login lands on `/change-password` before the shell.
 - Cross-origin local development assumes the API allows `http://localhost:5174` with `credentials: true`.
@@ -45,7 +45,8 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `src/features/` -> feature folders (`dashboard`, `products`, `orders`, `auth`, etc.)
 - `src/features/<name>/pages/` -> route entry components per feature
 - `src/features/<name>/hooks/` -> TanStack Query (auth has none; session is in `lib/auth`)
-- `src/lib/auth/` -> `AuthProvider`, route guards (`IndexLandingGate`, safe landing), permission helpers
+- `src/lib/auth/` -> `AuthProvider`, session HTTP (`session-api`), route guards (`IndexLandingGate`, safe landing), permission helpers, forbidden/operator-denied pages
+- `src/lib/query-keys/` -> order / inventory / dashboard Query key factories (shared by feature hooks and `WebSocketProvider`; `lib` cannot import `features`)
 - `src/lib/ws/` -> WebSocket gateway connection (`socket.io-client`), notification envelope, TanStack Query invalidation
 - `src/lib/format.ts` -> shared money/date formatting
 - `docs/architecture/` -> SPA architecture overview and ADRs
@@ -55,6 +56,8 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 - `docs/` -> roadmap, API integration notes, AI conventions
 
 ## Upcoming Feature Order
+
+**Next up** (see [`docs/ROADMAP.md`](../docs/ROADMAP.md)): finish **12.5** remaining polish (guided empty states, optional Cmd+K / trend badges); optional **12** payments ops; **14** dashboard operational facts (blocked on API OpenAPI fields). Staff slices **8b/8c** are done (folded into Phase 8).
 
 1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done**
 2. ~~Operator gate + silent refresh~~ **done**
@@ -69,14 +72,14 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 10. ~~Existing writes (product delete, user activate, roles UI)~~ **done**
 11. ~~API gaps then SPA (product activate, assign role)~~ **done**
 12. ~~User address book (list on user detail + existing writes)~~ **done**
-12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **done (core slice)**
+12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **core slice done** - remaining: empty-state checklist, optional Cmd+K / trend badges
 13. ~~Release gate (live API stranger quick start + operator smoke)~~ **done** - see [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md)
 13.5. ~~Visual showcase (hero WebP walkthrough, 3 retina stills, README hero & matrix, UI/UX polish)~~ **done**
 12. Payments ops (optional; does not block the release gate)
 
 Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).
 
-Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for this repo’s delivery plan and done criteria.
+Use [`docs/ROADMAP.md`](../docs/ROADMAP.md) for this repo's delivery plan and done criteria.
 
 Mock mode boundaries (who may import `@/lib/mock`, Playwright vs MSW): [`docs/ai/CONVENTIONS.md`](../docs/ai/CONVENTIONS.md) §15.
 

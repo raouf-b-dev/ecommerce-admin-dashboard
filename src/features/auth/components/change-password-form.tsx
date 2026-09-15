@@ -17,8 +17,8 @@ import {
   type ChangePasswordFormValues,
 } from '@/features/auth/schemas/change-password-schema';
 import { useAuth } from '@/lib/auth/auth-context';
-import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
-import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
+import { AuthRequestError } from '@/lib/api/parse-auth-error';
+import { safeRedirectPath } from '@/lib/auth/safe-redirect-path';
 
 function resolveChangePasswordError(error: unknown): string {
   if (error instanceof AuthRequestError) {

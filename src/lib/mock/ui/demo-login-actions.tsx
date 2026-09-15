@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/button';
-import { NotOperatorError } from '@/features/auth/api/auth-api';
-import { navigateAfterLoginPath } from '@/features/auth/lib/navigate-after-login';
+import { useAuth } from '@/lib/auth/auth-context';
+import { navigateAfterLoginPath } from '@/lib/auth/navigate-after-login';
+import { NotOperatorError } from '@/lib/auth/session-api';
 import {
   DEMO_ADMIN_EMAIL,
   DEMO_ADMIN_PASSWORD,
 } from '@/lib/mock/constants';
-import { useAuth } from '@/lib/auth/auth-context';
 
 /** Mock-mode-only chrome: banner + 1-click demo login. */
 export default function DemoLoginActions() {

@@ -3,9 +3,9 @@ import {
   loginRequest,
   NotOperatorError,
   refreshSessionRequest,
-} from '@/features/auth/api/auth-api';
+} from '@/lib/auth/session-api';
 
-vi.mock('@/features/auth/lib/jwt-decode', () => ({
+vi.mock('@/lib/auth/jwt-decode', () => ({
   decodeAccessTokenClaims: vi.fn(),
 }));
 
@@ -24,7 +24,7 @@ vi.mock('@/lib/api/silent-refresh', () => ({
   silentRefreshSession: vi.fn(),
 }));
 
-import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
+import { decodeAccessTokenClaims } from '@/lib/auth/jwt-decode';
 import { clearAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
 import { silentRefreshSession } from '@/lib/api/silent-refresh';

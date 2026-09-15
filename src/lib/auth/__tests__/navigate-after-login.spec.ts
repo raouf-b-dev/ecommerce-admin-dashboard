@@ -1,5 +1,5 @@
-import { navigateAfterLoginPath } from '@/features/auth/lib/navigate-after-login';
-import type { AuthSession } from '@/features/auth/types';
+import { navigateAfterLoginPath } from '@/lib/auth/navigate-after-login';
+import type { AuthSession } from '@/lib/auth/types';
 
 describe('navigateAfterLoginPath', () => {
   const baseSession: AuthSession = {

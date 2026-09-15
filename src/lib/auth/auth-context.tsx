@@ -17,13 +17,13 @@ import {
   loginRequest,
   logoutRequest,
   refreshSessionRequest,
-} from '@/features/auth/api/auth-api';
+} from '@/lib/auth/session-api';
 import type {
   AuthSession,
   AuthStatus,
   ChangePasswordInput,
   LoginCredentials,
-} from '@/features/auth/types';
+} from '@/lib/auth/types';
 import { clearAccessToken, getAccessToken } from '@/lib/auth/auth-session';
 import { hasPermission as checkPermission } from '@/lib/auth/permissions';
 import { onSessionRefreshed } from '@/lib/api/silent-refresh';

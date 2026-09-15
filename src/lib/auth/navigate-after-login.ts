@@ -1,5 +1,5 @@
-import type { AuthSession } from '@/features/auth/types';
-import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
+import type { AuthSession } from '@/lib/auth/types';
+import { safeRedirectPath } from '@/lib/auth/safe-redirect-path';
 import { getDefaultLandingRoute } from '@/lib/auth/safe-landing';
 
 /** Destination after a successful login / demo login. */

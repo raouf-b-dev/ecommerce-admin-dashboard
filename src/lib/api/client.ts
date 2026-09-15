@@ -34,14 +34,7 @@ export function shouldRedirectToChangePassword(
     return false;
   }
 
-  if (body.code === 'MUST_CHANGE_PASSWORD') {
-    return true;
-  }
-
-  return (
-    typeof body.message === 'string' &&
-    body.message.includes('Password change required')
-  );
+  return body.code === 'MUST_CHANGE_PASSWORD';
 }
 
 function redirectToChangePassword(): void {

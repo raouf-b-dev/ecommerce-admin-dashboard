@@ -13,8 +13,8 @@ import {
   listProductsRequest,
   updateProductRequest,
 } from '@/features/products/api/products-api';
-import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
-import { inventoryKeys } from '@/features/inventory/hooks/inventory-keys';
+import { dashboardKeys } from '@/lib/query-keys/dashboard-keys';
+import { inventoryKeys } from '@/lib/query-keys/inventory-keys';
 import { productKeys } from '@/features/products/hooks/product-keys';
 import { normalizeProductListFilters } from '@/features/products/lib/product-list-filters';
 import type {

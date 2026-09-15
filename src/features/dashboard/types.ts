@@ -1,4 +1,5 @@
 import type { components } from '@/lib/api/generated/schema';
+import type { DashboardPeriodDays } from '@/lib/query-keys/dashboard-keys';
 
 export type AnalyticsOverviewResponseDto =
   components['schemas']['AnalyticsOverviewResponseDto'];
@@ -17,8 +18,6 @@ export type InventoryAlertsResponseDto =
   components['schemas']['InventoryAlertsResponseDto'];
 export type InventoryAlertItemDto =
   components['schemas']['InventoryAlertItemDto'];
-
-export type DashboardPeriodDays = 7 | 30 | 90;
 
 export type DashboardPeriod = {
   days: DashboardPeriodDays;

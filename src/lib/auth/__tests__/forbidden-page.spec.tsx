@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { ForbiddenPage } from '@/features/auth/pages/forbidden-page';
+import { ForbiddenPage } from '@/lib/auth/forbidden-page';
 
 const mockUseAuth = vi.fn();
 

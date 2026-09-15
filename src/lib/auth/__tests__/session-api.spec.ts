@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { buildSessionFromAccessToken } from '@/features/auth/api/auth-api';
+import { buildSessionFromAccessToken } from '@/lib/auth/session-api';
 
-vi.mock('@/features/auth/lib/jwt-decode', () => ({
+vi.mock('@/lib/auth/jwt-decode', () => ({
   decodeAccessTokenClaims: vi.fn(),
 }));
 
@@ -10,7 +10,7 @@ vi.mock('@/lib/auth/auth-session', () => ({
   clearAccessToken: vi.fn(),
 }));
 
-import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
+import { decodeAccessTokenClaims } from '@/lib/auth/jwt-decode';
 
 describe('buildSessionFromAccessToken', () => {
   beforeEach(() => {

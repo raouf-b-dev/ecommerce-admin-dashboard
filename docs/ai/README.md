@@ -9,6 +9,7 @@ This folder contains the coding conventions and workflow guidance used by humans
 | [../../AGENT.md](../../AGENT.md) | Canonical repository policy |
 | [../../.agents/PROJECT-CONTEXT.md](../../.agents/PROJECT-CONTEXT.md) | Compact project snapshot |
 | [CONVENTIONS.md](CONVENTIONS.md) | SPA coding and structure conventions |
+| [ANTI-PATTERNS.md](ANTI-PATTERNS.md) | Good/bad snippets + review checklist |
 | [GOVERNANCE-AND-QUALITY-GATES.md](GOVERNANCE-AND-QUALITY-GATES.md) | Merge and verification gates |
 | [WORKFLOW-PLAYBOOK.md](WORKFLOW-PLAYBOOK.md) | Task execution checklist |
 

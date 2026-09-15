@@ -32,12 +32,12 @@ describe('shouldRedirectToChangePassword', () => {
     ).toBe(true);
   });
 
-  it('redirects on message fallback when code is absent (legacy production shape)', () => {
+  it('does not redirect on English message alone when code is absent', () => {
     expect(
       shouldRedirectToChangePassword(403, '/v1/products', {
         message: 'Password change required before accessing this resource',
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('does not redirect for authentication paths', () => {

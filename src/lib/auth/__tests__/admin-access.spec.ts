@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ACCESS_ADMIN_PERMISSION } from '@/features/auth/constants/admin-access';
+import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
 import { hasPermission } from '@/lib/auth/permissions';
 
 describe('ACCESS_ADMIN_PERMISSION', () => {
