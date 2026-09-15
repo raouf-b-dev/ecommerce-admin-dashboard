@@ -1,11 +1,11 @@
 import { Navigate, useSearchParams } from 'react-router';
 import type { ReactNode } from 'react';
-import { safeRedirectPath } from '@/features/auth/lib/safe-redirect-path';
 import {
   AuthLoadingScreen,
   AuthSessionErrorScreen,
 } from '@/lib/auth/auth-loading-screen';
 import { useAuth } from '@/lib/auth/auth-context';
+import { safeRedirectPath } from '@/lib/auth/safe-redirect-path';
 
 type GuestRouteProps = {
   children: ReactNode;

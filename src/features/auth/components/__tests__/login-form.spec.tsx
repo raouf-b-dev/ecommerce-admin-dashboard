@@ -1,6 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { LoginForm } from '@/features/auth/components/login-form';
+import { NotOperatorError } from '@/lib/auth/session-api';
 
 const mockLogin = vi.fn();
 const mockNavigate = vi.fn();
@@ -86,7 +87,6 @@ describe('LoginForm', () => {
   });
 
   it('shows operator-denied message for non-operator accounts', async () => {
-    const { NotOperatorError } = await import('@/features/auth/api/auth-api');
     mockLogin.mockRejectedValue(new NotOperatorError());
 
     render(

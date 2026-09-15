@@ -1,4 +1,4 @@
-import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
+import { AuthRequestError } from '@/lib/api/parse-auth-error';
 
 export type ParsedApiError = {
   statusCode: number;
@@ -132,13 +132,13 @@ export function hasHttpStatus(
 }
 
 /**
- * Semantic RFC 9110 client error check (HTTP 400–499).
+ * Semantic RFC 9110 client error check (HTTP 400-499).
  */
 export const isClientError = (error: unknown): boolean =>
   isStatusInRange(error, 400, 499);
 
 /**
- * Semantic RFC 9110 server error check (HTTP 500–599).
+ * Semantic RFC 9110 server error check (HTTP 500-599).
  */
 export const isServerError = (error: unknown): boolean =>
   isStatusInRange(error, 500, 599);

@@ -1,6 +1,5 @@
 import { formatStatusLabel } from '@/lib/format';
-
-export type DashboardPeriodDays = 7 | 30 | 90;
+import type { DashboardPeriodDays } from '@/lib/query-keys/dashboard-keys';
 
 export function buildDashboardPeriod(
   days: DashboardPeriodDays,

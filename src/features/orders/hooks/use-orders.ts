@@ -10,8 +10,8 @@ import {
   transitionOrderRequest,
 } from '@/features/orders/api/orders-api';
 import { getOrderPaymentRequest } from '@/features/orders/api/order-payments-api';
-import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
-import { orderKeys } from '@/features/orders/hooks/order-keys';
+import { dashboardKeys } from '@/lib/query-keys/dashboard-keys';
+import { orderKeys } from '@/lib/query-keys/order-keys';
 import { normalizeOrderListFilters } from '@/features/orders/lib/order-list-filters';
 import type {
   OrderListFilters,
