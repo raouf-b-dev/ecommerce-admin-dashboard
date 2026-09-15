@@ -48,7 +48,7 @@ export function isAccessTokenUsable(
 
 /**
  * Delay until the session query should refresh the access token.
- * `null` means no timer (JWT has no exp). `0` is never returned — callers get
+ * `null` means no timer (JWT has no exp). `0` is never returned - callers get
  * at least {@link MIN_REFRESH_DELAY_MS} so a missing/expired token cannot spin.
  */
 export function msUntilAccessTokenRefresh(

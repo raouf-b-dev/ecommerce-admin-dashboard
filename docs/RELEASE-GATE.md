@@ -6,13 +6,13 @@ Credentials stay in the API [seeding guide](https://github.com/raouf-b-dev/ecomm
 
 ## Before you start
 
-1. `ecommerce-store-api` is running. Follow that repository’s [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) (Docker and seed steps live there).
+1. `ecommerce-store-api` is running. Follow that repository's [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) (Docker and seed steps live there).
 2. This dashboard is configured (`npm run env:init`) and served with `npm run dev` on port **5174**. Point `VITE_API_BASE_URL` at the API origin from step 1 (this repo defaults to `http://localhost:3000`).
 3. If you will run Playwright, check out `ecommerce-store-api` as a **sibling directory** (`../ecommerce-store-api`) so `e2e/global-setup.ts` can reset demo auth. Otherwise set `E2E_SKIP_DB_SEED=1` and seed the API yourself. See [`e2e/README.md`](../e2e/README.md).
 
 The API rate-limits login and register. Run automated e2e **before** a long manual login walk, or wait about a minute after browser sign-ins before `npm run test:e2e`. Current limits: API docs.
 
-There is only one seeded **confirmed** demo order. Playwright’s orders spec needs it. Run `npm run test:e2e` **before** you Process or Ship that order by hand. If you already mutated it, restore catalog and orders using the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) before e2e.
+There is only one seeded **confirmed** demo order. Playwright's orders spec needs it. Run `npm run test:e2e` **before** you Process or Ship that order by hand. If you already mutated it, restore catalog and orders using the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) before e2e.
 
 ## Stranger boot
 
