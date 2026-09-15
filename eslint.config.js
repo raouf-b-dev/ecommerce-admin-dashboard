@@ -15,6 +15,7 @@ export default tseslint.config(
       'test-results',
       '*.d.ts',
       'src/lib/api/generated',
+      'scripts/**',
     ],
   },
   js.configs.recommended,
@@ -27,14 +28,6 @@ export default tseslint.config(
       sourceType: 'module',
       globals: {
         ...globals.node,
-      },
-    },
-  },
-  {
-    files: ['scripts/**/*.{js,mjs,cjs}'],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
       },
     },
   },
