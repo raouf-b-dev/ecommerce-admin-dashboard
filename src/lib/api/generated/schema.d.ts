@@ -1566,6 +1566,16 @@ export interface components {
             shippingAddress: string;
             items: components["schemas"]["OrderItemDetailResponseDto"][];
             /**
+             * @description Order subtotal (sum of line items)
+             * @example 199.99
+             */
+            subtotal: number;
+            /**
+             * @description Shipping cost. MVP policy: explicit zero until a shipping engine ships.
+             * @example 0
+             */
+            shippingCost: number;
+            /**
              * @description Order total amount
              * @example 224.94
              */
@@ -2410,7 +2420,17 @@ export interface components {
              */
             itemCount: number;
             /**
-             * @description Cart total amount
+             * @description Cart subtotal (sum of line items)
+             * @example 299.97
+             */
+            subtotal: number;
+            /**
+             * @description Shipping cost for the cart. MVP policy: always 0 until a shipping engine ships.
+             * @example 0
+             */
+            shippingCost: number;
+            /**
+             * @description Cart total amount (subtotal + shippingCost)
              * @example 299.97
              */
             totalAmount: number;

@@ -23,7 +23,7 @@ Pick the first unchecked work. Letter suffixes (`8a`, `8b`, `8c`) are stable IDs
 
 1. **Finish Phase 12.5** - remaining polish: guided empty-state checklist, then optional Cmd+K and trend badges.
 2. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
-3. **Phase 14** - Dashboard operational facts (blocked on API OpenAPI fields / API Phase **23**).
+3. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
 
 ---
 
@@ -153,8 +153,6 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 > **Goal**: Display operational order age, payment mix, and inventory sell-through facts once live storefront and payment flows exist.
 
 **Blocked on:** OpenAPI contracts exposing `payment_failed` on attention, order age (`oldestCreatedAt` / `oldestUpdatedAt`), payment counts (`failedPaymentCount` / `pendingPaymentCount`), and inventory fields (`unitsSold7d` / `reservedQuantity`).
-
-**Planning reference:** Sibling API roadmap section *Analytics Attention & Operational Facts* (currently tracked as API 17d).
 
 **Scope:**
 - [ ] **Attention Pulse**: Surface `payment_failed` orders with direct links to cancel/manage; display order age chips (`oldestCreatedAt` / `oldestUpdatedAt`).

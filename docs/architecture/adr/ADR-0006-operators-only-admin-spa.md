@@ -41,7 +41,7 @@ Hardcoding allowed role codes (`SUPER_ADMIN` | `ADMIN`) would block future custo
 
 ## 4. Consequences
 
-- Seeded `customer@store.local` cannot use Control Center.
+- Seeded customer accounts cannot use Control Center.
 - Granting `access_admin` to a custom role (API) plus mirroring it in the SPA UX map (until a profile/permissions API exists) admits that role.
 - Operators still rely on API authorization for every domain call (ADR-0003).
 - Change-password remains outside `OperatorRoute` (authenticated + must-change gate only) so operators can rotate passwords before entering the shell.
