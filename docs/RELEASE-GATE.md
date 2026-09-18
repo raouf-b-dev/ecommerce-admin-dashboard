@@ -32,7 +32,7 @@ Use the seeded **administrator** unless a row says otherwise.
 - [ ] **Inventory - adjust:** Open a high-stock row, **Adjust stock**, ADD 1, apply. Available quantity increases by 1. SUBTRACT 1 to restore the seed value.
 - [ ] **Inventory - conflict banner:** Open the adjust dialog and confirm the conflict alert slot exists. A live HTTP 409 needs two concurrent writes; unit tests cover `isOptimisticLockConflict`. Do not invent a client `version` field.
 - [ ] **Orders - process then ship:** Filter to **confirmed**, open the demo order, **Process**, then **Ship**. Confirm on the pending-payment order needs a completed payment (not in this loop). Do not add a payments capture step here.
-- [ ] **Users - status:** Open `customer@store.local`, deactivate, then reactivate so the account stays usable.
+- [ ] **Users - status:** Open the seeded **customer** account, deactivate, then reactivate so the account stays usable.
 - [ ] **Users - addresses:** Add an address, **Set default**, then delete the address you added (leave the seeded home address).
 - [ ] **Roles - hidden for administrator:** User detail must **not** show Change role / Assigned role. The seeded administrator does not have `manage_roles`.
 

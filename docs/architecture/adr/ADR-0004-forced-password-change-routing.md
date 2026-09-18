@@ -2,7 +2,7 @@
 
 - **Status**: Accepted
 - **Date**: 2026-08-29
-- **Context**: API Phase 14b (`mustChangePassword`); admin Phase 2.5
+- **Context**: API `mustChangePassword` session contract; admin Phase 2.5
 
 ---
 

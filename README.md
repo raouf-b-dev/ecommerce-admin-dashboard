@@ -22,7 +22,7 @@ A Vite + React operator console. Screens are typed from the API OpenAPI spec: da
 
 The UI hides nav or shows a forbidden page when a permission is missing. Authorization still happens on the API. There is no BFF.
 
-No hosted demo. Payments on order detail are read-only. `npm run dev:mock` is for UI work; Playwright still needs a live API.
+No hosted demo. Payments use a mock adapter behind a swappable hexagonal port; order detail views are read-only. `npm run dev:mock` is for UI work; Playwright still needs a live API.
 
 ## Quick start
 
@@ -124,7 +124,14 @@ Vite, React 19, TypeScript, Tailwind + shadcn/ui, TanStack Query, TanStack Table
 
 [`docs/README.md`](docs/README.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
 
-Related: [`ecommerce-store-api`](https://github.com/raouf-b-dev/ecommerce-store-api) (backend). `ecommerce-store-web` (storefront) is not published yet.
+## Related repositories
+
+| Repository | Role |
+| :-- | :-- |
+| [`ecommerce-store-api`](https://github.com/raouf-b-dev/ecommerce-store-api) | Backend API |
+| [`ecommerce-store-web`](https://github.com/raouf-b-dev/ecommerce-store-web) | Customer storefront |
+
+Each repository runs independently. Clone companions from the table when you need a full local stack.
 
 ```
 src/
