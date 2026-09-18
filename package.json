@@ -19,7 +19,10 @@
     "env:init": "node ./scripts/generate-env.js",
     "env:init:force": "node ./scripts/generate-env.js --overwrite",
     "env:init:secrets": "node ./scripts/generate-env.js --secrets-only",
-    "env:init:secrets:force": "node ./scripts/generate-env.js --secrets-only --overwrite"
+    "env:init:secrets:force": "node ./scripts/generate-env.js --secrets-only --overwrite",
+    "assets:stills": "node ./scripts/capture-showcase.js",
+    "assets:walkthrough": "node ./scripts/create-walkthrough.js",
+    "assets:capture": "npm run assets:stills && npm run assets:walkthrough"
   },
   "overrides": {
     "openapi-typescript": {
