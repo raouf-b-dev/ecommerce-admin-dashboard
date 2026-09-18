@@ -8,7 +8,7 @@ async function main() {
     fs.mkdirSync(assetsDir, { recursive: true });
   }
 
-  const baseUrl = process.env.BASE_URL ?? 'http://localhost:5175';
+  const baseUrl = process.env.BASE_URL ?? 'http://localhost:5174';
 
   console.log(`Starting showcase capture at ${baseUrl} (1440x900 @ 2x -> 2880x1800)...`);
   const browser = await chromium.launch({ headless: true });

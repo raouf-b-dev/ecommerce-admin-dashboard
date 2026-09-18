@@ -1,6 +1,6 @@
 # Operator smoke and live verification
 
-Walk this list against a **live** API. Mock mode (`npm run dev:mock`) is a demo only and does not satisfy this checklist.
+Repeatable runbook against a **live** API. Checkboxes stay open for each manual pass; phase completion is tracked in [`ROADMAP.md`](ROADMAP.md). Mock mode (`npm run dev:mock`) is a demo only and does not satisfy this checklist.
 
 Credentials stay in the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). Do not paste passwords into this repository.
 

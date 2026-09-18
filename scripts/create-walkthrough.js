@@ -92,7 +92,7 @@ async function captureWalkthrough() {
   });
 
   const page = await context.newPage();
-  const baseUrl = process.env.BASE_URL ?? 'http://localhost:5175';
+  const baseUrl = process.env.BASE_URL ?? 'http://localhost:5174';
   const frames = [];
 
   async function snap(description) {
