@@ -92,7 +92,7 @@ Write tests **with** each feature.
 | **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                  |
 | **11.5** | User address book                  | Done   | User detail address list + existing OpenAPI writes                              |
 | **13**   | Technical release gate             | Done   | Production validation against API, clean install quickstart, smoke              |
-| **13.5** | Visual Showcase & Portfolio Assets | Done   | Animated WebP/GIF hero recording, Retina screenshots, README hero               |
+| **13.5** | Visual Showcase & Portfolio Assets | Done   | Hero WebP, Retina screenshots, README embeds; refresh via `scripts/create-walkthrough.js` |
 
 ---
 
@@ -128,6 +128,18 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 
 **Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
 **Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`
+
+---
+
+## Phase 13.5: Visual Showcase & Portfolio Assets (complete)
+
+> Portfolio media for README and docs. Regenerate with Playwright while `npm run dev:mock` is running on port **5174**:
+>
+> - `npm run assets:stills` → Retina PNG stills (`scripts/capture-showcase.js`)
+> - `npm run assets:walkthrough` → animated hero WebP (`scripts/create-walkthrough.js`)
+> - `npm run assets:capture` → both
+
+**Location:** `docs/assets/`, `scripts/capture-showcase.js`, `scripts/create-walkthrough.js`, `README.md`
 
 ---
 
