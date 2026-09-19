@@ -474,6 +474,7 @@ function OrdersPage() {
             items={data.items}
             total={data.total}
             filters={filters}
+            hasActiveFilters={hasActiveOrderListFilters(filters)}
             onFiltersChange={updateFilters}
           />
         ) : null}

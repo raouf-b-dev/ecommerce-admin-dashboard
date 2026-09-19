@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
+import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { formatDateTime } from '@/lib/format';
 import {
@@ -32,6 +33,7 @@ type UsersTableProps = {
   items: UserListItemResponseDto[];
   total: number;
   filters: UserListFilters;
+  hasActiveFilters: boolean;
   roleNamesByCode?: Record<string, string>;
   onFiltersChange: (next: UserListFilters) => void;
 };
@@ -42,6 +44,7 @@ export function UsersTable({
   items,
   total,
   filters,
+  hasActiveFilters,
   roleNamesByCode,
   onFiltersChange,
 }: UsersTableProps) {
@@ -140,11 +143,19 @@ export function UsersTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No users found.
+                <TableCell colSpan={columns.length} className="h-auto py-4">
+                  <TableEmptyState
+                    title={
+                      hasActiveFilters
+                        ? 'No users match your filters.'
+                        : 'No users found.'
+                    }
+                    description={
+                      hasActiveFilters
+                        ? 'Try clearing filters or broadening your search.'
+                        : undefined
+                    }
+                  />
                 </TableCell>
               </TableRow>
             )}

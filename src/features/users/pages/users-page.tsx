@@ -13,6 +13,7 @@ import { UsersTable } from '@/features/users/components/users-table';
 import { useRolesListQuery } from '@/features/roles/hooks/use-roles';
 import { useUsersListQuery } from '@/features/users/hooks/use-users';
 import {
+  hasActiveUserListFilters,
   userListFiltersFromSearchParams,
   userListFiltersToSearchParams,
 } from '@/features/users/lib/user-list-filters';
@@ -181,6 +182,7 @@ function UsersPage() {
             items={data.items}
             total={data.total}
             filters={filters}
+            hasActiveFilters={hasActiveUserListFilters(filters)}
             roleNamesByCode={roleNamesByCode}
             onFiltersChange={updateFilters}
           />

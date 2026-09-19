@@ -122,7 +122,7 @@ Vite, React 19, TypeScript, Tailwind + shadcn/ui, TanStack Query, TanStack Table
 
 ## Docs
 
-[`docs/README.md`](docs/README.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
+[`docs/README.md`](docs/README.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
 
 ## Related repositories
 
@@ -140,6 +140,10 @@ src/
 ├── components/   # shell, theme, shared UI
 └── lib/          # OpenAPI client, auth, WebSocket
 ```
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Please follow the [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## License
 

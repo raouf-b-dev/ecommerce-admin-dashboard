@@ -117,7 +117,7 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 **Scope:**
 - [x] **Working Theme Provider:** Replace the previously removed non-functional placeholder with an accessible Dark/Light/System theme provider linked to Tailwind CSS tokens and `localStorage` persistence.
 - [x] **Real-Time WebSocket Feed:** Connect to API WebSocket gateway (`socket.io-client`). Show animated toast notifications when new orders arrive or stock drops below threshold, with query cache invalidation.
-- [ ] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
+- [x] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
 - [ ] **Command Palette (`Cmd+K` / `Ctrl+K`) [P2]:** Fast keyboard search and quick navigation across products, orders, customers, and setting views.
 - [ ] **Visual Micro-Interactions & Trend Badges [P2]:** Add trend percentage pills (▲/▼ % vs previous period) on dashboard cards and animated skeleton loaders during query transitions.
 - [x] **Silent refresh updates session Query:** After mid-request token refresh, update `AUTH_SESSION_QUERY_KEY` with permissions / `mustChangePassword` (not only `setAccessToken`), so nav chrome stays accurate if roles change mid-session.

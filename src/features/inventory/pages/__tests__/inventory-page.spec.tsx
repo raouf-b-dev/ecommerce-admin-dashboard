@@ -34,6 +34,26 @@ vi.mock('@/features/inventory/hooks/use-inventory', () => ({
   useInventoryListQuery: listQueryMock,
 }));
 
+vi.mock('@/features/products/hooks/use-products', () => ({
+  useProductsListQuery: () => ({
+    data: { items: [], total: 0, page: 1, limit: 1, totalPages: 0 },
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+    isFetching: false,
+  }),
+}));
+
+vi.mock('@/lib/auth/auth-context', () => ({
+  useAuth: () => ({
+    session: {
+      permissions: ['manage_products', 'manage_inventory', 'manage_roles'],
+    },
+    hasPermission: () => true,
+  }),
+}));
+
 describe('InventoryPage', () => {
   beforeEach(() => {
     listQueryMock.mockReset();
@@ -56,7 +76,9 @@ describe('InventoryPage', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Inventory' })).toBeInTheDocument();
-    expect(screen.getByText('No inventory found.')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'First-time operator setup' }),
+    ).toBeInTheDocument();
   });
 
   it('shows error alert with retry when the query fails', () => {
