@@ -17,7 +17,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
+import { OperatorSetupChecklist } from '@/components/feedback/operator-setup-checklist';
+import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { formatDateTime } from '@/lib/format';
+import type { OperatorSetupStepView } from '@/lib/operator-setup';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   InventoryListFilters,
@@ -29,6 +32,8 @@ type InventoryTableProps = {
   items: InventoryListItemResponseDto[];
   total: number;
   filters: InventoryListFilters;
+  hasActiveFilters: boolean;
+  setupSteps?: OperatorSetupStepView[];
   onFiltersChange: (next: InventoryListFilters) => void;
 };
 
@@ -36,10 +41,39 @@ const features = tableFeatures({});
 
 type InventorySortBy = NonNullable<ListInventoryQuery['sortBy']>;
 
+function InventoryTableEmpty({
+  total,
+  hasActiveFilters,
+  setupSteps,
+}: Pick<
+  InventoryTableProps,
+  'total' | 'hasActiveFilters' | 'setupSteps'
+>) {
+  const showSetup =
+    total === 0 && !hasActiveFilters && setupSteps && setupSteps.length > 0;
+
+  if (showSetup) {
+    return <OperatorSetupChecklist steps={setupSteps} />;
+  }
+
+  if (hasActiveFilters) {
+    return (
+      <TableEmptyState
+        title="No inventory matches your filters."
+        description="Try clearing filters or broadening your search."
+      />
+    );
+  }
+
+  return <TableEmptyState title="No inventory found." />;
+}
+
 export function InventoryTable({
   items,
   total,
   filters,
+  hasActiveFilters,
+  setupSteps,
   onFiltersChange,
 }: InventoryTableProps) {
   function handleSortChange(
@@ -161,11 +195,12 @@ export function InventoryTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No inventory found.
+                <TableCell colSpan={columns.length} className="h-auto py-4">
+                  <InventoryTableEmpty
+                    total={total}
+                    hasActiveFilters={hasActiveFilters}
+                    setupSteps={setupSteps}
+                  />
                 </TableCell>
               </TableRow>
             )}

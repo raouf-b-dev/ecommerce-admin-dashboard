@@ -20,6 +20,7 @@ import {
 } from '@/features/products/lib/product-list-filters';
 import type { ProductListFilters } from '@/features/products/types';
 import { useAuth } from '@/lib/auth/auth-context';
+import { buildOperatorSetupSteps } from '@/lib/operator-setup';
 
 type ActiveFilter = '' | 'true' | 'false';
 
@@ -33,12 +34,16 @@ function productFilterDraftKey(filters: ProductListFilters): string {
 }
 
 function ProductsPage() {
-  const { hasPermission } = useAuth();
+  const { hasPermission, session } = useAuth();
   const canManage = hasPermission('manage_products');
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = productListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
     useProductsListQuery(filters);
+  const setupSteps = buildOperatorSetupSteps(
+    session?.permissions ?? [],
+    data?.total ?? 0,
+  );
   const { data: categories } = useCategoriesListQuery();
 
   const [searchDraft, setSearchDraft] = useState(filters.search ?? '');
@@ -376,6 +381,8 @@ function ProductsPage() {
             total={data.total}
             filters={filters}
             canManage={canManage}
+            hasActiveFilters={hasActiveProductListFilters(filters)}
+            setupSteps={setupSteps}
             onFiltersChange={updateFilters}
           />
         ) : null}

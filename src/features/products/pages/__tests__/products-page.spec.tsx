@@ -30,10 +30,17 @@ const listQueryMock = vi.hoisted(() =>
   })),
 );
 
+const adminPermissions = [
+  'manage_products',
+  'manage_inventory',
+  'manage_roles',
+];
+
 const authMock = vi.hoisted(() =>
   vi.fn(() => ({
+    session: { permissions: adminPermissions },
     hasPermission: (permission?: string): boolean =>
-      permission === 'manage_products',
+      permission ? adminPermissions.includes(permission) : true,
   })),
 );
 
@@ -68,8 +75,9 @@ describe('ProductsPage', () => {
   beforeEach(() => {
     listQueryMock.mockReset();
     authMock.mockReturnValue({
+      session: { permissions: adminPermissions },
       hasPermission: (permission?: string) =>
-        permission === 'manage_products',
+        permission ? adminPermissions.includes(permission) : true,
     });
   });
 
@@ -90,7 +98,10 @@ describe('ProductsPage', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Products' })).toBeInTheDocument();
-    expect(screen.getByText('No products found.')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'First-time operator setup' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Add your first product')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Manage categories' }),
     ).toBeInTheDocument();
@@ -99,6 +110,7 @@ describe('ProductsPage', () => {
 
   it('shows Manage categories when manage_products is missing', () => {
     authMock.mockReturnValue({
+      session: { permissions: [] },
       hasPermission: () => false,
     });
     listQueryMock.mockReturnValue({

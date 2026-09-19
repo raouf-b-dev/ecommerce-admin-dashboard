@@ -85,3 +85,12 @@ export function userListFiltersToSearchParams(
 
   return params;
 }
+
+export function hasActiveUserListFilters(filters: UserListFilters): boolean {
+  const normalized = normalizeUserListFilters(filters);
+  return Boolean(
+    normalized.search ||
+      normalized.isActive !== undefined ||
+      normalized.roleCode,
+  );
+}

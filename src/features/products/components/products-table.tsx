@@ -17,7 +17,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
+import { OperatorSetupChecklist } from '@/components/feedback/operator-setup-checklist';
+import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { formatDate, formatMoney } from '@/lib/format';
+import type { OperatorSetupStepView } from '@/lib/operator-setup';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   ListProductsQuery,
@@ -30,6 +33,8 @@ type ProductsTableProps = {
   total: number;
   filters: ProductListFilters;
   canManage: boolean;
+  hasActiveFilters: boolean;
+  setupSteps?: OperatorSetupStepView[];
   onFiltersChange: (next: ProductListFilters) => void;
 };
 
@@ -50,11 +55,40 @@ function categoryLabel(item: ProductListItemResponseDto): string {
 
 type ProductSortBy = NonNullable<ListProductsQuery['sortBy']>;
 
+function ProductsTableEmpty({
+  total,
+  hasActiveFilters,
+  setupSteps,
+}: Pick<
+  ProductsTableProps,
+  'total' | 'hasActiveFilters' | 'setupSteps'
+>) {
+  const showSetup =
+    total === 0 && !hasActiveFilters && setupSteps && setupSteps.length > 0;
+
+  if (showSetup) {
+    return <OperatorSetupChecklist steps={setupSteps} />;
+  }
+
+  if (hasActiveFilters) {
+    return (
+      <TableEmptyState
+        title="No products match your filters."
+        description="Try clearing filters or broadening your search."
+      />
+    );
+  }
+
+  return <TableEmptyState title="No products found." />;
+}
+
 export function ProductsTable({
   items,
   total,
   filters,
   canManage,
+  hasActiveFilters,
+  setupSteps,
   onFiltersChange,
 }: ProductsTableProps) {
   function handleSortChange(sortBy: ProductSortBy, sortOrder: 'asc' | 'desc') {
@@ -168,11 +202,12 @@ export function ProductsTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No products found.
+                <TableCell colSpan={columns.length} className="h-auto py-4">
+                  <ProductsTableEmpty
+                    total={total}
+                    hasActiveFilters={hasActiveFilters}
+                    setupSteps={setupSteps}
+                  />
                 </TableCell>
               </TableRow>
             )}
