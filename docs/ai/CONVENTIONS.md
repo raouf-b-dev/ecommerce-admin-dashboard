@@ -25,13 +25,24 @@ src/features/products/
 
 Do **not** add barrel `index.ts` files. Import the concrete module.
 
+### Import matrix
+
+| From ↓ / To → | `app/` | `features/*` | `lib/` | `components/` |
+| :--- | :---: | :---: | :---: | :---: |
+| `app/` | ✓ | ✓ | ✓ | ✓ |
+| `features/A` | ✗ | other features OK (concrete modules) | ✓ | ✓ |
+| `lib/` | ✗ | **✗ forbidden** (ESLint `no-restricted-imports`) | ✓ | ✓ |
+| `components/` | ✗ | ✗ (prefer props) | ✓ | ✓ |
+
 Cross-feature dependencies must be imported directly from the target feature's concrete module (e.g. `@/features/roles/hooks/use-roles`). Do not create re-export shims or adapter files across features.
 
 Optional folders: `schemas/` and `hooks/` exist only when the feature has forms or server queries.
 
-**Auth exception:** `features/auth` has no `hooks/`. Session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`). Do not invent `useAuthQuery` in the feature.
+**Auth exception:** `features/auth` has no `hooks/` and no session HTTP wrappers. Session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`). Session HTTP, redirect helpers, JWT decode, operator access, and forbidden/operator-denied pages live under `src/lib/auth/`. Feature forms import those modules from `lib/` directly. Do not invent `useAuthQuery` in the feature. Do not add feature-folder re-export shims for code that already lives in `lib/`.
 
 Keep cross-feature primitives in `src/components/` (including `feedback/` for list query status) and cross-feature utilities in `src/lib/` (`format.ts`, API helpers, auth).
+
+**No-workaround:** If the OpenAPI contract is wrong, patch the API. Do not match English 403 messages or invent dual-dialect clients. Render only contract fields.
 
 ## 3. Layout and Shell
 
@@ -133,7 +144,7 @@ Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-h
 - Mid-request token refresh updates `AUTH_SESSION_QUERY_KEY` with updated claims and permissions, keeping UI chrome in sync.
 - Never silent-retry `/authentication/*` paths. Never pre-refresh login, register, or refresh requests.
 - **Safe landing for limited operators:** Route `/` and post-login redirection use `IndexLandingGate` and `getDefaultLandingRoute(permissions)` to land on the operator's first permitted route. The Forbidden page CTA links to this default route to prevent loops.
-- **Auth bootstrap retry:** `refreshSessionRequest` returns `null` on 401 (unauthenticated). Other failures throw. Differentiate 4xx rejections (`isClientError`: no retry) from transient 5xx or network errors (retry 2×). If the session query still errors with no data, guards show a retry surface — do not bounce to login.
+- **Auth bootstrap retry:** `refreshSessionRequest` returns `null` on 401 (unauthenticated). Other failures throw. Differentiate 4xx rejections (`isClientError`: no retry) from transient 5xx or network errors (retry 2×). If the session query still errors with no data, guards show a retry surface - do not bounce to login.
 - Treat rendered API strings as untrusted data.
 
 ## 11. Concurrency
@@ -145,6 +156,7 @@ Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-h
 
 - Add component tests alongside the UI they cover (`components/__tests__/`).
 - Page composition tests (empty / error / retry) live under `pages/__tests__/`. Hook-mocked page specs are the intended pattern; do not rewrite them onto `QueryClientProvider` unless you are testing the hook itself.
+- Prefer typed factories / fixtures over inline DTO literals in every spec.
 - Extend Playwright when a feature joins the critical path. The operator journey lives in `e2e/critical-path.spec.ts`.
 - Keep tests focused on user-visible behavior and contract wiring.
 
@@ -173,7 +185,7 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
   - `LoginPage` - lazy-load demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true
 - MSW must never be a static import in production entry paths; production `vite build` must not emit the mock browser/handlers chunk.
 - Playwright e2e targets a real seeded API. Mock mode is for local evaluation and static portfolio demos only.
-- Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature’s concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
+- Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature's concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
 
 ## 16. Theme System
 
@@ -189,6 +201,7 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 - Connection: `socket.io-client` targeting the API root origin with Bearer token authentication in `auth.token`.
 - Lifecycle: Handled by `WebSocketProvider` in the shell; connects on authenticated session, disconnects on unmount/logout.
 - Event Envelope: `NotificationEnvelope` with type/title matching via `isOrderNotification` and `isInventoryNotification`.
+- Query key factories used by this provider live in `src/lib/query-keys/` (`orderKeys`, `inventoryKeys`, `dashboardKeys`). Feature hooks import those same modules. Do not re-export them from `features/*/hooks`.
 - Reactivity: Incoming events trigger Sonner toasts and invalidate corresponding TanStack Query caches (`orderKeys.lists()`, `inventoryKeys.all`, `dashboardKeys.all`).
 - Mock Mode: In dev/mock mode, `window.dispatchMockNotification` is exposed for local event simulation without a live WebSocket gateway.
 
@@ -199,7 +212,25 @@ Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (align
 - **Semantic Predicates:**
   - `isStatusInRange(error, min, max)` - inclusive status range check
   - `hasHttpStatus(error, ...codes)` - exact status code match (e.g. `hasHttpStatus(error, 429)`)
-  - `isClientError(error)` - RFC 9110 client error (`400–499`)
-  - `isServerError(error)` - RFC 9110 server error (`500–599`)
+  - `isClientError(error)` - RFC 9110 client error (`400-499`)
+  - `isServerError(error)` - RFC 9110 server error (`500-599`)
   - `isOptimisticLockConflict(error)` - 409 conflict detection
 - Prefer these helpers over ad-hoc type casts (`error as ApiRequestError`) or direct status property access.
+
+## 19. ASCII prose (docs and comments)
+
+Docs, Markdown, and source comments must read like a human typed them in a plain editor. Do not use typography that chat models insert by default.
+
+`npm run lint` runs `scripts/lint-ascii-prose.cjs` on Markdown (except immutable `docs/architecture/adr/`) and on comments in `ts`/`tsx`/`js`. ESLint `ascii-prose/no-smart-punctuation` flags the same marks in comments in the editor.
+
+| Avoid | Use |
+| :--- | :--- |
+| Em dash (U+2014) | `-`, `:`, or a new sentence |
+| En dash (U+2013) | ASCII `-` in ranges (`8b-8c`, `400-499`) |
+| Curly quotes (U+2018/2019/201C/201D) | `'` and `"` |
+| Ellipsis character (U+2026) | `...` |
+| Non-breaking space or hyphen | Normal space / `-` |
+
+Do not decorate comments with emoji. Existing ADR bodies stay immutable; the linter skips `docs/architecture/adr/`.
+
+User-visible UI copy should follow the same ASCII habit for new strings. Existing loading labels are not in this lint yet.

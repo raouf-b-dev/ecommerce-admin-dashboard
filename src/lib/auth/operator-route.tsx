@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { ACCESS_ADMIN_PERMISSION } from '@/features/auth/constants/admin-access';
-import { OperatorDeniedPage } from '@/features/auth/pages/operator-denied-page';
+import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
+import { OperatorDeniedPage } from '@/lib/auth/operator-denied-page';
 import { useAuth } from '@/lib/auth/auth-context';
 
 type OperatorRouteProps = {

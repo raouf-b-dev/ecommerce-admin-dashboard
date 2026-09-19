@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
+import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { formatDateTime, formatMoney } from '@/lib/format';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type {
@@ -29,6 +30,7 @@ type OrdersTableProps = {
   items: OrderListItemResponseDto[];
   total: number;
   filters: OrderListFilters;
+  hasActiveFilters: boolean;
   onFiltersChange: (next: OrderListFilters) => void;
 };
 
@@ -40,6 +42,7 @@ export function OrdersTable({
   items,
   total,
   filters,
+  hasActiveFilters,
   onFiltersChange,
 }: OrdersTableProps) {
   function handleSortChange(sortBy: OrderSortBy, sortOrder: 'asc' | 'desc') {
@@ -153,11 +156,19 @@ export function OrdersTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No orders found.
+                <TableCell colSpan={columns.length} className="h-auto py-4">
+                  <TableEmptyState
+                    title={
+                      hasActiveFilters
+                        ? 'No orders match your filters.'
+                        : 'No orders found.'
+                    }
+                    description={
+                      hasActiveFilters
+                        ? 'Try clearing filters or broadening your search.'
+                        : 'Orders appear here after customers check out on the storefront.'
+                    }
+                  />
                 </TableCell>
               </TableRow>
             )}

@@ -3,9 +3,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/auth-context';
 import { getAccessToken } from '@/lib/auth/auth-session';
-import { orderKeys } from '@/features/orders/hooks/order-keys';
-import { inventoryKeys } from '@/features/inventory/hooks/inventory-keys';
-import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
+import { dashboardKeys } from '@/lib/query-keys/dashboard-keys';
+import { inventoryKeys } from '@/lib/query-keys/inventory-keys';
+import { orderKeys } from '@/lib/query-keys/order-keys';
 import {
   isInventoryNotification,
   isOrderNotification,

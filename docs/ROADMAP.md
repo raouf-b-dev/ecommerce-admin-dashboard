@@ -11,14 +11,23 @@
 - `[ ]` not started
 - `[/]` in progress
 - `[x]` done
-- Finish each phase before starting the next.
-  - **Parallel Work Exceptions**: **Phase 8a** (MSW mock mode) and **Phase 13.5** (visual portfolio assets) are DX/showcase enablers that may run in parallel with Phases 9–11.
-  - **Phase 12.5** (UX, Theme, WebSockets) runs after core screens are stabilized in Phases 9–11.
-  - **Phase 12** (payments) is optional: skip it or do it after Phase 13.
+- Finish each phase before starting the next. See **Next up** for the live queue.
+  - **Phase 12** (payments) is optional: skip it or do it after the already-done Phase 13 gate.
+  - Remaining **Phase 12.5** polish does not block Phase 12 or 14.
 - Keep domain rules and auth enforcement in the API.
 - Contracts: live OpenAPI/Swagger + generated client. [API-INTEGRATION.md](API-INTEGRATION.md) is client rules only (not an endpoint list).
 
-### Testing policy
+## Next up
+
+Pick the first unchecked work. Letter suffixes (`8a`, `8b`, `8c`) are stable IDs - do not renumber them.
+
+1. **Finish Phase 12.5** - remaining polish: guided empty-state checklist, then optional Cmd+K and trend badges.
+2. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
+3. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
+
+---
+
+## Testing policy
 
 Write tests **with** each feature.
 
@@ -28,9 +37,9 @@ Write tests **with** each feature.
 | Playwright            | Extend smoke when the feature joins the critical path |
 | Cross-cutting quality | Phase 8 only                                          |
 
-### Definition of done (every feature phase)
+## Definition of done (every feature phase)
 
-1. Wired to OpenAPI operations for that phase’s capabilities.
+1. Wired to OpenAPI operations for that phase's capabilities.
 2. Listed tests green.
 3. Lint + typecheck clean.
 4. RBAC: UI may hide controls; API remains the authority.
@@ -53,434 +62,84 @@ Write tests **with** each feature.
 | API            | Typed client from OpenAPI / Swagger           |
 | Tests          | Vitest + Testing Library + Playwright         |
 
-**Ports:** admin `5174`, API `3000` (or remapped API `PORT` on hosts that reserve `3000–3199`).
+**Ports:** admin `5174`, API `3000` (or remapped API `PORT` on hosts that reserve `3000-3199`).
 
 ---
 
-## Phase overview
+## Completed phases
+
+> Full checklists for finished phases are collapsed. History is in git. IDs stay; do not renumber.
+
+| Phase    | Name                               | Status | Focus                                                                           |
+| -------- | ---------------------------------- | ------ | ------------------------------------------------------------------------------- |
+| **0**    | Foundation                         | Done   | Vite scaffold, tooling, tests, OpenAPI client                                   |
+| **1**    | Agent ecosystem and conventions    | Done   | AGENT policy, context, AI docs, adapters                                        |
+| **1.5**  | Shell and page structure           | Done   | Layout extraction, feature pages, responsive nav, auth route shape              |
+| **2**    | Auth and RBAC chrome               | Done   | Login, permission-aware nav + tests                                             |
+| **2.5**  | Forced password change             | Done   | `/change-password`, session flag, API guard integration                         |
+| **2.6**  | Operator gate + silent refresh     | Done   | Operators-only SPA; domain 401 one-shot refresh                                 |
+| **3**    | Products                           | Done   | Table/forms + tests                                                             |
+| **4**    | Inventory                          | Done   | Stock views + tests                                                             |
+| **5**    | Orders                             | Done   | Ops actions + tests                                                             |
+| **6**    | Users                              | Done   | Read views + role filter + tests                                                |
+| **7**    | Dashboard                          | Done   | Operational cockpit (analytics API + Recharts)                                  |
+| **8**    | Quality sweep                      | Done   | Journey, a11y, consistency, CI e2e policy                                       |
+| **8b**   | Staff convention parity (docs)     | Done   | CONVENTIONS depth + ANTI-PATTERNS; GOVERNANCE match `ci.yml`                    |
+| **8c**   | Boundary + auth-code parity        | Done   | Invert lib -> features; drop English 403; ESLint `no-restricted-imports`        |
+| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, hosted demo target                                   |
+| **9**    | Query parity                       | Done   | Expose every list query param this API version already accepts                  |
+| **10**   | Existing writes                    | Done   | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
+| **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                  |
+| **11.5** | User address book                  | Done   | User detail address list + existing OpenAPI writes                              |
+| **13**   | Technical release gate             | Done   | Production validation against API, clean install quickstart, smoke              |
+| **13.5** | Visual Showcase & Portfolio Assets | Done   | Hero WebP, Retina screenshots, README embeds; refresh via `scripts/create-walkthrough.js` |
+
+---
+
+## Pending work
+
+Live queue (not numeric order): finish **12.5**, then optional **12**, then **14** (blocked on API facts). Phase 12 does not block the already-done Phase 13 gate.
 
 | Phase    | Name                               | Status | Priority | Focus                                                                           |
 | -------- | ---------------------------------- | ------ | :------: | ------------------------------------------------------------------------------- |
-| **0**    | Foundation                         | `[x]`  |    -     | Vite scaffold, tooling, tests, OpenAPI client                                   |
-| **1**    | Agent ecosystem and conventions    | `[x]`  |    -     | AGENT policy, context, AI docs, adapters                                        |
-| **1.5**  | Shell and page structure           | `[x]`  |    -     | Layout extraction, feature pages, responsive nav, auth route shape              |
-| **2**    | Auth and RBAC chrome               | `[x]`  |    -     | Login, permission-aware nav + tests                                             |
-| **2.5**  | Forced password change             | `[x]`  |    -     | `/change-password`, session flag, API guard integration                         |
-| **2.6**  | Operator gate + silent refresh     | `[x]`  |    -     | Operators-only SPA; domain 401 one-shot refresh                                 |
-| **3**    | Products                           | `[x]`  |    -     | Table/forms + tests                                                             |
-| **4**    | Inventory                          | `[x]`  |    -     | Stock views + tests                                                             |
-| **5**    | Orders                             | `[x]`  |    -     | Ops actions + tests                                                             |
-| **6**    | Users                              | `[x]`  |    -     | Read views + role filter + tests                                                |
-| **7**    | Dashboard                          | `[x]`  |    -     | Operational cockpit (analytics API + Recharts)                                  |
-| **8**    | Quality sweep                      | `[x]`  |    -     | Journey, a11y, consistency, CI e2e policy                                       |
-| **8a**   | Standalone Zero-Backend Preview    | `[x]`  |  `[P0]`  | **Instant DX**: MSW mock mode (`npm run dev:mock`), mock auth, hosted demo target |
-| **9**    | Query parity                       | `[x]`  |  `[P1]`  | Expose every list query param this API version already accepts                  |
-| **10**   | Existing writes                    | `[x]`  |  `[P1]`  | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
-| **11**   | API gaps then SPA                  | `[x]`  |  `[P1]`  | Product activate/deactivate + assign user role (API first, then SPA)            |
-| **11.5** | User address book                  | `[x]`  |  `[P1]`  | User detail address list + existing OpenAPI writes                              |
+| **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K remaining        |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
-| **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | **Polish**: Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K deferred |
-| **13**   | Technical release gate             | `[x]`  |  `[P0]`  | Production validation against API, clean install quickstart, smoke              |
-| **13.5** | Visual Showcase & Portfolio Assets | `[x]`  |  `[P0]`  | **Visuals**: Animated WebP/GIF hero recording, Retina screenshots, README hero  |
-| **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields (failed-payment attention, payment mix, sell-through) |
+| **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                           |
 
 ---
 
-## Phase 0: Foundation
+## Phase 12.5: Operational UX, Aesthetics & Real-Time Interaction [P1]
 
-> Runnable Vite app with toolchain and test harness.
+> **Goal**: Transform the functional SPA into a responsive, polished operational cockpit with real-time feedback and guided workflows.
 
-**OpenAPI capabilities:** health / readiness (discover exact paths in Swagger).
+**OpenAPI capabilities:** WebSocket gateway notifications (`orders.created`, `inventory.low_stock`).
 
 **Scope:**
+- [x] **Working Theme Provider:** Replace the previously removed non-functional placeholder with an accessible Dark/Light/System theme provider linked to Tailwind CSS tokens and `localStorage` persistence.
+- [x] **Real-Time WebSocket Feed:** Connect to API WebSocket gateway (`socket.io-client`). Show animated toast notifications when new orders arrive or stock drops below threshold, with query cache invalidation.
+- [x] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
+- [ ] **Command Palette (`Cmd+K` / `Ctrl+K`) [P2]:** Fast keyboard search and quick navigation across products, orders, customers, and setting views.
+- [ ] **Visual Micro-Interactions & Trend Badges [P2]:** Add trend percentage pills (▲/▼ % vs previous period) on dashboard cards and animated skeleton loaders during query transitions.
+- [x] **Silent refresh updates session Query:** After mid-request token refresh, update `AUTH_SESSION_QUERY_KEY` with permissions / `mustChangePassword` (not only `setAccessToken`), so nav chrome stays accurate if roles change mid-session.
+- [x] **Safe landing for limited operators:** Post-login and Forbidden CTA must not trap accounts with `access_admin` but without `view_all_orders` on `/` (land on first permitted nav item; Forbidden "home" must not loop).
+- [x] **Auth bootstrap retry:** Distinguish transient refresh/network failures from unauthenticated; avoid hard bounce to login with no retry on boot 5xx.
+- [x] **UsersTable column memo:** Memoize column defs like products/orders/inventory tables (minor render polish).
+- [x] **Address form DialogDescription:** Align `user-address-form` dialog a11y with other dialogs.
 
-- [x] Scaffold Vite React-TS
-- [x] Tailwind + shadcn/ui + app shell (sidebar/topbar)
-- [x] React Router skeleton
-- [x] `.env.example` with `VITE_API_BASE_URL=http://localhost:3000` (no secrets)
-- [x] `.gitignore` ignores `.env` and other secret files
-- [x] OpenAPI typed client stub + regenerate script
-- [x] Vitest + Testing Library sample test
-- [x] Playwright placeholder smoke
-- [x] Scripts: `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`
-- [x] CI: lint, typecheck, unit tests
-- [x] Dev server on port **5174** (or document the chosen port)
-
-**Done when:** clean install passes lint/typecheck/test; `npm run dev` shows the shell.
-
----
-
-## Phase 1: Agent ecosystem and conventions
-
-> Same idea as the API agent system, sized for a Vite SPA.
-
-### Files to create (minimal outline)
-
-| File                                          | Purpose                                          |
-| :-------------------------------------------- | :----------------------------------------------- |
-| `AGENT.md`                                    | Authority order + non-negotiables                |
-| `.agents/PROJECT-CONTEXT.md`                  | Stack, folders, RBAC UX notes, API links         |
-| `docs/ai/README.md`                           | Index                                            |
-| `docs/ai/CONVENTIONS.md`                      | Feature folders, Query/Table/forms, 409 handling |
-| `docs/ai/GOVERNANCE-AND-QUALITY-GATES.md`     | Merge gates                                      |
-| `docs/ai/WORKFLOW-PLAYBOOK.md`                | Task intake -> verify                            |
-| `AGENTS.md` / `CLAUDE.md` / `.cursor/rules/*` | Thin adapters to `AGENT.md`                      |
-
-### `AGENT.md` non-negotiables (must include)
-
-1. No domain rules in the SPA.
-2. RBAC chrome is UX only; API enforces authorization.
-3. Prefer OpenAPI client for domain calls.
-4. Require verification for behavior changes.
-5. No push/publish/production config changes without explicit confirmation.
-
-### `docs/ai/CONVENTIONS.md` must cover
-
-- `src/features/<name>/` layout
-- Query key + mutation invalidation patterns
-- TanStack Table conventions
-- Form + Zod alignment to API DTOs
-- HTTP 409 OCC reload-and-retry UX
-
-**Scope checklist:**
-
-- [x] Create all files above
-- [x] Link from README docs table
-- [x] Adapters do not fork policy
-
-**Done when:** `AGENT.md` + `PROJECT-CONTEXT.md` are enough to start a feature phase safely.
+**Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
+**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`
 
 ---
 
-## Phase 1.5: Shell and page structure
+## Phase 13.5: Visual Showcase & Portfolio Assets (complete)
 
-> Extract layout, establish feature page folders, and lock in auth-first routing shape before Phase 2.
-
-**Scope:**
-
-- [x] Extract `AppLayout`, `AppSidebar`, `AppHeader`, `MobileNav`, `PageHeader` under `src/components/layout/`
-- [x] Move placeholder pages to `src/features/*/pages/`
-- [x] Slim `router.tsx` to route map only (imports page components; no inline page JSX)
-- [x] `/login` outside admin shell; sole public route in v1
-- [x] `ProtectedRoute` / `GuestRoute` stubs under `src/lib/auth/` (passthrough until Phase 2)
-- [x] Protected route tree: `ProtectedRoute` → `AppLayout` for all admin routes
-- [x] Responsive mobile nav (shadcn `Sheet` on `<lg`; `SheetTitle` for a11y)
-- [x] Scroll on `<main>` only (`h-screen overflow-hidden` shell)
-- [x] Component + Playwright tests
-- [x] Update conventions docs
-
-**Done when:** all routes work; mobile nav functional; auth route shape in place; tests green; docs updated.
-
----
-
-## Phase 2: Auth and RBAC chrome
-
-> Builds on Phase 1.5 shell. Wire session logic into existing route guards and nav config.
-
-**OpenAPI capabilities:** admin login/session; permission/role reads if needed for chrome.
-
-**Seeded user:** administrator from API [`SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) (do not paste passwords into this repo)
-
-**Scope:**
-
-- [x] Login (RHF + Zod)
-- [x] Session persistence matching the API
-- [x] Wire `ProtectedRoute` / `GuestRoute` to API session (stubs from Phase 1.5)
-- [x] Unauthenticated access to any protected path → `/login?redirect=...`
-- [x] Post-login redirect to `redirect` query param or `/`
-- [x] Global `401` handler on `apiClient`
-- [x] Nav filtered by permission claims in `src/app/navigation.ts` (UX only)
-- [x] 401 -> login; 403 -> forbidden
-- [x] Component tests: validation, guard, forbidden
-- [x] Playwright: login success and failure
-- [x] Architecture docs + ADRs (`docs/architecture/`)
-
-**Done when:** Seeded admin reaches the shell; unauthenticated user cannot see admin shell or placeholder pages; forbidden route shows 403 UX; tests green.
-
----
-
-## Phase 2.5: Forced password change
-
-> Requires API `mustChangePassword` enforcement (discover in OpenAPI). Uses seeded accounts from API [`SEEDING.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md).
-
-**Scope:**
-
-- [x] Parse `mustChangePassword` on login, refresh, and change-password responses
-- [x] `/change-password` route (minimal layout, no shell)
-- [x] `RequirePasswordChanged` / `ChangePasswordRoute` guards
-- [x] Change-password form (RHF + Zod) wired to API
-- [x] Global 403 `MUST_CHANGE_PASSWORD` redirect on `apiClient`
-- [x] Component tests for guards and validation
-- [x] Playwright: seeded user forced change then reaches dashboard (when seed available)
-- [x] Sign out on `/change-password` (stay on the page; no skip into the shell)
-- [x] Update `docs/API-INTEGRATION.md`
-
-**Done when:** Seeded user with `mustChangePassword: true` lands on change-password, updates password, and reaches the dashboard shell; tests green.
-
----
-
-## Phase 2.6: Operator gate + silent access-token refresh
-
-> Operators-only admin SPA and mid-request silent refresh. ADRs: [ADR-0005](architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md), [ADR-0006](architecture/adr/ADR-0006-operators-only-admin-spa.md). Do not amend ADR-0002 body.
-
-**Scope:**
-
-- [x] Gate on `access_admin` (not hardcoded role codes); reject missing permission on login/refresh (logout clears cookie)
-- [x] Login form message for accounts without admin access
-- [x] `OperatorRoute` on shell (`access_admin`); Dashboard `/` and `/orders` behind `PermissionRoute` (`view_all_orders`)
-- [x] Single-flight silent refresh + one domain request retry on `401`
-- [x] Unit/component + Playwright (customer blocked; admin OK)
-- [x] ADR-0005 / ADR-0006 + conventions/governance ADR immutability notes
-
-**Done when:** Seeded customer cannot enter Control Center; seeded admin can; expired access token recovers via one refresh without login when the cookie is valid; tests green.
-
----
-
-## Phase 3: Products
-
-**OpenAPI capabilities:** product list/detail and product writes.
-
-**Scope:**
-
-- [x] Product table (TanStack Table)
-- [x] Create/edit forms aligned to API DTOs
-- [x] Query invalidation after mutations
-- [x] HTTP 409 OCC: reload and retry
-- [x] Component tests for validation and 409 messaging
-- [x] Playwright: list + open create/edit
-
-**Done when:** Admin can create/edit a product via API; 409 path is covered by a test or documented manual check with follow-up issue.
-
-> Note: Live concurrent-edit 409 is unit/component covered via mocked `OPTIMISTIC_LOCK_CONFLICT`. End-to-end dual-session OCC remains a follow-up if needed.
-
----
-
-## Phase 4: Inventory
-
-**OpenAPI capabilities:** inventory reads (and adjust/low-stock if you ship them in v1).
-
-**Scope:**
-
-- [x] Stock list/detail from API read models
-- [x] Low-stock view if useful
-- [x] Adjust stock only if product needs it in v1
-- [x] Empty/error states; no client inventory engine
-- [x] Tests for empty/error
-- [x] Playwright: open inventory list
-
-**Done when:** Admin can see stock for seeded products; tests green.
-
----
-
-## Phase 5: Orders
-
-**OpenAPI capabilities:** order list/detail and allowed status transitions; payment reads optional.
-
-**Scope:**
-
-- [x] Orders table and detail
-- [x] Transitions only via API operations allowed for the current order status (discover in OpenAPI; disable illegal controls in UX)
-- [x] Disable illegal controls; still handle API rejection
-- [x] Show payment fields when API returns them
-- [x] Component tests for disabled vs enabled actions
-- [x] Playwright: open order detail; one safe transition on seeded data if available
-
-**Done when:** Admin can inspect an order and run at least one allowed transition in a test or seeded manual script checked into docs.
-
----
-
-## Phase 6: Users
-
-**OpenAPI capabilities:** user reads with optional role filter (writes optional in v1).
-
-**Scope:**
-
-- [x] User list/detail (role on read model + role filter)
-- [x] No client-side IDOR bypass
-- [x] Tests for empty/forbidden
-- [x] Playwright: open users list
-
-**Done when:** Admin can open seeded user detail read-only (or with documented mutations); tests green.
-
----
-
-## Phase 7: Dashboard
-
-**OpenAPI capabilities:** `/v1/admin/analytics/overview`, `payments/time-series`, `products/top`, `inventory/alerts` (plus recent orders list). See [API-INTEGRATION.md](API-INTEGRATION.md).
-
-**Scope:**
-
-- [x] Summary cards with documented data source (analytics overview)
-- [x] Recharts visualizations (net revenue time series)
-- [x] No invented SPA metrics; footnote documents UTC analytics aggregates (not Prometheus)
-- [x] Tests for empty/error dashboard (+ permission gating)
-- [x] Playwright: load dashboard after login (existing smoke heading)
-
-**Done when:** Dashboard loads for seeded admin without inventing business metrics in the client.
-
----
-
-## Phase 8: Quality sweep
-
-> No new OpenAPI capabilities. Harden the SPA that Phases 2–7 already wired.
-
-**OpenAPI capabilities:** none (uses existing operations).
-
-### A. Operator journey (Playwright)
-
-- [x] One spec: login → dashboard widgets visible → products list → open edit → orders list → open detail (same session)
-- [x] Deduplicate overlapping smokes in `e2e/smoke.spec.ts`
-- [x] Keep per-feature specs; journey is glue, not a replacement
-- [x] In CI, missing `E2E_*` fails the e2e job; locally skip with the existing message
-
-### B. Keyboard and accessibility
-
-- [x] Skip link to `#main`; `main` id; `nav` `aria-label`
-- [x] Page title is the `h1` (`PageHeader`); sidebar branding is not an `h1`
-- [x] Sidebar keyboard + decorative icons `aria-hidden`
-- [x] Mobile sheet: keyboard open, Esc closes, focus returns
-- [x] Adjust-stock dialog: Tab / Esc / focus restore
-- [x] `@axe-core/playwright` on login, dashboard, products, order detail (no serious/critical)
-- [x] `eslint-plugin-jsx-a11y` + `eslint-plugin-react-hooks` (React 19 compatible)
-- [x] Remove non-functional theme buttons
-- [x] Loading / status: `role="status"`, `aria-busy`, `aria-live="polite"`
-- [x] Focus `#main` (or page `h1`) after client navigation
-
-### C. Consistency
-
-- [x] Shared list query status UI + table pagination + `src/lib/format.ts` (operator locale)
-- [x] TkDodo query-key factories; invalidate dashboard keys from mutations that affect widgets
-- [x] Rename `useProductsQuery` → `useProductsListQuery`; `keepPreviousData` on products list
-- [x] Domain API helpers through `throwApiErrorFromResponse` (products + order payments)
-- [x] Dashboard recent-orders read through dashboard `api/`
-- [x] Render `ErrorBoundary` around the shell outlet (no `QueryErrorResetBoundary` / `throwOnError`)
-- [x] ProductsPage empty/error/retry tests; move page specs to `pages/__tests__/`
-- [x] Align CONVENTIONS + ARCHITECTURE with real folders (`types.ts`, `pages/`, `lib/`, no barrels)
-
-### D. CI and governance
-
-- [x] PR merge gates (lint, typecheck, unit, build, audit) as parallel jobs plus a `ci` aggregator
-- [x] Dependabot weekly npm + GitHub Actions updates (`.github/dependabot.yml`)
-- [x] `e2e` job on PRs into `main`/`master` and `workflow_dispatch`; credentials required (no skip-to-green); push after merge skips Playwright
-- [x] GOVERNANCE states when Playwright runs; feature PRs into `develop` skip e2e; `ci` treats skipped e2e as pass
-- [x] PROJECT-CONTEXT + README current limits match shipped Phases 2–7
-
-**Done when:** journey spec green locally against seeded API; axe/keyboard tests pass; lint includes hooks + jsx-a11y; query/API helper drift is gone; CI policy is documented and the e2e job does not skip-to-green.
-
----
-
-## Phase 8a: Standalone Zero-Backend Preview (MSW Mock Mode) [P0]
-
-> **Goal**: Enable instant 30-second evaluation of the admin dashboard without requiring Docker, PostgreSQL, Redis, or API backend setup.
+> Portfolio media for README and docs. Regenerate with Playwright while `npm run dev:mock` is running on port **5174**:
 >
-> *(Note: Non-blocking DX enabler. Can be executed in parallel with API-contract Phases 9–11).*
+> - `npm run assets:stills` → Retina PNG stills (`scripts/capture-showcase.js`)
+> - `npm run assets:walkthrough` → animated hero WebP (`scripts/create-walkthrough.js`)
+> - `npm run assets:capture` → both
 
-**OpenAPI capabilities:** Mirrored mock handlers for `/v1/authentication/*`, `/v1/admin/analytics/*`, `/v1/products`, `/v1/orders`, `/v1/inventory`, `/v1/users`, `/v1/roles`, and `/v1/permissions`.
-
-### MSW Auth Strategy
-- Provide MSW handlers for `POST /v1/authentication/login`, `POST /v1/authentication/refresh`, and `POST /v1/authentication/logout`.
-- Mock login accepts any password for `admin@store.local` (and provides a "Demo 1-Click Login" button on the login screen in mock mode).
-- Returns a decodeable mock JWT plus full operator permissions (`access_admin`, `view_all_orders`, `view_all_inventory`, `view_all_payments`, `manage_products`, `manage_users`, `manage_roles`, …). Session persistence uses `sessionStorage` (service workers cannot set cookies).
-
-### Scope:
-- [x] Install Mock Service Worker (`msw`) as dev dependency.
-- [x] Create mock API handlers in `src/lib/mock/handlers/` matching the OpenAPI contract.
-- [x] Populate realistic seed datasets (15 products, multi-period revenue series, low stock alerts, pending orders).
-- [x] Add `src/lib/mock/browser.ts` worker initialization.
-- [x] Add script `"dev:mock": "vite --mode mock"` and configure conditional worker startup in `src/main.tsx`.
-- [x] Configure live read-only hosted demo target (e.g. Vercel/Netlify) running in mock mode.
-- [x] Add "Try Live Demo (Zero Setup)" button and badge to the top of README.
-- [x] Static mock packaging: `npm run build:mock` and `vercel.json` for a hosted demo target.
-
-**Done when:** Running `npm run dev:mock` allows anyone to log in, navigate all screens, interact with filters, and view analytics charts with zero backend running.
-**Location:** `src/lib/mock/`, `src/main.tsx`, `vercel.json`, `package.json`
-
----
-
-Phases 9–11.5 are **this API version**, not new product ideas. Prefer backend OpenAPI contract synchronization (accurate DTO schemas) before regenerating for Phase 9, and backend operator HTTP endpoints (product activate/deactivate, role assignments) in `ecommerce-store-api` before Phase 11. Start each phase by regenerating the OpenAPI client and reading Swagger (or `schema.d.ts`) for the fields that exist **now**. Do not invent SPA filters or buttons for operations that are missing from Swagger. Do not keep an endpoint inventory in this file.
-
-Phase 12 (payments) is optional and does **not** block Phase 13.
-
----
-
-## Phase 9: Query parity
-
-> No new OpenAPI operations. Put every **list query param this API already accepts** on the matching admin list (URL + visible controls). Table column-sort was deferred in filter comments; this phase owns it.
-
-Named fields below were true at planning time. On start, take the **current** list query DTOs from live Swagger / `schema.d.ts`.
-
-**OpenAPI capabilities:** existing product, order, and inventory list query DTOs (discover in OpenAPI).
-
-**Scope:**
-
-- [x] **Products:** search box (name/SKU/description); `isActive`; `minPrice` / `maxPrice`; `categoryId` as a numeric filter until a categories list exists (do not invent a category picker)
-- [x] Pass those params through `listProductsRequest` (extend `ProductListFilters`)
-- [x] **Orders:** date range (`createdAfter` / `createdBefore`); `minAmount` / `maxAmount`; optional `firstName` / `lastName` if you keep `userName`
-- [x] Pass those params through `listOrdersRequest` (today the client drops them even if they were in the URL)
-- [x] **Inventory:** `productId` (e.g. from product/detail “view stock”)
-- [x] Column-sort UI bound to existing `sortBy` / `sortOrder` on products, orders, inventory (still URL-as-source-of-truth)
-- [x] Hide or relabel the Roles nav item until Phase 10 (stop advertising an empty page)
-- [x] Tests: each new control updates the URL and the query key; empty filter result still shows the empty table
-
-**Done when:** an operator can exercise every documented list query field from the UI; no client-side filtering of full pages.
-
----
-
-## Phase 10: Existing writes
-
-> Wire **writes that already exist in OpenAPI**. Still no new API endpoints.
-
-**OpenAPI capabilities:** product delete; user PATCH/activate/deactivate/delete; roles CRUD; permissions list (discover in OpenAPI).
-
-**Scope:**
-
-- [x] Product: delete (confirm); keep 409 reload-and-retry on edit
-- [x] Users: activate / deactivate on detail (`manage_users`); optional PATCH of name/email/phone; do **not** fake role assignment
-- [x] User **address** writes (Phase 11.5: list on GET user detail + add/edit/delete/set-default)
-- [x] Roles: replace the stub with list/create/edit/delete using `GET /v1/permissions` for the permission set; `manage_roles` only
-- [x] After role mutations, session chrome still comes from login/refresh `permissions` (ADR-0007): document that the operator may need to re-login or refresh to see nav changes for **their own** account
-- [x] Tests for forbidden vs allowed controls; Playwright: one delete or activate on seeded data if safe
-
-**Done when:** superadmin can manage roles in the SPA; admin can deactivate a user and delete a product through the API; stub Roles page is gone.
-
----
-
-## Phase 11: API gaps, then SPA
-
-> Capabilities the API domain already modeled; HTTP now exposes dedicated product activate/deactivate and user role assignment. This phase wired those OpenAPI operations in the SPA.
-
-**API (required before any SPA toggle):**
-
-- [x] Product activate / deactivate HTTP (same shape as users: dedicated activate/deactivate actions, `manage_products`): do not silently add `isActive` to PATCH if the API treats it as a dedicated action
-- [x] Assign or replace a user’s role over HTTP
-- [x] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
-
-**Admin SPA (after the API ships):**
-
-- [x] Product status control on edit (and/or list row action)
-- [x] User detail: change assigned role
-- [x] Tests + Playwright
-
-**Done when:** an operator can take a product off the catalog and change a user’s role without SQL or seed scripts.
-
----
-
-## Phase 11.5: User address book
-
-> Address writes already existed in OpenAPI. This phase added the missing **read** on user detail, then wired list + writes in the SPA. No new collection route.
-
-**API (required before SPA writes):**
-
-- [x] `GET /v1/users/{id}` returns required `addresses[]` (empty book is `[]`)
-- [x] OpenAPI + tests in `ecommerce-store-api`; regenerate `schema.d.ts` here
-
-**Admin SPA:**
-
-- [x] User detail Addresses section (list + empty state) for `view_all_users`
-- [x] Add / edit / delete / set-default for `manage_users` only (`isDefault` on add only; Set default is a card action)
-- [x] Tests + Playwright (seeded `customer@store.local`; add then delete)
-
-**Done when:** an operator can see and correct a customer address book through the API, with no invented list.
+**Location:** `docs/assets/`, `scripts/capture-showcase.js`, `scripts/create-walkthrough.js`, `README.md`
 
 ---
 
@@ -501,87 +160,11 @@ Named fields below were true at planning time. On start, take the **current** li
 
 ---
 
-## Phase 12.5: Operational UX, Aesthetics & Real-Time Interaction [P1]
-
-> **Goal**: Transform the functional SPA into a responsive, polished operational cockpit with real-time feedback and guided workflows.
-
-**OpenAPI capabilities:** WebSocket gateway notifications (`orders.created`, `inventory.low_stock`).
-
-**Scope:**
-- [x] **Working Theme Provider:** Replace the previously removed non-functional placeholder with an accessible Dark/Light/System theme provider linked to Tailwind CSS tokens and `localStorage` persistence.
-- [x] **Real-Time WebSocket Feed:** Connect to API WebSocket gateway (`socket.io-client`). Show animated toast notifications when new orders arrive or stock drops below threshold, with query cache invalidation.
-- [ ] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
-- [ ] **Command Palette (`Cmd+K` / `Ctrl+K`) [P2]:** Fast keyboard search and quick navigation across products, orders, customers, and setting views.
-- [ ] **Visual Micro-Interactions & Trend Badges [P2]:** Add trend percentage pills (▲/▼ % vs previous period) on dashboard cards and animated skeleton loaders during query transitions.
-- [x] **Silent refresh updates session Query:** After mid-request token refresh, update `AUTH_SESSION_QUERY_KEY` with permissions / `mustChangePassword` (not only `setAccessToken`), so nav chrome stays accurate if roles change mid-session.
-- [x] **Safe landing for limited operators:** Post-login and Forbidden CTA must not trap accounts with `access_admin` but without `view_all_orders` on `/` (land on first permitted nav item; Forbidden “home” must not loop).
-- [x] **Auth bootstrap retry:** Distinguish transient refresh/network failures from unauthenticated; avoid hard bounce to login with no retry on boot 5xx.
-- [x] **UsersTable column memo:** Memoize column defs like products/orders/inventory tables (minor render polish).
-- [x] **Address form DialogDescription:** Align `user-address-form` dialog a11y with other dialogs.
-
-**Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
-**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`
-
----
-
-## Phase 13: Technical Release Gate [P0]
-
-> **Goal**: Validate production readiness against a live `ecommerce-store-api` instance (boot and ports: API README / local setup).
-
-**Executable checklist:** [`RELEASE-GATE.md`](RELEASE-GATE.md) (no passwords; seed-accurate transitions).
-
-**Scope:**
-
-- [x] Stranger onboarding validation following `README.md` (`npm run env:init` → `npm run dev` against a live API started from the API repo’s own docs).
-- [x] Full live operator smoke loop (see [`RELEASE-GATE.md`](RELEASE-GATE.md)):
-  - Login as seeded administrator (credentials in API `SEEDING.md` only). First login is a forced password change.
-  - Products: filter by status, search, edit details, activate / deactivate.
-  - Inventory: submit a stock adjustment; OCC 409 is unit-covered (concurrent writes; no client version field).
-  - Orders: Process the seeded confirmed order, then Ship (Confirm on pending-payment needs a completed payment; do not add a payments capture step).
-  - Users (administrator): activate/deactivate account; address book add, set default, delete.
-  - Roles (super administrator only): change assigned role. Administrator chrome hides that control (`manage_roles`).
-- [x] Validate hosted static packaging: stop `npm run dev`, then `npm run build` with `VITE_API_BASE_URL` and `npm run preview` on **5174**.
-- [x] [`API-INTEGRATION.md`](API-INTEGRATION.md) points at API OpenAPI / Swagger as the contract (no copied boot recipe).
-- [x] README + PROJECT-CONTEXT verified accurate without tribal knowledge.
-
-**Done when:** A stranger can follow the README, connect to the live API, and successfully execute all documented operator workflows without manual overrides or code changes.
-
----
-
-## Phase 13.5: Visual Showcase & Public Portfolio Assets [P0]
-
-> **Goal**: Create high-impact visual media assets and documentation hooks to demonstrate immediate value to stakeholders, hiring managers, and clients outside the code editor.
->
-> *(Note: Initial recordings and screenshots can be captured early using `npm run dev:mock` from Phase 8a, then re-verified against live production data in Phase 13).*
-
-**Required Tools:** Screen recording software (CleanShot X / OBS / ScreenToGif / browser devtools), Image optimization CLI (`cwebp` / `squoosh`).
-
-**Scope (Step-by-Step Asset Creation):**
-- [x] **Dashboard Hero Recording (Animated WebP / High-FPS GIF):** Record a 15-second walkthrough:
-  1. Instant login with prefilled operator credentials (or 1-click demo login).
-  2. Switching dashboard time range (7d -> 30d -> 90d) showing smooth Recharts re-render.
-  3. Filtering orders by status and adjusting inventory in a dialog modal.
-  4. Save as optimized WebP (< 2.5MB) in `docs/assets/dashboard-walkthrough.webp`.
-- [x] **High-Resolution Static Screenshots (Retina 2x):**
-  1. `docs/assets/screenshot-dashboard-dark.png` (Operational pulse cockpit).
-  2. `docs/assets/screenshot-order-detail.png` (Order timeline and item status).
-  3. `docs/assets/screenshot-rbac-matrix.png` (Permission-aware UI in action).
-- [x] **README Hero Overhaul:**
-  1. Embed the hero animation directly under the repository badges.
-  2. Add a 30-second "Quick Comparison: Why Choose This Admin Dashboard?" matrix.
-  3. Add a prominent "1-Click Live Demo" badge.
-
-**Done when:** All media files exist in `docs/assets/` and the README displays the interactive preview cleanly on GitHub.
-
----
-
 ## Phase 14: Dashboard Operational Facts [P2]
 
 > **Goal**: Display operational order age, payment mix, and inventory sell-through facts once live storefront and payment flows exist.
 
 **Blocked on:** OpenAPI contracts exposing `payment_failed` on attention, order age (`oldestCreatedAt` / `oldestUpdatedAt`), payment counts (`failedPaymentCount` / `pendingPaymentCount`), and inventory fields (`unitsSold7d` / `reservedQuantity`).
-
-**Planning reference:** Sibling API roadmap section *Analytics Attention & Operational Facts* (currently tracked as API 17d).
 
 **Scope:**
 - [ ] **Attention Pulse**: Surface `payment_failed` orders with direct links to cancel/manage; display order age chips (`oldestCreatedAt` / `oldestUpdatedAt`).

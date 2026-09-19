@@ -19,7 +19,7 @@ import {
   useDashboardRevenueSeriesQuery,
   useDashboardTopProductsQuery,
 } from '@/features/dashboard/hooks/use-dashboard';
-import type { DashboardPeriodDays } from '@/features/dashboard/types';
+import type { DashboardPeriodDays } from '@/lib/query-keys/dashboard-keys';
 import { useAuth } from '@/lib/auth/auth-context';
 
 const PERIOD_OPTIONS: { value: DashboardPeriodDays; label: string }[] = [

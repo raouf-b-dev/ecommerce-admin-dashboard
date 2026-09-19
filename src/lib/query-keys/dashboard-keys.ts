@@ -1,4 +1,4 @@
-import type { DashboardPeriodDays } from '@/features/dashboard/types';
+export type DashboardPeriodDays = 7 | 30 | 90;
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,

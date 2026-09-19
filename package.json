@@ -1,7 +1,7 @@
 {
   "name": "ecommerce-admin-dashboard",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Admin SPA for the E-commerce Store API.",
   "scripts": {
     "dev": "vite",
@@ -9,8 +9,8 @@
     "build": "tsc -b && vite build",
     "build:mock": "tsc -b && vite build --mode mock",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . && node scripts/lint-ascii-prose.cjs",
+    "lint:fix": "eslint . --fix && node scripts/lint-ascii-prose.cjs --fix",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -19,7 +19,10 @@
     "env:init": "node ./scripts/generate-env.js",
     "env:init:force": "node ./scripts/generate-env.js --overwrite",
     "env:init:secrets": "node ./scripts/generate-env.js --secrets-only",
-    "env:init:secrets:force": "node ./scripts/generate-env.js --secrets-only --overwrite"
+    "env:init:secrets:force": "node ./scripts/generate-env.js --secrets-only --overwrite",
+    "assets:stills": "node ./scripts/capture-showcase.js",
+    "assets:walkthrough": "node ./scripts/create-walkthrough.js",
+    "assets:capture": "npm run assets:stills && npm run assets:walkthrough"
   },
   "overrides": {
     "openapi-typescript": {

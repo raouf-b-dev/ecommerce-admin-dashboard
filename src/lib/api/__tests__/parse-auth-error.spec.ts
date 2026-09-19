@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AuthRequestError,
   parseAuthErrorBody,
-} from '@/features/auth/api/parse-auth-error';
+} from '@/lib/api/parse-auth-error';
 
 describe('parseAuthErrorBody', () => {
   it('parses GlobalExceptionFilter shape', () => {

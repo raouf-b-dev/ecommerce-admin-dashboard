@@ -1,18 +1,18 @@
-import { decodeAccessTokenClaims } from '@/features/auth/lib/jwt-decode';
-import { ACCESS_ADMIN_PERMISSION } from '@/features/auth/constants/admin-access';
+import { decodeAccessTokenClaims } from '@/lib/auth/jwt-decode';
+import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
 import type {
   AuthSession,
   AuthTokensResponse,
   ChangePasswordInput,
   LoginCredentials,
-} from '@/features/auth/types';
+} from '@/lib/auth/types';
 import { clearAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { apiClient } from '@/lib/api/client';
 import { silentRefreshSession } from '@/lib/api/silent-refresh';
 import {
   readAuthErrorFromResponse,
   toAuthRequestError,
-} from '@/features/auth/api/parse-auth-error';
+} from '@/lib/api/parse-auth-error';
 import { hasPermission } from '@/lib/auth/permissions';
 
 export class NotOperatorError extends Error {

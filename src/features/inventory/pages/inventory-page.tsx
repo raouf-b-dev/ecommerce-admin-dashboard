@@ -18,6 +18,9 @@ import {
   inventoryListFiltersToSearchParams,
 } from '@/features/inventory/lib/inventory-list-filters';
 import type { InventoryListFilters } from '@/features/inventory/types';
+import { useProductsListQuery } from '@/features/products/hooks/use-products';
+import { useAuth } from '@/lib/auth/auth-context';
+import { buildOperatorSetupSteps } from '@/lib/operator-setup';
 
 function inventoryFilterDraftKey(filters: InventoryListFilters): string {
   return [
@@ -28,10 +31,16 @@ function inventoryFilterDraftKey(filters: InventoryListFilters): string {
 }
 
 function InventoryPage() {
+  const { session } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = inventoryListFiltersFromSearchParams(searchParams);
   const { data, isLoading, isError, error, refetch, isFetching } =
     useInventoryListQuery(filters);
+  const { data: productTotals } = useProductsListQuery({ page: 1, limit: 1 });
+  const setupSteps = buildOperatorSetupSteps(
+    session?.permissions ?? [],
+    productTotals?.total ?? 0,
+  );
 
   const [skuDraft, setSkuDraft] = useState(filters.sku ?? '');
   const [titleDraft, setTitleDraft] = useState(filters.productTitle ?? '');
@@ -278,6 +287,8 @@ function InventoryPage() {
             items={data.items}
             total={data.total}
             filters={filters}
+            hasActiveFilters={hasActiveInventoryListFilters(filters)}
+            setupSteps={setupSteps}
             onFiltersChange={updateFilters}
           />
         ) : null}

@@ -35,6 +35,7 @@ Before starting feature work, read `.agents/PROJECT-CONTEXT.md` for the current 
 6. Require verification evidence for behavior changes.
 7. Do not push changes without explicit confirmation and verification evidence.
 8. If API contract or docs drift, fix them at the source in `ecommerce-store-api` rather than hiding the issue in frontend code.
+9. Docs and comments use ASCII punctuation only (hyphens, straight quotes, `...`). No em dashes, curly quotes, or other smart typography. See [`docs/ai/CONVENTIONS.md`](docs/ai/CONVENTIONS.md) §19.
 
 ## 5. Conventions Rule
 
@@ -47,6 +48,7 @@ At minimum, that includes:
 - form and API error mapping
 - table query parameter mapping
 - optimistic concurrency (`409`) handling
+- ASCII punctuation in docs and comments (`CONVENTIONS` §19)
 
 ## 6. Execution Lifecycle
 

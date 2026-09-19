@@ -1,18 +1,18 @@
 # Operator smoke and live verification
 
-Walk this list against a **live** API. Mock mode (`npm run dev:mock`) is a demo only and does not satisfy this checklist.
+Repeatable runbook against a **live** API. Checkboxes stay open for each manual pass; phase completion is tracked in [`ROADMAP.md`](ROADMAP.md). Mock mode (`npm run dev:mock`) is a demo only and does not satisfy this checklist.
 
 Credentials stay in the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). Do not paste passwords into this repository.
 
 ## Before you start
 
-1. `ecommerce-store-api` is running. Follow that repository’s [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) (Docker and seed steps live there).
+1. `ecommerce-store-api` is running. Follow that repository's [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) (Docker and seed steps live there).
 2. This dashboard is configured (`npm run env:init`) and served with `npm run dev` on port **5174**. Point `VITE_API_BASE_URL` at the API origin from step 1 (this repo defaults to `http://localhost:3000`).
 3. If you will run Playwright, check out `ecommerce-store-api` as a **sibling directory** (`../ecommerce-store-api`) so `e2e/global-setup.ts` can reset demo auth. Otherwise set `E2E_SKIP_DB_SEED=1` and seed the API yourself. See [`e2e/README.md`](../e2e/README.md).
 
 The API rate-limits login and register. Run automated e2e **before** a long manual login walk, or wait about a minute after browser sign-ins before `npm run test:e2e`. Current limits: API docs.
 
-There is only one seeded **confirmed** demo order. Playwright’s orders spec needs it. Run `npm run test:e2e` **before** you Process or Ship that order by hand. If you already mutated it, restore catalog and orders using the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) before e2e.
+There is only one seeded **confirmed** demo order. Playwright's orders spec needs it. Run `npm run test:e2e` **before** you Process or Ship that order by hand. If you already mutated it, restore catalog and orders using the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) before e2e.
 
 ## Stranger boot
 
@@ -32,7 +32,7 @@ Use the seeded **administrator** unless a row says otherwise.
 - [ ] **Inventory - adjust:** Open a high-stock row, **Adjust stock**, ADD 1, apply. Available quantity increases by 1. SUBTRACT 1 to restore the seed value.
 - [ ] **Inventory - conflict banner:** Open the adjust dialog and confirm the conflict alert slot exists. A live HTTP 409 needs two concurrent writes; unit tests cover `isOptimisticLockConflict`. Do not invent a client `version` field.
 - [ ] **Orders - process then ship:** Filter to **confirmed**, open the demo order, **Process**, then **Ship**. Confirm on the pending-payment order needs a completed payment (not in this loop). Do not add a payments capture step here.
-- [ ] **Users - status:** Open `customer@store.local`, deactivate, then reactivate so the account stays usable.
+- [ ] **Users - status:** Open the seeded **customer** account, deactivate, then reactivate so the account stays usable.
 - [ ] **Users - addresses:** Add an address, **Set default**, then delete the address you added (leave the seeded home address).
 - [ ] **Roles - hidden for administrator:** User detail must **not** show Change role / Assigned role. The seeded administrator does not have `manage_roles`.
 

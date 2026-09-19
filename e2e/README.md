@@ -17,10 +17,10 @@ The journey is glue, not a replacement for per-feature specs.
 
 ## Prerequisites
 
-1. A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) instance. Follow that repository’s [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md).
+1. A running [ecommerce-store-api](https://github.com/raouf-b-dev/ecommerce-store-api) instance. Follow that repository's [README](https://github.com/raouf-b-dev/ecommerce-store-api#quick-start) or [local setup](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md).
 2. Seeded administrator account (credentials stay in API [SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md) only).
 3. `VITE_API_BASE_URL` pointing at the API origin (this repo defaults to `http://localhost:3000`; match the API `PORT` if you remapped it).
-4. **Sibling checkout:** [`global-setup.ts`](./global-setup.ts) runs `npm run db:seed:auth` in `../ecommerce-store-api`. That script name is this repo’s integration contract - if the API renames it, update `global-setup.ts`. Clone the API next to this repo, or set `E2E_SKIP_DB_SEED=1` and seed the API yourself (setup fails if the sibling path is missing and the skip flag is unset).
+4. **Sibling checkout:** [`global-setup.ts`](./global-setup.ts) runs `npm run db:seed:auth` in `../ecommerce-store-api`. That script name is this repo's integration contract - if the API renames it, update `global-setup.ts`. Clone the API next to this repo, or set `E2E_SKIP_DB_SEED=1` and seed the API yourself (setup fails if the sibling path is missing and the skip flag is unset).
 
 Live operator checklist (when to run e2e vs manual Process/Ship): [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md).
 
@@ -101,8 +101,8 @@ Two workers, three projects:
 
 Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.
 
-`session.spec.ts` lives in the **superadmin** project so a reload (and cookie-clear) cannot rotate the admin worker’s refresh cookie. Access-token expiry is covered in Vitest with JWTs that are already expired — do not lower `JWT_ACCESS_TOKEN_TTL` for e2e.
+`session.spec.ts` lives in the **superadmin** project so a reload (and cookie-clear) cannot rotate the admin worker's refresh cookie. Access-token expiry is covered in Vitest with JWTs that are already expired - do not lower `JWT_ACCESS_TOKEN_TTL` for e2e.
 
-Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other’s refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
+Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other's refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
 
-Guest and superadmin may run beside the admin worker because they use other accounts (or no account). Login and register are still rate-limited per IP (~10/min). The remaining guest/superadmin logins plus one admin login stay under that. Rapid local re-runs can still 429; the login form shows a distinct throttle message (not “invalid password”). Playwright’s default timeout is **180s** so helpers can wait out a 429.
+Guest and superadmin may run beside the admin worker because they use other accounts (or no account). Login and register are still rate-limited per IP (~10/min). The remaining guest/superadmin logins plus one admin login stay under that. Rapid local re-runs can still 429; the login form shows a distinct throttle message (not "invalid password"). Playwright's default timeout is **180s** so helpers can wait out a 429.

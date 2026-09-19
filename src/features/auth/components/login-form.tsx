@@ -12,8 +12,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { NotOperatorError } from '@/features/auth/api/auth-api';
-import { navigateAfterLoginPath } from '@/features/auth/lib/navigate-after-login';
+import { NotOperatorError } from '@/lib/auth/session-api';
+import { navigateAfterLoginPath } from '@/lib/auth/navigate-after-login';
 import { hasHttpStatus } from '@/lib/api/parse-api-error';
 import {
   loginSchema,

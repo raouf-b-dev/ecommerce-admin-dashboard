@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AuthRequestError } from '@/features/auth/api/parse-auth-error';
+import { AuthRequestError } from '@/lib/api/parse-auth-error';
 import {
   ApiRequestError,
   getErrorMessage,

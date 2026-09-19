@@ -6,8 +6,10 @@ import {
   getTopProductsRequest,
   listRecentOrdersForDashboard,
 } from '@/features/dashboard/api/dashboard-api';
-import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
-import type { DashboardPeriodDays } from '@/features/dashboard/types';
+import {
+  dashboardKeys,
+  type DashboardPeriodDays,
+} from '@/lib/query-keys/dashboard-keys';
 import { buildDashboardPeriod } from '@/features/dashboard/lib/dashboard-metrics';
 
 const DASHBOARD_STALE_MS = 45_000;

@@ -9,8 +9,8 @@ import {
   getInventoryRequest,
   listInventoryRequest,
 } from '@/features/inventory/api/inventory-api';
-import { dashboardKeys } from '@/features/dashboard/hooks/dashboard-keys';
-import { inventoryKeys } from '@/features/inventory/hooks/inventory-keys';
+import { dashboardKeys } from '@/lib/query-keys/dashboard-keys';
+import { inventoryKeys } from '@/lib/query-keys/inventory-keys';
 import { normalizeInventoryListFilters } from '@/features/inventory/lib/inventory-list-filters';
 import type {
   AdjustStockDto,

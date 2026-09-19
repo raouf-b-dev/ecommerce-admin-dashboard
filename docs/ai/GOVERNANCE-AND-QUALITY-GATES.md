@@ -4,7 +4,7 @@
 
 The baseline gates for this repository (PR and the `ci` GitHub Actions job) are:
 
-- `npm run lint`
+- `npm run lint` (`eslint .` plus `scripts/lint-ascii-prose.cjs` for docs/comments)
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
@@ -18,20 +18,20 @@ Prettier is installed for local formatting. `format:check` is not a merge gate.
 
 ## Playwright
 
-The `e2e` GitHub Actions job runs on:
+Aligned with [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml):
 
 | Event | Playwright |
 | --- | --- |
-| PR into `develop` (or any non-`main`/`master` branch) | No |
-| PR into `master` or `main` | Yes |
-| Push to `master` or `main` | No (the merge PR already ran it) |
+| Pull request into `main` or `master` | Yes |
+| Pull request into any other branch | No (skipped) |
+| Push to `main` or `master` | No (the merge PR already ran it) |
 | `workflow_dispatch` | Yes |
 
-That job **fails** if required e2e secrets are unset (admin, customer, and superadmin password; no skip-to-green). It is part of the `ci` aggregator. A skipped Playwright job (feature PRs into `develop`, or push after merge) does not fail `ci`; a failed or cancelled run does. On PRs into `master`/`main` and `workflow_dispatch`, Playwright must succeed for `ci` to pass.
+That job **fails** if required e2e secrets are unset (admin, customer, and superadmin password; no skip-to-green). It is part of the `ci` aggregator. A skipped Playwright job (feature PRs, or push after merge) does not fail `ci`; a failed or cancelled run does. On PRs into `master`/`main` and `workflow_dispatch`, Playwright must succeed for `ci` to pass.
 
-Require **CI Status Check** (`ci`) in branch protection, not the Playwright job by name. Requiring Playwright itself would block `develop` PRs where the job is skipped.
+Require **CI Status Check** (`ci`) in branch protection, not the Playwright job by name. Requiring Playwright itself would block feature PRs where the job is skipped.
 
-A full run needs a live seeded API (start and seed it from the API repo’s docs). Login is rate-limited; see [`e2e/README.md`](../../e2e/README.md) for worker layout. Generate a local `.secrets` file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)), fill passwords from the API seeding guide, and copy into GitHub Secrets. Do not commit `.secrets`.
+A full run needs a live seeded API (start and seed it from the API repo's docs). Login is rate-limited; see [`e2e/README.md`](../../e2e/README.md) for worker layout. Generate a local `.secrets` file with `npm run env:init:secrets` (from [`.secrets.example`](../../.secrets.example)), fill passwords from the API seeding guide, and copy into GitHub Secrets. Do not commit `.secrets`.
 
 Locally, authenticated specs skip when those variables are missing (see [`e2e/README.md`](../../e2e/README.md)).
 
