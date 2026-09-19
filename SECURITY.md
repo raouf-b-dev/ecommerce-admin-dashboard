@@ -30,6 +30,20 @@ Security baseline for this admin SPA. The API remains the authority for authn/au
 - Keep dependencies updated. CI blocks on `npm audit --omit=dev --audit-level=high`. Dependabot opens weekly grouped PRs for npm and GitHub Actions (see [`.github/dependabot.yml`](.github/dependabot.yml)).
 - Prefer an OpenAPI-generated client so request shapes stay aligned with the server.
 
-## Reporting
+## Reporting a vulnerability
 
-If you find a vulnerability in this UI or its handling of the API, prefer a private report to the maintainer over a public issue when exploit detail is sensitive.
+**Please do NOT open a public GitHub issue for security vulnerabilities.**
+
+If you discover a security vulnerability in this admin UI or its handling of the API:
+
+1. **Email**: [rbdz@hotmail.fr](mailto:rbdz@hotmail.fr)
+2. **Subject**: `[SECURITY] ecommerce-admin-dashboard: Brief description`
+3. **Include**: description, steps to reproduce, potential impact, suggested fix (if any)
+
+You can also use GitHub **Private vulnerability reporting** on this repository when exploit detail is sensitive.
+
+### Response timeline
+
+- **Acknowledgment**: Within 48 hours
+- **Initial assessment**: Within 5 business days
+- **Fix or mitigation**: Dependent on severity
