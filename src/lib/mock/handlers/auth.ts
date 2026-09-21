@@ -1,10 +1,12 @@
 import { http, HttpResponse } from 'msw';
 import {
   DEMO_ADMIN_EMAIL,
+  DEMO_ADMIN_PASSWORD,
   DEMO_ADMIN_ROLE,
   DEMO_ADMIN_USER_ID,
   DEMO_OPERATOR_PERMISSIONS,
   DEMO_CATALOG_OPERATOR_EMAIL,
+  DEMO_CATALOG_OPERATOR_PASSWORD,
   DEMO_CATALOG_OPERATOR_ROLE,
   DEMO_CATALOG_OPERATOR_USER_ID,
   DEMO_CATALOG_OPERATOR_PERMISSIONS,
@@ -59,12 +61,18 @@ export const authHandlers = [
       password?: string;
     };
 
-    if (body.email === DEMO_CATALOG_OPERATOR_EMAIL && body.password) {
+    if (
+      body.email === DEMO_CATALOG_OPERATOR_EMAIL &&
+      body.password === DEMO_CATALOG_OPERATOR_PASSWORD
+    ) {
       setMockSessionActive(true, DEMO_CATALOG_OPERATOR_EMAIL);
       return HttpResponse.json(catalogOperatorTokensBody());
     }
 
-    if (body.email !== DEMO_ADMIN_EMAIL || !body.password) {
+    if (
+      body.email !== DEMO_ADMIN_EMAIL ||
+      body.password !== DEMO_ADMIN_PASSWORD
+    ) {
       return HttpResponse.json(
         { message: 'Invalid credentials', statusCode: 401 },
         { status: 401 },

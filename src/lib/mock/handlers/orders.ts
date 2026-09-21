@@ -130,6 +130,8 @@ export const ordersHandlers = [
     items = sortByKey(items, sortBy, sortOrder, {
       createdAt: (item) => item.createdAt,
       totalAmount: (item) => item.totalAmount,
+      // OpenAPI list sort uses totalPrice; list DTO field is totalAmount.
+      totalPrice: (item) => item.totalAmount,
       id: (item) => item.id,
       status: (item) => item.status,
     });
