@@ -31,6 +31,7 @@ npm run env:init
 | UI without a backend | `npm run dev:mock` → [http://localhost:5174](http://localhost:5174) (Demo 1-Click Login) |
 | Full stack | Start the [API](https://github.com/raouf-b-dev/ecommerce-store-api) on port **3000**, then `npm run dev` |
 | Refresh OpenAPI types | With the API running: `npm run api:generate` |
+| Verify mock handlers (no API) | `npx vitest run src/lib/mock` - contract tests for product filters and demo auth |
 
 Seeded operator credentials: API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). First login may require a password change.
 
