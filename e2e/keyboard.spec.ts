@@ -41,8 +41,11 @@ test('mobile sheet opens from keyboard and closes on Escape', async ({ page }) =
   await expect(menu).toBeVisible();
   await menu.focus();
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('link', { name: 'Products' })).toBeVisible();
+  const sheet = page.getByRole('dialog', { name: 'Navigation Menu' });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole('link', { name: 'Products' })).toBeVisible();
   await page.keyboard.press('Escape');
+  await expect(sheet).toBeHidden();
   await expect(menu).toBeFocused();
 });
 
