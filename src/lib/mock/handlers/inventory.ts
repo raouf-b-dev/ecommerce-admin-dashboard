@@ -47,6 +47,8 @@ export const inventoryHandlers = [
 
     items = sortByKey(items, sortBy, sortOrder, {
       availableQuantity: (item) => item.availableQuantity,
+      totalQuantity: (item) => item.totalQuantity,
+      productId: (item) => item.productId,
       productTitle: (item) => item.productTitle.toLowerCase(),
       sku: (item) => item.sku.toLowerCase(),
       updatedAt: (item) => item.updatedAt,
