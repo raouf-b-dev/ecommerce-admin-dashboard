@@ -21,9 +21,10 @@
 
 Pick the first unchecked work. Letter suffixes (`8a`, `8b`, `8c`) are stable IDs - do not renumber them.
 
-1. **Finish Phase 12.5** - visual finish (chart tooltip, font, favicon, product thumbnails and image preview), then optional Cmd+K and trend badges.
-2. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
-3. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
+1. **Phase 12.6** - Hosted mock demo (the deploy config already exists; ship and document it).
+2. **Finish Phase 12.5** - visual finish (chart tooltip, font, favicon, product thumbnails and image preview, Categories nav, forced-password hint), then optional Cmd+K and trend badges.
+3. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
+4. **Phase 14** - Dashboard operational facts (parked until the API exposes the operational fields).
 
 ---
 
@@ -78,7 +79,7 @@ Write tests **with** each feature.
 | **2**    | Auth and RBAC chrome               | Done   | Login, permission-aware nav + tests                                                       |
 | **2.5**  | Forced password change             | Done   | `/change-password`, session flag, API guard integration                                   |
 | **2.6**  | Operator gate + silent refresh     | Done   | Operators-only SPA; domain 401 one-shot refresh                                           |
-| **3**    | Products                           | Done   | Table/forms + tests                                                                       |
+| **3**    | Products                           | Done   | Table/forms + categories + tests                                                          |
 | **4**    | Inventory                          | Done   | Stock views + tests                                                                       |
 | **5**    | Orders                             | Done   | Ops actions + tests                                                                       |
 | **6**    | Users                              | Done   | Read views + role filter + tests                                                          |
@@ -86,7 +87,7 @@ Write tests **with** each feature.
 | **8**    | Quality sweep                      | Done   | Journey, a11y, consistency, CI e2e policy                                                 |
 | **8b**   | Staff convention parity (docs)     | Done   | CONVENTIONS depth + ANTI-PATTERNS; GOVERNANCE match `ci.yml`                              |
 | **8c**   | Boundary + auth-code parity        | Done   | Invert lib -> features; drop English 403; ESLint `no-restricted-imports`                  |
-| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, hosted demo target                                             |
+| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, `build:mock` + `vercel.json` (deploy in 12.6)                  |
 | **9**    | Query parity                       | Done   | Expose every list query param this API version already accepts                            |
 | **10**   | Existing writes                    | Done   | Wire OpenAPI writes already shipped (users, products delete, roles UI)                    |
 | **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                            |
@@ -98,13 +99,30 @@ Write tests **with** each feature.
 
 ## Pending work
 
-Live queue (not numeric order): finish **12.5**, then optional **12**, then **14** (blocked on API facts). Phase 12 does not block the already-done Phase 13 gate.
+Live queue (not numeric order): **12.6**, then finish **12.5**, then optional **12**, then **14** (parked until the API exposes the operational fields). Phase 12 does not block the already-done Phase 13 gate.
 
 | Phase    | Name                            | Status | Priority | Focus                                                                    |
 | -------- | ------------------------------- | ------ | :------: | ------------------------------------------------------------------------ |
+| **12.6** | Hosted mock demo                | `[ ]`  |  `[P1]`  | Ship the existing `build:mock` Vercel config; demo banner; README link   |
 | **12.5** | Operational UX & Real-Time Sync | `[/]`  |  `[P1]`  | Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K remaining |
 | **12**   | Payments ops                    | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                |
-| **14**   | Dashboard Operational Facts     | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                    |
+| **14**   | Dashboard Operational Facts     | `[ ]`  |  `[P2]`  | Parked until OpenAPI exposes the operational fields                      |
+
+---
+
+## Phase 12.6: Hosted mock demo [P1]
+
+> **Goal**: A public zero-backend preview anyone can open. The deploy config already exists (`vercel.json` runs `npm run build:mock` with an SPA rewrite); this phase ships and documents it.
+
+**Scope:**
+
+- [ ] **Deploy:** connect the repo to Vercel (or equivalent) using the committed `vercel.json`. Production branch `master`; previews for PRs.
+- [ ] **Demo banner:** a visible "Demo data, resets on reload" banner in mock mode only (same `isMockMode` gate as MSW; absent from the `build` output).
+- [ ] **README:** replace "No hosted demo" with the demo link and its limits (MSW data, mock payments, data resets on reload). Keep the "against a local API" instructions.
+- [ ] **Later (live demo):** when the API offers a hosted demo environment, add an env-configured live build that targets it: API origin in `VITE_*` env, this origin registered in the API's CORS list, and hosting on a sibling subdomain of the API's domain so the refresh cookie reaches the API.
+
+**Done when:** the README links a working hosted mock URL; demo one-click login works there; `npm run build` output contains no MSW chunk.
+**Location:** `vercel.json`, `README.md`, `src/lib/mock/`, `src/components/`
 
 ---
 
@@ -130,11 +148,13 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 - [ ] **Load the declared font:** `index.css` names Inter but nothing loads it; self-host it (e.g. `@fontsource-variable/inter`) or switch the token to a deliberate system stack.
 - [ ] **Favicon and app icon:** ship a favicon and apple-touch icon so browser tabs are not blank.
 - [ ] **Product thumbnails:** show the existing `imageUrl` in the products table and order line items, with a styled placeholder when it is `null`.
-- [ ] **Product form image preview:** live preview of the typed image URL with a clear invalid or unreachable state. File upload waits on the API (see Out of scope).
+- [ ] **Product form image preview:** live preview of the typed image URL with a clear invalid or unreachable state. File upload waits on the API (see Depends on the API).
 - [ ] **Truncated text:** names clipped in tables expose the full value (`title` or tooltip).
+- [ ] **Categories in primary nav:** top-level nav item in `src/app/navigation.ts` (same permission as the categories route) instead of reaching it only through Products; keep the existing URL.
+- [ ] **Forced password change hint:** on the login page, a short note that seeded accounts must set a new password on first sign-in. Uses the existing `/change-password` flow; no new API field.
 
 **Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps; product rows show a thumbnail or placeholder; the tab has a favicon; chart tooltips are readable in both themes.
-**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`, `src/features/products/`, `src/index.css`, `index.html`
+**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/app/navigation.ts`, `src/features/auth/`, `src/features/dashboard/`, `src/features/products/`, `src/index.css`, `index.html`
 
 ---
 
@@ -172,6 +192,7 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 > **Goal**: Display operational order age, payment mix, and inventory sell-through facts once live storefront and payment flows exist.
 
 **Blocked on:** OpenAPI contracts exposing `payment_failed` on attention, order age (`oldestCreatedAt` / `oldestUpdatedAt`), payment counts (`failedPaymentCount` / `pendingPaymentCount`), and inventory fields (`unitsSold7d` / `reservedQuantity`).
+**Parked:** until the regenerated client contains all four field groups; no partial UI and no client-side derivation.
 
 **Scope:**
 
@@ -183,6 +204,22 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 
 ---
 
+## Depends on the API
+
+Adopt each only after it appears in OpenAPI and the client is regenerated. Do not work around a missing item in the SPA (no base64 image fields, no client-side storage, no derived values).
+
+| Capability                              | Unblocks                                            |
+| :-------------------------------------- | :-------------------------------------------------- |
+| Seeded demo product images (`imageUrl`) | Real thumbnails against a freshly seeded local API  |
+| Media upload operation                  | Product image file upload (keep the URL field)      |
+| Product image gallery                   | Multi-image product form                            |
+| Category image                          | Category thumbnails                                 |
+| Order status history                    | Order activity timeline                             |
+| Operational analytics fields            | Phase 14 dashboard operational facts                |
+| Hosted demo environment                 | Live (non-mock) hosted demo from Phase 12.6 "Later" |
+
+---
+
 ## Out of scope (this API version)
 
 - BFF
@@ -190,5 +227,3 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 - Customer checkout UI, carts, register, inventory reserve/release/check (storefront)
 - Inventing filters or buttons for operations that are not in OpenAPI
 - Global client store for server data (use TanStack Query)
-- Categories admin until the API exposes category list/write operations
-- Product image file upload until the API exposes a media upload operation in OpenAPI; keep the image URL field, no base64 or client-side storage workaround
