@@ -21,7 +21,7 @@
 
 Pick the first unchecked work. Letter suffixes (`8a`, `8b`, `8c`) are stable IDs - do not renumber them.
 
-1. **Finish Phase 12.5** - remaining polish: guided empty-state checklist, then optional Cmd+K and trend badges.
+1. **Finish Phase 12.5** - visual finish (chart tooltip, font, favicon, product thumbnails and image preview), then optional Cmd+K and trend badges.
 2. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
 3. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
 
@@ -125,9 +125,15 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 - [x] **Auth bootstrap retry:** Distinguish transient refresh/network failures from unauthenticated; avoid hard bounce to login with no retry on boot 5xx.
 - [x] **UsersTable column memo:** Memoize column defs like products/orders/inventory tables (minor render polish).
 - [x] **Address form DialogDescription:** Align `user-address-form` dialog a11y with other dialogs.
+- [ ] **Chart tooltip theming:** Recharts tooltips use theme tokens so dark mode never shows a white box.
+- [ ] **Load the declared font:** `index.css` names Inter but nothing loads it; self-host it (e.g. `@fontsource-variable/inter`) or switch the token to a deliberate system stack.
+- [ ] **Favicon and app icon:** ship a favicon and apple-touch icon so browser tabs are not blank.
+- [ ] **Product thumbnails:** show the existing `imageUrl` in the products table and order line items, with a styled placeholder when it is `null`.
+- [ ] **Product form image preview:** live preview of the typed image URL with a clear invalid or unreachable state. File upload waits on the API (see Out of scope).
+- [ ] **Truncated text:** names clipped in tables expose the full value (`title` or tooltip).
 
-**Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps.
-**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`
+**Done when:** Theme toggle works smoothly without flash; simulated WebSocket event triggers live toast and updates dashboard query cache; empty tables show actionable onboarding steps; product rows show a thumbnail or placeholder; the tab has a favicon; chart tooltips are readable in both themes.
+**Location:** `src/components/theme/`, `src/lib/ws/`, `src/components/ui/command-palette.tsx`, `src/features/dashboard/`, `src/features/products/`, `src/index.css`, `index.html`
 
 ---
 
@@ -183,3 +189,4 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 - Inventing filters or buttons for operations that are not in OpenAPI
 - Global client store for server data (use TanStack Query)
 - Categories admin until the API exposes category list/write operations
+- Product image file upload until the API exposes a media upload operation in OpenAPI; keep the image URL field, no base64 or client-side storage workaround
