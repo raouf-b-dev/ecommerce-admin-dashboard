@@ -70,28 +70,28 @@ Write tests **with** each feature.
 
 > Full checklists for finished phases are collapsed. History is in git. IDs stay; do not renumber.
 
-| Phase    | Name                               | Status | Focus                                                                           |
-| -------- | ---------------------------------- | ------ | ------------------------------------------------------------------------------- |
-| **0**    | Foundation                         | Done   | Vite scaffold, tooling, tests, OpenAPI client                                   |
-| **1**    | Agent ecosystem and conventions    | Done   | AGENT policy, context, AI docs, adapters                                        |
-| **1.5**  | Shell and page structure           | Done   | Layout extraction, feature pages, responsive nav, auth route shape              |
-| **2**    | Auth and RBAC chrome               | Done   | Login, permission-aware nav + tests                                             |
-| **2.5**  | Forced password change             | Done   | `/change-password`, session flag, API guard integration                         |
-| **2.6**  | Operator gate + silent refresh     | Done   | Operators-only SPA; domain 401 one-shot refresh                                 |
-| **3**    | Products                           | Done   | Table/forms + tests                                                             |
-| **4**    | Inventory                          | Done   | Stock views + tests                                                             |
-| **5**    | Orders                             | Done   | Ops actions + tests                                                             |
-| **6**    | Users                              | Done   | Read views + role filter + tests                                                |
-| **7**    | Dashboard                          | Done   | Operational cockpit (analytics API + Recharts)                                  |
-| **8**    | Quality sweep                      | Done   | Journey, a11y, consistency, CI e2e policy                                       |
-| **8b**   | Staff convention parity (docs)     | Done   | CONVENTIONS depth + ANTI-PATTERNS; GOVERNANCE match `ci.yml`                    |
-| **8c**   | Boundary + auth-code parity        | Done   | Invert lib -> features; drop English 403; ESLint `no-restricted-imports`        |
-| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, hosted demo target                                   |
-| **9**    | Query parity                       | Done   | Expose every list query param this API version already accepts                  |
-| **10**   | Existing writes                    | Done   | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
-| **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                  |
-| **11.5** | User address book                  | Done   | User detail address list + existing OpenAPI writes                              |
-| **13**   | Technical release gate             | Done   | Production validation against API, clean install quickstart, smoke              |
+| Phase    | Name                               | Status | Focus                                                                                     |
+| -------- | ---------------------------------- | ------ | ----------------------------------------------------------------------------------------- |
+| **0**    | Foundation                         | Done   | Vite scaffold, tooling, tests, OpenAPI client                                             |
+| **1**    | Agent ecosystem and conventions    | Done   | AGENT policy, context, AI docs, adapters                                                  |
+| **1.5**  | Shell and page structure           | Done   | Layout extraction, feature pages, responsive nav, auth route shape                        |
+| **2**    | Auth and RBAC chrome               | Done   | Login, permission-aware nav + tests                                                       |
+| **2.5**  | Forced password change             | Done   | `/change-password`, session flag, API guard integration                                   |
+| **2.6**  | Operator gate + silent refresh     | Done   | Operators-only SPA; domain 401 one-shot refresh                                           |
+| **3**    | Products                           | Done   | Table/forms + tests                                                                       |
+| **4**    | Inventory                          | Done   | Stock views + tests                                                                       |
+| **5**    | Orders                             | Done   | Ops actions + tests                                                                       |
+| **6**    | Users                              | Done   | Read views + role filter + tests                                                          |
+| **7**    | Dashboard                          | Done   | Operational cockpit (analytics API + Recharts)                                            |
+| **8**    | Quality sweep                      | Done   | Journey, a11y, consistency, CI e2e policy                                                 |
+| **8b**   | Staff convention parity (docs)     | Done   | CONVENTIONS depth + ANTI-PATTERNS; GOVERNANCE match `ci.yml`                              |
+| **8c**   | Boundary + auth-code parity        | Done   | Invert lib -> features; drop English 403; ESLint `no-restricted-imports`                  |
+| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, hosted demo target                                             |
+| **9**    | Query parity                       | Done   | Expose every list query param this API version already accepts                            |
+| **10**   | Existing writes                    | Done   | Wire OpenAPI writes already shipped (users, products delete, roles UI)                    |
+| **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                            |
+| **11.5** | User address book                  | Done   | User detail address list + existing OpenAPI writes                                        |
+| **13**   | Technical release gate             | Done   | Production validation against API, clean install quickstart, smoke                        |
 | **13.5** | Visual Showcase & Portfolio Assets | Done   | Hero WebP, Retina screenshots, README embeds; refresh via `scripts/create-walkthrough.js` |
 
 ---
@@ -100,11 +100,11 @@ Write tests **with** each feature.
 
 Live queue (not numeric order): finish **12.5**, then optional **12**, then **14** (blocked on API facts). Phase 12 does not block the already-done Phase 13 gate.
 
-| Phase    | Name                               | Status | Priority | Focus                                                                           |
-| -------- | ---------------------------------- | ------ | :------: | ------------------------------------------------------------------------------- |
-| **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K remaining        |
-| **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
-| **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                           |
+| Phase    | Name                            | Status | Priority | Focus                                                                    |
+| -------- | ------------------------------- | ------ | :------: | ------------------------------------------------------------------------ |
+| **12.5** | Operational UX & Real-Time Sync | `[/]`  |  `[P1]`  | Core slice shipped (Theme, WS, safe landing); checklists/Cmd+K remaining |
+| **12**   | Payments ops                    | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                |
+| **14**   | Dashboard Operational Facts     | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                    |
 
 ---
 
@@ -115,6 +115,7 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 **OpenAPI capabilities:** WebSocket gateway notifications (`orders.created`, `inventory.low_stock`).
 
 **Scope:**
+
 - [x] **Working Theme Provider:** Replace the previously removed non-functional placeholder with an accessible Dark/Light/System theme provider linked to Tailwind CSS tokens and `localStorage` persistence.
 - [x] **Real-Time WebSocket Feed:** Connect to API WebSocket gateway (`socket.io-client`). Show animated toast notifications when new orders arrive or stock drops below threshold, with query cache invalidation.
 - [x] **Guided Operator Checklist (Empty States):** Replace generic empty tables with an interactive "First-Time Operator Setup Guide" (e.g., 1. Add first product, 2. Set warehouse stock, 3. Review store settings).
@@ -173,6 +174,7 @@ Live queue (not numeric order): finish **12.5**, then optional **12**, then **14
 **Blocked on:** OpenAPI contracts exposing `payment_failed` on attention, order age (`oldestCreatedAt` / `oldestUpdatedAt`), payment counts (`failedPaymentCount` / `pendingPaymentCount`), and inventory fields (`unitsSold7d` / `reservedQuantity`).
 
 **Scope:**
+
 - [ ] **Attention Pulse**: Surface `payment_failed` orders with direct links to cancel/manage; display order age chips (`oldestCreatedAt` / `oldestUpdatedAt`).
 - [ ] **Payment Mix**: Show period `failedPaymentCount` and `pendingPaymentCount` on the dashboard overview.
 - [ ] **Inventory Sell-Through**: Display `unitsSold7d` and `reservedQuantity` on low-stock alert rows.
