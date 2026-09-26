@@ -2,6 +2,8 @@
   "name": "ecommerce-admin-dashboard",
   "private": true,
   "version": "0.3.0",
+  "license": "AGPL-3.0-only",
+  "author": "Abderaouf Bouzerara <https://github.com/raouf-b-dev>",
   "description": "Admin SPA for the E-commerce Store API.",
   "scripts": {
     "dev": "vite",

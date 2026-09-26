@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: E-commerce Admin Dashboard
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Abderaouf
+    family-names: Bouzerara
+    website: https://github.com/raouf-b-dev
+repository-code: https://github.com/raouf-b-dev/ecommerce-admin-dashboard
+license: AGPL-3.0-only
+version: "0.3.0"
+date-released: "2026-09-19"

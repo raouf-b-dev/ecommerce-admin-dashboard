@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { test } from '@playwright/test';
 
 /** Fail CI when required secrets are missing; skip locally so `npm run test:e2e` still runs guest specs. */

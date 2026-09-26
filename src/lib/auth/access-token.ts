@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const ACCESS_TOKEN_REFRESH_SKEW_MS = 15_000;
 const MIN_REFRESH_DELAY_MS = 1_000;
 

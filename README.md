@@ -7,7 +7,7 @@
   <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite"></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"></a>
   <a href="https://tanstack.com/query"><img src="https://img.shields.io/badge/TanStack-Query-FF4154?style=flat&logo=react-query&logoColor=white" alt="TanStack Query"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
 </p>
 
 > Admin UI for the [E-commerce Store API](https://github.com/raouf-b-dev/ecommerce-store-api). Operators manage catalog, stock, orders, and access. Business rules stay in the API.
@@ -122,7 +122,7 @@ Vite, React 19, TypeScript, Tailwind + shadcn/ui, TanStack Query, TanStack Table
 
 ## Docs
 
-[`docs/README.md`](docs/README.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
+[`docs/README.md`](docs/README.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`LICENSING.md`](LICENSING.md) · [`CLA.md`](CLA.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
 
 ## Related repositories
 
@@ -147,6 +147,12 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). Please follow the [`CODE_OF_CONDUCT.md
 
 ## License
 
-[MIT](LICENSE)
+[GNU Affero General Public License v3.0 only](LICENSE) (AGPL-3.0-only).
+
+Commercial licenses are available from the author. Contact [Abderaouf Bouzerara](https://github.com/raouf-b-dev).
+
+Releases up to and including [v0.3.0](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/releases/tag/v0.3.0) remain under the MIT License.
+
+The dual-license model is explained in [LICENSING.md](LICENSING.md). Contributors agree to [CLA.md](CLA.md).
 
 Built by [Abderaouf .B](https://github.com/raouf-b-dev) · [Issues](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues)

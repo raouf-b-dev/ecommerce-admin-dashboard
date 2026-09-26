@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { defineConfig } from '@playwright/test';
 
 const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { describe, expect, it } from 'vitest';
 import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
 import { hasPermission } from '@/lib/auth/permissions';

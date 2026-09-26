@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router';
 import { useAuth } from '@/lib/auth/auth-context';

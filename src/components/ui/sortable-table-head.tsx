@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { TableHead } from '@/components/ui/table';
 import { cn } from '@/lib/utils';

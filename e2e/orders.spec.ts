@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { type Page } from '@playwright/test';
 import { test, expect, openAdminShell, adminNav } from './helpers/admin-fixtures';
 

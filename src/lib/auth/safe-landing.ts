@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { navigation } from '@/app/navigation';
 import { hasPermission } from '@/lib/auth/permissions';
 
