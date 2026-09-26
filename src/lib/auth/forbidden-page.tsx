@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { Link } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';

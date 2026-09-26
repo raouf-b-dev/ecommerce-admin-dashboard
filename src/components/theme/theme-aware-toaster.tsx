@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { Toaster as SonnerToaster, type ToasterProps } from 'sonner';
 import { useTheme } from '@/components/theme/use-theme';
 

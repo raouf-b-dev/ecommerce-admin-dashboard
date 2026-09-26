@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
   DEMO_ADMIN_EMAIL,
   DEMO_OPERATOR_PERMISSIONS,

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { Suspense } from 'react';
 import { Outlet } from 'react-router';
 import { AppHeader } from '@/components/layout/app-header';

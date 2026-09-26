@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { decodeAccessTokenClaims } from '@/lib/auth/jwt-decode';
 import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
 import type {

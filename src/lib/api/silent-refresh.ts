@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { getAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { isAccessTokenUsable } from '@/lib/auth/access-token';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';

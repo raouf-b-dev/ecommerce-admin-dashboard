@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { http, HttpResponse } from 'msw';
 import { getMockStore } from '@/lib/mock/data/store';
 import { parsePositiveInt } from '@/lib/mock/lib/paginate-filter';

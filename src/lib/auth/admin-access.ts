@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 /**
  * API permission required to use this admin SPA.
  * Mirrors `access_admin` in ecommerce-store-api SYSTEM_PERMISSIONS.

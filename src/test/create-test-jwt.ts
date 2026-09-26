@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 function toBase64Url(value: string): string {
   const bytes = new TextEncoder().encode(value);
   let binary = '';

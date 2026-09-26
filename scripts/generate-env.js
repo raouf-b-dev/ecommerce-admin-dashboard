@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // Copies .env.example → .env.local and .secrets.example → .secrets.
 // Passwords are not filled in: copy them from the API seeding guide into .secrets.
 //

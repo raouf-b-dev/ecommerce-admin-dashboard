@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Abderaouf Bouzerara
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { formatStatusLabel } from '@/lib/format';
 import type { DashboardPeriodDays } from '@/lib/query-keys/dashboard-keys';
 
