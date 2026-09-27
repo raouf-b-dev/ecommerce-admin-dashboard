@@ -33,6 +33,21 @@ export const METRIC_OPTIONS = [
   { value: 'capturedCount' as const, label: 'Captured payments' },
 ];
 
+const AXIS_TICK = { fontSize: 12, fill: 'hsl(var(--muted-foreground))' };
+
+const TOOLTIP_CONTENT_STYLE = {
+  backgroundColor: 'hsl(var(--popover))',
+  borderColor: 'hsl(var(--border))',
+  borderRadius: 'var(--radius)',
+  color: 'hsl(var(--popover-foreground))',
+  fontSize: 12,
+};
+
+const TOOLTIP_LABEL_STYLE = {
+  color: 'hsl(var(--popover-foreground))',
+  fontWeight: 500,
+};
+
 function formatBucketLabel(iso: string, mode: 'day' | 'week'): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {
@@ -116,9 +131,14 @@ export function DashboardRevenueChart({
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border/70" />
-              <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+              <XAxis
+                dataKey="label"
+                tick={AXIS_TICK}
+                stroke="hsl(var(--border))"
+              />
               <YAxis
-                tick={{ fontSize: 12 }}
+                tick={AXIS_TICK}
+                stroke="hsl(var(--border))"
                 width={isCountMetric ? 40 : 64}
                 tickFormatter={(value: number) =>
                   isCountMetric
@@ -127,6 +147,9 @@ export function DashboardRevenueChart({
                 }
               />
               <Tooltip
+                contentStyle={TOOLTIP_CONTENT_STYLE}
+                labelStyle={TOOLTIP_LABEL_STYLE}
+                cursor={{ stroke: 'hsl(var(--border))' }}
                 formatter={(value: number) => [
                   isCountMetric
                     ? String(value)
