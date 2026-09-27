@@ -13,7 +13,7 @@
 - `[x]` done
 - Finish each phase before starting the next. See **Next up** for the live queue.
   - **Phase 12** (payments) is optional: skip it or do it after the already-done Phase 13 gate.
-  - Remaining **Phase 12.5** polish does not block Phase 12 or 14.
+  - Remaining **Phase 12.5** polish does not block Phase 12.6, 12, or 14.
 - Keep domain rules and auth enforcement in the API.
 - Contracts: live OpenAPI/Swagger + generated client. [API-INTEGRATION.md](API-INTEGRATION.md) is client rules only (not an endpoint list).
 
@@ -21,9 +21,10 @@
 
 Pick the first unchecked work. Letter suffixes (`8a`, `8b`, `8c`) are stable IDs - do not renumber them.
 
-1. **Finish Phase 12.5** - optional Cmd+K and transition skeletons (P2). The visual finish, trend badges, and the Categories nav item have shipped.
-2. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
-3. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
+1. **Phase 12.6** - Hosted mock demo (the deploy config already exists; ship and document it).
+2. **Finish Phase 12.5** - optional Cmd+K and transition skeletons (P2). The visual finish, trend badges, and the Categories nav item have shipped.
+3. **Phase 12** - Payments ops (optional; does **not** block the already-done Phase 13 gate).
+4. **Phase 14** - Dashboard operational facts (blocked on OpenAPI operational fields).
 
 ---
 
@@ -86,7 +87,7 @@ Write tests **with** each feature.
 | **8**    | Quality sweep                      | Done   | Journey, a11y, consistency, CI e2e policy                                       |
 | **8b**   | Staff convention parity (docs)     | Done   | CONVENTIONS depth + ANTI-PATTERNS; GOVERNANCE match `ci.yml`                    |
 | **8c**   | Boundary + auth-code parity        | Done   | Invert lib -> features; drop English 403; ESLint `no-restricted-imports`        |
-| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, hosted demo target                                   |
+| **8a**   | Standalone Zero-Backend Preview    | Done   | MSW `dev:mock`, mock auth, `build:mock` + `vercel.json` (deploy in 12.6)        |
 | **9**    | Query parity                       | Done   | Expose every list query param this API version already accepts                  |
 | **10**   | Existing writes                    | Done   | Wire OpenAPI writes already shipped (users, products delete, roles UI)          |
 | **11**   | API gaps then SPA                  | Done   | Product activate/deactivate + assign user role                                  |
@@ -98,13 +99,30 @@ Write tests **with** each feature.
 
 ## Pending work
 
-Live queue (not numeric order): finish **12.5**, then optional **12**, then **14** (blocked on API facts). Phase 12 does not block the already-done Phase 13 gate.
+Live queue (not numeric order): **12.6**, then finish **12.5**, then optional **12**, then **14** (blocked on API facts). Phase 12 does not block the already-done Phase 13 gate.
 
 | Phase    | Name                               | Status | Priority | Focus                                                                           |
 | -------- | ---------------------------------- | ------ | :------: | ------------------------------------------------------------------------------- |
+| **12.6** | Hosted mock demo                   | `[ ]`  |  `[P1]`  | Ship the existing `build:mock` Vercel config; demo banner; README link          |
 | **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | Core slice and visual finish shipped; Cmd+K and transition skeletons (P2) left |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                           |
+
+---
+
+## Phase 12.6: Hosted mock demo [P1]
+
+> **Goal**: A public zero-backend preview anyone can open. The deploy config already exists (`vercel.json` runs `npm run build:mock` with an SPA rewrite); this phase ships and documents it.
+
+**Scope:**
+
+- [ ] **Deploy:** connect the repo to Vercel (or equivalent) using the committed `vercel.json`. Production branch `master`; previews for PRs.
+- [ ] **Demo banner:** a visible "Demo data, resets on reload" banner in mock mode only, on the login page and in the authenticated shell. Component lives in `src/lib/mock/ui/` and is lazy-loaded behind `isMockMode()` like the demo login actions, so it is absent from the `build` output. The shell becomes a third allowed `@/lib/mock` touchpoint; document it in [CONVENTIONS.md](ai/CONVENTIONS.md) section 15.
+- [ ] **README:** replace "No hosted demo" with the demo link and its limits (MSW data, mock payments, data resets on reload). Keep the "against a local API" instructions.
+- [ ] **Later (live demo):** when the API offers a hosted demo environment, add an env-configured live build that targets it: API origin in `VITE_*` env, this origin registered in the API's CORS list, and hosting on a sibling subdomain of the API's domain so the refresh cookie reaches the API.
+
+**Done when:** the README links a working hosted mock URL; demo one-click login works there; `npm run build` output contains no MSW chunk.
+**Location:** `vercel.json`, `README.md`, `src/lib/mock/ui/`, app shell layout, `docs/ai/CONVENTIONS.md`
 
 ---
 
