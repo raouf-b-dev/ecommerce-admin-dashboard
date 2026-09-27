@@ -167,14 +167,14 @@ async function captureWalkthrough() {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
 
-  // Frame 9: Product edit page (2-column layout with Media asset & Category dropdown)
+  // Frame 9: Product edit page (2-column layout with catalog image preview & Category dropdown)
   await page.goto(`${baseUrl}/products`);
   await page.waitForSelector('table tbody tr', { timeout: 10_000 });
   const productEditLink = page.locator('table tbody tr a:has-text("Edit")').first();
   await productEditLink.click();
   await page.waitForURL(/\/products\/\d+\/edit/, { timeout: 10_000 });
-  await page.waitForSelector('text=Media asset', { timeout: 10_000 });
-  await snap('9. Product edit 2-column layout with media asset and category selector');
+  await page.waitForSelector('h2:has-text("Catalog image")', { timeout: 10_000 });
+  await snap('9. Product edit 2-column layout with catalog image preview and category selector');
 
   // Frame 10: Inventory list
   await page.goto(`${baseUrl}/inventory`);
