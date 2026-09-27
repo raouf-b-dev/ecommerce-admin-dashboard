@@ -104,6 +104,7 @@ export function CategoriesTable() {
               <TableHead>Category</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead className="text-right">Active products</TableHead>
               <TableHead>Status</TableHead>
               {canManage ? (
                 <TableHead className="text-right">Actions</TableHead>
@@ -114,7 +115,7 @@ export function CategoriesTable() {
             {categories.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={canManage ? 5 : 4}
+                  colSpan={canManage ? 6 : 5}
                   className="text-center text-muted-foreground"
                 >
                   No categories found.
@@ -135,6 +136,9 @@ export function CategoriesTable() {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {emptyCell(category.description)}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {category.productCount}
                   </TableCell>
                   <TableCell>
                     <StatusBadge variant="product" isActive={category.isActive} />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -20,6 +20,7 @@ import {
   type ProductSubmitValues,
 } from '@/features/products/schemas/product-schema';
 import { useCategoriesListQuery } from '@/features/products/hooks/use-categories';
+import { ProductImagePreview } from '@/features/products/components/product-image-preview';
 import { applyApiFormErrors } from '@/lib/api/form-api-errors';
 
 export type ProductFormMode = 'create' | 'edit';
@@ -97,6 +98,10 @@ export function ProductForm({
   }, [defaultValues, form]);
 
   const isSubmitting = form.formState.isSubmitting;
+  const [watchedName, watchedCategoryId] = useWatch({
+    control: form.control,
+    name: ['name', 'categoryId'],
+  });
 
   async function handleSubmit(values: ProductFormValues) {
     setFormError(null);
@@ -257,6 +262,11 @@ export function ProductForm({
                 />
               </FormControl>
               <FormMessage />
+              <ProductImagePreview
+                url={field.value ?? ''}
+                name={watchedName ?? ''}
+                categoryId={watchedCategoryId ? Number(watchedCategoryId) : null}
+              />
             </FormItem>
           )}
         />

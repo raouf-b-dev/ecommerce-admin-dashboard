@@ -36,6 +36,7 @@ export function DashboardTopProducts({ items, currency }: Props) {
                 <div className="min-w-0 truncate">
                   <Link
                     to={`/inventory/${item.productId}`}
+                    title={item.name}
                     className="truncate font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
                   >
                     {item.name}

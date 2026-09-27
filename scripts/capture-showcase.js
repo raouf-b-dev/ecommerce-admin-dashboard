@@ -91,7 +91,7 @@ async function main() {
   const prodEditLink = darkPage.locator('table tbody tr a:has-text("Edit")').first();
   await prodEditLink.click();
   await darkPage.waitForURL(/\/products\/\d+\/edit/, { timeout: 10_000 });
-  await darkPage.waitForSelector('text=Media asset', { timeout: 10_000 });
+  await darkPage.waitForSelector('h2:has-text("Catalog image")', { timeout: 10_000 });
   await darkPage.waitForTimeout(800);
   const prodEditDarkPath = path.join(assetsDir, 'screenshot-product-edit-dark.png');
   await darkPage.screenshot({ path: prodEditDarkPath });
@@ -210,7 +210,7 @@ async function main() {
   const prodEditLightLink = lightPage.locator('table tbody tr a:has-text("Edit")').first();
   await prodEditLightLink.click();
   await lightPage.waitForURL(/\/products\/\d+\/edit/, { timeout: 10_000 });
-  await lightPage.waitForSelector('text=Media asset', { timeout: 10_000 });
+  await lightPage.waitForSelector('h2:has-text("Catalog image")', { timeout: 10_000 });
   await lightPage.waitForTimeout(800);
   const prodEditLightPath = path.join(assetsDir, 'screenshot-product-edit-light.png');
   await lightPage.screenshot({ path: prodEditLightPath });

@@ -1,6 +1,10 @@
 import { http, HttpResponse } from 'msw';
 import { getMockStore, isoNow } from '@/lib/mock/data/store';
-import type { RoleResponseDto } from '@/lib/mock/data/types';
+import type {
+  CreateRoleDto,
+  RoleResponseDto,
+  UpdateRoleDto,
+} from '@/lib/mock/data/types';
 
 export const rolesHandlers = [
   http.get('*/v1/roles', () => {
@@ -19,12 +23,8 @@ export const rolesHandlers = [
     return HttpResponse.json(role);
   }),
 
-  http.post('*/v1/roles', async ({ request }) => {
-    const body = (await request.json()) as {
-      code: string;
-      name: string;
-      permissions: string[];
-    };
+  http.post<never, CreateRoleDto>('*/v1/roles', async ({ request }) => {
+    const body = await request.json();
     const store = getMockStore();
     const stamp = isoNow();
     const role: RoleResponseDto = {
@@ -40,25 +40,25 @@ export const rolesHandlers = [
     return HttpResponse.json(role, { status: 201 });
   }),
 
-  http.patch('*/v1/roles/:id', async ({ params, request }) => {
-    const id = Number(params.id);
-    const role = getMockStore().roles.find((item) => item.id === id);
-    if (!role) {
-      return HttpResponse.json(
-        { message: 'Role not found', statusCode: 404 },
-        { status: 404 },
-      );
-    }
+  http.patch<{ id: string }, UpdateRoleDto>(
+    '*/v1/roles/:id',
+    async ({ params, request }) => {
+      const id = Number(params.id);
+      const role = getMockStore().roles.find((item) => item.id === id);
+      if (!role) {
+        return HttpResponse.json(
+          { message: 'Role not found', statusCode: 404 },
+          { status: 404 },
+        );
+      }
 
-    const body = (await request.json()) as {
-      name: string;
-      permissions: string[];
-    };
-    role.name = body.name;
-    role.permissions = { codes: body.permissions };
-    role.updatedAt = isoNow();
-    return new HttpResponse(null, { status: 204 });
-  }),
+      const body = await request.json();
+      role.name = body.name;
+      role.permissions = { codes: body.permissions };
+      role.updatedAt = isoNow();
+      return new HttpResponse(null, { status: 204 });
+    },
+  ),
 
   http.delete('*/v1/roles/:id', ({ params }) => {
     const id = Number(params.id);

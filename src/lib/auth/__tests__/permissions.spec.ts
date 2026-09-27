@@ -26,6 +26,7 @@ describe('permissions helpers', () => {
     expect(filtered.map((item) => item.label)).toEqual([
       'Dashboard',
       'Products',
+      'Categories',
       'Orders',
     ]);
   });

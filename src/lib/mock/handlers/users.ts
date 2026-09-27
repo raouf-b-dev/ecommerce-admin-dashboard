@@ -1,6 +1,13 @@
 import { http, HttpResponse } from 'msw';
 import { getMockStore, isoNow } from '@/lib/mock/data/store';
-import type { AddressResponseDto, UserDetailResponseDto } from '@/lib/mock/data/types';
+import type {
+  AddAddressDto,
+  AddressResponseDto,
+  AssignRoleDto,
+  UpdateAddressDto,
+  UpdateUserDto,
+  UserDetailResponseDto,
+} from '@/lib/mock/data/types';
 import {
   paginate,
   parseOptionalBoolean,
@@ -61,7 +68,7 @@ export const usersHandlers = [
     return HttpResponse.json(user);
   }),
 
-  http.patch('*/v1/users/:id', async ({ params, request }) => {
+  http.patch<{ id: string }, UpdateUserDto>('*/v1/users/:id', async ({ params, request }) => {
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
@@ -71,13 +78,7 @@ export const usersHandlers = [
       );
     }
 
-    const body = (await request.json()) as Partial<{
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-    }>;
-
+    const body = await request.json();
     Object.assign(user, body, { updatedAt: isoNow() });
     return new HttpResponse(null, { status: 204 });
   }),
@@ -110,7 +111,7 @@ export const usersHandlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.put('*/v1/users/:id/role', async ({ params, request }) => {
+  http.put<{ id: string }, AssignRoleDto>('*/v1/users/:id/role', async ({ params, request }) => {
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
@@ -120,7 +121,7 @@ export const usersHandlers = [
       );
     }
 
-    const body = (await request.json()) as { roleCode: string };
+    const body = await request.json();
     const role = getMockStore().roles.find((item) => item.code === body.roleCode);
     if (!role) {
       return HttpResponse.json(
@@ -134,7 +135,7 @@ export const usersHandlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.post('*/v1/users/:id/addresses', async ({ params, request }) => {
+  http.post<{ id: string }, AddAddressDto>('*/v1/users/:id/addresses', async ({ params, request }) => {
     const id = Number(params.id);
     const store = getMockStore();
     const user = store.users.find((item) => item.id === id);
@@ -145,17 +146,7 @@ export const usersHandlers = [
       );
     }
 
-    const body = (await request.json()) as {
-      street: string;
-      street2?: string;
-      city: string;
-      state: string;
-      postalCode: string;
-      country: string;
-      type: AddressResponseDto['type'];
-      isDefault?: boolean;
-      deliveryInstructions?: string;
-    };
+    const body = await request.json();
 
     const stamp = isoNow();
     const isDefault = body.isDefault === true || user.addresses.length === 0;
@@ -173,7 +164,8 @@ export const usersHandlers = [
       state: body.state,
       postalCode: body.postalCode,
       country: body.country,
-      type: body.type,
+      // Mirrors AddAddressUseCase default.
+      type: body.type ?? 'SHIPPING',
       isDefault,
       deliveryInstructions: body.deliveryInstructions,
       createdAt: stamp,
@@ -186,7 +178,7 @@ export const usersHandlers = [
     return new HttpResponse(null, { status: 201 });
   }),
 
-  http.patch('*/v1/users/:id/addresses/:addressId', async ({
+  http.patch<{ id: string; addressId: string }, UpdateAddressDto>('*/v1/users/:id/addresses/:addressId', async ({
     params,
     request,
   }) => {
@@ -208,7 +200,7 @@ export const usersHandlers = [
       );
     }
 
-    const body = (await request.json()) as Partial<AddressResponseDto>;
+    const body = await request.json();
     Object.assign(address, body, { updatedAt: isoNow() });
     user.updatedAt = isoNow();
     return new HttpResponse(null, { status: 204 });
