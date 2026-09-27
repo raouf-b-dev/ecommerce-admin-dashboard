@@ -3,6 +3,7 @@ import {
   Package,
   Shield,
   ShoppingCart,
+  Tags,
   Users,
   Warehouse,
   type LucideIcon,
@@ -26,6 +27,12 @@ export const navigation: NavItem[] = [
     to: '/products',
     label: 'Products',
     icon: Package,
+    permission: 'view_all_products',
+  },
+  {
+    to: '/products/categories',
+    label: 'Categories',
+    icon: Tags,
     permission: 'view_all_products',
   },
   {
