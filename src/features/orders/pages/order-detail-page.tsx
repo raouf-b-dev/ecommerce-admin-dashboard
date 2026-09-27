@@ -27,6 +27,7 @@ import {
 import { formatDateTime, formatMoney } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { ProductNameCell } from '@/components/media/product-name-cell';
 
 const CONFLICT_MESSAGE =
   'Order was modified by another request. Latest values were reloaded - review and try again.';
@@ -137,7 +138,9 @@ function OrderDetailPage() {
                       <TableCell className="pl-6 font-mono text-xs font-medium text-muted-foreground">
                         {item.sku}
                       </TableCell>
-                      <TableCell className="font-medium">{item.title}</TableCell>
+                      <TableCell className="font-medium">
+                        <ProductNameCell name={item.title} imageUrl={item.imageUrl} />
+                      </TableCell>
                       <TableCell className="text-right tabular-nums">{item.quantity}</TableCell>
                       <TableCell className="text-right tabular-nums">
                         {formatMoney(item.unitPrice, order.currency)}

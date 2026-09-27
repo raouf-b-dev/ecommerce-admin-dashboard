@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseHttpUrl } from '@/lib/url';
 import type {
   CreateProductDto,
   UpdateProductDto,
@@ -25,11 +26,8 @@ export const createProductSchema = z.object({
     .string()
     .optional()
     .refine(
-      (value) =>
-        !value ||
-        value.trim().length === 0 ||
-        z.string().url().safeParse(value.trim()).success,
-      'Enter a valid URL',
+      (value) => !value?.trim() || parseHttpUrl(value.trim()) !== null,
+      'Enter a full http(s) URL, for example https://cdn.example.com/photo.webp',
     ),
   categoryId: z
     .string()

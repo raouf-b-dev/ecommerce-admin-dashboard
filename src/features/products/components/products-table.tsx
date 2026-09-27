@@ -19,6 +19,7 @@ import {
 import { TablePagination } from '@/components/ui/table-pagination';
 import { OperatorSetupChecklist } from '@/components/feedback/operator-setup-checklist';
 import { TableEmptyState } from '@/components/feedback/table-empty-state';
+import { ProductNameCell } from '@/components/media/product-name-cell';
 import { formatDate, formatMoney } from '@/lib/format';
 import type { OperatorSetupStepView } from '@/lib/operator-setup';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -102,13 +103,22 @@ export function ProductsTable({
           accessorKey: 'name',
           header: 'Name',
           cell: ({ row }) => (
-            <div className="font-medium">{row.original.name}</div>
+            <ProductNameCell
+              name={row.original.name}
+              imageUrl={row.original.imageUrl}
+              categoryId={row.original.categoryId}
+              className="font-medium"
+            />
           ),
         },
         {
           accessorKey: 'sku',
           header: 'SKU',
-          cell: ({ row }) => nullableString(row.original.sku),
+          cell: ({ row }) => (
+            <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">
+              {nullableString(row.original.sku)}
+            </span>
+          ),
         },
         {
           accessorKey: 'categoryName',

@@ -87,14 +87,17 @@ describe('createProductSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects invalid image URL', () => {
-    const result = createProductSchema.safeParse({
-      name: 'Laptop',
-      price: '10',
-      currency: 'USD',
-      imageUrl: 'not-a-url',
-    });
+  it.each(['not-a-url', 'ftp://files.example.com/a.jpg', 'javascript:alert(1)'])(
+    'rejects image URL %p',
+    (imageUrl) => {
+      const result = createProductSchema.safeParse({
+        name: 'Laptop',
+        price: '10',
+        currency: 'USD',
+        imageUrl,
+      });
 
-    expect(result.success).toBe(false);
-  });
+      expect(result.success).toBe(false);
+    },
+  );
 });

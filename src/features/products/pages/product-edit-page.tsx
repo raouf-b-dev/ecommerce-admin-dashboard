@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { ProductThumbnail } from '@/components/media/product-thumbnail';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -201,32 +202,22 @@ function ProductEditPage() {
 
         {/* Sidebar Column (1/3) */}
         <div className="space-y-6">
-          {/* Image Preview Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Media asset</CardTitle>
+              <CardTitle as="h2" className="text-base">Catalog image</CardTitle>
               <CardDescription>
-                Catalog thumbnail preview
+                {product.imageUrl
+                  ? 'The saved image URL. The placeholder shows if it cannot load.'
+                  : 'No image saved. Shoppers see the lettered placeholder.'}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {product.imageUrl ? (
-                <div className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/20">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/80 bg-muted/10 p-6 text-center text-xs text-muted-foreground">
-                  <ImageIcon className="mb-2 h-7 w-7 opacity-40" />
-                  No image URL provided
-                </div>
-              )}
+              <ProductThumbnail
+                src={product.imageUrl}
+                name={product.name}
+                categoryId={product.categoryId}
+                size="fill"
+              />
             </CardContent>
           </Card>
 
