@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { Link } from 'react-router';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { resolveInventorySeverity } from '@/lib/status';

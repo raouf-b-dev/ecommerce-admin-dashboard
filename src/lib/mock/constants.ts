@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 export const DEMO_ADMIN_EMAIL = 'admin@store.local';
 export const DEMO_ADMIN_PASSWORD = 'demo';
 export const DEMO_ADMIN_USER_ID = '1';

@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { PermissionResponseDto } from '@/features/roles/types';

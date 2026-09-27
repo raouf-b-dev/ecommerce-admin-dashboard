@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { components } from '@/lib/api/generated/schema';
 
 export type AddressResponseDto = components['schemas']['AddressResponseDto'];

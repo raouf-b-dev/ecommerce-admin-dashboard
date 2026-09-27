@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 /**
  * API permission required to use this admin SPA.
  * Mirrors `access_admin` in ecommerce-store-api SYSTEM_PERMISSIONS.

@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import {
   DEMO_ADMIN_EMAIL,
   DEMO_OPERATOR_PERMISSIONS,

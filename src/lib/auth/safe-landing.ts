@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { navigation } from '@/app/navigation';
 import { hasPermission } from '@/lib/auth/permissions';
 

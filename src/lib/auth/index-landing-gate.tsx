@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router';
 import { useAuth } from '@/lib/auth/auth-context';

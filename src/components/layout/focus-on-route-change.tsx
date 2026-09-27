@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 

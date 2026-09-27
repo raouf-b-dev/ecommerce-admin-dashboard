@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { io, type Socket } from 'socket.io-client';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
 import type { NotificationEnvelope } from '@/lib/ws/notification-types';

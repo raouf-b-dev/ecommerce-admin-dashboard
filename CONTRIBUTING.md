@@ -6,20 +6,6 @@ Thanks for your interest in improving the admin dashboard. This repository is an
 
 By participating, you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## Contributor License Agreement
-
-This project is licensed under the [MIT License](LICENSE). Contributors sign the [Contributor License Agreement](CLA.md). Your first pull request must include a signature.
-
-The CLA Assistant workflow comments on the pull request when a committer has not signed yet. Reply with this comment, exactly:
-
-```
-I have read the CLA Document and I hereby sign the CLA
-```
-
-That comment is your signature. It covers your present and future contributions to this repository. Signatures are stored in `signatures/version1/cla.json` on the `cla-signatures` branch, not on `master`.
-
-`raouf-b-dev`, `dependabot[bot]`, and other GitHub bot accounts (usernames ending in `[bot]`) are allowlisted and do not sign. If you already signed on an earlier pull request, you do not sign again. Comment `recheck` if the status check should run again.
-
 ## How we accept changes
 
 1. **Fork** this repository (write access on the upstream is not expected).
@@ -72,7 +58,6 @@ Playwright needs a live API; see CI notes in the README. Prefer unit/component c
 ### PR checklist
 
 - [ ] Targets `develop` from a fork branch
-- [ ] CLA signed if this is your first contribution (see above)
 - [ ] Lint, typecheck, and unit tests pass locally
 - [ ] OpenAPI client regenerated if the contract changed
 - [ ] No secrets in `VITE_*` or committed env files

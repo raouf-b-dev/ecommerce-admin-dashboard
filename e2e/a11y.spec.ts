@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { test, expect } from '@playwright/test';
 import { expectNoSeriousAxeViolations } from './helpers/axe';
 

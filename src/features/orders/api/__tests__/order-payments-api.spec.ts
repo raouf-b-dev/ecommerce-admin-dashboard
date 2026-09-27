@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { getOrderPaymentRequest } from '@/features/orders/api/order-payments-api';
 

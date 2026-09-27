@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { useRef, type KeyboardEvent } from 'react';
 import { cn } from '@/lib/utils';
 

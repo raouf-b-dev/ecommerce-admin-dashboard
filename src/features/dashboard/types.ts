@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { components } from '@/lib/api/generated/schema';
 import type { DashboardPeriodDays } from '@/lib/query-keys/dashboard-keys';
 

@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router';
 import { Button } from '@/components/ui/button';
 

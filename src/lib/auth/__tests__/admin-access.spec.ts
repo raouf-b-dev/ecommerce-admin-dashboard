@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { describe, expect, it } from 'vitest';
 import { ACCESS_ADMIN_PERMISSION } from '@/lib/auth/admin-access';
 import { hasPermission } from '@/lib/auth/permissions';

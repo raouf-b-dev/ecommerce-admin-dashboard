@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, ArrowUpDown, Clock, Layers, ShieldAlert } from 'lucide-react';

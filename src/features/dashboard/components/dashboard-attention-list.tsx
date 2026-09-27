@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { Link } from 'react-router';
 import type { OrderAttentionCountDto } from '@/features/dashboard/types';
 import { attentionStatusLabel } from '@/features/dashboard/lib/dashboard-metrics';
