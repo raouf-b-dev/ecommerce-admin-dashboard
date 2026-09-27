@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { test, expect, openAdminShell } from './helpers/admin-fixtures';
 
 test('signed-in session shows the admin shell', async ({ page }) => {

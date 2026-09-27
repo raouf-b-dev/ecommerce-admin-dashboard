@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { createTestJwt } from '@/test/create-test-jwt';
 import {
   isAccessTokenUsable,

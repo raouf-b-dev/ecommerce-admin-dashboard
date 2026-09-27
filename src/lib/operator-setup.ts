@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { hasPermission } from '@/lib/auth/permissions';
 
 export type OperatorSetupStepStatus = 'ready' | 'locked' | 'forbidden';

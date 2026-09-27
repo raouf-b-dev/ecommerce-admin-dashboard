@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { QueryStateAlert } from '@/components/feedback/query-state';
 
 export function AuthLoadingScreen() {

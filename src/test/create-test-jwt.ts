@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 function toBase64Url(value: string): string {
   const bytes = new TextEncoder().encode(value);
   let binary = '';

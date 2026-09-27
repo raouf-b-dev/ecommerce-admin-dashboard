@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createRoleRequest,

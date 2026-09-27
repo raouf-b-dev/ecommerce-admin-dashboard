@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { cn } from '@/lib/utils';
 import { formatPercentDelta } from '@/lib/format';
 

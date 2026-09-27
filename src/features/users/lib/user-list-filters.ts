@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { UserListFilters } from '@/features/users/types';
 
 export const DEFAULT_USER_LIST_FILTERS: UserListFilters = {

@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { AppLayout } from '@/components/layout/app-layout';

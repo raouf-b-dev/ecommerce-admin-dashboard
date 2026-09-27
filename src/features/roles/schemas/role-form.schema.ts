@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { z } from 'zod';
 import type { CreateRoleDto, UpdateRoleDto } from '@/features/roles/types';
 

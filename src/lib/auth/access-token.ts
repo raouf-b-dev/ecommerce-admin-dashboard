@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 const ACCESS_TOKEN_REFRESH_SKEW_MS = 15_000;
 const MIN_REFRESH_DELAY_MS = 1_000;
 

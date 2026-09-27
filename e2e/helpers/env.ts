@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { test } from '@playwright/test';
 
 /** Fail CI when required secrets are missing; skip locally so `npm run test:e2e` still runs guest specs. */

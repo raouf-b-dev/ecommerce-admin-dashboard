@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { NavLink } from 'react-router';
 import { cn } from '@/lib/utils';
 import { navigation } from '@/app/navigation';

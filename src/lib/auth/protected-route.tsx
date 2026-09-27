@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { Navigate, useLocation } from 'react-router';
 import type { ReactNode } from 'react';
 import {

@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { describe, expect, it, vi } from 'vitest';
 import { ApiRequestError } from '@/lib/api/parse-api-error';
 import { applyApiFormErrors } from '@/lib/api/form-api-errors';

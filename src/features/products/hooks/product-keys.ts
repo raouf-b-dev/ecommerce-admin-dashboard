@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { ProductListFilters } from '@/features/products/types';
 
 export const productKeys = {

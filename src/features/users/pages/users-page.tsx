@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { useState, type SubmitEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { PageHeader } from '@/components/layout/page-header';

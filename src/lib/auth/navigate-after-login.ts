@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { AuthSession } from '@/lib/auth/types';
 import { safeRedirectPath } from '@/lib/auth/safe-redirect-path';
 import { getDefaultLandingRoute } from '@/lib/auth/safe-landing';

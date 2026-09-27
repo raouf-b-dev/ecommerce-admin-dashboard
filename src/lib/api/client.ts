@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import createClient from 'openapi-fetch';
 import type { paths } from '@/lib/api/generated/schema';
 import {

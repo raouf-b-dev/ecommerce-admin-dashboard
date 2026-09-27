@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import { render, screen } from '@testing-library/react';
 import { Button } from '@/components/ui/button';
 

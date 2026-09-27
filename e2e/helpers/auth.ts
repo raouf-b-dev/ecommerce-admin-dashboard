@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: MIT
-
 import type { Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import { skipUnlessEnv } from './env';
