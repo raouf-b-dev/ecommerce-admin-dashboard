@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { adminNav } from './auth';

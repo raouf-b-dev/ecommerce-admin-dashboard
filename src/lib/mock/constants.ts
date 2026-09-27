@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 
 export const DEMO_ADMIN_EMAIL = 'admin@store.local';
 export const DEMO_ADMIN_PASSWORD = 'demo';

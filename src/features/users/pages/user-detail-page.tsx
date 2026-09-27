@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';

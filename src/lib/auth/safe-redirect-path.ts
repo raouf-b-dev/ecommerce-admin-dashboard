@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 
 /** Reject open redirects: only same-origin relative paths. Reject auth-route loops. */
 export function safeRedirectPath(value: string | null): string {

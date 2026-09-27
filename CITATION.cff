@@ -7,6 +7,6 @@ authors:
     family-names: Bouzerara
     website: https://github.com/raouf-b-dev
 repository-code: https://github.com/raouf-b-dev/ecommerce-admin-dashboard
-license: AGPL-3.0-only
+license: MIT
 version: "0.3.0"
 date-released: "2026-09-19"

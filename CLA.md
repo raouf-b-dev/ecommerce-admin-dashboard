@@ -30,7 +30,7 @@ You accept and agree to the following terms and conditions for Your present and 
 
 Subject to the terms and conditions of this Agreement, You hereby grant to the Recipient and to recipients of software distributed by the Recipient a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
 
-Relicense. In addition, You grant the Recipient the right to sublicense and to relicense Your Contributions, and any derivative works of them, under any terms the Recipient chooses, including proprietary and commercial licenses. This includes the right to dual-license the Work: to offer it under the GNU Affero General Public License version 3 only (AGPL-3.0-only) and, separately, under a commercial license or any other terms.
+Relicense. In addition, You grant the Recipient the right to sublicense and to relicense Your Contributions, and any derivative works of them, under any terms the Recipient chooses, including other open-source licenses or proprietary licenses.
 
 ## 3. Grant of Patent License
 

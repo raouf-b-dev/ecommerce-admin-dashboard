@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Abderaouf Bouzerara
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { ProductStatusActions } from '@/features/products/components/product-status-actions';

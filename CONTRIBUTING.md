@@ -8,7 +8,7 @@ By participating, you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Contributor License Agreement
 
-This repository is dual-licensed (see [LICENSING.md](LICENSING.md)). Your first pull request must include a signature on the [Contributor License Agreement](CLA.md).
+This project is licensed under the [MIT License](LICENSE). Contributors sign the [Contributor License Agreement](CLA.md). Your first pull request must include a signature.
 
 The CLA Assistant workflow comments on the pull request when a committer has not signed yet. Reply with this comment, exactly:
 
