@@ -16,6 +16,7 @@ import {
   isMockSessionActive,
   setMockSessionActive,
 } from '@/lib/mock/data/store';
+import type { ChangePasswordDto, LoginDto } from '@/lib/mock/data/types';
 import { createMockJwt } from '@/lib/mock/lib/jwt';
 
 function adminTokensBody() {
@@ -55,33 +56,33 @@ function getTokensForCurrentUser(): ReturnType<typeof adminTokensBody> {
 }
 
 export const authHandlers = [
-  http.post('*/v1/authentication/login', async ({ request }) => {
-    const body = (await request.json()) as {
-      email?: string;
-      password?: string;
-    };
+  http.post<never, LoginDto>(
+    '*/v1/authentication/login',
+    async ({ request }) => {
+      const body = await request.json();
 
-    if (
-      body.email === DEMO_CATALOG_OPERATOR_EMAIL &&
-      body.password === DEMO_CATALOG_OPERATOR_PASSWORD
-    ) {
-      setMockSessionActive(true, DEMO_CATALOG_OPERATOR_EMAIL);
-      return HttpResponse.json(catalogOperatorTokensBody());
-    }
+      if (
+        body.email === DEMO_CATALOG_OPERATOR_EMAIL &&
+        body.password === DEMO_CATALOG_OPERATOR_PASSWORD
+      ) {
+        setMockSessionActive(true, DEMO_CATALOG_OPERATOR_EMAIL);
+        return HttpResponse.json(catalogOperatorTokensBody());
+      }
 
-    if (
-      body.email !== DEMO_ADMIN_EMAIL ||
-      body.password !== DEMO_ADMIN_PASSWORD
-    ) {
-      return HttpResponse.json(
-        { message: 'Invalid credentials', statusCode: 401 },
-        { status: 401 },
-      );
-    }
+      if (
+        body.email !== DEMO_ADMIN_EMAIL ||
+        body.password !== DEMO_ADMIN_PASSWORD
+      ) {
+        return HttpResponse.json(
+          { message: 'Invalid credentials', statusCode: 401 },
+          { status: 401 },
+        );
+      }
 
-    setMockSessionActive(true, DEMO_ADMIN_EMAIL);
-    return HttpResponse.json(adminTokensBody());
-  }),
+      setMockSessionActive(true, DEMO_ADMIN_EMAIL);
+      return HttpResponse.json(adminTokensBody());
+    },
+  ),
 
   http.post('*/v1/authentication/refresh', () => {
     if (!isMockSessionActive()) {
@@ -96,23 +97,23 @@ export const authHandlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.post('*/v1/authentication/change-password', async ({ request }) => {
-    if (!isMockSessionActive()) {
-      return new HttpResponse(null, { status: 401 });
-    }
+  http.post<never, ChangePasswordDto>(
+    '*/v1/authentication/change-password',
+    async ({ request }) => {
+      if (!isMockSessionActive()) {
+        return new HttpResponse(null, { status: 401 });
+      }
 
-    const body = (await request.json()) as {
-      currentPassword?: string;
-      newPassword?: string;
-    };
+      const body = await request.json();
 
-    if (!body.currentPassword || !body.newPassword) {
-      return HttpResponse.json(
-        { message: 'Invalid password change request', statusCode: 400 },
-        { status: 400 },
-      );
-    }
+      if (!body.currentPassword || !body.newPassword) {
+        return HttpResponse.json(
+          { message: 'Invalid password change request', statusCode: 400 },
+          { status: 400 },
+        );
+      }
 
-    return HttpResponse.json(getTokensForCurrentUser());
-  }),
+      return HttpResponse.json(getTokensForCurrentUser());
+    },
+  ),
 ];

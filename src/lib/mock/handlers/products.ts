@@ -1,9 +1,11 @@
 import { http, HttpResponse } from 'msw';
 import { getMockStore, isoNow } from '@/lib/mock/data/store';
 import type {
+  CreateProductDto,
   ProductDetailResponseDto,
   ProductListItemResponseDto,
   ProductResponseDto,
+  UpdateProductDto,
 } from '@/lib/mock/data/types';
 import {
   paginate,
@@ -36,6 +38,7 @@ function toListItem(
     categoryName: product.categoryName ?? categoryNameForId(product.categoryId),
     isActive: product.isActive,
     createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
   };
 }
 
@@ -121,25 +124,8 @@ export const productsHandlers = [
     return HttpResponse.json(product);
   }),
 
-  http.post('*/v1/products', async ({ request }) => {
-    const body = (await request.json()) as {
-      name: string;
-      slug?: string;
-      description?: string;
-      sku?: string;
-      price: number;
-      currency?: string;
-      imageUrl?: string;
-      categoryId?: number;
-    };
-
-    if (body.categoryId == null) {
-      return HttpResponse.json(
-        { message: 'categoryId is required', statusCode: 400 },
-        { status: 400 },
-      );
-    }
-
+  http.post<never, CreateProductDto>('*/v1/products', async ({ request }) => {
+    const body = await request.json();
     const store = getMockStore();
     const createdAt = isoNow();
     const product: ProductDetailResponseDto = {
@@ -174,7 +160,7 @@ export const productsHandlers = [
     return HttpResponse.json(toResponse(product), { status: 201 });
   }),
 
-  http.patch('*/v1/products/:id', async ({ params, request }) => {
+  http.patch<{ id: string }, UpdateProductDto>('*/v1/products/:id', async ({ params, request }) => {
     const id = Number(params.id);
     const store = getMockStore();
     const product = store.products.find((item) => item.id === id);
@@ -185,24 +171,7 @@ export const productsHandlers = [
       );
     }
 
-    const body = (await request.json()) as Partial<{
-      name: string;
-      slug: string;
-      description: string;
-      sku: string;
-      price: number;
-      currency: string;
-      imageUrl: string;
-      categoryId: number | null;
-    }>;
-
-    if (body.categoryId === null) {
-      return HttpResponse.json(
-        { message: 'categoryId cannot be null', statusCode: 400 },
-        { status: 400 },
-      );
-    }
-
+    const body = await request.json();
     Object.assign(product, body, { updatedAt: isoNow() });
     if (body.categoryId !== undefined) {
       product.categoryName = categoryNameForId(body.categoryId);

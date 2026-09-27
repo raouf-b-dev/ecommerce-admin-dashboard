@@ -1,6 +1,9 @@
 import { http, HttpResponse } from 'msw';
 import { getMockStore, isoNow } from '@/lib/mock/data/store';
-import type { InventoryStockResponseDto } from '@/lib/mock/data/types';
+import type {
+  AdjustStockDto,
+  InventoryStockResponseDto,
+} from '@/lib/mock/data/types';
 import {
   paginate,
   parseOptionalBoolean,
@@ -105,49 +108,48 @@ export const inventoryHandlers = [
     });
   }),
 
-  http.post('*/v1/inventory/products/:productId/adjust', async ({
-    params,
-    request,
-  }) => {
-    const productId = Number(params.productId);
-    const store = getMockStore();
-    const row = store.inventory.find((item) => item.productId === productId);
-    if (!row) {
-      return HttpResponse.json(
-        { message: 'Inventory not found', statusCode: 404 },
-        { status: 404 },
-      );
-    }
+  http.post<{ productId: string }, AdjustStockDto>(
+    '*/v1/inventory/products/:productId/adjust',
+    async ({ params, request }) => {
+      const productId = Number(params.productId);
+      const store = getMockStore();
+      const row = store.inventory.find((item) => item.productId === productId);
+      if (!row) {
+        return HttpResponse.json(
+          { message: 'Inventory not found', statusCode: 404 },
+          { status: 404 },
+        );
+      }
 
-    const body = (await request.json()) as {
-      quantity: number;
-      type: 'ADD' | 'SUBTRACT' | 'SET';
-      reason?: string;
-    };
+      const body = await request.json();
 
-    if (body.type === 'ADD') {
-      row.availableQuantity += body.quantity;
-    } else if (body.type === 'SUBTRACT') {
-      row.availableQuantity = Math.max(0, row.availableQuantity - body.quantity);
-    } else {
-      row.availableQuantity = Math.max(0, body.quantity);
-    }
+      if (body.type === 'ADD') {
+        row.availableQuantity += body.quantity;
+      } else if (body.type === 'SUBTRACT') {
+        row.availableQuantity = Math.max(
+          0,
+          row.availableQuantity - body.quantity,
+        );
+      } else {
+        row.availableQuantity = Math.max(0, body.quantity);
+      }
 
-    row.totalQuantity = row.availableQuantity + row.reservedQuantity;
-    row.updatedAt = isoNow();
+      row.totalQuantity = row.availableQuantity + row.reservedQuantity;
+      row.updatedAt = isoNow();
 
-    const response: InventoryStockResponseDto = {
-      id: row.id,
-      productId: row.productId,
-      availableQuantity: row.availableQuantity,
-      reservedQuantity: row.reservedQuantity,
-      totalQuantity: row.totalQuantity,
-      lowStockThreshold: row.lowStockThreshold,
-      lastRestockDate: row.updatedAt,
-      createdAt: row.updatedAt,
-      updatedAt: row.updatedAt,
-    };
+      const response: InventoryStockResponseDto = {
+        id: row.id,
+        productId: row.productId,
+        availableQuantity: row.availableQuantity,
+        reservedQuantity: row.reservedQuantity,
+        totalQuantity: row.totalQuantity,
+        lowStockThreshold: row.lowStockThreshold,
+        lastRestockDate: row.updatedAt,
+        createdAt: row.updatedAt,
+        updatedAt: row.updatedAt,
+      };
 
-    return HttpResponse.json(response);
-  }),
+      return HttpResponse.json(response);
+    },
+  ),
 ];

@@ -7,10 +7,10 @@ import {
   createSeedProducts,
   createSeedRoles,
   createSeedUsers,
+  type SeedCategory,
   type SeedInventoryRow,
 } from '@/lib/mock/data/seed';
 import type {
-  CategoryResponseDto,
   OrderDetailResponseDto,
   PaymentDetailResponseDto,
   PermissionResponseDto,
@@ -23,7 +23,7 @@ const MOCK_SESSION_KEY = 'es_admin_mock_session'; // flag for refresh presence o
 
 export type MockStore = {
   products: ProductDetailResponseDto[];
-  categories: CategoryResponseDto[];
+  categories: SeedCategory[];
   inventory: SeedInventoryRow[];
   users: UserDetailResponseDto[];
   orders: OrderDetailResponseDto[];

@@ -1,6 +1,11 @@
 import { http, HttpResponse } from 'msw';
 import { getMockStore } from '@/lib/mock/data/store';
-import type { CategoryResponseDto } from '@/lib/mock/data/types';
+import type { SeedCategory } from '@/lib/mock/data/seed';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from '@/lib/mock/data/types';
 
 function slugify(name: string): string {
   return name
@@ -20,9 +25,16 @@ function notFound() {
   );
 }
 
+function toResponse(category: SeedCategory): CategoryResponseDto {
+  const productCount = getMockStore().products.filter(
+    (product) => product.categoryId === category.id && product.isActive,
+  ).length;
+  return { ...category, productCount };
+}
+
 export const categoriesHandlers = [
   http.get('*/v1/categories', () => {
-    return HttpResponse.json(getMockStore().categories);
+    return HttpResponse.json(getMockStore().categories.map(toResponse));
   }),
 
   http.get('*/v1/categories/:id', ({ params }) => {
@@ -31,15 +43,11 @@ export const categoriesHandlers = [
     if (!category) {
       return notFound();
     }
-    return HttpResponse.json(category);
+    return HttpResponse.json(toResponse(category));
   }),
 
-  http.post('*/v1/categories', async ({ request }) => {
-    const body = (await request.json()) as {
-      name: string;
-      slug?: string;
-      description?: string;
-    };
+  http.post<never, CreateCategoryDto>('*/v1/categories', async ({ request }) => {
+    const body = await request.json();
     const store = getMockStore();
     const name = body.name.trim();
     const slug = body.slug?.trim() || slugify(name);
@@ -51,7 +59,7 @@ export const categoriesHandlers = [
       return conflict('Category slug already exists');
     }
 
-    const category: CategoryResponseDto = {
+    const category: SeedCategory = {
       id: store.nextCategoryId++,
       name,
       slug,
@@ -59,21 +67,17 @@ export const categoriesHandlers = [
       isActive: true,
     };
     store.categories.push(category);
-    return HttpResponse.json(category, { status: 201 });
+    return HttpResponse.json(toResponse(category), { status: 201 });
   }),
 
-  http.patch('*/v1/categories/:id', async ({ params, request }) => {
+  http.patch<{ id: string }, UpdateCategoryDto>('*/v1/categories/:id', async ({ params, request }) => {
     const id = Number(params.id);
     const category = getMockStore().categories.find((item) => item.id === id);
     if (!category) {
       return notFound();
     }
 
-    const body = (await request.json()) as {
-      name?: string;
-      slug?: string;
-      description?: string;
-    };
+    const body = await request.json();
     const nextName = body.name?.trim() ?? category.name;
     const nextSlug = body.slug?.trim() || category.slug;
     const store = getMockStore();
@@ -102,7 +106,7 @@ export const categoriesHandlers = [
       }
     }
 
-    return HttpResponse.json(category);
+    return HttpResponse.json(toResponse(category));
   }),
 
   http.delete('*/v1/categories/:id', ({ params }) => {
