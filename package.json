@@ -67,7 +67,7 @@
     "socket.io-client": "^4.8.3",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
-    "zod": "^3.25.76"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
