@@ -56,6 +56,39 @@ describe('AppSidebar', () => {
     );
   });
 
+  it('keeps Products active on nested product routes', () => {
+    render(
+      <MemoryRouter initialEntries={['/products/3/edit']}>
+        <AppSidebar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('link', { name: 'Products' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+  });
+
+  it('marks only Categories active on the categories route', () => {
+    render(
+      <MemoryRouter initialEntries={['/products/categories']}>
+        <AppSidebar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('link', { name: 'Categories' })).toHaveAttribute(
+      'href',
+      '/products/categories',
+    );
+    expect(screen.getByRole('link', { name: 'Categories' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(screen.getByRole('link', { name: 'Products' })).not.toHaveAttribute(
+      'aria-current',
+    );
+  });
+
   it('hides links the operator lacks permission for', () => {
     mockUseAuth.mockReturnValue({
       session: {

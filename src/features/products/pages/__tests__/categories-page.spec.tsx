@@ -9,6 +9,7 @@ const sampleCategories = [
     slug: 'electronics',
     description: null,
     isActive: true,
+    productCount: 12,
   },
   {
     id: 5,
@@ -16,6 +17,7 @@ const sampleCategories = [
     slug: 'books',
     description: null,
     isActive: false,
+    productCount: 0,
   },
 ];
 
@@ -109,6 +111,16 @@ describe('CategoriesPage', () => {
     expect(
       screen.getByRole('button', { name: 'Create category' }),
     ).toBeInTheDocument();
+  });
+
+  it('shows the active product count per category', () => {
+    renderPage();
+
+    expect(
+      screen.getByRole('columnheader', { name: 'Active products' }),
+    ).toBeInTheDocument();
+    const row = screen.getByRole('row', { name: /electronics/i });
+    expect(within(row).getByText('12')).toBeInTheDocument();
   });
 
   it('creates a category from the dialog', async () => {

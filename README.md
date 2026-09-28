@@ -149,4 +149,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). Please follow the [`CODE_OF_CONDUCT.md
 
 [MIT](LICENSE)
 
-Built by [Abderaouf .B](https://github.com/raouf-b-dev) · [Issues](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues)
+Built by [Abderaouf Bouzerara](https://github.com/raouf-b-dev) · [Issues](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues)

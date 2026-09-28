@@ -24,3 +24,17 @@ export type CategoryResponseDto = components['schemas']['CategoryResponseDto'];
 export type PermissionResponseDto =
   components['schemas']['PermissionResponseDto'];
 export type RoleResponseDto = components['schemas']['RoleResponseDto'];
+
+export type LoginDto = components['schemas']['LoginDto'];
+export type ChangePasswordDto = components['schemas']['ChangePasswordDto'];
+export type CreateProductDto = components['schemas']['CreateProductDto'];
+export type UpdateProductDto = components['schemas']['UpdateProductDto'];
+export type CreateCategoryDto = components['schemas']['CreateCategoryDto'];
+export type UpdateCategoryDto = components['schemas']['UpdateCategoryDto'];
+export type AdjustStockDto = components['schemas']['AdjustStockDto'];
+export type UpdateUserDto = components['schemas']['UpdateUserDto'];
+export type AssignRoleDto = components['schemas']['AssignRoleDto'];
+export type AddAddressDto = components['schemas']['AddAddressDto'];
+export type UpdateAddressDto = components['schemas']['UpdateAddressDto'];
+export type CreateRoleDto = components['schemas']['CreateRoleDto'];
+export type UpdateRoleDto = components['schemas']['UpdateRoleDto'];

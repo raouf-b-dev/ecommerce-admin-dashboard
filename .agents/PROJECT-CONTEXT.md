@@ -57,7 +57,7 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 
 ## Upcoming Feature Order
 
-**Next up** (see [`docs/ROADMAP.md`](../docs/ROADMAP.md)): finish **12.5** remaining polish (guided empty states, optional Cmd+K / trend badges); optional **12** payments ops; **14** dashboard operational facts (blocked on API OpenAPI fields). Staff slices **8b/8c** are done (folded into Phase 8).
+**Next up** (see [`docs/ROADMAP.md`](../docs/ROADMAP.md)): **12.6** hosted mock demo (ship `vercel.json`, demo banner, README link); finish **12.5** remaining polish (optional Cmd+K / transition skeletons); optional **12** payments ops; **14** dashboard operational facts (blocked on API OpenAPI fields). Staff slices **8b/8c** are done (folded into Phase 8).
 
 1. ~~Auth and RBAC chrome (wire guards to API session)~~ **done**
 2. ~~Operator gate + silent refresh~~ **done**
@@ -72,9 +72,10 @@ This repository is the operator-facing SPA for `ecommerce-store-api`.
 10. ~~Existing writes (product delete, user activate, roles UI)~~ **done**
 11. ~~API gaps then SPA (product activate, assign role)~~ **done**
 12. ~~User address book (list on user detail + existing writes)~~ **done**
-12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **core slice done** - remaining: empty-state checklist, optional Cmd+K / trend badges
+12.5. ~~Operational UX, real-time & hardening (Theme provider, WebSocket feed, silent refresh session sync, safe landing, RFC 9110 error helpers)~~ **core slice and visual finish done** - remaining: optional Cmd+K / transition skeletons
 13. ~~Release gate (live API stranger quick start + operator smoke)~~ **done** - see [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md)
 13.5. ~~Visual showcase (hero WebP walkthrough, 3 retina stills, README hero & matrix, UI/UX polish)~~ **done** - refresh media with `node scripts/create-walkthrough.js`
+12.6. Hosted mock demo (Vercel deploy of `build:mock`, demo banner, README link)
 12. Payments ops (optional; does not block the release gate)
 
 Backend delivery detail: API [`ROADMAP.md`](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/ROADMAP.md).

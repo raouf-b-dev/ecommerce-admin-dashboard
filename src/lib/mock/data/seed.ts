@@ -236,7 +236,20 @@ function slugify(name: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-const seedCategories: CategoryResponseDto[] = [
+/** `productCount` is derived from the product list when a handler responds. */
+export type SeedCategory = Omit<CategoryResponseDto, 'productCount'>;
+
+/**
+ * Same photos the API seed serves, copied into `public/mock/products/`.
+ * Absolute like real API values, so the product form's URL validation accepts them.
+ * Mock mode only runs in a browser (or jsdom), so the page origin is always there.
+ */
+export function mockProductImageUrl(sku: string): string {
+  return new URL(`/mock/products/${sku.toLowerCase()}.webp`, window.location.origin)
+    .href;
+}
+
+const seedCategories: SeedCategory[] = [
   { id: 1, name: 'Electronics', slug: 'electronics', description: null, isActive: true },
   { id: 2, name: 'Clothing', slug: 'clothing', description: null, isActive: true },
   { id: 3, name: 'Home & Garden', slug: 'home-garden', description: null, isActive: true },
@@ -248,7 +261,7 @@ function categoryNameForId(categoryId: number): string | null {
   return seedCategories.find((category) => category.id === categoryId)?.name ?? null;
 }
 
-export function createSeedCategories(): CategoryResponseDto[] {
+export function createSeedCategories(): SeedCategory[] {
   return seedCategories.map((category) => ({ ...category }));
 }
 
@@ -260,7 +273,7 @@ export function createSeedProducts(): ProductDetailResponseDto[] {
     sku: product.sku,
     price: product.price,
     currency: 'USD',
-    imageUrl: null,
+    imageUrl: mockProductImageUrl(product.sku),
     categoryId: product.categoryId,
     categoryName: categoryNameForId(product.categoryId),
     isActive: product.isActive,
@@ -370,7 +383,21 @@ export function createSeedUsers(): UserDetailResponseDto[] {
   ];
 }
 
+type SeedOrder = Omit<OrderDetailResponseDto, 'items'> & {
+  items: Omit<OrderDetailResponseDto['items'][number], 'imageUrl'>[];
+};
+
 export function createSeedOrders(): OrderDetailResponseDto[] {
+  return seedOrders().map((order) => ({
+    ...order,
+    items: order.items.map((item) => ({
+      ...item,
+      imageUrl: mockProductImageUrl(item.sku),
+    })),
+  }));
+}
+
+function seedOrders(): SeedOrder[] {
   return [
     {
       id: 1,

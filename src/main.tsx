@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeAwareToaster } from '@/components/theme/theme-aware-toaster';
 import { WebSocketProvider } from '@/lib/ws/websocket-provider';
 import { hasHttpStatus } from '@/lib/api/parse-api-error';
+import '@fontsource-variable/inter';
 import '@/index.css';
 
 async function enableMocking(): Promise<void> {
