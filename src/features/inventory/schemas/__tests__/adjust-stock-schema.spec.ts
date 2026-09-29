@@ -5,6 +5,18 @@ import {
 } from '@/features/inventory/schemas/adjust-stock-schema';
 
 describe('adjustStockSchema', () => {
+  it('rejects an unknown adjustment type with the select message', () => {
+    const result = adjustStockSchema.safeParse({
+      type: 'MULTIPLY',
+      quantity: '5',
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]).toMatchObject({
+      message: 'Select an adjustment type',
+      path: ['type'],
+    });
+  });
+
   it('rejects empty quantity', () => {
     const result = adjustStockSchema.safeParse({
       type: 'ADD',

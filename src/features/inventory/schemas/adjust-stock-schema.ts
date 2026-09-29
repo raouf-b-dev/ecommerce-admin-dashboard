@@ -14,7 +14,7 @@ export const ADJUST_STOCK_TYPE_OPTIONS = ADJUST_STOCK_TYPES.map((type) => ({
 
 export const adjustStockSchema = z.object({
   type: z.enum(ADJUST_STOCK_TYPES, {
-    message: 'Select an adjustment type',
+    error: 'Select an adjustment type',
   }),
   quantity: z
     .string()

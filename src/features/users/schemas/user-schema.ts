@@ -4,7 +4,7 @@ import type { UpdateUserDto } from '@/features/users/types';
 export const updateUserSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required'),
   lastName: z.string().trim().min(1, 'Last name is required'),
-  email: z.string().trim().email('Enter a valid email'),
+  email: z.string().trim().check(z.email('Enter a valid email')),
   phone: z.string().optional(),
 });
 

@@ -19,6 +19,10 @@ describe('changePasswordSchema', () => {
     });
 
     expect(result.success).toBe(false);
+    expect(result.error?.issues[0]).toMatchObject({
+      message: 'Passwords do not match',
+      path: ['confirmPassword'],
+    });
   });
 
   it('rejects when new password equals current password', () => {
@@ -29,5 +33,9 @@ describe('changePasswordSchema', () => {
     });
 
     expect(result.success).toBe(false);
+    expect(result.error?.issues[0]).toMatchObject({
+      message: 'New password must differ from current password',
+      path: ['newPassword'],
+    });
   });
 });
