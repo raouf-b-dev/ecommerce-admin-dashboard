@@ -1,11 +1,20 @@
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router';
 import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { FocusOnRouteChange } from '@/components/layout/focus-on-route-change';
 import { RouteErrorBoundary } from '@/components/layout/route-error-boundary';
+import { isMockMode } from '@/lib/mock/is-mock-mode';
+
+// Inline env checks let production Rollup omit the mock-only banner chunk.
+const DemoDataBanner =
+  import.meta.env.MODE === 'mock' || import.meta.env.VITE_ENABLE_MOCK === 'true'
+    ? lazy(() => import('@/lib/mock/ui/demo-data-banner'))
+    : null;
 
 export function AppLayout() {
+  const mockMode = isMockMode();
+
   return (
     <div className="grid h-screen overflow-hidden lg:grid-cols-[260px_1fr]">
       <a
@@ -18,6 +27,13 @@ export function AppLayout() {
       <AppSidebar className="hidden lg:flex" />
       <div className="flex min-h-0 flex-col">
         <AppHeader />
+        {mockMode && DemoDataBanner ? (
+          <div className="px-6 pt-4">
+            <Suspense fallback={null}>
+              <DemoDataBanner />
+            </Suspense>
+          </div>
+        ) : null}
         <main
           id="main"
           tabIndex={-1}
