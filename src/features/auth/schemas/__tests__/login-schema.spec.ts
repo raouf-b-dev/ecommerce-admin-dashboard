@@ -10,13 +10,14 @@ describe('loginSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects empty email', () => {
+  it('rejects empty email with the required message first', () => {
     const result = loginSchema.safeParse({
       email: '',
       password: 'Admin123!',
     });
 
     expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe('Email is required');
   });
 
   it('rejects invalid email format', () => {
