@@ -1,7 +1,7 @@
 {
   "name": "ecommerce-admin-dashboard",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "MIT",
   "author": "Abderaouf Bouzerara <https://github.com/raouf-b-dev>",
   "description": "Admin SPA for the E-commerce Store API.",
