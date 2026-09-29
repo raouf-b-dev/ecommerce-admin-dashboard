@@ -77,4 +77,3 @@ describe.each([
     ).not.toBeInTheDocument();
   });
 });
-
