@@ -9,7 +9,17 @@ import {
 import { LoginForm } from '@/features/auth/components/login-form';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
 
-const DemoLoginActions = lazy(() => import('@/lib/mock/ui/demo-login-actions'));
+// Inline env checks let production Rollup omit mock-only chunks.
+const isMockBuild =
+  import.meta.env.MODE === 'mock' ||
+  import.meta.env.VITE_ENABLE_MOCK === 'true';
+
+const DemoLoginActions = isMockBuild
+  ? lazy(() => import('@/lib/mock/ui/demo-login-actions'))
+  : null;
+const DemoDataBanner = isMockBuild
+  ? lazy(() => import('@/lib/mock/ui/demo-data-banner'))
+  : null;
 
 function LoginPage() {
   const mockMode = isMockMode();
@@ -24,8 +34,13 @@ function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {mockMode && DemoDataBanner ? (
+            <Suspense fallback={null}>
+              <DemoDataBanner />
+            </Suspense>
+          ) : null}
           <LoginForm />
-          {mockMode ? (
+          {mockMode && DemoLoginActions ? (
             <Suspense fallback={null}>
               <DemoLoginActions />
             </Suspense>
