@@ -122,7 +122,7 @@ Vite, React 19, TypeScript, Tailwind + shadcn/ui, TanStack Query, TanStack Table
 
 ## Docs
 
-[`docs/README.md`](docs/README.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
+[`CHANGELOG.md`](CHANGELOG.md) · [`docs/README.md`](docs/README.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`docs/API-INTEGRATION.md`](docs/API-INTEGRATION.md) · [ADRs](docs/architecture/adr/README.md)
 
 ## Related repositories
 
