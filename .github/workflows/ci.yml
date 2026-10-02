@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - main
       - master
       - develop
   pull_request:
@@ -99,8 +98,11 @@ jobs:
   e2e:
     name: Playwright
     if: >
-      github.event_name == 'workflow_dispatch'
-      || (github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master'))
+      github.actor != 'dependabot[bot]'
+      && (
+        github.event_name == 'workflow_dispatch'
+        || (github.event_name == 'pull_request' && github.base_ref == 'master')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -217,9 +219,11 @@ jobs:
           done
 
           e2e_required=false
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.actor }}" = "dependabot[bot]" ]; then
+            e2e_required=false
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             e2e_required=true
-          elif [ "${{ github.event_name }}" = "pull_request" ] && { [ "${{ github.base_ref }}" = "master" ] || [ "${{ github.base_ref }}" = "main" ]; }; then
+          elif [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.base_ref }}" = "master" ]; then
             e2e_required=true
           fi
 
