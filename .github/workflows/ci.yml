@@ -231,11 +231,11 @@ jobs:
           fi
 
           if [ "$e2e_required" = true ]; then
-            if [ "$e2e_status" != "success" ]; then
-              echo "Playwright is required for this event and did not succeed ($e2e_status)."
+            if [ "$E2E_STATUS" != "success" ]; then
+              echo "Playwright is required for this event and did not succeed ($E2E_STATUS)."
               exit 1
             fi
-          elif [ "$e2e_status" = "failure" ] || [ "$e2e_status" = "cancelled" ]; then
+          elif [ "$E2E_STATUS" = "failure" ] || [ "$E2E_STATUS" = "cancelled" ]; then
             echo "Playwright failed or was cancelled."
             exit 1
           fi
