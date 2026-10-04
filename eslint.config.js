@@ -53,6 +53,12 @@ export default tseslint.config(
     rules: {
       ...jsxA11y.flatConfigs.recommended.rules,
       '@typescript-eslint/consistent-type-imports': 'error',
+      // No type assertions (`as const` stays allowed). The preset bans `any`.
+      // Older violations are baselined in eslint-suppressions.json.
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        { assertionStyle: 'never' },
+      ],
       'ascii-prose/no-smart-punctuation': 'error',
     },
   },

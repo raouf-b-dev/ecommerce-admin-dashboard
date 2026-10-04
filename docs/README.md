@@ -13,6 +13,6 @@ Entry points for this repo. Backend boot and API contracts stay in [ecommerce-st
 | [RELEASE-GATE.md](RELEASE-GATE.md) | Live API stranger boot and operator smoke checklist |
 | [ai/CONVENTIONS.md](ai/CONVENTIONS.md) | Coding patterns for features and guards |
 | [ai/README.md](ai/README.md) | Agent workflow docs |
-| [../AGENT.md](../AGENT.md) | Contributor conventions |
+| [../AGENTS.md](../AGENTS.md) | Agent entry point and contributor rules |
 
 **API (separate repo):** [LOCAL-SETUP.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/LOCAL-SETUP.md) · [SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md)

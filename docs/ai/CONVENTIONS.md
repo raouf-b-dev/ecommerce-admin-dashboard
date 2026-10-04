@@ -1,16 +1,16 @@
 # Admin SPA Conventions
 
+Section numbers are cited by ADRs and other docs. Keep them stable when editing.
+
 ## 1. Architecture Boundary
 
-- Keep domain rules in `ecommerce-store-api`.
-- UI guards, disabled actions, and hidden navigation are UX only.
-- Prefer the OpenAPI-generated client for API calls. Do not spread ad-hoc `fetch` calls through feature code.
+- Domain rules live in `ecommerce-store-api`. UI guards, disabled actions, and hidden navigation are UX only.
+- Call the API through the OpenAPI-generated client (`src/lib/api/client.ts`). No ad-hoc `fetch` in feature code.
+- No workaround: if the OpenAPI contract is wrong, patch the API. Do not match English 403 messages or build dual-dialect clients. Render only contract fields.
 
 ## 2. Feature Layout
 
-Use `src/features/<feature-name>/` for feature-owned code.
-
-Typical shape:
+Feature-owned code lives in `src/features/<feature-name>/`:
 
 ```text
 src/features/products/
@@ -23,215 +23,142 @@ src/features/products/
   types.ts      # aliases to generated OpenAPI types
 ```
 
-Do **not** add barrel `index.ts` files. Import the concrete module.
+`schemas/` and `hooks/` exist only when the feature has forms or server queries. No barrel `index.ts` files: import the concrete module.
 
-### Import matrix
+| From / To     | `app/` | `features/*`                  | `lib/`                          | `components/`   |
+| :------------ | :----: | :---------------------------- | :-----------------------------: | :-------------: |
+| `app/`        | yes    | yes                           | yes                             | yes             |
+| `features/A`  | no     | other features (concrete modules) | yes                         | yes             |
+| `lib/`        | no     | **no** (ESLint `no-restricted-imports`) | yes                   | yes             |
+| `components/` | no     | no (prefer props)             | yes                             | yes             |
 
-| From ↓ / To → | `app/` | `features/*` | `lib/` | `components/` |
-| :--- | :---: | :---: | :---: | :---: |
-| `app/` | ✓ | ✓ | ✓ | ✓ |
-| `features/A` | ✗ | other features OK (concrete modules) | ✓ | ✓ |
-| `lib/` | ✗ | **✗ forbidden** (ESLint `no-restricted-imports`) | ✓ | ✓ |
-| `components/` | ✗ | ✗ (prefer props) | ✓ | ✓ |
-
-Cross-feature dependencies must be imported directly from the target feature's concrete module (e.g. `@/features/roles/hooks/use-roles`). Do not create re-export shims or adapter files across features.
-
-Optional folders: `schemas/` and `hooks/` exist only when the feature has forms or server queries.
-
-**Auth exception:** `features/auth` has no `hooks/` and no session HTTP wrappers. Session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`). Session HTTP, redirect helpers, JWT decode, operator access, and forbidden/operator-denied pages live under `src/lib/auth/`. Feature forms import those modules from `lib/` directly. Do not invent `useAuthQuery` in the feature. Do not add feature-folder re-export shims for code that already lives in `lib/`.
-
-Keep cross-feature primitives in `src/components/` (including `feedback/` for list query status) and cross-feature utilities in `src/lib/` (`format.ts`, API helpers, auth).
-
-**No-workaround:** If the OpenAPI contract is wrong, patch the API. Do not match English 403 messages or invent dual-dialect clients. Render only contract fields.
+- Cross-feature code is imported from the target's concrete module (for example `@/features/roles/hooks/use-roles`). No re-export shims or adapter files.
+- **Auth exception:** `features/auth` has no `hooks/` and no session HTTP wrappers. The session Query lives in `AuthProvider` (`src/lib/auth/auth-context.tsx`); session HTTP, redirects, JWT decode, operator access, and the forbidden pages live in `src/lib/auth/`. Do not invent `useAuthQuery`.
+- Cross-feature primitives go in `src/components/` (list status in `feedback/`), cross-feature utilities in `src/lib/`.
 
 ## 3. Layout and Shell
 
-Cross-feature layout lives in `src/components/layout/`:
-
-- `app-layout.tsx`: `h-screen overflow-hidden` grid; skip link to `#main`; scroll only on `<main>`
-- `app-sidebar.tsx`: branding (not an `h1`) + `NavLink` items from `src/app/navigation.ts`
-- `app-header.tsx`: header chrome + mobile menu trigger + `ThemeToggle` (Light/Dark/System)
-- `mobile-nav.tsx`: shadcn `Sheet` for `<lg` viewports; include `SheetTitle` for a11y
-- `page-header.tsx`: page title is the `h1` (+ description and optional actions)
-
-Nav config is centralized in `src/app/navigation.ts` with optional `permission` per item (filtered by session claims).
-
-Active nav styling uses React Router `NavLink` with a `className` callback and `cn()`.
+Cross-feature layout is in `src/components/layout/`: `app-layout.tsx` (`h-screen overflow-hidden` grid, skip link to `#main`, scroll only on `<main>`), `app-sidebar.tsx` (branding is not an `h1`; `NavLink` items from `src/app/navigation.ts`), `app-header.tsx` (mobile menu trigger, `ThemeToggle`), `mobile-nav.tsx` (`Sheet` below `lg`, include `SheetTitle`), and `page-header.tsx` (the page title is the `h1`). Nav config lives in `src/app/navigation.ts` with an optional `permission` per item; active styling uses the `NavLink` `className` callback with `cn()`.
 
 ## 4. Page Components
 
-Each route gets one exported page component under `src/features/<name>/pages/<name>-page.tsx`.
-
-Pages compose layout sections and feature components. They do not contain API logic directly: use feature hooks and query helpers.
-
-Register pages in `src/app/router.tsx` with a single import; do not define page JSX inline in the router.
-
-App-level pages (e.g. 404) may live in `src/app/pages/`.
+One exported page component per route: `src/features/<name>/pages/<name>-page.tsx`. Pages compose layout sections and feature components and use feature hooks; they hold no API logic. Pages export both a named and a default component and are registered in `src/app/router.tsx` with `lazy(() => import(...))`, never as inline JSX. App-level pages (404) may live in `src/app/pages/`.
 
 ## 5. Routing and Auth Guards
 
 Rationale: [ADR-0001](../architecture/adr/ADR-0001-auth-first-routing-and-route-guards.md), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
 
-- `/login` is the sole public route in v1; no admin chrome on login
-- Shell routes: `ProtectedRoute` → `RequirePasswordChanged` → `OperatorRoute` → `AppLayout` → feature page (optional `PermissionRoute` for claim-gated pages)
-- Admit sessions with `access_admin` only; reject others at login/refresh and via `OperatorRoute`
-- Route guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`, `operator-route.tsx`, `permission-route.tsx`)
-- Session state comes from `AuthProvider` + TanStack Query bootstrap refresh
-- Client guards are UX only; the API enforces authorization
-- Unauthenticated protected visits redirect to `/login?redirect=<path>`
-- Authenticated `/login` visits redirect to `redirect` query param or `/`
+- `/login` is the only public route; no admin chrome on it.
+- Shell routes: `ProtectedRoute` -> `RequirePasswordChanged` -> `OperatorRoute` -> `AppLayout` -> feature page (optional `PermissionRoute` for claim-gated pages).
+- Admit sessions with `access_admin` only; reject others at login, refresh, and in `OperatorRoute`.
+- Guards live in `src/lib/auth/` (`protected-route.tsx`, `guest-route.tsx`, `operator-route.tsx`, `permission-route.tsx`). Session state comes from `AuthProvider` plus the TanStack Query bootstrap refresh.
+- Unauthenticated visits redirect to `/login?redirect=<path>`; authenticated `/login` visits go to `redirect` or `/`.
 
 ## 5.1 RBAC chrome
 
 Rationale: [ADR-0007](../architecture/adr/ADR-0007-auth-response-permissions-for-chrome.md) (supersedes [ADR-0003](../architecture/adr/ADR-0003-client-rbac-chrome-api-authoritative.md)), [ADR-0006](../architecture/adr/ADR-0006-operators-only-admin-spa.md).
 
-- SPA admission requires `access_admin` (`ACCESS_ADMIN_PERMISSION`); do not hardcode role codes
-- Declare optional `permission` on nav items in `src/app/navigation.ts`
-- Filter sidebar items with `filterNavigation()` and `useAuth().hasPermission()`
-- Use `PermissionRoute` for route-level forbidden UX inside the shell
-- Permission claims for chrome come from auth token response `permissions` (API-authoritative)
+- Admission requires `access_admin` (`ACCESS_ADMIN_PERMISSION`); never hardcode role codes.
+- Declare an optional `permission` on nav items; filter with `filterNavigation()` and `useAuth().hasPermission()`.
+- `PermissionRoute` gives route-level forbidden UX inside the shell.
+- Permission claims for chrome come from the auth token response `permissions` (API-authoritative).
 
 ## 6. Responsive Shell
 
-- `lg+`: fixed 260px sidebar visible
-- `<lg`: sidebar hidden; hamburger in header opens nav in a `Sheet`
-- Close sheet on navigation via `onNavigate` callback on `AppSidebar`
+- `lg` and up: fixed 260px sidebar.
+- Below `lg`: sidebar hidden; the header hamburger opens nav in a `Sheet`, closed on navigation via `onNavigate` on `AppSidebar`.
 
 ## 7. Query and Mutation Rules
 
 - TanStack Query owns server-state caching.
-- Use TkDodo query-key factories per feature (`all` / `lists()` / `list(filters)` / `details()` / `detail(id)`).
-- Mutation success handlers must invalidate `lists()` and `detail(id)`, plus `dashboardKeys.all` when widgets would go stale.
-- Handle `isError` in the page or widget. Do not set QueryClient `throwOnError` or wrap with `QueryErrorResetBoundary` (the dashboard is independent widgets).
-- Do not cache authorization assumptions separately from API-backed session state.
-
-Example:
-
-```ts
-export const productKeys = {
-  all: ['products'] as const,
-  lists: () => [...productKeys.all, 'list'] as const,
-  list: (filters: ProductListFilters) =>
-    [...productKeys.lists(), filters] as const,
-  details: () => [...productKeys.all, 'detail'] as const,
-  detail: (id: number | undefined) => [...productKeys.details(), id] as const,
-};
-```
+- Key factories per feature (TkDodo style): `all` / `lists()` / `list(filters)` / `details()` / `detail(id)`.
+- Mutation success handlers invalidate `lists()` and `detail(id)`, plus `dashboardKeys.all` when widgets would go stale.
+- Handle `isError` in the page or widget. No QueryClient `throwOnError`, no `QueryErrorResetBoundary` (dashboard widgets are independent).
+- Never cache authorization assumptions separately from the API-backed session.
 
 ## 8. Table Query Mapping
 
-- Bind TanStack Table pagination, sorting, and filter state to URL search params.
-- Map those params to whatever the active OpenAPI query schema defines.
-- Do not hardcode query parameter names that are not present in the contract.
+Bind TanStack Table pagination, sorting, and filters to URL search params, and map them to the active OpenAPI query schema. Do not hardcode parameter names the contract lacks.
 
 ## 9. Forms and Errors
 
-- Use React Hook Form + Zod for form state and client validation.
-- Align schemas to API DTOs.
-- Display structured API validation errors in the form when possible.
-- Do not invent business validation rules that belong in the API.
-- Map API failures with shared helpers: `getErrorMessage` (dialogs/queries), `applyApiFormErrors` (forms), `ActionErrorAlert` (mutation banners). See [API-INTEGRATION.md](../API-INTEGRATION.md) Error UX.
+- React Hook Form + Zod, schemas aligned to API DTOs. Show structured API validation errors in the form. Business validation belongs in the API.
+- Shared helpers: `getErrorMessage` (dialogs, queries), `applyApiFormErrors` (forms), `ActionErrorAlert` (mutation banners). See [API-INTEGRATION.md](../API-INTEGRATION.md) Error UX.
 
 ## 10. Auth and Security
 
 Rationale: [ADR-0002](../architecture/adr/ADR-0002-in-memory-access-token-with-httponly-refresh-cookie.md), [ADR-0005](../architecture/adr/ADR-0005-silent-one-shot-access-token-refresh.md), [ADR-0008](../architecture/adr/ADR-0008-keep-session-alive-for-refresh-token-lifetime.md).
 
-- Browser configuration uses `VITE_*` public values only.
-- Access token in memory only; refresh token via HttpOnly cookie + `credentials: 'include'`.
-- Avoid `localStorage` for long-lived tokens.
-- Refresh the access token whenever it is missing, malformed, or near JWT `exp` (before domain requests; session query timer while authenticated).
-- Domain `401`: single-flight silent refresh + one request retry; redirect to login **only** when refresh itself is 401. Transient refresh failures keep the session.
-- Mid-request token refresh updates `AUTH_SESSION_QUERY_KEY` with updated claims and permissions, keeping UI chrome in sync.
+- Browser config is `VITE_*` public values only.
+- Access token in memory only; refresh token is an HttpOnly cookie with `credentials: 'include'`. No `localStorage` for long-lived tokens.
+- Refresh the access token when it is missing, malformed, or near JWT `exp` (before domain requests, and on a session query timer while authenticated).
+- Domain `401`: single-flight silent refresh, one request retry; redirect to login **only** when the refresh itself is `401`. Transient refresh failures keep the session.
+- A mid-request refresh updates `AUTH_SESSION_QUERY_KEY` with the new claims and permissions.
 - Never silent-retry `/authentication/*` paths. Never pre-refresh login, register, or refresh requests.
-- **Safe landing for limited operators:** Route `/` and post-login redirection use `IndexLandingGate` and `getDefaultLandingRoute(permissions)` to land on the operator's first permitted route. The Forbidden page CTA links to this default route to prevent loops.
-- **Auth bootstrap retry:** `refreshSessionRequest` returns `null` on 401 (unauthenticated). Other failures throw. Differentiate 4xx rejections (`isClientError`: no retry) from transient 5xx or network errors (retry 2×). If the session query still errors with no data, guards show a retry surface - do not bounce to login.
-- Treat rendered API strings as untrusted data.
+- **Safe landing:** `/` and post-login redirects use `IndexLandingGate` and `getDefaultLandingRoute(permissions)` to reach the operator's first permitted route. The Forbidden page CTA links there to avoid loops.
+- **Bootstrap retry:** `refreshSessionRequest` returns `null` on `401` (unauthenticated) and throws otherwise. `isClientError` failures are not retried; transient 5xx or network errors retry twice. If the session query still errors with no data, guards show a retry surface instead of bouncing to login.
+- Treat rendered API strings as untrusted.
 
 ## 11. Concurrency
 
-- When the API returns `409`, reload the entity and let the operator retry.
-- Do not silently overwrite server state after a conflict.
+On `409` reload the entity and let the operator retry. Never silently overwrite server state after a conflict.
 
 ## 12. Testing
 
-- Add component tests alongside the UI they cover (`components/__tests__/`).
-- Page composition tests (empty / error / retry) live under `pages/__tests__/`. Hook-mocked page specs are the intended pattern; do not rewrite them onto `QueryClientProvider` unless you are testing the hook itself.
-- Prefer typed factories / fixtures over inline DTO literals in every spec.
-- Extend Playwright when a feature joins the critical path. The operator journey lives in `e2e/critical-path.spec.ts`.
-- Keep tests focused on user-visible behavior and contract wiring.
+Procedure, golden specs, and typed-mock patterns: `.agents/skills/write-tests/SKILL.md`. Specs sit beside the UI (`components/__tests__/`, `pages/__tests__/`); page composition specs cover empty, error, and retry. Add Playwright when a feature joins the critical path (`e2e/critical-path.spec.ts`).
 
 ## 13. Documentation
 
-- Roadmap phase numbers and delivery sequencing belong only in [`docs/ROADMAP.md`](../ROADMAP.md).
-- Other docs describe structure, conventions, and behavior without referencing roadmap phases.
+Roadmap phase numbers and sequencing belong only in [`docs/ROADMAP.md`](../ROADMAP.md). Other docs describe structure and behavior without phase IDs.
 
 ## 14. Architecture Decision Records
 
-Follow [`docs/architecture/adr/README.md`](../architecture/adr/README.md) (aligned with `ecommerce-store-api`):
+Rules (immutable body, supersede, naming, index): [`docs/architecture/adr/README.md`](../architecture/adr/README.md). When to write one: `.agents/skills/write-docs/SKILL.md`.
 
-- Naming: `ADR-XXXX-[short-title].md` (4-digit zero-padded).
-- **Body is immutable.** Do not rewrite Context, Decisions, Alternatives, or Consequences on an existing ADR.
-- **Status (and supersede links) may change** in the file header and index only: e.g. set `Superseded` and `Superseded By: ADR-XXXX` when a later ADR fully replaces it.
-- Extending a decision (prior ADR still stands) → new ADR with `Does not supersede`; leave the prior ADR `Accepted`.
-- Full replacement → new ADR with `Supersedes`; mark the old ADR `Superseded` (header Status + index). Never rewrite the old Decisions.
-- Lifecycle: `Proposed` | `Accepted` | `Deprecated` | `Superseded`.
-- Always update the ADR index (`Supersedes` / `Superseded By` columns) when adding or superseding a record.
+## 15. Mock Mode and Boundaries
 
-## 15. Mock Mode & Boundaries
-
-- Mock infrastructure lives only under `src/lib/mock/` (handlers, seed, worker, demo UI).
-- Feature modules must **not** import `@/lib/mock/*`. Allowed touchpoints:
-  - `src/main.tsx` - dynamic `import('@/lib/mock/browser')` behind an inline `import.meta.env` mock gate (same conditions as `isMockMode()`) so production Rollup drops the MSW chunk
-  - `LoginPage` - lazy-load demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true
-  - `AppLayout` - lazy-load the demo-data banner from `@/lib/mock/ui/` only when `isMockMode()` is true
-- MSW must never be a static import in production entry paths; production `vite build` must not emit the mock browser/handlers chunk.
-- Playwright e2e targets a real seeded API. Mock mode is for local evaluation and static portfolio demos only.
-- Feature `api/` may expose **preset query facades** (e.g. `listRecentOrdersForDashboard`) that call another feature's concrete request with fixed filters. That is not a banned empty re-export shim. Cross-feature imports remain direct (no barrels).
+- Mock infrastructure lives only under `src/lib/mock/` (handlers, seed, worker, demo UI). Feature modules must not import `@/lib/mock/*`.
+- Allowed touchpoints:
+  - `src/main.tsx`: dynamic `import('@/lib/mock/browser')` behind an inline `import.meta.env` mock gate (same conditions as `isMockMode()`), so production Rollup drops the MSW chunk.
+  - `LoginPage`: lazy-loads demo chrome from `@/lib/mock/ui/` only when `isMockMode()` is true.
+  - `AppLayout`: lazy-loads the demo-data banner from `@/lib/mock/ui/` only when `isMockMode()` is true.
+- MSW is never a static import on production entry paths; `vite build` must not emit the mock chunk.
+- Playwright targets a real seeded API. Mock mode is for local evaluation and static demos.
+- A feature `api/` file may expose a preset query facade (for example `listRecentOrdersForDashboard`) that calls another feature's request with fixed filters. That is not a banned re-export shim.
 
 ## 16. Theme System
 
-- Location: `src/components/theme/`
-- Themes: `light` | `dark` | `system` (persisted in `localStorage` under `THEME_STORAGE_KEY = 'vite-ui-theme'`).
-- **Zero-FOUC execution:** An inline script in `index.html` resolves and sets the `.dark` class on `<html>` before React loads.
-- **OS Theme Sync:** `ThemeProvider` uses React's `useSyncExternalStore` to track `window.matchMedia('(prefers-color-scheme: dark)')` safely without tearing or redundant render cycles.
-- **Toaster Integration:** `ThemeAwareToaster` binds `resolvedTheme` to Sonner, guaranteeing alerts match the active UI theme.
+- Location `src/components/theme/`. Themes `light` | `dark` | `system`, stored under `THEME_STORAGE_KEY = 'admin-ui-theme'`.
+- An inline script in `index.html` sets the `.dark` class before React loads (no flash).
+- `ThemeProvider` tracks `prefers-color-scheme` with `useSyncExternalStore`.
+- `ThemeAwareToaster` binds `resolvedTheme` to Sonner.
 
 ## 17. Real-Time WebSocket Feed
 
-- Location: `src/lib/ws/`
-- Connection: `socket.io-client` targeting the API root origin with Bearer token authentication in `auth.token`.
-- Lifecycle: Handled by `WebSocketProvider` in the shell; connects on authenticated session, disconnects on unmount/logout.
-- Event Envelope: `NotificationEnvelope` with type/title matching via `isOrderNotification` and `isInventoryNotification`.
-- Query key factories used by this provider live in `src/lib/query-keys/` (`orderKeys`, `inventoryKeys`, `dashboardKeys`). Feature hooks import those same modules. Do not re-export them from `features/*/hooks`.
-- Reactivity: Incoming events trigger Sonner toasts and invalidate corresponding TanStack Query caches (`orderKeys.lists()`, `inventoryKeys.all`, `dashboardKeys.all`).
-- Mock Mode: In dev/mock mode, `window.dispatchMockNotification` is exposed for local event simulation without a live WebSocket gateway.
+- Location `src/lib/ws/`. `socket.io-client` targets the API root origin with the Bearer token in `auth.token`.
+- `WebSocketProvider` in the shell connects on an authenticated session and disconnects on unmount or logout.
+- Events use `NotificationEnvelope`; match with `isOrderNotification` and `isInventoryNotification`.
+- Query key factories used here live in `src/lib/query-keys/` (`orderKeys`, `inventoryKeys`, `dashboardKeys`); feature hooks import the same modules. Do not re-export them from `features/*/hooks`.
+- Events raise Sonner toasts and invalidate `orderKeys.lists()`, `inventoryKeys.all`, and `dashboardKeys.all`.
+- In dev and mock mode `window.dispatchMockNotification` simulates events without a gateway.
 
 ## 18. Composable RFC 9110 Error Helpers
 
-- Location: `src/lib/api/parse-api-error.ts`
-- **Status Extraction:** `getErrorStatusCode(error)` extracts status from `ApiRequestError`, `AuthRequestError`, native `Response`, or error objects with `.statusCode` or `.status`.
-- **Semantic Predicates:**
-  - `isStatusInRange(error, min, max)` - inclusive status range check
-  - `hasHttpStatus(error, ...codes)` - exact status code match (e.g. `hasHttpStatus(error, 429)`)
-  - `isClientError(error)` - RFC 9110 client error (`400-499`)
-  - `isServerError(error)` - RFC 9110 server error (`500-599`)
-  - `isOptimisticLockConflict(error)` - 409 conflict detection
-- Prefer these helpers over ad-hoc type casts (`error as ApiRequestError`) or direct status property access.
+Location `src/lib/api/parse-api-error.ts`. Prefer these over casts (`error as ApiRequestError`) or direct status access:
+
+- `getErrorStatusCode(error)`: status from `ApiRequestError`, `AuthRequestError`, `Response`, or objects with `.statusCode` or `.status`.
+- `isStatusInRange(error, min, max)`, `hasHttpStatus(error, ...codes)`, `isClientError(error)` (400-499), `isServerError(error)` (500-599), `isOptimisticLockConflict(error)` (409).
 
 ## 19. ASCII prose (docs and comments)
 
-Docs, Markdown, and source comments must read like a human typed them in a plain editor. Do not use typography that chat models insert by default.
+Docs, Markdown, and source comments read as if typed in a plain editor. `npm run lint` runs `scripts/lint-ascii-prose.cjs` on Markdown (except immutable `docs/architecture/adr/`) and on comments in `ts`, `tsx`, and `js`; `ascii-prose/no-smart-punctuation` flags the same marks in the editor.
 
-`npm run lint` runs `scripts/lint-ascii-prose.cjs` on Markdown (except immutable `docs/architecture/adr/`) and on comments in `ts`/`tsx`/`js`. ESLint `ascii-prose/no-smart-punctuation` flags the same marks in comments in the editor.
+| Avoid                                 | Use                                       |
+| :------------------------------------ | :---------------------------------------- |
+| Em dash (U+2014)                      | `-`, `:`, or a new sentence               |
+| En dash (U+2013)                      | ASCII `-` in ranges (`8b-8c`, `400-499`)  |
+| Curly quotes (U+2018/2019/201C/201D)  | `'` and `"`                               |
+| Ellipsis character (U+2026)           | `...`                                     |
+| Non-breaking space or hyphen          | normal space or `-`                       |
 
-| Avoid | Use |
-| :--- | :--- |
-| Em dash (U+2014) | `-`, `:`, or a new sentence |
-| En dash (U+2013) | ASCII `-` in ranges (`8b-8c`, `400-499`) |
-| Curly quotes (U+2018/2019/201C/201D) | `'` and `"` |
-| Ellipsis character (U+2026) | `...` |
-| Non-breaking space or hyphen | Normal space / `-` |
-
-Do not decorate comments with emoji. Existing ADR bodies stay immutable; the linter skips `docs/architecture/adr/`.
-
-User-visible UI copy should follow the same ASCII habit for new strings. Existing loading labels are not in this lint yet.
+No emoji in comments. New user-visible strings follow the same habit.
