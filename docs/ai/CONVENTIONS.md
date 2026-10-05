@@ -38,7 +38,7 @@ src/features/products/
 
 ## 3. Layout and Shell
 
-Cross-feature layout is in `src/components/layout/`: `app-layout.tsx` (`h-screen overflow-hidden` grid, skip link to `#main`, scroll only on `<main>`), `app-sidebar.tsx` (branding is not an `h1`; `NavLink` items from `src/app/navigation.ts`), `app-header.tsx` (mobile menu trigger, `ThemeToggle`), `mobile-nav.tsx` (`Sheet` below `lg`, include `SheetTitle`), and `page-header.tsx` (the page title is the `h1`). Nav config lives in `src/app/navigation.ts` with an optional `permission` per item; active styling uses the `NavLink` `className` callback with `cn()`.
+Cross-feature layout is in `src/components/layout/`: `app-layout.tsx` (`h-screen overflow-hidden` grid, skip link to `#main`, scroll only on `<main>`), `app-sidebar.tsx` (branding is not an `h1`; `NavLink` items from `src/app/navigation.ts`), `app-header.tsx` (mobile menu trigger, `ThemeToggle`), `mobile-nav.tsx` (`Sheet` below `xl`, include `SheetTitle`), and `page-header.tsx` (the page title is the `h1`). Nav config lives in `src/app/navigation.ts` with an optional `permission` per item; active styling uses the `NavLink` `className` callback with `cn()`.
 
 ## 4. Page Components
 
@@ -65,8 +65,8 @@ Rationale: [ADR-0007](../architecture/adr/ADR-0007-auth-response-permissions-for
 
 ## 6. Responsive Shell
 
-- `lg` and up: fixed 260px sidebar.
-- Below `lg`: sidebar hidden; the header hamburger opens nav in a `Sheet`, closed on navigation via `onNavigate` on `AppSidebar`.
+- `xl` and up: fixed 260px sidebar.
+- Below `xl`: sidebar hidden; the header hamburger opens nav in a `Sheet`, closed on navigation via `onNavigate` on `AppSidebar`.
 
 ## 7. Query and Mutation Rules
 
