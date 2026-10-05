@@ -91,12 +91,14 @@ Do not commit `.secrets`.
 
 ## Parallelism
 
-Two workers, three projects:
+Two workers, five projects:
 
 | Project | Workers | Specs |
 | :--- | :--- | :--- |
 | `guest` | remaining pool | Login page, failed login, customer operator-gate |
-| `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y |
+| `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y. Skips `@mobile`. |
+| `mobile-pixel` | 1 | `@mobile` tests at 375px (Pixel 5 profile). Runs after `admin`. |
+| `mobile-iphone` | 1 | `@mobile` tests at 390px (iPhone 13 profile). Runs after `mobile-pixel`. |
 | `superadmin` | 1 | Roles, forced password change, session cookie restore |
 
 Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.
@@ -105,4 +107,6 @@ Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **
 
 Do not raise the admin project above 1 worker without **distinct seeded admins**. Two workers logging in as the same operator invalidate each other's refresh tokens. Mutating tests (process/ship, deactivate user, adjust stock) also share catalog data.
 
-Guest and superadmin may run beside the admin worker because they use other accounts (or no account). Login and register are still rate-limited per IP (~10/min). The remaining guest/superadmin logins plus one admin login stay under that. Rapid local re-runs can still 429; the login form shows a distinct throttle message (not "invalid password"). Playwright's default timeout is **180s** so helpers can wait out a 429.
+`mobile-pixel` depends on `admin`, and `mobile-iphone` depends on `mobile-pixel`, so those phone projects never sign in while another admin session is live. Phone layout tests are tagged `@mobile` (shell nav and the keyboard sheet). They inherit the project viewport instead of setting one in the test.
+
+Guest and superadmin may run beside the admin worker because they use other accounts (or no account). Login and register are still rate-limited per IP (~10/min). The remaining guest/superadmin logins plus one admin login stay under that. The two phone projects add one admin login each, after the admin project, and not at the same time. Rapid local re-runs can still 429; the login form shows a distinct throttle message (not "invalid password"). Playwright's default timeout is **180s** so helpers can wait out a 429.

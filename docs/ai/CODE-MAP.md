@@ -23,7 +23,7 @@ Operator-facing SPA for `ecommerce-store-api`. It consumes the versioned HTTP co
 - `src/lib/mock/`: MSW handlers, seed data, demo UI (`npm run dev:mock`).
 - `src/lib/format.ts`, `list-filters.ts`, `url.ts`, `status.ts`: shared helpers.
 - `src/test/`: Vitest setup and `create-test-jwt.ts`.
-- `e2e/`: Playwright projects (guest, admin, superadmin); see `e2e/README.md`.
+- `e2e/`: Playwright projects (guest, admin, mobile-pixel, mobile-iphone, superadmin); see `e2e/README.md`.
 - `scripts/`: `generate-api-client.js`, `generate-env.js`, `ascii-prose.cjs`, `lint-ascii-prose.cjs`, asset capture.
 
 ## Local environment

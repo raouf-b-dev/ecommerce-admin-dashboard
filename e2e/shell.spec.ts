@@ -9,8 +9,7 @@ test('signed-in session shows the admin shell', async ({ page }) => {
   await expect(page.getByText('Needs attention')).toBeVisible({ timeout: 15_000 });
 });
 
-test('mobile navigation opens and navigates', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test('mobile navigation opens and navigates', { tag: '@mobile' }, async ({ page }) => {
   await openAdminShell(page);
 
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
