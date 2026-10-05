@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
@@ -18,8 +18,9 @@ if (
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',
-  // Guest specs can share the pool. Admin and superadmin stay at 1 worker each
-  // (shared seed accounts, refresh-token rotation, mutating catalog/orders).
+  // Guest specs can share the pool. Admin, phone, and superadmin stay at 1
+  // worker each (shared seed accounts, refresh-token rotation, mutating catalog).
+  // Phone projects depend on admin so they do not sign in beside it.
   fullyParallel: false,
   workers: 2,
   // Helpers wait out a 429 window; keep this above that wait.
@@ -55,8 +56,31 @@ export default defineConfig({
         'shell.spec.ts',
         'a11y-shell.spec.ts',
       ],
+      grepInvert: /@mobile/,
       fullyParallel: false,
       workers: 1,
+    },
+    {
+      name: 'mobile-pixel',
+      dependencies: ['admin'],
+      grep: /@mobile/,
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        ...devices['Pixel 5'],
+        viewport: { width: 375, height: 851 },
+      },
+    },
+    {
+      name: 'mobile-iphone',
+      dependencies: ['mobile-pixel'],
+      grep: /@mobile/,
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        ...devices['iPhone 13'],
+        viewport: { width: 390, height: 844 },
+      },
     },
     {
       name: 'superadmin',
