@@ -38,4 +38,15 @@ describe('MobileNav', () => {
     await user.keyboard('{Escape}');
     expect(trigger).toHaveFocus();
   });
+
+  it('hides the trigger on desktop screens with xl:hidden', () => {
+    render(
+      <MemoryRouter>
+        <MobileNav />
+      </MemoryRouter>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Open navigation menu' });
+    expect(trigger).toHaveClass('xl:hidden');
+  });
 });
