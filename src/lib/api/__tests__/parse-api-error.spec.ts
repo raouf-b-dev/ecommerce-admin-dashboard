@@ -63,9 +63,18 @@ describe('isOptimisticLockConflict', () => {
     ).toBe(true);
   });
 
-  it('returns true for object with 409 status', () => {
-    expect(isOptimisticLockConflict({ statusCode: 409 })).toBe(true);
-    expect(isOptimisticLockConflict({ status: 409 })).toBe(true);
+  it('ignores a 409 that is not an optimistic lock', () => {
+    expect(isOptimisticLockConflict({ statusCode: 409 })).toBe(false);
+    expect(isOptimisticLockConflict({ status: 409 })).toBe(false);
+    expect(
+      isOptimisticLockConflict(
+        new ApiRequestError({
+          statusCode: 409,
+          message: 'Idempotency key is in progress',
+          code: 'IDEMPOTENCY_KEY_IN_PROGRESS',
+        }),
+      ),
+    ).toBe(false);
   });
 
   it('returns false for other errors', () => {
