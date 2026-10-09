@@ -1,7 +1,30 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const specUrl = `${process.env.API_OPENAPI_URL ?? 'http://localhost:3000/api/docs'}-json`;
+for (const envFile of ['.env.local', '.env']) {
+  const envPath = path.resolve(process.cwd(), envFile);
+  try {
+    process.loadEnvFile(envPath);
+  } catch {
+    // File not found or unreadable; continue.
+  }
+}
+
+function resolveSpecUrl() {
+  const rawUrl = process.env.API_OPENAPI_URL?.trim();
+  if (rawUrl) {
+    if (rawUrl.endsWith('-json') || rawUrl.endsWith('.json')) {
+      return rawUrl;
+    }
+    return `${rawUrl.replace(/\/+$/, '')}-json`;
+  }
+  const apiBase = (
+    process.env.VITE_API_BASE_URL?.trim() || 'http://localhost:3000'
+  ).replace(/\/+$/, '');
+  return `${apiBase}/api/docs-json`;
+}
+
+const specUrl = resolveSpecUrl();
 const outputFile = path.resolve(
   process.cwd(),
   'src/lib/api/generated/schema.d.ts',

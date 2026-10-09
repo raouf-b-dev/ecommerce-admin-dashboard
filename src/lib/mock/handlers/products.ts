@@ -128,13 +128,19 @@ export const productsHandlers = [
     const body = await request.json();
     const store = getMockStore();
     const createdAt = isoNow();
+    if (!body.currency?.trim()) {
+      return HttpResponse.json(
+        { message: 'Currency is required', statusCode: 400 },
+        { status: 400 },
+      );
+    }
     const product: ProductDetailResponseDto = {
       id: store.nextProductId++,
       name: body.name,
       slug: body.slug?.trim() || slugify(body.name),
       sku: body.sku?.trim() || `SKU-${Date.now()}`,
       price: body.price,
-      currency: body.currency ?? 'USD',
+      currency: body.currency.trim().toUpperCase(),
       imageUrl: body.imageUrl ?? null,
       categoryId: body.categoryId,
       categoryName: categoryNameForId(body.categoryId),

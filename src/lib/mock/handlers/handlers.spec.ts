@@ -139,4 +139,17 @@ describe('admin mock handlers', () => {
       expect(response.status).toBe(401);
     });
   });
+
+  describe('GET /v1/platform/config', () => {
+    it('returns platform config with default currency and exponent', async () => {
+      const response = await fetch(`${API}/v1/platform/config`);
+      expect(response.status).toBe(200);
+      const body: unknown = await response.json();
+      expect(body).toEqual({
+        defaultCurrency: 'USD',
+        defaultCurrencyExponent: 2,
+        supportedCurrencies: ['USD'],
+      });
+    });
+  });
 });
