@@ -17,8 +17,25 @@ const categoriesQueryMock = vi.hoisted(() =>
   })),
 );
 
+const platformConfigQueryMock = vi.hoisted(() =>
+  vi.fn(() => ({
+    data: {
+      defaultCurrency: 'USD',
+      defaultCurrencyExponent: 2,
+      supportedCurrencies: ['USD'],
+    },
+    isLoading: false,
+    isError: false,
+    error: null,
+  })),
+);
+
 vi.mock('@/features/products/hooks/use-categories', () => ({
   useCategoriesListQuery: categoriesQueryMock,
+}));
+
+vi.mock('@/features/products/hooks/use-platform-config', () => ({
+  usePlatformConfigQuery: platformConfigQueryMock,
 }));
 
 describe('ProductForm', () => {
@@ -40,7 +57,7 @@ describe('ProductForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('submits create payload with required categoryId', async () => {
+  it('submits create payload with configured store currency and required categoryId', async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
     render(
@@ -57,9 +74,6 @@ describe('ProductForm', () => {
     fireEvent.change(screen.getByLabelText('Price'), {
       target: { value: '10' },
     });
-    fireEvent.change(screen.getByLabelText('Currency'), {
-      target: { value: 'USD' },
-    });
     fireEvent.change(screen.getByLabelText('Category'), {
       target: { value: '2' },
     });
@@ -70,10 +84,47 @@ describe('ProductForm', () => {
         expect.objectContaining({
           name: 'Laptop',
           price: 10,
+          currency: 'USD',
           categoryId: 2,
         }),
       );
     });
+  });
+
+  it('displays store currency badge on price field', () => {
+    render(
+      <ProductForm
+        mode="create"
+        submitLabel="Create product"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText('Currency: USD')).toBeInTheDocument();
+  });
+
+  it('shows legacy currency discrepancy warning in edit mode when currency differs', () => {
+    render(
+      <ProductForm
+        mode="edit"
+        submitLabel="Save changes"
+        defaultValues={{
+          name: 'Laptop',
+          price: '10',
+          currency: 'EUR',
+          categoryId: '1',
+        }}
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Legacy Currency Discrepancy'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/This product is configured in/i),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Currency: EUR')).toBeInTheDocument();
   });
 
   it('shows conflict banner when conflictMessage is set', () => {
