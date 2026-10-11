@@ -248,6 +248,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/orders/{id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a payment for an order
+         * @description Charges the order total for an order the caller can see. The amount, currency, and owner come from the order. A caller who cannot see the order receives the same not-found result as a missing order.
+         */
+        post: operations["OrdersController_createPayment_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/orders/{id}/confirm": {
         parameters: {
             query?: never;
@@ -355,8 +375,7 @@ export interface paths {
         /** List payments with filtering */
         get: operations["PaymentsController_listPayments_v1"];
         put?: never;
-        /** Create a payment intent/transaction */
-        post: operations["PaymentsController_createPayment_v1"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1219,8 +1238,11 @@ export interface components {
             sku?: string;
             /** @example 1200 */
             price: number;
-            /** @example USD */
-            currency?: string;
+            /**
+             * @description ISO 4217 currency code
+             * @example USD
+             */
+            currency: string;
             /** @example https://example.com/laptop.jpg */
             imageUrl?: string;
             /**
@@ -1340,7 +1362,10 @@ export interface components {
             sku?: string;
             /** @example 1200 */
             price?: number;
-            /** @example USD */
+            /**
+             * @description ISO 4217 currency code
+             * @example USD
+             */
             currency?: string;
             /** @example https://example.com/laptop.jpg */
             imageUrl?: string;
@@ -1450,14 +1475,9 @@ export interface components {
              * @description Payment method
              * @enum {string}
              */
-            paymentMethod: "STRIPE";
+            paymentMethod: "CARD";
             /** @description Customer notes for the order */
             customerNotes?: string;
-            /**
-             * @description Idempotency key for preventing duplicate checkouts
-             * @example checkout-abc123-xyz789
-             */
-            idempotencyKey?: string;
         };
         CheckoutResponseDto: {
             /**
@@ -1621,13 +1641,19 @@ export interface components {
              */
             status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
             /**
+             * @description Payment method
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
+            /**
              * @description Formatted shipping address
              * @example Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US
              */
             shippingAddress: string;
             items: components["schemas"]["OrderItemDetailResponseDto"][];
             /**
-             * @description Order subtotal (sum of line items)
+             * @description Order subtotal
              * @example 199.99
              */
             subtotal: number;
@@ -1659,6 +1685,75 @@ export interface components {
             /**
              * @description Last update date
              * @example 2025-10-31T12:35:00.000Z
+             */
+            updatedAt: string;
+        };
+        OrderPaymentMethodDetailsDto: {
+            /** @example tok_visa1234 */
+            token?: string;
+            /** @example 4242 */
+            cardLast4?: string;
+            /** @example Visa */
+            cardBrand?: string;
+            /** @example wallet@example.com */
+            walletId?: string;
+        };
+        CreateOrderPaymentDto: {
+            /**
+             * @description Payment method
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
+            paymentMethodDetails?: components["schemas"]["OrderPaymentMethodDetailsDto"];
+        };
+        OrderPaymentResponseDto: {
+            /** @example 123 */
+            id: number;
+            /** @example 123 */
+            orderId: number;
+            /**
+             * @description Payment amount as a major-unit decimal
+             * @example 299.99
+             */
+            amount: number;
+            /** @example USD */
+            currency: string;
+            /**
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
+            /** @example AUTHORIZED */
+            status: string;
+            /** @example txn_1234567890 */
+            transactionId?: Record<string, never>;
+            /**
+             * @description Gateway payment intent ID
+             * @example pi_1234567890
+             */
+            gatewayPaymentIntentId?: string | null;
+            /** @example 123 */
+            userId?: Record<string, never>;
+            /** @example **** 1234 */
+            paymentMethodInfo?: Record<string, never>;
+            /**
+             * @description Refunded amount as a major-unit decimal
+             * @example 50
+             */
+            refundedAmount: number;
+            /** @example Payment gateway error */
+            failureReason?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @example 2025-10-31T10:00:00Z
+             */
+            createdAt: string;
+            /** @example 2025-10-31T10:05:00Z */
+            completedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @example 2025-10-31T12:30:00Z
              */
             updatedAt: string;
         };
@@ -1694,140 +1789,6 @@ export interface components {
             /** @example Left package at front desk */
             notes?: string;
         };
-        PaymentMethodDetailsDto: {
-            /**
-             * @description Payment token from gateway
-             * @example tok_visa1234
-             */
-            token?: string;
-            /**
-             * @description Masked card number
-             * @example **** **** **** 1234
-             */
-            cardLast4?: string;
-            /**
-             * @description Card brand
-             * @example Visa
-             */
-            cardBrand?: string;
-            /**
-             * @description Digital wallet identifier
-             * @example wallet@example.com
-             */
-            walletId?: string;
-        };
-        CreatePaymentDto: {
-            /**
-             * @description Order ID
-             * @example 123
-             */
-            orderId: number;
-            /**
-             * @description Payment amount
-             * @example 299.99
-             */
-            amount: number;
-            /**
-             * @description Payment method
-             * @example STRIPE
-             * @enum {string}
-             */
-            paymentMethod: "STRIPE";
-            /**
-             * @description Currency code
-             * @example USD
-             */
-            currency: string;
-            /** @description Payment method specific details */
-            paymentMethodDetails?: components["schemas"]["PaymentMethodDetailsDto"];
-            /**
-             * @description User ID
-             * @example 123
-             */
-            userId?: number;
-        };
-        PaymentResponseDto: {
-            /**
-             * @description Payment ID
-             * @example 123
-             */
-            id: number;
-            /**
-             * @description Order ID
-             * @example 123
-             */
-            orderId: number;
-            /**
-             * @description Payment amount
-             * @example 299.99
-             */
-            amount: number;
-            /**
-             * @description Currency code
-             * @example USD
-             */
-            currency: string;
-            /**
-             * @description Payment method
-             * @example STRIPE
-             * @enum {string}
-             */
-            paymentMethod: "STRIPE";
-            /**
-             * @description Payment status
-             * @example COMPLETED
-             * @enum {string}
-             */
-            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "COMPLETED" | "FAILED" | "REFUNDED" | "PARTIALLY_REFUNDED" | "CANCELLED";
-            /**
-             * @description Transaction ID from payment gateway
-             * @example txn_1234567890
-             */
-            transactionId?: string;
-            /**
-             * @description Gateway payment intent ID
-             * @example pi_1234567890
-             */
-            gatewayPaymentIntentId?: string | null;
-            /**
-             * @description User ID
-             * @example 123
-             */
-            userId?: number;
-            /**
-             * @description Masked payment method info
-             * @example **** 1234
-             */
-            paymentMethodInfo?: string;
-            /**
-             * @description Refunded amount
-             * @example 50
-             */
-            refundedAmount?: number;
-            /**
-             * @description Failure reason if payment failed
-             * @example Payment gateway error
-             */
-            failureReason?: string;
-            /**
-             * Format: date-time
-             * @description Payment creation date
-             * @example 2025-10-31T10:00:00Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Payment completion date
-             * @example 2025-10-31T10:05:00Z
-             */
-            completedAt?: string;
-            /**
-             * Format: date-time
-             * @description Last update date
-             * @example 2025-10-31T12:30:00Z
-             */
-            updatedAt: string;
-        };
         PaymentListItemResponseDto: {
             /** @example 1 */
             id: number;
@@ -1839,14 +1800,20 @@ export interface components {
             userName: string;
             /** @example customer@store.local */
             userEmail: string;
-            /** @example 224.94 */
+            /**
+             * @description Payment amount as a major-unit decimal
+             * @example 224.94
+             */
             amount: number;
             /** @example USD */
             currency: string;
             /** @example completed */
             status: string;
-            /** @example stripe */
-            paymentMethod: string;
+            /**
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
             /** @example txn_123 */
             transactionId: string;
             /**
@@ -1893,7 +1860,7 @@ export interface components {
              */
             userEmail: string;
             /**
-             * @description Payment amount
+             * @description Payment amount as a major-unit decimal
              * @example 224.94
              */
             amount: number;
@@ -1909,9 +1876,10 @@ export interface components {
             status: string;
             /**
              * @description Payment method
-             * @example stripe
+             * @example CARD
+             * @enum {string}
              */
-            paymentMethod: string;
+            paymentMethod: "CARD";
             /**
              * @description Transaction ID
              * @example txn_123
@@ -1942,9 +1910,91 @@ export interface components {
              */
             updatedAt: string;
         };
+        PaymentResponseDto: {
+            /**
+             * @description Payment ID
+             * @example 123
+             */
+            id: number;
+            /**
+             * @description Order ID
+             * @example 123
+             */
+            orderId: number;
+            /**
+             * @description Payment amount as a major-unit decimal
+             * @example 299.99
+             */
+            amount: number;
+            /**
+             * @description Currency code
+             * @example USD
+             */
+            currency: string;
+            /**
+             * @description Payment method
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
+            /**
+             * @description Payment status
+             * @example COMPLETED
+             * @enum {string}
+             */
+            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "COMPLETED" | "FAILED" | "REFUNDED" | "PARTIALLY_REFUNDED" | "CANCELLED";
+            /**
+             * @description Transaction ID from payment gateway
+             * @example txn_1234567890
+             */
+            transactionId?: string;
+            /**
+             * @description Gateway payment intent ID
+             * @example pi_1234567890
+             */
+            gatewayPaymentIntentId?: string | null;
+            /**
+             * @description User ID
+             * @example 123
+             */
+            userId?: number;
+            /**
+             * @description Masked payment method info
+             * @example **** 1234
+             */
+            paymentMethodInfo?: string;
+            /**
+             * @description Refunded amount as a major-unit decimal
+             * @example 50
+             */
+            refundedAmount?: number;
+            /**
+             * @description Failure reason if payment failed
+             * @example Payment gateway error
+             */
+            failureReason?: string;
+            /**
+             * Format: date-time
+             * @description Payment creation date
+             * @example 2025-10-31T10:00:00Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Payment completion date
+             * @example 2025-10-31T10:05:00Z
+             */
+            completedAt?: string;
+            /**
+             * Format: date-time
+             * @description Last update date
+             * @example 2025-10-31T12:30:00Z
+             */
+            updatedAt: string;
+        };
         ProcessRefundDto: {
             /**
-             * @description Refund amount
+             * @description Refund amount as a major-unit decimal
              * @example 99.99
              */
             amount: number;
@@ -2437,7 +2487,7 @@ export interface components {
              */
             productName: string;
             /**
-             * @description Unit price snapshotted at add time
+             * @description Unit price, snapshotted at add time
              * @example 99.99
              */
             price: number;
@@ -2452,7 +2502,7 @@ export interface components {
              */
             quantity: number;
             /**
-             * @description Subtotal (price * quantity)
+             * @description Line subtotal
              * @example 199.98
              */
             subtotal: number;
@@ -2486,12 +2536,12 @@ export interface components {
              */
             subtotal: number;
             /**
-             * @description Shipping cost for the cart. MVP policy: always 0 until a shipping engine ships.
+             * @description Shipping cost. MVP policy: always 0 until a shipping engine ships.
              * @example 0
              */
             shippingCost: number;
             /**
-             * @description Cart total amount (subtotal + shippingCost)
+             * @description Cart total (subtotal + shippingCost)
              * @example 299.97
              */
             totalAmount: number;
@@ -3546,13 +3596,9 @@ export interface operations {
     OrdersController_checkout_v1: {
         parameters: {
             query?: never;
-            header?: {
-                /** @description Present on HTTP 409 when the idempotency key is still in progress. Value is 2 seconds. */
-                "Retry-After"?: string;
-                /** @description Legacy alias for Idempotency-Key. */
-                "x-idempotency-key"?: string;
-                /** @description Preferred client idempotency key (also accepted as x-idempotency-key or body idempotencyKey). */
-                "Idempotency-Key"?: string;
+            header: {
+                /** @description Client idempotency key. Required. */
+                "Idempotency-Key": string;
             };
             path?: never;
             cookie?: never;
@@ -3572,7 +3618,7 @@ export interface operations {
                     "application/json": components["schemas"]["CheckoutResponseDto"];
                 };
             };
-            /** @description Invalid checkout data, empty cart, or omitted shippingAddress with no default address on the user profile. */
+            /** @description Invalid checkout data, missing Idempotency-Key, empty cart, or omitted shippingAddress with no default address on the user profile. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -3631,9 +3677,9 @@ export interface operations {
                 createdAfter?: string;
                 /** @description Filter orders created before this date (ISO 8601) */
                 createdBefore?: string;
-                /** @description Filter orders with total price greater than */
+                /** @description Minimum order total as a major-unit decimal */
                 minAmount?: number;
-                /** @description Filter orders with total price less than */
+                /** @description Maximum order total as a major-unit decimal */
                 maxAmount?: number;
             };
             header?: never;
@@ -3689,6 +3735,57 @@ export interface operations {
             };
             /** @description Order not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_createPayment_v1: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Client idempotency key. Required. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderPaymentDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderPaymentResponseDto"];
+                };
+            };
+            /** @description Missing Idempotency-Key. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Conflict - a request with this idempotency key is already in progress. Clients must honor the Retry-After response header (2 seconds) before retrying. */
+            409: {
+                headers: {
+                    /** @description Seconds to wait before retrying (2). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service unavailable - idempotency store unavailable. */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3843,15 +3940,15 @@ export interface operations {
                     "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
-            /** @description Order cannot be cancelled. */
-            400: {
+            /** @description Order not found. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Order not found. */
-            404: {
+            /** @description Order cannot be cancelled in current state. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3891,29 +3988,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaginatedPaymentListResponseDto"];
-                };
-            };
-        };
-    };
-    PaymentsController_createPayment_v1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePaymentDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaymentResponseDto"];
                 };
             };
         };
@@ -5251,18 +5325,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example ok */
-                        status?: string;
+                        /**
+                         * @example ok
+                         * @enum {string}
+                         */
+                        status?: "ok" | "degraded";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5270,7 +5351,10 @@ export interface operations {
                         /** @example {} */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5278,13 +5362,17 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5299,18 +5387,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example error */
-                        status?: string;
+                        /**
+                         * @example error
+                         * @enum {string}
+                         */
+                        status?: "error" | "shutting_down";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5319,13 +5414,17 @@ export interface operations {
                          * @example {
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5333,17 +5432,22 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       },
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5373,18 +5477,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example ok */
-                        status?: string;
+                        /**
+                         * @example ok
+                         * @enum {string}
+                         */
+                        status?: "ok" | "degraded";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5392,7 +5503,10 @@ export interface operations {
                         /** @example {} */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5400,13 +5514,17 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5421,18 +5539,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example error */
-                        status?: string;
+                        /**
+                         * @example error
+                         * @enum {string}
+                         */
+                        status?: "error" | "shutting_down";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5441,13 +5566,17 @@ export interface operations {
                          * @example {
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5455,17 +5584,22 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       },
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5495,18 +5629,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example ok */
-                        status?: string;
+                        /**
+                         * @example ok
+                         * @enum {string}
+                         */
+                        status?: "ok" | "degraded";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5514,7 +5655,10 @@ export interface operations {
                         /** @example {} */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5522,13 +5666,17 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5543,18 +5691,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @example error */
-                        status?: string;
+                        /**
+                         * @example error
+                         * @enum {string}
+                         */
+                        status?: "error" | "shutting_down";
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       }
                          *     }
                          */
                         info?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5563,13 +5718,17 @@ export interface operations {
                          * @example {
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         error?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5577,17 +5736,22 @@ export interface operations {
                         /**
                          * @example {
                          *       "database": {
-                         *         "status": "up"
+                         *         "status": "up",
+                         *         "responseTime": 12
                          *       },
                          *       "redis": {
                          *         "status": "down",
-                         *         "message": "Could not connect"
+                         *         "message": "Could not connect",
+                         *         "responseTime": 3005
                          *       }
                          *     }
                          */
                         details?: {
                             [key: string]: {
-                                status: string;
+                                /** @enum {string} */
+                                status: "up" | "degraded" | "down";
+                                /** @description Time the health indicator took to respond, in ms */
+                                responseTime?: number;
                             } & {
                                 [key: string]: unknown;
                             };
