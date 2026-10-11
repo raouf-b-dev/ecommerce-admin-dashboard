@@ -30,7 +30,7 @@ describe('OrderPaymentPanel', () => {
         isError={false}
         error={null}
         payment={null}
-        onRetry={vi.fn()}
+        onRetry={vi.fn<() => void>()}
       />,
     );
 
@@ -39,7 +39,7 @@ describe('OrderPaymentPanel', () => {
 
   it('shows error alert and triggers retry callback on click when isError is true', async () => {
     const user = userEvent.setup();
-    const handleRetry = vi.fn();
+    const handleRetry = vi.fn<() => void>();
 
     render(
       <OrderPaymentPanel
@@ -67,7 +67,7 @@ describe('OrderPaymentPanel', () => {
         isError={false}
         error={null}
         payment={null}
-        onRetry={vi.fn()}
+        onRetry={vi.fn<() => void>()}
       />,
     );
 
@@ -83,7 +83,7 @@ describe('OrderPaymentPanel', () => {
         isError={false}
         error={null}
         payment={basePayment}
-        onRetry={vi.fn()}
+        onRetry={vi.fn<() => void>()}
       />,
     );
 
@@ -105,7 +105,7 @@ describe('OrderPaymentPanel', () => {
         isError={false}
         error={null}
         payment={failedPayment}
-        onRetry={vi.fn()}
+        onRetry={vi.fn<() => void>()}
       />,
     );
 
