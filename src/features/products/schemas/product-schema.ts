@@ -81,10 +81,10 @@ export function toCreateProductDto(
     name: values.name,
     price: values.price,
     categoryId: values.categoryId,
+    currency: values.currency ?? 'USD',
     ...(values.slug ? { slug: values.slug } : {}),
     ...(values.description ? { description: values.description } : {}),
     ...(values.sku ? { sku: values.sku } : {}),
-    ...(values.currency ? { currency: values.currency } : {}),
     ...(values.imageUrl ? { imageUrl: values.imageUrl } : {}),
   };
 }

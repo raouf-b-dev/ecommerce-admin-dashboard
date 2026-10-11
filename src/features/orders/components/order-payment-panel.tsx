@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { QueryLoading } from '@/components/feedback/query-state';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
-import { formatDateTime, formatMoney } from '@/lib/format';
+import {
+  formatDateTime,
+  formatMoney,
+  formatPaymentMethodLabel,
+} from '@/lib/format';
 
 type OrderPaymentPanelProps = {
   isLoading: boolean;
@@ -60,7 +64,7 @@ export function OrderPaymentPanel({
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Method</dt>
-        <dd className="capitalize">{payment.paymentMethod}</dd>
+        <dd>{formatPaymentMethodLabel(payment.paymentMethod)}</dd>
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Transaction ID</dt>

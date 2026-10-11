@@ -1,3 +1,16 @@
+import type { components } from '@/lib/api/generated/schema';
+
+export type PaymentMethod =
+  components['schemas']['PaymentDetailResponseDto']['paymentMethod'];
+
+const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  CARD: 'Card',
+};
+
+function isPaymentMethod(value: string): value is PaymentMethod {
+  return Object.hasOwn(PAYMENT_METHOD_LABELS, value);
+}
+
 export function formatMoney(
   amount: number,
   currency?: string | null,
@@ -42,6 +55,18 @@ export function formatDateTime(value: string | null | undefined): string {
 
 export function formatStatusLabel(status: string): string {
   return status.replaceAll('_', ' ');
+}
+
+export function formatPaymentMethodLabel(
+  method: PaymentMethod | string | null | undefined,
+): string {
+  if (!method) {
+    return '-';
+  }
+  if (isPaymentMethod(method)) {
+    return PAYMENT_METHOD_LABELS[method];
+  }
+  return method;
 }
 
 export function formatPercentDelta(delta: number | null): string {
