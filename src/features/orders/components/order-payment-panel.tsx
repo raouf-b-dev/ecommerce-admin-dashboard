@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { QueryLoading } from '@/components/feedback/query-state';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
+import { PAYMENT_METHOD_LABELS } from '@/features/orders/lib/payment-method-labels';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime, formatMoney } from '@/lib/format';
 
@@ -21,7 +22,7 @@ export function OrderPaymentPanel({
   onRetry,
 }: OrderPaymentPanelProps) {
   if (isLoading) {
-    return <QueryLoading>Loading payment…</QueryLoading>;
+    return <QueryLoading>Loading payment...</QueryLoading>;
   }
 
   if (isError) {
@@ -60,7 +61,7 @@ export function OrderPaymentPanel({
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Method</dt>
-        <dd className="capitalize">{payment.paymentMethod}</dd>
+        <dd>{PAYMENT_METHOD_LABELS[payment.paymentMethod]}</dd>
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Transaction ID</dt>

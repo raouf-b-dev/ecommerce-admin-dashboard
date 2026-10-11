@@ -406,6 +406,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Jane Doe',
       userEmail: 'customer@store.local',
       status: 'confirmed',
+      paymentMethod: 'CARD',
       shippingAddress:
         'Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US',
       items: [
@@ -441,6 +442,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Jane Doe',
       userEmail: 'customer@store.local',
       status: 'processing',
+      paymentMethod: 'CARD',
       shippingAddress:
         'Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US',
       items: [
@@ -468,6 +470,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Jane Doe',
       userEmail: 'customer@store.local',
       status: 'pending_payment',
+      paymentMethod: 'CARD',
       shippingAddress:
         'Jane Doe, 500 Market Street, San Francisco, CA 94102, US',
       items: [
@@ -495,6 +498,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Alex Rivera',
       userEmail: 'alex.rivera@example.com',
       status: 'shipped',
+      paymentMethod: 'CARD',
       shippingAddress: 'Alex Rivera, 88 Pine Ave, Austin, TX 78701, US',
       items: [
         {
@@ -529,6 +533,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Jane Doe',
       userEmail: 'customer@store.local',
       status: 'delivered',
+      paymentMethod: 'CARD',
       shippingAddress:
         'Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US',
       items: [
@@ -564,6 +569,7 @@ function seedOrders(): SeedOrder[] {
       userName: 'Jane Doe',
       userEmail: 'customer@store.local',
       status: 'cancelled',
+      paymentMethod: 'CARD',
       shippingAddress:
         'Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US',
       items: [
@@ -598,7 +604,7 @@ export function createSeedPayments(): PaymentDetailResponseDto[] {
       amount: 279.98,
       currency: 'USD',
       status: 'completed',
-      paymentMethod: 'stripe',
+      paymentMethod: 'CARD',
       transactionId: 'txn_mock_001',
       createdAt: '2026-02-28T10:18:00.000Z',
       gatewayPaymentIntentId: 'pi_mock_001',
@@ -615,7 +621,7 @@ export function createSeedPayments(): PaymentDetailResponseDto[] {
       amount: 349,
       currency: 'USD',
       status: 'completed',
-      paymentMethod: 'stripe',
+      paymentMethod: 'CARD',
       transactionId: 'txn_mock_002',
       createdAt: '2026-02-25T14:05:00.000Z',
       gatewayPaymentIntentId: 'pi_mock_002',
@@ -632,7 +638,7 @@ export function createSeedPayments(): PaymentDetailResponseDto[] {
       amount: 178,
       currency: 'USD',
       status: 'completed',
-      paymentMethod: 'stripe',
+      paymentMethod: 'CARD',
       transactionId: 'txn_mock_004',
       createdAt: '2026-02-20T16:50:00.000Z',
       gatewayPaymentIntentId: 'pi_mock_004',
@@ -649,7 +655,7 @@ export function createSeedPayments(): PaymentDetailResponseDto[] {
       amount: 68.49,
       currency: 'USD',
       status: 'completed',
-      paymentMethod: 'stripe',
+      paymentMethod: 'CARD',
       transactionId: 'txn_mock_005',
       createdAt: '2026-02-10T12:05:00.000Z',
       gatewayPaymentIntentId: 'pi_mock_005',

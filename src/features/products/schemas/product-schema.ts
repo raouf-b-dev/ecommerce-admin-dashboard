@@ -48,7 +48,7 @@ export type ProductSubmitValues = {
   slug?: string;
   description?: string;
   sku?: string;
-  currency?: string;
+  currency: string;
   imageUrl?: string;
   categoryId: number;
 };
@@ -68,7 +68,7 @@ export function toProductSubmitValues(
     slug: trimOrUndefined(values.slug),
     description: trimOrUndefined(values.description),
     sku: trimOrUndefined(values.sku),
-    currency: trimOrUndefined(values.currency),
+    currency: values.currency.trim(),
     imageUrl: trimOrUndefined(values.imageUrl),
     categoryId: Number(values.categoryId),
   };
@@ -81,10 +81,10 @@ export function toCreateProductDto(
     name: values.name,
     price: values.price,
     categoryId: values.categoryId,
+    currency: values.currency,
     ...(values.slug ? { slug: values.slug } : {}),
     ...(values.description ? { description: values.description } : {}),
     ...(values.sku ? { sku: values.sku } : {}),
-    ...(values.currency ? { currency: values.currency } : {}),
     ...(values.imageUrl ? { imageUrl: values.imageUrl } : {}),
   };
 }
@@ -95,12 +95,12 @@ export function toUpdateProductDto(
   return {
     name: values.name,
     price: values.price,
+    currency: values.currency,
     ...(values.slug !== undefined ? { slug: values.slug } : {}),
     ...(values.description !== undefined
       ? { description: values.description }
       : {}),
     ...(values.sku !== undefined ? { sku: values.sku } : {}),
-    ...(values.currency !== undefined ? { currency: values.currency } : {}),
     ...(values.imageUrl !== undefined ? { imageUrl: values.imageUrl } : {}),
     ...(values.categoryId !== undefined
       ? { categoryId: values.categoryId }
