@@ -1,0 +1,22 @@
+# Cursor already skips .gitignore paths and a default list (node_modules,
+# lockfiles, images). Listed again so a window that misses .gitignore still
+# cannot open them. The generated client stays readable; it is indexing-ignored.
+# See the workspace doc docs/agent-workflow.md.
+
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.turbo/
+*.tsbuildinfo
+package-lock.json
+
+# Secrets
+.secrets
+.env
+.env.*
+!.env.example
+
+# Tracked screenshots. Do not open the whole gallery.
+docs/assets/

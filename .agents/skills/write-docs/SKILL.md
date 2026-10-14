@@ -49,4 +49,4 @@ Immutable body, states, supersede rules, naming, and the index: [adr/README.md](
 
 ## Check
 
-Links resolve, headings match the index, no deleted file is still linked (`rg '<old-name>' docs README.md CONTRIBUTING.md`), then `npm run lint`.
+Links resolve, headings match the index, no deleted file is still linked (`rg '<old-name>' docs README.md CONTRIBUTING.md`), then `npm run check:agent`. A docs-only diff runs the ASCII prose lint and skips the suite.

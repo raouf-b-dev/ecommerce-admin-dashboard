@@ -42,6 +42,6 @@ Specs go in `__tests__/` beside each folder. No `index.ts` barrels. Import other
 
 ## Checks
 
-- `npm run verify` passes.
+- `npm run check:agent` once. The user runs `npm run verify` in a terminal before the PR.
 - No `@/lib/mock/*` import in the feature (CONVENTIONS section 15).
 - Hidden or disabled UI is paired with an API-enforced permission, never a client-only rule.
