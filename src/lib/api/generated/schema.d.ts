@@ -2039,7 +2039,7 @@ export interface components {
             amount: number;
             /**
              * @description Reason for refund
-             * @example User  requested cancellation
+             * @example User requested cancellation
              */
             reason?: string;
         };
@@ -2854,7 +2854,10 @@ export interface components {
             unread: number;
         };
         AnalyticsKpiSnapshotDto: {
-            /** @example 12500.5 */
+            /**
+             * @description grossRevenue - refundedAmount. Negative when refunds in the window exceed captures.
+             * @example 12500.5
+             */
             netRevenue: number;
             /** @example 13000 */
             grossRevenue: number;
@@ -2871,11 +2874,14 @@ export interface components {
              */
             paidOrderCount: number;
             /**
-             * @description netRevenue / paidOrderCount (0 if none)
+             * @description netRevenue / paidOrderCount (0 if none). Negative when netRevenue is negative.
              * @example 297.63
              */
             aov: number;
-            /** @example USD */
+            /**
+             * @description Store default currency. Only payments in this currency are counted.
+             * @example USD
+             */
             currency: string;
         };
         OrderAttentionCountDto: {
@@ -2907,11 +2913,17 @@ export interface components {
             grossAmount: number;
             /** @example 50 */
             refundedAmount: number;
-            /** @example 1450.25 */
+            /**
+             * @description grossAmount - refundedAmount. Negative when refunds in the bucket exceed captures.
+             * @example 1450.25
+             */
             netAmount: number;
             /** @example 12 */
             capturedCount: number;
-            /** @example USD */
+            /**
+             * @description Store default currency. Only payments in this currency are counted.
+             * @example USD
+             */
             currency: string;
         };
         PaymentsTimeSeriesResponseDto: {
