@@ -2,11 +2,15 @@
 
 Operator SPA for `ecommerce-store-api`. Vite, React 19, TypeScript (strict), React Router data router, TanStack Query and Table, React Hook Form + Zod, Tailwind + shadcn-style primitives, `openapi-fetch` client. Vitest + Testing Library, Playwright. Node 24+.
 
-## Verify
+## Checks
 
-`npm run verify` runs lint (ESLint + ASCII prose), typecheck, unit tests, and build. Run it before reporting a task done. One spec: `npx vitest run <path>`. Playwright (`npm run test:e2e`) needs a seeded live API: run it only when you change the critical path, keyboard, or a11y behavior.
+`npm run verify` is the pre-PR command in your terminal (lint, typecheck, unit tests, and build). Do not run it in this chat. Do not run `test:e2e` or a build here either. The log stays in the transcript and every later step re-reads it.
 
-In your final message give: what changed, the commands you ran with results, and open risks or assumptions.
+In this chat a passing command is one line. A failing command is the error block only. While iterating: `node scripts/agent-run.mjs -- npx vitest run <path> --reporter=minimal`. Once before you stop: `npm run check:agent`. It covers uncommitted files and commits on this branch since `develop`. A docs-only diff skips the suite. Playwright (`npm run test:e2e`) needs a seeded live API: run it only when the user asks, and only for the critical path, keyboard, or a11y behavior.
+
+`agent-check: ok` means those commands ran and passed. `agent-check: skipped` means nothing was proven (clean tree, or a wide diff). Do not run `npm test`, `npm run verify`, `test:e2e`, or a build directly.
+
+In your final message give: what changed, the `agent-check:` line, and open risks or assumptions. Name `npm run verify` as the command the user runs. Do not paste a green log.
 
 ## Never
 

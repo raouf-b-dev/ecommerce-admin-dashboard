@@ -14,9 +14,9 @@ type LoginOutcome =
 
 const AUTH_THROTTLE_WAIT_MS = 61_000;
 
-function shellMarker(page: Page) {
-  // Present on desktop and mobile; "Control Center" is sidebar-only.
-  return page.getByRole('button', { name: 'Log out' });
+/** Visible on desktop and mobile. Log out lives inside this menu. */
+export function signedInShell(page: Page) {
+  return page.getByRole('button', { name: /Operator account menu/ });
 }
 
 export function adminNav(page: Page) {
@@ -40,7 +40,7 @@ async function waitForLoginOutcome(page: Page): Promise<LoginOutcome> {
   const changePasswordHeading = page.getByRole('heading', {
     name: 'Change your password',
   });
-  const shell = shellMarker(page);
+  const shell = signedInShell(page);
 
   await Promise.race([
     shell.waitFor({ state: 'visible', timeout: 15_000 }),
@@ -73,7 +73,7 @@ async function completeForcedPasswordChange(
   await page.getByLabel('New password', { exact: true }).fill(newPassword);
   await page.getByLabel('Confirm new password').fill(newPassword);
   await page.getByRole('button', { name: 'Update password' }).click();
-  await shellMarker(page).waitFor({ state: 'visible', timeout: 15_000 });
+  await signedInShell(page).waitFor({ state: 'visible', timeout: 15_000 });
 }
 
 function uniquePasswords(...values: Array<string | null | undefined>): string[] {

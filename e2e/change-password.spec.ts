@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { signedInShell } from './helpers/auth';
 import { skipUnlessEnv } from './helpers/env';
 
 /**
@@ -22,7 +23,7 @@ test.describe('Forced password change', () => {
     const changePasswordHeading = page.getByRole('heading', {
       name: 'Change your password',
     });
-    const shell = page.getByRole('button', { name: 'Log out' });
+    const shell = signedInShell(page);
 
     async function tryPassword(pwd: string): Promise<'change' | 'shell' | 'invalid'> {
       await page.goto('/login');

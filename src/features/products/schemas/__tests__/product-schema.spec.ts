@@ -77,14 +77,33 @@ describe('createProductSchema', () => {
     }
   });
 
-  it('rejects missing currency', () => {
-    const result = createProductSchema.safeParse({
-      name: 'Laptop',
-      price: '10',
-      currency: '',
-    });
+  it('rejects missing or invalid currency', () => {
+    expect(
+      createProductSchema.safeParse({
+        name: 'Laptop',
+        price: '10',
+        currency: '',
+        categoryId: '1',
+      }).success,
+    ).toBe(false);
 
-    expect(result.success).toBe(false);
+    expect(
+      createProductSchema.safeParse({
+        name: 'Laptop',
+        price: '10',
+        currency: 'US',
+        categoryId: '1',
+      }).success,
+    ).toBe(false);
+
+    expect(
+      createProductSchema.safeParse({
+        name: 'Laptop',
+        price: '10',
+        currency: 'USDT',
+        categoryId: '1',
+      }).success,
+    ).toBe(false);
   });
 
   it.each(['not-a-url', 'ftp://files.example.com/a.jpg', 'javascript:alert(1)'])(
@@ -101,11 +120,11 @@ describe('createProductSchema', () => {
     },
   );
 
-  it('trims currency whitespace in both create and update DTOs', () => {
+  it('trims and uppercases currency in both create and update DTOs', () => {
     const submit = toProductSubmitValues({
       name: 'Laptop',
       price: '10',
-      currency: ' EUR ',
+      currency: ' eur ',
       categoryId: '3',
     });
 

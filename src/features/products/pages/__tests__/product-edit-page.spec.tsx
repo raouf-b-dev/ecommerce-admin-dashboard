@@ -57,6 +57,19 @@ vi.mock('@/features/products/hooks/use-categories', () => ({
   }),
 }));
 
+vi.mock('@/features/products/hooks/use-platform-config', () => ({
+  usePlatformConfigQuery: () => ({
+    data: {
+      defaultCurrency: 'USD',
+      defaultCurrencyExponent: 2,
+      supportedCurrencies: ['USD'],
+    },
+    isLoading: false,
+    isError: false,
+    error: null,
+  }),
+}));
+
 vi.mock('@/features/products/hooks/use-products', () => ({
   useProductQuery: productQueryMock,
   useUpdateProduct: () => ({

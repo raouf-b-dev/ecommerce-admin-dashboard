@@ -21,7 +21,8 @@ export const createProductSchema = z.object({
   currency: z
     .string()
     .trim()
-    .min(1, 'Currency is required'),
+    .min(1, 'Currency is required')
+    .length(3, 'Currency must be a 3-letter ISO code'),
   imageUrl: z
     .string()
     .optional()
@@ -68,7 +69,7 @@ export function toProductSubmitValues(
     slug: trimOrUndefined(values.slug),
     description: trimOrUndefined(values.description),
     sku: trimOrUndefined(values.sku),
-    currency: values.currency.trim(),
+    currency: values.currency.trim().toUpperCase(),
     imageUrl: trimOrUndefined(values.imageUrl),
     categoryId: Number(values.categoryId),
   };

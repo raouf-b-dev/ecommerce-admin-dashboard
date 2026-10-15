@@ -51,4 +51,4 @@ Fix them when you touch the file, then run `npm run lint:prune`.
 
 ## Run
 
-`npx vitest run <path>` while iterating, then `npm run verify`. After removing a baselined cast, run `npm run lint:prune` (AGENTS.md rule 1).
+`node scripts/agent-run.mjs -- npx vitest run <path> --reporter=minimal` while iterating, then `npm run check:agent` once. A pass is one line. A failure is the error block only. Leave `npm run verify` for the user's terminal. After removing a baselined cast, run `npm run lint:prune` (AGENTS.md rule 1).

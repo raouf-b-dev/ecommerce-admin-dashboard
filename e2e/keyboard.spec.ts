@@ -5,6 +5,7 @@ import {
   adminNav,
   openInventoryDetailBySku,
 } from './helpers/admin-fixtures';
+import { signedInShell } from './helpers/auth';
 import { SEEDED_PRODUCT_SKU } from './helpers/seed';
 
 test('skip link moves focus to main', async ({ page }) => {
@@ -13,7 +14,7 @@ test('skip link moves focus to main', async ({ page }) => {
   // Reused session + client-side nav focuses #main (FocusOnRouteChange).
   // Tab from there never hits the skip link. Reload so Tab starts at the document.
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+  await expect(signedInShell(page)).toBeVisible({
     timeout: 15_000,
   });
   await page.keyboard.press('Tab');

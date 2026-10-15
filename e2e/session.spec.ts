@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAsSuperAdmin } from './helpers/auth';
+import { loginAsSuperAdmin, signedInShell } from './helpers/auth';
 
 /**
  * Isolated from the admin worker page. Reloading that shared page would rotate
@@ -15,7 +15,7 @@ test.describe('Session cookie restore', () => {
   }) => {
     await loginAsSuperAdmin(page);
 
-    await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+    await expect(signedInShell(page)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({
       timeout: 15_000,
     });
@@ -32,7 +32,7 @@ test.describe('Session cookie restore', () => {
 
     await page.reload();
 
-    await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+    await expect(signedInShell(page)).toBeVisible({
       timeout: 15_000,
     });
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({
@@ -48,7 +48,7 @@ test.describe('Session cookie restore', () => {
     page,
   }) => {
     await loginAsSuperAdmin(page);
-    await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+    await expect(signedInShell(page)).toBeVisible();
 
     await page.context().clearCookies();
     await page.reload();
@@ -56,6 +56,6 @@ test.describe('Session cookie restore', () => {
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible({
       timeout: 15_000,
     });
-    await expect(page.getByRole('button', { name: 'Log out' })).toHaveCount(0);
+    await expect(signedInShell(page)).toHaveCount(0);
   });
 });
