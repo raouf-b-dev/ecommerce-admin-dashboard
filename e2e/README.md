@@ -98,7 +98,7 @@ Two workers, five projects:
 | `guest` | remaining pool | Login page, failed login, customer operator-gate |
 | `admin` | 1 | Shell, products, inventory, orders, users, keyboard, journey, signed-in a11y. Skips `@mobile`. |
 | `mobile-pixel` | 1 | `@mobile` tests at 375px (Pixel 5 profile). Runs after `admin`. |
-| `mobile-iphone` | 1 | `@mobile` tests at 390px (iPhone 13 profile). Runs after `mobile-pixel`. |
+| `mobile-iphone` | 1 | `@mobile` tests at 390px (iPhone 13 profile on Chromium; WebKit drops the Secure refresh cookie on `http://localhost`). Runs after `mobile-pixel`. |
 | `superadmin` | 1 | Roles, forced password change, session cookie restore |
 
 Admin specs sign in **once per worker** (`e2e/helpers/admin-fixtures.ts`) and **reuse that page**. A new page per test would bootstrap via silent refresh; React Strict Mode can fire two refreshes at once, which rotates the cookie and can revoke the session, and many reloads hit the API refresh throttle. A Playwright `storageState` file would freeze the first cookie and collide with reuse detection.

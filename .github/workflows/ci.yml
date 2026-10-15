@@ -175,7 +175,7 @@ jobs:
         run: |
           npm run migration:run:dev
           npm run build
-          npx cross-env NODE_ENV=development node --require ./dist/src/infrastructure/tracing/tracing.js dist/src/main.js &
+          npx cross-env NODE_ENV=development node --require ./dist/infrastructure/tracing/tracing.js dist/main.js &
           for i in $(seq 1 60); do
             if curl -sf http://localhost:3000/health/liveness >/dev/null; then
               break

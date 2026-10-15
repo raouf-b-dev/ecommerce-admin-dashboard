@@ -25,6 +25,8 @@ export default defineConfig({
   workers: 2,
   // Helpers wait out a 429 window; keep this above that wait.
   timeout: 180_000,
+  // The CI default (dot) prints no newline per test, so the Actions log looks stalled.
+  reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: {
     baseURL: 'http://localhost:5174',
     trace: 'on-first-retry',
@@ -79,6 +81,9 @@ export default defineConfig({
       workers: 1,
       use: {
         ...devices['iPhone 13'],
+        // WebKit drops the API's Secure refresh cookie on http://localhost,
+        // so any full page load signs the operator out.
+        browserName: 'chromium',
         viewport: { width: 390, height: 844 },
       },
     },
