@@ -103,7 +103,7 @@ Live queue (not numeric order): **12.6**, then finish **12.5**, then optional **
 
 | Phase    | Name                               | Status | Priority | Focus                                                                           |
 | -------- | ---------------------------------- | ------ | :------: | ------------------------------------------------------------------------------- |
-| **12.6** | Hosted mock demo                   | `[ ]`  |  `[P1]`  | Ship the existing `build:mock` Vercel config; demo banner; README link          |
+| **12.6** | Hosted mock demo                   | `[/]`  |  `[P1]`  | Demo banner shipped; deploy `build:mock` config and add the README link        |
 | **12.5** | Operational UX & Real-Time Sync    | `[/]`  |  `[P1]`  | Core slice and visual finish shipped; Cmd+K and transition skeletons (P2) left |
 | **12**   | Payments ops                       | `[ ]`  |  `[P2]`  | Optional; does not block the release gate                                       |
 | **14**   | Dashboard Operational Facts        | `[ ]`  |  `[P2]`  | Blocked on OpenAPI operational fields                                           |
@@ -117,7 +117,7 @@ Live queue (not numeric order): **12.6**, then finish **12.5**, then optional **
 **Scope:**
 
 - [ ] **Deploy:** connect the repo to Vercel (or equivalent) using the committed `vercel.json`. Production branch `master`; previews for PRs.
-- [ ] **Demo banner:** a visible "Demo data, resets on reload" banner in mock mode only, on the login page and in the authenticated shell. Component lives in `src/lib/mock/ui/` and is lazy-loaded behind `isMockMode()` like the demo login actions, so it is absent from the `build` output. The shell becomes a third allowed `@/lib/mock` touchpoint; document it in [CONVENTIONS.md](ai/CONVENTIONS.md) section 15.
+- [x] **Demo banner:** a visible "Demo data, resets on reload" banner in mock mode only, on the login page and in the authenticated shell. Component lives in `src/lib/mock/ui/` and is lazy-loaded behind `isMockMode()` like the demo login actions, so it is absent from the `build` output. The shell becomes a third allowed `@/lib/mock` touchpoint; document it in [CONVENTIONS.md](ai/CONVENTIONS.md) section 15.
 - [ ] **README:** replace "No hosted demo" with the demo link and its limits (MSW data, mock payments, data resets on reload). Keep the "against a local API" instructions.
 - [ ] **Later (live demo):** when the API offers a hosted demo environment, add an env-configured live build that targets it: API origin in `VITE_*` env, this origin registered in the API's CORS list, and hosting on a sibling subdomain of the API's domain so the refresh cookie reaches the API.
 
