@@ -52,4 +52,3 @@ export function formatPercentDelta(delta: number | null): string {
   const sign = rounded > 0 ? '+' : '';
   return `${sign}${rounded}%`;
 }
-

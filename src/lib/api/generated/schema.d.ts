@@ -1514,14 +1514,9 @@ export interface components {
              * @description Payment method
              * @enum {string}
              */
-            paymentMethod: "STRIPE";
+            paymentMethod: "CARD";
             /** @description Customer notes for the order */
             customerNotes?: string;
-            /**
-             * @description Idempotency key for preventing duplicate checkouts. Also accepted as the Idempotency-Key header.
-             * @example checkout-abc123-xyz789
-             */
-            idempotencyKey: string;
         };
         CheckoutResponseDto: {
             /**
@@ -1685,6 +1680,12 @@ export interface components {
              */
             status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
             /**
+             * @description Payment method
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
+            /**
              * @description Formatted shipping address
              * @example Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US
              */
@@ -1739,10 +1740,10 @@ export interface components {
         CreateOrderPaymentDto: {
             /**
              * @description Payment method
-             * @example STRIPE
+             * @example CARD
              * @enum {string}
              */
-            paymentMethod: "STRIPE";
+            paymentMethod: "CARD";
             paymentMethodDetails?: components["schemas"]["OrderPaymentMethodDetailsDto"];
         };
         OrderPaymentResponseDto: {
@@ -1758,10 +1759,10 @@ export interface components {
             /** @example USD */
             currency: string;
             /**
-             * @example STRIPE
+             * @example CARD
              * @enum {string}
              */
-            paymentMethod: "STRIPE";
+            paymentMethod: "CARD";
             /** @example AUTHORIZED */
             status: string;
             /** @example txn_1234567890 */
@@ -1847,8 +1848,11 @@ export interface components {
             currency: string;
             /** @example completed */
             status: string;
-            /** @example stripe */
-            paymentMethod: string;
+            /**
+             * @example CARD
+             * @enum {string}
+             */
+            paymentMethod: "CARD";
             /** @example txn_123 */
             transactionId: string;
             /**
@@ -1911,9 +1915,10 @@ export interface components {
             status: string;
             /**
              * @description Payment method
-             * @example stripe
+             * @example CARD
+             * @enum {string}
              */
-            paymentMethod: string;
+            paymentMethod: "CARD";
             /**
              * @description Transaction ID
              * @example txn_123
@@ -1967,10 +1972,10 @@ export interface components {
             currency: string;
             /**
              * @description Payment method
-             * @example STRIPE
+             * @example CARD
              * @enum {string}
              */
-            paymentMethod: "STRIPE";
+            paymentMethod: "CARD";
             /**
              * @description Payment status
              * @example COMPLETED
@@ -3651,11 +3656,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Present on HTTP 409 when the idempotency key is still in progress. Value is 2 seconds. */
-                "Retry-After"?: string;
-                /** @description Legacy alias for Idempotency-Key. */
-                "x-idempotency-key"?: string;
-                /** @description Client idempotency key (also accepted as x-idempotency-key or body idempotencyKey). Required. */
+                /** @description Client idempotency key. Required. */
                 "Idempotency-Key": string;
             };
             path?: never;
@@ -3804,11 +3805,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Present on HTTP 409 when the idempotency key is still in progress. Value is 2 seconds. */
-                "Retry-After"?: string;
-                /** @description Legacy alias for Idempotency-Key. */
-                "x-idempotency-key"?: string;
-                /** @description Client idempotency key (also accepted as x-idempotency-key or body idempotencyKey). Required. */
+                /** @description Client idempotency key. Required. */
                 "Idempotency-Key": string;
             };
             path: {

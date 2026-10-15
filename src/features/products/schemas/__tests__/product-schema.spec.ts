@@ -119,4 +119,17 @@ describe('createProductSchema', () => {
       expect(result.success).toBe(false);
     },
   );
+
+  it('trims and uppercases currency in both create and update DTOs', () => {
+    const submit = toProductSubmitValues({
+      name: 'Laptop',
+      price: '10',
+      currency: ' eur ',
+      categoryId: '3',
+    });
+
+    expect(submit).toMatchObject({ currency: 'EUR' });
+    expect(toCreateProductDto(submit)).toMatchObject({ currency: 'EUR' });
+    expect(toUpdateProductDto(submit)).toMatchObject({ currency: 'EUR' });
+  });
 });

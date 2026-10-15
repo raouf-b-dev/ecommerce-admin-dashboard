@@ -11,6 +11,8 @@ export type OrderMutationResponseDto =
 export type PaymentDetailResponseDto =
   components['schemas']['PaymentDetailResponseDto'];
 
+export type PaymentMethod = PaymentDetailResponseDto['paymentMethod'];
+
 export type ListOrdersQuery = NonNullable<
   operations['OrdersController_findAll_v1']['parameters']['query']
 >;

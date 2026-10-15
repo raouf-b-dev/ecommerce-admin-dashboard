@@ -96,12 +96,12 @@ export function toUpdateProductDto(
   return {
     name: values.name,
     price: values.price,
+    currency: values.currency,
     ...(values.slug !== undefined ? { slug: values.slug } : {}),
     ...(values.description !== undefined
       ? { description: values.description }
       : {}),
     ...(values.sku !== undefined ? { sku: values.sku } : {}),
-    ...(values.currency !== undefined ? { currency: values.currency } : {}),
     ...(values.imageUrl !== undefined ? { imageUrl: values.imageUrl } : {}),
     ...(values.categoryId !== undefined
       ? { categoryId: values.categoryId }
