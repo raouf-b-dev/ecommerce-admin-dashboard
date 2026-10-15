@@ -156,7 +156,7 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: ecommerce-admin-dashboard
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium
 
       - name: Install API dependencies
         working-directory: ecommerce-store-api
