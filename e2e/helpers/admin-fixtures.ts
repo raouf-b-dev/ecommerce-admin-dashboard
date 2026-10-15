@@ -54,8 +54,10 @@ export const test = base.extend<
   context: async ({ adminContext }, provide) => {
     await provide(adminContext);
   },
-  page: async ({ adminPage }, provide) => {
-    await adminPage.setViewportSize(DEFAULT_VIEWPORT);
+  page: async ({ adminPage }, provide, testInfo) => {
+    await adminPage.setViewportSize(
+      testInfo.project.use.viewport ?? DEFAULT_VIEWPORT,
+    );
     await provide(adminPage);
     await adminPage.keyboard.press('Escape').catch(() => undefined);
   },
