@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-15
+
+Works with ecommerce-store-api v0.10.0 or later.
+
+### Added
+
+- Platform config integration: the display currency comes from `GET /v1/platform/config`. Operator user menu in the header ([#93](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/93)).
+- Payment method labels ([#94](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/94)).
+- Demo-data banner in mock mode, on the login page and in the app shell. Follow-up to [#74](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/74), which 0.4.1 left out.
+
+### Changed
+
+- **Breaking:** payment method `CARD` replaces `STRIPE`. Requires ecommerce-store-api v0.10.0 ([#94](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/94)).
+- Responsive admin shell below desktop widths ([#90](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/90)).
+- Tests use the production compiler; mobile Playwright projects added ([#91](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/91)).
+- Slimmer agent guidance ([#88](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/88)).
+
+### Fixed
+
+- Only optimistic lock conflicts are treated as version conflicts ([#92](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/92)).
+- CI status gate uses `E2E_STATUS` ([#82](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/82)).
+
+[Compare v0.4.1...v0.5.0](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/compare/v0.4.1...v0.5.0)
+
 ## [0.4.1] - 2026-09-29
 
 Does **not** include the mock demo-data banner ([#74](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/74)). That stays a follow-up on `develop` after this cut.
