@@ -5,7 +5,7 @@ Portfolio media for the README hero and screenshot gallery. Captured against **`
 ## Prerequisites
 
 1. From repo root: `npm run dev:mock` (port **5174**).
-2. Playwright Chromium installed: `npx playwright install chromium` (once).
+2. Playwright Chromium installed: `npx playwright install chromium` (once). If the download fails, use a system browser: `CAPTURE_CHANNEL=chrome npm run assets:capture` (or `msedge`).
 
 ## Regenerate
 
@@ -34,3 +34,4 @@ Override base URL if needed: `BASE_URL=http://localhost:5174 npm run assets:capt
 | `screenshot-rbac-matrix-{dark,light}.png` | Roles / permissions dialog |
 
 Additional stills (products, categories, order detail, etc.) are written by `capture-showcase.js` for future docs use.
+

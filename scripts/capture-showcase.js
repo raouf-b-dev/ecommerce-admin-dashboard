@@ -11,7 +11,10 @@ async function main() {
   const baseUrl = process.env.BASE_URL ?? 'http://localhost:5174';
 
   console.log(`Starting showcase capture at ${baseUrl} (1440x900 @ 2x -> 2880x1800)...`);
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.CAPTURE_CHANNEL || undefined,
+  });
 
   // -------------------------------------------------------------
   // 1. CAPTURE ALL DARK THEME STILLS

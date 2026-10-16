@@ -20,14 +20,17 @@ Works with ecommerce-store-api v0.10.0 or later.
 ### Changed
 
 - **Breaking:** payment method `CARD` replaces `STRIPE`. Requires ecommerce-store-api v0.10.0 ([#94](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/94)).
+- Product create and update always send `currency`, matching the API v0.10.0 contract ([#94](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/94)).
 - Responsive admin shell below desktop widths ([#90](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/90)).
 - Tests use the production compiler; mobile Playwright projects added ([#91](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/91)).
 - Slimmer agent guidance ([#88](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/88)).
+- Regenerated README showcase stills and walkthrough for the 0.5.0 shell (user menu, demo banner, payment labels).
 
 ### Fixed
 
 - Only optimistic lock conflicts are treated as version conflicts ([#92](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/92)).
 - CI status gate uses `E2E_STATUS` ([#82](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/82)).
+- E2E CI boots the API from the NestJS 12 `dist/main.js` layout and keeps phone project viewports ([#100](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/100)).
 
 [Compare v0.4.1...v0.5.0](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/compare/v0.4.1...v0.5.0)
 
