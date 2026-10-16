@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Copies .env.example → .env.local and .secrets.example → .secrets.
-// Passwords are not filled in: copy them from the API seeding guide into .secrets.
+// Copies .env.example -> .env.local and .secrets.example -> .secrets.
+// .secrets.example ships local demo seed passwords (not production).
 //
 // Usage:
 //   node scripts/generate-env.js
@@ -60,10 +60,10 @@ async function writeSecrets() {
     return;
   }
   console.log(
-    '   → Fill E2E_* passwords from the API seeding guide. Do not commit .secrets.',
+    '   -> Demo seed passwords came from .secrets.example. Do not commit .secrets.',
   );
   console.log(
-    '   → Copy filled values into GitHub Secrets for the Playwright CI job.',
+    '   -> For CI, copy values into GitHub Secrets for the Playwright job.',
   );
 }
 

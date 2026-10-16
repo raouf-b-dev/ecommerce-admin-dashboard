@@ -4,9 +4,9 @@ Security baseline for this admin SPA. The API remains the authority for authn/au
 
 ## Secrets and config
 
-- Never commit `.env` or files with real credentials.
+- Never commit `.env`, `.secrets`, or files with real / production credentials.
 - `VITE_*` values are exposed to the browser. Never put API secrets, private keys, or long-lived credentials in Vite env vars.
-- Local seed users live only in the API seeding doc. Do not copy passwords into this repository.
+- Published local demo seed passwords may live in `.secrets.example` (and a gitignored `.secrets` copy) for Playwright. Do not put production operator credentials in the repo.
 
 ## Trust boundaries
 

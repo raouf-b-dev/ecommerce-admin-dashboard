@@ -32,7 +32,7 @@ Operator-facing SPA for `ecommerce-store-api`. It consumes the versioned HTTP co
 - API origin is `VITE_API_BASE_URL` (default `http://localhost:3000`). The API must allow `http://localhost:5174` with `credentials: true`.
 - `npm run dev:mock` runs without a backend (MSW, demo login). Playwright needs a real seeded API; `e2e/global-setup.ts` seeds the sibling `../ecommerce-store-api` unless `E2E_SKIP_DB_SEED=1`. Boot, Docker, and credentials: the API repo's `README.md`, `docs/development/LOCAL-SETUP.md`, and `docs/development/SEEDING.md`.
 - Seeded operators start with `mustChangePassword: true`; first login lands on `/change-password`.
-- Browser configuration uses `VITE_*` public values only. Create local files with `npm run env:init` (never commit `.secrets`).
+- Browser configuration uses `VITE_*` public values only. Create local files with `npm run env:init` (never commit `.secrets`). Local demo seed passwords ship in `.secrets.example`; Playwright loads `.secrets` automatically.
 
 ## API integration
 

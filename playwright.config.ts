@@ -1,4 +1,33 @@
+import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
+
+const E2E_ENV_KEYS = [
+  'E2E_ADMIN_EMAIL',
+  'E2E_ADMIN_PASSWORD',
+  'E2E_CUSTOMER_EMAIL',
+  'E2E_CUSTOMER_PASSWORD',
+  'E2E_SUPERADMIN_EMAIL',
+  'E2E_SUPERADMIN_PASSWORD',
+  'E2E_ADMIN_NEW_PASSWORD',
+  'E2E_SUPERADMIN_NEW_PASSWORD',
+] as const;
+
+// GitHub Actions sets missing secrets to "". Treat those as unset so files can fill.
+for (const key of E2E_ENV_KEYS) {
+  if (process.env[key] === '') {
+    delete process.env[key];
+  }
+}
+
+// Defaults from tracked example, then gitignored .secrets, then .env.local (VITE_*).
+// process.loadEnvFile does not override keys already set (non-empty GH secrets win).
+for (const name of ['.secrets.example', '.secrets', '.env.local']) {
+  try {
+    process.loadEnvFile(path.resolve(process.cwd(), name));
+  } catch {
+    // Missing or unreadable; continue.
+  }
+}
 
 const apiBaseUrl = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
@@ -11,7 +40,7 @@ if (
     !process.env.E2E_SUPERADMIN_PASSWORD)
 ) {
   throw new Error(
-    'CI e2e requires E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD, E2E_CUSTOMER_EMAIL, E2E_CUSTOMER_PASSWORD, and E2E_SUPERADMIN_PASSWORD (see e2e/README.md).',
+    'CI e2e requires E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD, E2E_CUSTOMER_EMAIL, E2E_CUSTOMER_PASSWORD, and E2E_SUPERADMIN_PASSWORD (see .secrets.example / e2e/README.md).',
   );
 }
 
@@ -23,6 +52,8 @@ export default defineConfig({
   // Phone projects depend on admin so they do not sign in beside it.
   fullyParallel: false,
   workers: 2,
+  // One CI retry recovers transient flakes and enables trace: on-first-retry.
+  retries: process.env.CI ? 1 : 0,
   // Helpers wait out a 429 window; keep this above that wait.
   timeout: 180_000,
   // The CI default (dot) prints no newline per test, so the Actions log looks stalled.

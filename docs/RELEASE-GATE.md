@@ -2,7 +2,7 @@
 
 Repeatable runbook against a **live** API. Checkboxes stay open for each manual pass; phase completion is tracked in [`ROADMAP.md`](ROADMAP.md). Mock mode (`npm run dev:mock`) is a demo only and does not satisfy this checklist.
 
-Credentials stay in the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). Do not paste passwords into this repository.
+Local demo seed credentials: [`.secrets.example`](../.secrets.example) / `npm run env:init` (see also the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md)). Do not commit `.secrets` or production credentials.
 
 ## Before you start
 
@@ -63,7 +63,7 @@ npm run preview
 
 ## Automated evidence
 
-From this repo, with the API running and `E2E_*` filled (`npm run env:init:secrets`, then passwords from the API seeding guide):
+From this repo, with the API running and local e2e secrets ready (`npm run env:init` once; Playwright loads `.secrets`):
 
 ```bash
 npm run lint

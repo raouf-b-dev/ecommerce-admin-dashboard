@@ -130,6 +130,9 @@ export async function signInAsAdmin(page: Page): Promise<void> {
       }
 
       if (outcome === 'throttled') {
+        console.log(
+          `[e2e] Login throttled; waiting ${AUTH_THROTTLE_WAIT_MS / 1000}s before retry...`,
+        );
         await new Promise((resolve) =>
           setTimeout(resolve, AUTH_THROTTLE_WAIT_MS),
         );
@@ -137,6 +140,9 @@ export async function signInAsAdmin(page: Page): Promise<void> {
       }
     }
 
+    console.log(
+      `[e2e] Admin login round exhausted; waiting ${AUTH_THROTTLE_WAIT_MS / 1000}s before next round...`,
+    );
     await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
   }
 
@@ -161,6 +167,9 @@ export async function loginAsSuperAdmin(page: Page): Promise<void> {
     let outcome = await waitForLoginOutcome(page);
 
     if (outcome === 'throttled') {
+      console.log(
+        `[e2e] Superadmin login throttled; waiting ${AUTH_THROTTLE_WAIT_MS / 1000}s before retry...`,
+      );
       await new Promise((resolve) => setTimeout(resolve, AUTH_THROTTLE_WAIT_MS));
       await submitCredentials(page, email, password);
       outcome = await waitForLoginOutcome(page);
