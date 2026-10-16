@@ -15,5 +15,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{spec,test}.{ts,tsx}'],
     exclude: ['e2e/**'],
+    // Local: list each file as it runs. CI: compact default.
+    reporters: process.env.CI ? ['default'] : ['verbose'],
   },
 });

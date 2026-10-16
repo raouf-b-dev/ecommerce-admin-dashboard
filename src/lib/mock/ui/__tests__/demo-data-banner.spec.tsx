@@ -35,6 +35,9 @@ let AppLayout: ComponentType;
 
 beforeAll(async () => {
   vi.stubEnv('VITE_ENABLE_MOCK', 'true');
+  // Warm the lazy chunk so Suspense resolves under a loaded suite (mocked
+  // DemoLoginActions is sync; the real banner import is not).
+  await import('@/lib/mock/ui/demo-data-banner');
   ({ default: LoginPage } = await import('@/features/auth/pages/login-page'));
   ({ AppLayout } = await import('@/components/layout/app-layout'));
 });
