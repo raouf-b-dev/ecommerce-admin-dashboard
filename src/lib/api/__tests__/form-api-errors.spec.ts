@@ -23,6 +23,24 @@ describe('applyApiFormErrors', () => {
     expect(setFieldError).not.toHaveBeenCalled();
   });
 
+  it('applies a 409 that is not an optimistic lock to the form', () => {
+    const setFormError = vi.fn();
+    const setFieldError = vi.fn();
+
+    applyApiFormErrors({
+      error: new ApiRequestError({
+        statusCode: 409,
+        message: 'Idempotency key is in progress',
+        code: 'IDEMPOTENCY_KEY_IN_PROGRESS',
+      }),
+      setFormError,
+      setFieldError,
+    });
+
+    expect(setFormError).toHaveBeenCalledWith('Idempotency key is in progress');
+    expect(setFieldError).not.toHaveBeenCalled();
+  });
+
   it('sets generic fallback for unknown errors', () => {
     const setFormError = vi.fn();
     const setFieldError = vi.fn();

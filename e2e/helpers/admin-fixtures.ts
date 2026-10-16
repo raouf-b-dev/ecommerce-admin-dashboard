@@ -4,7 +4,7 @@ import {
   type BrowserContext,
   type Page,
 } from '@playwright/test';
-import { adminNav, signInAsAdmin } from './auth';
+import { adminNav, signedInShell, signInAsAdmin } from './auth';
 
 export { adminNav, expect };
 
@@ -54,8 +54,10 @@ export const test = base.extend<
   context: async ({ adminContext }, provide) => {
     await provide(adminContext);
   },
-  page: async ({ adminPage }, provide) => {
-    await adminPage.setViewportSize(DEFAULT_VIEWPORT);
+  page: async ({ adminPage }, provide, testInfo) => {
+    await adminPage.setViewportSize(
+      testInfo.project.use.viewport ?? DEFAULT_VIEWPORT,
+    );
     await provide(adminPage);
     await adminPage.keyboard.press('Escape').catch(() => undefined);
   },
@@ -66,7 +68,7 @@ export const test = base.extend<
  * (and rotate) the session on every spec.
  */
 export async function openAdminShell(page: Page): Promise<void> {
-  const logout = page.getByRole('button', { name: 'Log out' });
+  const logout = signedInShell(page);
   const dashboardHeading = page.getByRole('heading', { name: 'Dashboard' });
 
   if (await logout.isVisible().catch(() => false)) {
@@ -91,7 +93,7 @@ export async function openAdminShell(page: Page): Promise<void> {
 }
 
 async function waitForAdminShell(page: Page): Promise<void> {
-  const logout = page.getByRole('button', { name: 'Log out' });
+  const logout = signedInShell(page);
   const signIn = page.getByRole('heading', { name: 'Sign in' });
 
   await Promise.race([

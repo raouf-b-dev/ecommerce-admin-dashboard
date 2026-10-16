@@ -6,6 +6,7 @@ import { paymentsHandlers } from '@/lib/mock/handlers/payments';
 import { categoriesHandlers } from '@/lib/mock/handlers/categories';
 import { productsHandlers } from '@/lib/mock/handlers/products';
 import { rolesHandlers } from '@/lib/mock/handlers/roles';
+import { platformHandlers } from '@/lib/mock/handlers/platform';
 import { usersHandlers } from '@/lib/mock/handlers/users';
 
 export const handlers = [
@@ -18,4 +19,5 @@ export const handlers = [
   ...usersHandlers,
   ...rolesHandlers,
   ...analyticsHandlers,
+  ...platformHandlers,
 ];

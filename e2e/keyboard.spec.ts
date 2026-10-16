@@ -5,6 +5,7 @@ import {
   adminNav,
   openInventoryDetailBySku,
 } from './helpers/admin-fixtures';
+import { signedInShell } from './helpers/auth';
 import { SEEDED_PRODUCT_SKU } from './helpers/seed';
 
 test('skip link moves focus to main', async ({ page }) => {
@@ -13,7 +14,7 @@ test('skip link moves focus to main', async ({ page }) => {
   // Reused session + client-side nav focuses #main (FocusOnRouteChange).
   // Tab from there never hits the skip link. Reload so Tab starts at the document.
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+  await expect(signedInShell(page)).toBeVisible({
     timeout: 15_000,
   });
   await page.keyboard.press('Tab');
@@ -33,21 +34,24 @@ test('desktop sidebar links are keyboard reachable', async ({ page }) => {
   });
 });
 
-test('mobile sheet opens from keyboard and closes on Escape', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await openAdminShell(page);
+test(
+  'mobile sheet opens from keyboard and closes on Escape',
+  { tag: '@mobile' },
+  async ({ page }) => {
+    await openAdminShell(page);
 
-  const menu = page.getByRole('button', { name: 'Open navigation menu' });
-  await expect(menu).toBeVisible();
-  await menu.focus();
-  await page.keyboard.press('Enter');
-  const sheet = page.getByRole('dialog', { name: 'Navigation Menu' });
-  await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole('link', { name: 'Products' })).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(sheet).toBeHidden();
-  await expect(menu).toBeFocused();
-});
+    const menu = page.getByRole('button', { name: 'Open navigation menu' });
+    await expect(menu).toBeVisible();
+    await menu.focus();
+    await page.keyboard.press('Enter');
+    const sheet = page.getByRole('dialog', { name: 'Navigation Menu' });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole('link', { name: 'Products' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).toBeHidden();
+    await expect(menu).toBeFocused();
+  },
+);
 
 test('adjust stock dialog closes on Escape', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });

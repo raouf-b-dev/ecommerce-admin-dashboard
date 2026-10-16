@@ -84,7 +84,10 @@ async function captureWalkthrough() {
   const width = 1280;
   const height = 800;
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.CAPTURE_CHANNEL || undefined,
+  });
   const context = await browser.newContext({
     viewport: { width, height },
     deviceScaleFactor: 1,

@@ -10,10 +10,12 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "types": ["node"]
   },
   "include": [
     "vite.config.ts",
+    "vite.react.ts",
     "vitest.config.ts",
     "playwright.config.ts",
     "e2e/**/*.ts"

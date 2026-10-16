@@ -42,15 +42,12 @@ Details: [README](README.md). Client rules: [`docs/API-INTEGRATION.md`](docs/API
 - Use the **live OpenAPI / generated client**. Do not invent list filters, mutations, or status transitions the API does not expose.
 - No BFF: the browser talks to the API directly.
 - Treat permission-aware nav as UX only; never bypass IDOR or RBAC in the client.
-- Follow conventions in [`AGENT.md`](AGENT.md) and [`docs/ai/`](docs/ai/) when touching app structure.
+- Follow conventions in [`AGENTS.md`](AGENTS.md) and [`docs/ai/`](docs/ai/) when touching app structure.
 
 ## Before you open a PR
 
 ```bash
-npm run lint
-npm run typecheck
-npm test
-npm run build
+npm run verify   # lint, typecheck, unit tests, build
 ```
 
 Playwright needs a live API; see CI notes in the README. Prefer unit/component coverage for feature UI in the same PR.

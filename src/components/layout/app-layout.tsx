@@ -16,7 +16,7 @@ export function AppLayout() {
   const mockMode = isMockMode();
 
   return (
-    <div className="grid h-screen overflow-hidden lg:grid-cols-[260px_1fr]">
+    <div className="grid h-screen overflow-hidden grid-cols-1 xl:grid-cols-[260px_1fr]">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -24,8 +24,8 @@ export function AppLayout() {
         Skip to main content
       </a>
       <FocusOnRouteChange targetId="main" />
-      <AppSidebar className="hidden lg:flex" />
-      <div className="flex min-h-0 flex-col">
+      <AppSidebar className="hidden xl:flex" />
+      <div className="flex min-h-0 min-w-0 flex-col">
         <AppHeader />
         {mockMode && DemoDataBanner ? (
           <div className="px-6 pt-4">
@@ -37,7 +37,7 @@ export function AppLayout() {
         <main
           id="main"
           tabIndex={-1}
-          className="flex-1 overflow-y-auto px-6 py-8 outline-none"
+          className="flex-1 min-w-0 overflow-y-auto px-6 py-8 outline-none"
         >
           <RouteErrorBoundary>
             <Suspense

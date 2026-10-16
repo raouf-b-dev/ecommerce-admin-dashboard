@@ -1,6 +1,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
+.eslintcache
 coverage/
 playwright-report/
 test-results/
@@ -12,3 +13,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.cursor/plans

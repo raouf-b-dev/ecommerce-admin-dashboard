@@ -1,0 +1,132 @@
+{
+  "src/features/dashboard/pages/__tests__/dashboard-page.spec.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 11
+    }
+  },
+  "src/features/inventory/lib/inventory-list-filters.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "src/features/orders/api/orders-api.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/orders/lib/order-list-filters.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 3
+    }
+  },
+  "src/features/orders/lib/order-status-actions.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/orders/pages/__tests__/orders-ui.spec.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 3
+    }
+  },
+  "src/features/orders/pages/orders-page.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/products/lib/product-list-filters.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "src/features/products/pages/__tests__/categories-page.spec.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/products/pages/__tests__/product-edit-page.spec.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 3
+    }
+  },
+  "src/features/products/pages/products-page.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/roles/components/role-form-fields.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/features/users/pages/__tests__/users-ui.spec.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 9
+    }
+  },
+  "src/features/users/pages/users-page.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/api/__tests__/client.spec.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/api/client.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/api/parse-api-error.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 5
+    }
+  },
+  "src/lib/api/parse-auth-error.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/api/silent-refresh.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "src/lib/auth/access-token.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/auth/jwt-decode.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/auth/session-api.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/mock/data/seed.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "src/lib/mock/handlers/handlers.spec.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 3
+    }
+  },
+  "src/lib/mock/handlers/orders.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "src/lib/ws/websocket-service.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 3
+    }
+  }
+}

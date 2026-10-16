@@ -1,4 +1,5 @@
 import { test, expect, openAdminShell } from './helpers/admin-fixtures';
+import { signedInShell } from './helpers/auth';
 
 test('signed-in session shows the admin shell', async ({ page }) => {
   await openAdminShell(page);
@@ -9,11 +10,10 @@ test('signed-in session shows the admin shell', async ({ page }) => {
   await expect(page.getByText('Needs attention')).toBeVisible({ timeout: 15_000 });
 });
 
-test('mobile navigation opens and navigates', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test('mobile navigation opens and navigates', { tag: '@mobile' }, async ({ page }) => {
   await openAdminShell(page);
 
-  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+  await expect(signedInShell(page)).toBeVisible();
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   await expect(page.getByRole('link', { name: 'Products' })).toBeVisible();
 
@@ -23,10 +23,10 @@ test('mobile navigation opens and navigates', async ({ page }) => {
 
 test('forbidden route shows access denied inside shell', async ({ page }) => {
   await openAdminShell(page);
-  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+  await expect(signedInShell(page)).toBeVisible();
 
   await page.goto('/settings/roles');
-  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible({
+  await expect(signedInShell(page)).toBeVisible({
     timeout: 15_000,
   });
   await expect(

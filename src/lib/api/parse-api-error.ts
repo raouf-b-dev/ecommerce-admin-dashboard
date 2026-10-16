@@ -72,11 +72,23 @@ export function toApiRequestError(
   );
 }
 
+function readErrorCode(error: unknown): string | undefined {
+  if (error instanceof ApiRequestError) {
+    return error.code;
+  }
+  if (
+    error !== null &&
+    typeof error === 'object' &&
+    'code' in error &&
+    typeof error.code === 'string'
+  ) {
+    return error.code;
+  }
+  return undefined;
+}
+
 export function isOptimisticLockConflict(error: unknown): boolean {
-  return (
-    hasHttpStatus(error, 409) ||
-    (error instanceof ApiRequestError && error.code === 'OPTIMISTIC_LOCK_CONFLICT')
-  );
+  return readErrorCode(error) === 'OPTIMISTIC_LOCK_CONFLICT';
 }
 
 /**
