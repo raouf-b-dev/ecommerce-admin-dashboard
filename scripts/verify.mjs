@@ -3,7 +3,6 @@
  * Pre-PR gate with live phase banners. Streams each step to the terminal.
  * Keep npm run check:agent for in-chat checks.
  */
-import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,17 +11,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Run npm via node + npm-cli.js so Windows never needs shell:true + args (DEP0190). */
 function resolveNpmCli() {
-  const bundled = path.join(
-    path.dirname(process.execPath),
-    'node_modules',
-    'npm',
-    'bin',
-    'npm-cli.js',
-  );
-  if (existsSync(bundled)) return bundled;
-  throw new Error(
-    `Could not resolve npm CLI at ${bundled}. Is Node installed with npm?`,
-  );
+  const npmExecPath = process.env.npm_execpath;
+  if (!npmExecPath) {
+    process.stderr.write(
+      'scripts/verify.mjs must be run via `npm run verify` (npm_execpath is unset).\n',
+    );
+    process.exit(1);
+  }
+  return npmExecPath;
 }
 
 const npmCli = resolveNpmCli();
