@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-17
+
+Works with ecommerce-store-api v0.10.0 or later. The generated client matches v0.11.0.
+
 ### Changed
 
-- Generated API client synced with API v0.11.0: order customer name/email, shipping address and item SKU may be null and render as '-'.
+- **Breaking:** production builds require `VITE_API_BASE_URL` and fail at startup without it instead of calling localhost ([#113](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/113)).
+- Generated API client synced with API v0.11.0: order customer name/email, shipping address and item SKU may be null and render as `-` ([#113](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/113)).
+- `npm run test:e2e` installs Playwright Chromium first through a `pretest:e2e` hook; it downloads only when missing ([#113](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/113)).
+- Dependency updates: production deps (Radix UI dialog/dropdown/label/slot, TanStack Query and Table, lucide-react, react-hook-form, socket.io-client, zod), dev deps (Playwright 1.64, Vite 8.3, Vitest 5.0.4, ESLint 10.12 and others), `brace-expansion` and `source-map-js` lockfile bumps, GitHub Actions `setup-node` 7.1.0 ([#95](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/95), [#103](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/103), [#105](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/105), [#106](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/106), [#107](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/107)).
 
 ### Fixed
 
-- A production build without `VITE_API_BASE_URL` fails at startup instead of calling localhost.
-- `npm run test:e2e` installs Playwright Chromium when missing instead of failing the global setup.
+- `npm install` resolves the `oxc-transform-react` peer conflict (pinned to 0.152.x for `@vitejs/plugin-react`), MSW install scripts are allowed, and `npm run verify` finds the npm CLI through `npm_execpath` on Windows and Unix ([#110](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/110)).
+
+[Compare v0.5.0...v0.6.0](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/compare/v0.5.0...v0.6.0)
 
 ## [0.5.0] - 2026-10-15
 
