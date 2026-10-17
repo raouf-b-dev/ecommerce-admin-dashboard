@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type { OrderListItemResponseDto } from '@/features/orders/types';
-import { formatMoney } from '@/lib/format';
+import { formatMoney, formatOptionalText } from '@/lib/format';
 
 type Props = {
   items: OrderListItemResponseDto[];
@@ -45,7 +45,7 @@ export function DashboardRecentOrders({ items }: Props) {
                 </Link>
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {order.userEmail}
+                {formatOptionalText(order.userEmail)}
               </TableCell>
               <TableCell>
                 <StatusBadge variant="order" status={order.status} />

@@ -1,4 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
+import { API_BASE_URL } from '@/lib/api/api-base-url';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
 import type { NotificationEnvelope } from '@/lib/ws/notification-types';
 
@@ -66,10 +67,7 @@ class WebSocketService {
     this.disconnect();
     this.currentToken = token;
 
-    const baseUrl =
-      import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
-    this.socket = io(baseUrl, {
+    this.socket = io(API_BASE_URL, {
       auth: { token },
       reconnection: true,
       reconnectionAttempts: 5,

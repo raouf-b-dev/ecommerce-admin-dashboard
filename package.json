@@ -17,6 +17,7 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "pretest:e2e": "npm run playwright:install",
     "test:e2e": "playwright test",
     "playwright:install": "playwright install chromium",
     "verify": "node scripts/verify.mjs",

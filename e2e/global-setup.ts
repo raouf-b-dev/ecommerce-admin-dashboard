@@ -16,7 +16,7 @@ function assertChromiumInstalled(): void {
   }
 
   throw new Error(
-    `Playwright Chromium is not installed (expected ${executablePath}). Run: npm run playwright:install`,
+    `Playwright Chromium is not installed (expected ${executablePath}). Run: npm run playwright:install (npm run test:e2e does this automatically)`,
   );
 }
 

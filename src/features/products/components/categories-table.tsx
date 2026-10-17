@@ -41,11 +41,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/lib/auth/auth-context';
-
-function emptyCell(value?: string | null): string {
-  const trimmed = value?.trim();
-  return trimmed && trimmed.length > 0 ? trimmed : '-';
-}
+import { formatOptionalText } from '@/lib/format';
 
 export function CategoriesTable() {
   const { hasPermission } = useAuth();
@@ -131,11 +127,11 @@ export function CategoriesTable() {
                   </TableCell>
                   <TableCell>
                     <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-muted-foreground">
-                      {emptyCell(category.slug)}
+                      {formatOptionalText(category.slug)}
                     </code>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {emptyCell(category.description)}
+                    {formatOptionalText(category.description)}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {category.productCount}

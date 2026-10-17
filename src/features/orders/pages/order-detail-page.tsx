@@ -24,7 +24,7 @@ import {
   getErrorMessage,
   isOptimisticLockConflict,
 } from '@/lib/api/parse-api-error';
-import { formatDateTime, formatMoney } from '@/lib/format';
+import { formatDateTime, formatMoney, formatOptionalText } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ProductNameCell } from '@/components/media/product-name-cell';
@@ -99,7 +99,7 @@ function OrderDetailPage() {
     <div className="space-y-6">
       <PageHeader
         title={order.orderNumber}
-        description={`${order.userName} · ${order.userEmail}`}
+        description={`${formatOptionalText(order.userName)} · ${formatOptionalText(order.userEmail)}`}
       >
         <Button asChild variant="outline">
           <Link to="/orders">Back to list</Link>
@@ -134,9 +134,9 @@ function OrderDetailPage() {
                 </TableHeader>
                 <TableBody>
                   {order.items.map((item) => (
-                    <TableRow key={`${item.productId}-${item.sku}`}>
+                    <TableRow key={item.productId}>
                       <TableCell className="pl-6 font-mono text-xs font-medium text-muted-foreground">
-                        {item.sku}
+                        {formatOptionalText(item.sku)}
                       </TableCell>
                       <TableCell className="font-medium">
                         <ProductNameCell name={item.title} imageUrl={item.imageUrl} />
@@ -222,14 +222,14 @@ function OrderDetailPage() {
             <CardContent className="space-y-3 text-sm">
               <div>
                 <span className="text-xs text-muted-foreground">Customer</span>
-                <p className="font-medium text-foreground">{order.userName}</p>
-                <p className="text-xs text-muted-foreground">{order.userEmail}</p>
+                <p className="font-medium text-foreground">{formatOptionalText(order.userName)}</p>
+                <p className="text-xs text-muted-foreground">{formatOptionalText(order.userEmail)}</p>
                 <p className="text-xs text-muted-foreground">User #{order.userId}</p>
               </div>
               <div className="border-t border-border pt-3">
                 <span className="text-xs text-muted-foreground">Shipping address</span>
                 <p className="mt-1 whitespace-pre-wrap rounded-md bg-muted/40 p-2.5 text-xs text-foreground">
-                  {order.shippingAddress}
+                  {formatOptionalText(order.shippingAddress)}
                 </p>
               </div>
             </CardContent>

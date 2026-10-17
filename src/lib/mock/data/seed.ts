@@ -384,7 +384,9 @@ export function createSeedUsers(): UserDetailResponseDto[] {
 }
 
 type SeedOrder = Omit<OrderDetailResponseDto, 'items'> & {
-  items: Omit<OrderDetailResponseDto['items'][number], 'imageUrl'>[];
+  items: (Omit<OrderDetailResponseDto['items'][number], 'imageUrl' | 'sku'> & {
+    sku: string;
+  })[];
 };
 
 export function createSeedOrders(): OrderDetailResponseDto[] {

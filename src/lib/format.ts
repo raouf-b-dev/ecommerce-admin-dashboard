@@ -40,6 +40,11 @@ export function formatDateTime(value: string | null | undefined): string {
   return date.toLocaleString();
 }
 
+export function formatOptionalText(value: string | null | undefined): string {
+  const trimmed = value?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : '-';
+}
+
 export function formatStatusLabel(status: string): string {
   return status.replaceAll('_', ' ');
 }
