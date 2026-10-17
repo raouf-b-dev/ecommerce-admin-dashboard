@@ -1563,15 +1563,15 @@ export interface components {
              */
             userId: number;
             /**
-             * @description Customer display name
+             * @description Customer display name. Null when the user join has no name.
              * @example Jane Doe
              */
-            userName: string;
+            userName: string | null;
             /**
-             * @description Customer email
+             * @description Customer email. Null when the user join has no email.
              * @example customer@store.local
              */
-            userEmail: string;
+            userEmail: string | null;
             /**
              * @description Order status
              * @example confirmed
@@ -1617,10 +1617,10 @@ export interface components {
              */
             productId: number;
             /**
-             * @description Product SKU
+             * @description Product SKU captured at purchase. Null when the product had no SKU.
              * @example ELEC-ANC-001
              */
-            sku: string;
+            sku: string | null;
             /**
              * @description Product title
              * @example Wireless Noise-Canceling Headphones
@@ -1664,15 +1664,15 @@ export interface components {
              */
             userId: number;
             /**
-             * @description Customer display name
+             * @description Customer display name. Null when user details are unavailable.
              * @example Jane Doe
              */
-            userName: string;
+            userName: string | null;
             /**
-             * @description Customer email
+             * @description Customer email. Null when user details are unavailable.
              * @example customer@store.local
              */
-            userEmail: string;
+            userEmail: string | null;
             /**
              * @description Order status
              * @example confirmed
@@ -1686,10 +1686,10 @@ export interface components {
              */
             paymentMethod: "CARD";
             /**
-             * @description Formatted shipping address
+             * @description Formatted shipping address. Null when the order has no shipping address.
              * @example Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US
              */
-            shippingAddress: string;
+            shippingAddress: string | null;
             items: components["schemas"]["OrderItemDetailResponseDto"][];
             /**
              * @description Order subtotal
@@ -2550,13 +2550,18 @@ export interface components {
              * @example https://example.com/image.jpg
              */
             imageUrl: string | null;
+            /**
+             * @description Product SKU snapshotted at add time. Null when the product had no SKU.
+             * @example ELEC-ANC-001
+             */
+            sku: string | null;
         };
         CartResponseDto: {
             /**
-             * @description Cart ID
+             * @description Cart ID. Null when the cart has not been persisted yet.
              * @example 1
              */
-            id: number;
+            id: number | null;
             /**
              * @description User ID
              * @example 123

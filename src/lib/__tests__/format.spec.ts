@@ -3,6 +3,7 @@ import {
   formatDate,
   formatDateTime,
   formatMoney,
+  formatOptionalText,
   formatPercentDelta,
   formatStatusLabel,
 } from '@/lib/format';
@@ -30,6 +31,12 @@ describe('format', () => {
     expect(formatDateTime('2025-01-15T12:00:00.000Z')).not.toBe(
       '2025-01-15T12:00:00.000Z',
     );
+  });
+
+  it('formats optional text with dash fallback', () => {
+    expect(formatOptionalText(null)).toBe('-');
+    expect(formatOptionalText('   ')).toBe('-');
+    expect(formatOptionalText('  SKU-1 ')).toBe('SKU-1');
   });
 
   it('humanizes status codes', () => {
