@@ -1,11 +1,20 @@
 import { parseHttpUrl } from '@/lib/url';
 
+declare global {
+  interface Window {
+    /** Set by /config.js; the Docker image renders it from API_BASE_URL. */
+    __APP_CONFIG__?: { apiBaseUrl?: string };
+  }
+}
+
 export function getApiBaseUrl(): string {
-  const raw = import.meta.env.VITE_API_BASE_URL?.trim() ?? '';
+  const runtime = window.__APP_CONFIG__?.apiBaseUrl?.trim() ?? '';
+  const source = runtime ? 'API_BASE_URL' : 'VITE_API_BASE_URL';
+  const raw = runtime || (import.meta.env.VITE_API_BASE_URL?.trim() ?? '');
   if (!raw) {
     if (import.meta.env.PROD) {
       throw new Error(
-        'VITE_API_BASE_URL must be configured for production builds.',
+        'VITE_API_BASE_URL (or API_BASE_URL in the Docker image) must be configured for production builds.',
       );
     }
     return 'http://localhost:3000';
@@ -13,9 +22,7 @@ export function getApiBaseUrl(): string {
 
   const parsed = parseHttpUrl(raw);
   if (parsed === null) {
-    throw new Error(
-      `VITE_API_BASE_URL must be an absolute http(s) URL: ${raw}`,
-    );
+    throw new Error(`${source} must be an absolute http(s) URL: ${raw}`);
   }
 
   return parsed.replace(/\/+$/, '');
