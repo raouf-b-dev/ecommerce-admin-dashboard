@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Generated API client synced with API v0.11.0: order customer name/email, shipping address and item SKU may be null and render as '-'.
+
+### Fixed
+
+- A production build without `VITE_API_BASE_URL` fails at startup instead of calling localhost.
+- `npm run test:e2e` installs Playwright Chromium when missing instead of failing the global setup.
+
 ## [0.5.0] - 2026-10-15
 
 Works with ecommerce-store-api v0.10.0 or later.

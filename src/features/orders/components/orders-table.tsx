@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/table';
 import { TablePagination } from '@/components/ui/table-pagination';
 import { TableEmptyState } from '@/components/feedback/table-empty-state';
-import { formatDateTime, formatMoney } from '@/lib/format';
+import { formatDateTime, formatMoney, formatOptionalText } from '@/lib/format';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type {
   ListOrdersQuery,
@@ -64,9 +64,9 @@ export function OrdersTable({
           header: 'Customer',
           cell: ({ row }) => (
             <div>
-              <div>{row.original.userName}</div>
+              <div>{formatOptionalText(row.original.userName)}</div>
               <div className="text-muted-foreground">
-                {row.original.userEmail}
+                {formatOptionalText(row.original.userEmail)}
               </div>
             </div>
           ),

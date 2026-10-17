@@ -95,23 +95,31 @@ export const ordersHandlers = [
       items = items.filter((item) => item.userId === userId);
     }
     if (userEmail) {
-      items = items.filter((item) =>
-        item.userEmail.toLowerCase().includes(userEmail),
+      items = items.filter(
+        (item) =>
+          item.userEmail !== null &&
+          item.userEmail.toLowerCase().includes(userEmail),
       );
     }
     if (userName) {
-      items = items.filter((item) =>
-        item.userName.toLowerCase().includes(userName),
+      items = items.filter(
+        (item) =>
+          item.userName !== null &&
+          item.userName.toLowerCase().includes(userName),
       );
     }
     if (firstName) {
-      items = items.filter((item) =>
-        item.userName.toLowerCase().includes(firstName),
+      items = items.filter(
+        (item) =>
+          item.userName !== null &&
+          item.userName.toLowerCase().includes(firstName),
       );
     }
     if (lastName) {
-      items = items.filter((item) =>
-        item.userName.toLowerCase().includes(lastName),
+      items = items.filter(
+        (item) =>
+          item.userName !== null &&
+          item.userName.toLowerCase().includes(lastName),
       );
     }
     if (createdAfter) {

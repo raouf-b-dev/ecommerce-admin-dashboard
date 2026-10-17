@@ -1,15 +1,14 @@
 import createClient from 'openapi-fetch';
 import type { paths } from '@/lib/api/generated/schema';
+import { API_BASE_URL } from '@/lib/api/api-base-url';
 import {
   ensureFreshAccessToken,
   silentRefreshAccessToken,
 } from '@/lib/api/silent-refresh';
 import { clearAccessToken } from '@/lib/auth/auth-session';
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
 export const apiClient = createClient<paths>({
-  baseUrl,
+  baseUrl: API_BASE_URL,
   credentials: 'include',
 });
 

@@ -21,7 +21,7 @@ The journey is glue, not a replacement for per-feature specs.
 2. Seeded administrator account (API [SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md); local demo passwords also in [`.secrets.example`](../.secrets.example)).
 3. Local env once: `npm run env:init` (creates `.env.local` and `.secrets` from the examples). Playwright loads `.secrets` automatically.
 4. `VITE_API_BASE_URL` pointing at the API origin (this repo defaults to `http://localhost:3000`; match the API `PORT` if you remapped it).
-5. Playwright Chromium once per machine (and again after upgrading `@playwright/test`): `npm run playwright:install`. `npm install` does not download browsers. Global setup fails fast if the binary is missing.
+5. Playwright Chromium: `npm run test:e2e` runs `playwright install chromium` first (idempotent; downloads only when missing or after a Playwright upgrade). `npm install` does not download browsers. Use `npm run playwright:install` alone for asset capture scripts. Global setup fails fast if the binary is still missing.
 6. **Sibling checkout:** [`global-setup.ts`](./global-setup.ts) runs `npm run db:seed:auth` in `../ecommerce-store-api`. That script name is this repo's integration contract - if the API renames it, update `global-setup.ts`. Clone the API next to this repo, or set `E2E_SKIP_DB_SEED=1` and seed the API yourself (setup fails if the sibling path is missing and the skip flag is unset).
 
 Live operator checklist (when to run e2e vs manual Process/Ship): [`docs/RELEASE-GATE.md`](../docs/RELEASE-GATE.md).

@@ -1,8 +1,7 @@
 import { getAccessToken, setAccessToken } from '@/lib/auth/auth-session';
 import { isAccessTokenUsable } from '@/lib/auth/access-token';
+import { API_BASE_URL } from '@/lib/api/api-base-url';
 import { throwApiErrorFromResponse } from '@/lib/api/throw-api-error';
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 export type SilentRefreshResult = {
   accessToken: string;
@@ -57,7 +56,7 @@ function notifySessionRefreshed(result: SilentRefreshResult): void {
 }
 
 async function performSilentRefresh(): Promise<SilentRefreshResult | null> {
-  const response = await fetch(`${baseUrl}/v1/authentication/refresh`, {
+  const response = await fetch(`${API_BASE_URL}/v1/authentication/refresh`, {
     method: 'POST',
     credentials: 'include',
     headers: {

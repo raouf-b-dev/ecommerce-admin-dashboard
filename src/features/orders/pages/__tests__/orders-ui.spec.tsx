@@ -38,13 +38,13 @@ const detailQueryMock = vi.hoisted(() =>
           id: number;
           orderNumber: string;
           userId: number;
-          userName: string;
-          userEmail: string;
+          userName: string | null;
+          userEmail: string | null;
           status: string;
-          shippingAddress: string;
+          shippingAddress: string | null;
           items: {
             productId: number;
-            sku: string;
+            sku: string | null;
             title: string;
             unitPrice: number;
             quantity: number;
@@ -257,5 +257,53 @@ describe('OrderDetailPage', () => {
 
     expect(screen.getByText('Status actions')).toBeInTheDocument();
     expect(screen.queryByText('Payment')).not.toBeInTheDocument();
+  });
+
+  it('renders dashes when customer fields and item sku are null', () => {
+    authMock.mockReturnValue({
+      hasPermission: (permission: string) => permission === 'manage_orders',
+    });
+    detailQueryMock.mockReturnValue({
+      data: {
+        id: 1,
+        orderNumber: 'ORD-1',
+        userId: 3,
+        userName: null,
+        userEmail: null,
+        status: 'confirmed',
+        shippingAddress: null,
+        items: [
+          {
+            productId: 1,
+            sku: null,
+            title: 'Item',
+            unitPrice: 10,
+            quantity: 1,
+            subtotal: 10,
+          },
+        ],
+        totalAmount: 10,
+        totalPrice: 10,
+        currency: 'USD',
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-01T00:00:00.000Z',
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/orders/1']}>
+        <Routes>
+          <Route path="/orders/:orderId" element={<OrderDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(/^- . -$/)).toBeInTheDocument();
+    expect(screen.queryByText(/null/)).not.toBeInTheDocument();
+    expect(screen.getAllByText('-')).toHaveLength(4);
   });
 });
