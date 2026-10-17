@@ -18,9 +18,8 @@ import {
 import { TablePagination } from '@/components/ui/table-pagination';
 import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatOptionalText } from '@/lib/format';
 import {
-  formatUserPhone,
   formatUserRole,
   userDisplayName,
 } from '@/features/users/lib/display-name';
@@ -65,7 +64,7 @@ export function UsersTable({
     {
       id: 'phone',
       header: 'Phone',
-      cell: ({ row }) => formatUserPhone(row.original.phone),
+      cell: ({ row }) => formatOptionalText(row.original.phone),
     },
     {
       id: 'role',
