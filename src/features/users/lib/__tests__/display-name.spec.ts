@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  formatUserPhone,
   formatUserRole,
   userDisplayName,
 } from '@/features/users/lib/display-name';
@@ -15,14 +14,6 @@ describe('userDisplayName', () => {
   it('falls back when names are empty', () => {
     expect(userDisplayName({ firstName: '', lastName: '  ' })).toBe('-');
     expect(userDisplayName({})).toBe('-');
-  });
-});
-
-describe('formatUserPhone', () => {
-  it('returns phone strings and dashes otherwise', () => {
-    expect(formatUserPhone('+15551212')).toBe('+15551212');
-    expect(formatUserPhone(null)).toBe('-');
-    expect(formatUserPhone(undefined)).toBe('-');
   });
 });
 

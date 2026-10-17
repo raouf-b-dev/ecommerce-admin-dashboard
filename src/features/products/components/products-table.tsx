@@ -20,7 +20,7 @@ import { TablePagination } from '@/components/ui/table-pagination';
 import { OperatorSetupChecklist } from '@/components/feedback/operator-setup-checklist';
 import { TableEmptyState } from '@/components/feedback/table-empty-state';
 import { ProductNameCell } from '@/components/media/product-name-cell';
-import { formatDate, formatMoney } from '@/lib/format';
+import { formatDate, formatMoney, formatOptionalText } from '@/lib/format';
 import type { OperatorSetupStepView } from '@/lib/operator-setup';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type {
@@ -40,13 +40,6 @@ type ProductsTableProps = {
 };
 
 const features = tableFeatures({});
-
-function nullableString(value: unknown): string {
-  if (typeof value === 'string') {
-    return value;
-  }
-  return '-';
-}
 
 function categoryLabel(item: ProductListItemResponseDto): string {
   if (item.categoryName) return item.categoryName;
@@ -116,7 +109,7 @@ export function ProductsTable({
           header: 'SKU',
           cell: ({ row }) => (
             <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">
-              {nullableString(row.original.sku)}
+              {formatOptionalText(row.original.sku)}
             </span>
           ),
         },
