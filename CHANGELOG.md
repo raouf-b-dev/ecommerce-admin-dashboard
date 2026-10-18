@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Production Docker image (nginx unprivileged, port 8080) published to `ghcr.io/raouf-b-dev/ecommerce-admin-dashboard` for linux/amd64 and linux/arm64 on pushes to master and `v*` tags. The API origin is read at container start from `API_BASE_URL` instead of being compiled in ([#118](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/118)).
+
 ## [0.6.0] - 2026-10-17
 
 Works with ecommerce-store-api v0.10.0 or later. The generated client matches v0.11.0.
