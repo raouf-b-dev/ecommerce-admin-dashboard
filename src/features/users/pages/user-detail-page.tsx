@@ -38,14 +38,13 @@ import {
 } from '@/features/users/hooks/use-users';
 import { useRolesListQuery } from '@/features/roles/hooks/use-roles';
 import {
-  formatUserPhone,
   formatUserRole,
   userDisplayName,
 } from '@/features/users/lib/display-name';
 import type { AddressResponseDto } from '@/features/users/types';
 import { useAuth } from '@/lib/auth/auth-context';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatOptionalText } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
 
 function UserDetailPage() {
@@ -247,7 +246,7 @@ function UserDetailPage() {
                   </div>
                   <div className="space-y-1">
                     <dt className="text-xs font-medium text-muted-foreground">Phone</dt>
-                    <dd className="text-sm">{formatUserPhone(user.phone)}</dd>
+                    <dd className="text-sm">{formatOptionalText(user.phone)}</dd>
                   </div>
                 </dl>
               )}

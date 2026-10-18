@@ -258,4 +258,3 @@ captureWalkthrough().catch((err) => {
   console.error('Failed to create walkthrough:', err);
   process.exit(1);
 });
-

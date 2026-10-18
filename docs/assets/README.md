@@ -34,4 +34,3 @@ Override base URL if needed: `BASE_URL=http://localhost:5174 npm run assets:capt
 | `screenshot-rbac-matrix-{dark,light}.png` | Roles / permissions dialog |
 
 Additional stills (products, categories, order detail, etc.) are written by `capture-showcase.js` for future docs use.
-

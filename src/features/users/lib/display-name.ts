@@ -1,3 +1,5 @@
+import { formatOptionalText } from '@/lib/format';
+
 export function userDisplayName(user: {
   firstName?: string | null;
   lastName?: string | null;
@@ -6,14 +8,7 @@ export function userDisplayName(user: {
     .map((part) => part?.trim())
     .filter(Boolean)
     .join(' ');
-  return name || '-';
-}
-
-export function formatUserPhone(phone: string | null | undefined): string {
-  if (typeof phone === 'string' && phone.trim()) {
-    return phone;
-  }
-  return '-';
+  return formatOptionalText(name);
 }
 
 export function formatUserRole(

@@ -67,4 +67,3 @@ describe('SegmentedControl', () => {
     expect(handleChange).toHaveBeenCalledWith(90);
   });
 });
-

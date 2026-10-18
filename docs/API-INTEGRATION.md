@@ -18,7 +18,7 @@ Do **not** keep an endpoint inventory here. Added, removed, or renamed API route
 
 | Item | Typical local value |
 | :--- | :------------------ |
-| API origin | `VITE_API_BASE_URL` (default intent `http://localhost:3000`; use the API `PORT` when remapped). A production build without it fails at startup. |
+| API origin | `VITE_API_BASE_URL` (default intent `http://localhost:3000`; use the API `PORT` when remapped). A production build without it fails at startup. The Docker image is built without it: `API_BASE_URL` is required at container start and rendered into `/config.js`, which takes precedence. |
 | Versioned API | Confirm versioning scheme in OpenAPI |
 | Health | Confirm health routes in OpenAPI |
 

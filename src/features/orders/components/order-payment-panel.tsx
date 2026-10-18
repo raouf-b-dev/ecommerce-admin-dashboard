@@ -4,7 +4,7 @@ import { QueryLoading } from '@/components/feedback/query-state';
 import type { PaymentDetailResponseDto } from '@/features/orders/types';
 import { PAYMENT_METHOD_LABELS } from '@/features/orders/lib/payment-method-labels';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
-import { formatDateTime, formatMoney } from '@/lib/format';
+import { formatDateTime, formatMoney, formatOptionalText } from '@/lib/format';
 
 type OrderPaymentPanelProps = {
   isLoading: boolean;
@@ -65,7 +65,7 @@ export function OrderPaymentPanel({
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Transaction ID</dt>
-        <dd className="font-mono text-sm">{payment.transactionId || '-'}</dd>
+        <dd className="font-mono text-sm">{formatOptionalText(payment.transactionId)}</dd>
       </div>
       <div className="space-y-1">
         <dt className="text-sm text-muted-foreground">Created</dt>
