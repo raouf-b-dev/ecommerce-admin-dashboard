@@ -22,7 +22,7 @@ A Vite + React operator console. Screens are typed from the API OpenAPI spec: da
 
 The UI hides nav or shows a forbidden page when a permission is missing. Authorization still happens on the API. There is no BFF.
 
-No hosted demo. Payments use a mock adapter behind a swappable hexagonal port; order detail views are read-only. `npm run dev:mock` is for UI work; Playwright still needs a live API.
+No hosted demo URL yet; use the Docker image below or [ecommerce-platform](https://github.com/raouf-b-dev/ecommerce-platform) for the full stack. Payments use a mock adapter behind a swappable hexagonal port; order detail views are read-only. `npm run dev:mock` is for UI work; Playwright still needs a live API.
 
 ## Quick start
 
@@ -56,6 +56,17 @@ npm run dev
 Open `http://localhost:5174`. Sign in with a seeded administrator from the API [seeding guide](https://github.com/raouf-b-dev/ecommerce-store-api/blob/master/docs/development/SEEDING.md). The first login requires a password change.
 
 After the API contract changes, run `npm run api:generate` while the API is up.
+
+### Docker image (GHCR)
+
+Published as `ghcr.io/raouf-b-dev/ecommerce-admin-dashboard` on pushes to `master` and on `v*` tags (linux/amd64 and linux/arm64). The container listens on **8080** and requires `API_BASE_URL` at start (absolute `http://` or `https://` origin the browser will call).
+
+```bash
+docker pull ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.7.0
+docker run --rm -p 8080:8080 -e API_BASE_URL=http://localhost:3000 ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.7.0
+```
+
+For the full stack (API, Postgres, Redis, storefront), use [ecommerce-platform](https://github.com/raouf-b-dev/ecommerce-platform).
 
 ## Screenshots
 
