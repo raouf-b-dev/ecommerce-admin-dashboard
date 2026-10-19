@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `VITE_DEMO_MODE` hosted demo banner (login + shell) and Live demo README section with read-only `viewer@store.local` credentials (`ADMIN_READONLY` / view_* only).
+
 ## [0.7.0] - 2026-10-18
 
 Works with ecommerce-store-api v0.10.0 or later. The generated client matches API v0.11.0.
