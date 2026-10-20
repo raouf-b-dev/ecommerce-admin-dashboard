@@ -4,16 +4,23 @@ import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { FocusOnRouteChange } from '@/components/layout/focus-on-route-change';
 import { RouteErrorBoundary } from '@/components/layout/route-error-boundary';
+import { isDemoMode } from '@/lib/demo/is-demo-mode';
 import { isMockMode } from '@/lib/mock/is-mock-mode';
 
-// Inline env checks let production Rollup omit the mock-only banner chunk.
+// Inline env checks let production Rollup omit mode-only banner chunks.
 const DemoDataBanner =
   import.meta.env.MODE === 'mock' || import.meta.env.VITE_ENABLE_MOCK === 'true'
     ? lazy(() => import('@/lib/mock/ui/demo-data-banner'))
     : null;
 
+const HostedDemoBanner =
+  import.meta.env.VITE_DEMO_MODE === 'true'
+    ? lazy(() => import('@/lib/demo/hosted-demo-banner'))
+    : null;
+
 export function AppLayout() {
   const mockMode = isMockMode();
+  const demoMode = isDemoMode();
 
   return (
     <div className="grid h-screen overflow-hidden grid-cols-1 xl:grid-cols-[260px_1fr]">
@@ -31,6 +38,13 @@ export function AppLayout() {
           <div className="px-6 pt-4">
             <Suspense fallback={null}>
               <DemoDataBanner />
+            </Suspense>
+          </div>
+        ) : null}
+        {!mockMode && demoMode && HostedDemoBanner ? (
+          <div className="px-6 pt-4">
+            <Suspense fallback={null}>
+              <HostedDemoBanner />
             </Suspense>
           </div>
         ) : null}
