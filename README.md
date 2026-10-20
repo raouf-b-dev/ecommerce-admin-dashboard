@@ -32,13 +32,15 @@ Operator-filled placeholders after the hybrid hosted deploy:
 | :--- | :-- |
 | Admin | https://admin.example.com |
 
-Hosted sign-in (public, demo-only; API runs with `DEMO_READ_ONLY=true`):
+Hosted sign-in (public, demo-only; API runs with `DEMO_READ_ONLY=true`). Defaults match API `.env.example` (`DEMO_VIEWER_*`):
 
 | Role | Email | Password |
 | :--- | :---- | :------- |
 | Admin (read-only) | `viewer@store.local` | `Viewer123!` |
 
-`viewer@` has `access_admin` and `view_*` only (no `manage_*`), so the shell opens but create/save/delete stay hidden and API calls that need `manage_*` return 403. Catalog and orders reset on a schedule. Do not store real data. Set Pages build env `VITE_API_BASE_URL` to the public API origin and `VITE_DEMO_MODE=true` for the banner. Local Compose still uses the writable accounts in the [platform README](https://github.com/raouf-b-dev/ecommerce-platform#open-the-apps).
+`viewer@` is `ADMIN_READONLY`: `access_admin` and `view_*` only (no `manage_*`), so the shell opens but create/save/delete stay hidden and API calls that need `manage_*` return 403. Catalog and orders reset on a schedule. Do not store real data. Set Pages build env `VITE_API_BASE_URL` to the public API origin and `VITE_DEMO_MODE=true` for the banner.
+
+Local writable demo accounts: [platform README](https://github.com/raouf-b-dev/ecommerce-platform#local-demo-sign-in-demo_read_onlyfalse). Seed env keys and hosted rules: [API SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/develop/docs/development/SEEDING.md).
 
 ## Quick start
 

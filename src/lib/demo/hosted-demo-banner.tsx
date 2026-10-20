@@ -6,7 +6,7 @@ export default function HostedDemoBanner() {
       aria-live="polite"
     >
       Shared demo - admin is read-only; catalog and orders reset on a schedule.
-      Sign in as viewer@store.local (see README).
+      See the README for the public viewer account.
     </p>
   );
 }
