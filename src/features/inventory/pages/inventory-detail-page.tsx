@@ -301,7 +301,7 @@ function InventoryDetailPage() {
               <div className="flex items-center justify-between border-b border-border pb-2.5 text-sm">
                 <span className="text-muted-foreground">Threshold alert status</span>
                 {item.availableQuantity <= defaultThreshold ? (
-                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                  <span className="font-medium text-amber-700 dark:text-amber-400">
                     Low stock trigger active
                   </span>
                 ) : (
