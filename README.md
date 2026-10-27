@@ -44,7 +44,7 @@ Local writable demo accounts: [platform README](https://github.com/raouf-b-dev/e
 
 ## Quick start
 
-Tested against Node.js 24 and npm 11.
+Tested against Node.js LTS (see `.nvmrc`, currently 26) and npm 11.
 
 ```bash
 git clone https://github.com/raouf-b-dev/ecommerce-admin-dashboard.git

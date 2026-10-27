@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `VITE_DEMO_MODE` hosted demo banner (login + shell; points at README, no hardcoded email) and Live demo README section with read-only viewer credentials (`ADMIN_READONLY` / view_* only).
+- `.npmrc` with `engine-strict=true` and a Dependabot `docker` entry (Node majors ignored) so the toolchain tracks the LTS in `.nvmrc`; Node version policy in CONTRIBUTING.
+
+### Changed
+
+- Node.js 26 LTS: `.nvmrc` 26, `engines` node `>=26.0.0` and npm `>=11.6.0`, Docker build stage pinned to `node:26.12.1-alpine3.24` by digest, local `setup-node-ci` action on the same `setup-node` v7.1.0 pin as `ci.yml`.
 
 ## [0.7.0] - 2026-10-18
 

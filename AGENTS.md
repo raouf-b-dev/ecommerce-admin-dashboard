@@ -1,6 +1,6 @@
 # ecommerce-admin-dashboard
 
-Operator SPA for `ecommerce-store-api`. Vite, React 19, TypeScript (strict), React Router data router, TanStack Query and Table, React Hook Form + Zod, Tailwind + shadcn-style primitives, `openapi-fetch` client. Vitest + Testing Library, Playwright. Node 24+.
+Operator SPA for `ecommerce-store-api`. Vite, React 19, TypeScript (strict), React Router data router, TanStack Query and Table, React Hook Form + Zod, Tailwind + shadcn-style primitives, `openapi-fetch` client. Vitest + Testing Library, Playwright. Node.js LTS (see `.nvmrc`, currently 26).
 
 ## Checks
 
