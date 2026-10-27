@@ -17,7 +17,14 @@ Do not push directly to `master` or `develop`. Force-pushes and branch deletion 
 
 ## Local setup
 
-Requires Node.js 24+ and npm 11+.
+Requires Node.js LTS (see `.nvmrc`, currently 26) and npm 11.6+.
+
+### Node version policy
+
+- `.nvmrc` is the single source of truth. CI reads it through `actions/setup-node` (`node-version-file`).
+- The Dockerfile build stage pin (`node:<version>-alpine@sha256:...`) and `engines` in `package.json` follow it. `.npmrc` sets `engine-strict=true`, so `npm install` fails on an older Node or npm.
+- Dependabot bumps the Docker image within the current major and ignores Node majors.
+- To move to a new LTS major, edit `.nvmrc`, the Dockerfile pin and `engines` in one PR.
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/ecommerce-admin-dashboard.git
