@@ -13,7 +13,7 @@ const API = 'http://localhost:3000';
 const server = setupServer(...handlers);
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' });
+  server.listen({ onUnhandledFrame: 'error' });
 });
 
 afterEach(() => {
