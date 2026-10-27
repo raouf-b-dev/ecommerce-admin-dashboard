@@ -21,7 +21,7 @@ async function enableMocking(): Promise<void> {
   }
   const { worker } = await import('@/lib/mock/browser');
   await worker.start({
-    onUnhandledRequest: 'bypass',
+    onUnhandledFrame: 'bypass',
     quiet: true,
   });
 }
