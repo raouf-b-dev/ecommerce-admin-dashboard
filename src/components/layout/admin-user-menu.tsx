@@ -41,17 +41,28 @@ export function AdminUserMenu({ defaultOpen }: AdminUserMenuProps = {}) {
         <button
           type="button"
           className="group flex cursor-pointer items-center gap-2.5 rounded-full border border-border/80 bg-background/80 py-1 pl-1 pr-3 shadow-xs transition-all hover:border-border hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={`Operator account menu for ${session.email}`}
         >
-          <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground shadow-xs">
+          <span className="sr-only">
+            Operator account menu for {session.email}
+          </span>
+          <span
+            aria-hidden="true"
+            className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground shadow-xs"
+          >
             {initial}
           </span>
-          <div className="hidden flex-col items-start text-left sm:flex">
+          <div
+            aria-hidden="true"
+            className="hidden flex-col items-start text-left sm:flex"
+          >
             <span className="max-w-[140px] truncate text-xs font-medium text-foreground">
               {session.email}
             </span>
           </div>
-          <span className="hidden rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-primary uppercase md:inline-flex">
+          <span
+            aria-hidden="true"
+            className="hidden rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-primary uppercase md:inline-flex"
+          >
             {roleLabel}
           </span>
           <ChevronDown

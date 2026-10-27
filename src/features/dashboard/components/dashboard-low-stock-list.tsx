@@ -55,7 +55,7 @@ export function DashboardLowStockList({ items, totalAtRisk }: Props) {
                       'font-semibold',
                       isCritical
                         ? 'text-rose-600 dark:text-rose-400'
-                        : 'text-amber-600 dark:text-amber-400',
+                        : 'text-amber-700 dark:text-amber-400',
                     )}
                   >
                     {item.availableQuantity}
