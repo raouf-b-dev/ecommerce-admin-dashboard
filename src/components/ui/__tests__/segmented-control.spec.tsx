@@ -16,10 +16,13 @@ describe('SegmentedControl', () => {
         options={options}
         value={30}
         onChange={vi.fn()}
+        ariaLabel="Period"
       />,
     );
 
+    expect(screen.getByRole('radiogroup', { name: 'Period' })).toBeInTheDocument();
     const radio30 = screen.getByRole('radio', { name: '30 days' });
+    expect(radio30).not.toHaveAttribute('aria-label');
     expect(radio30).toHaveAttribute('aria-checked', 'true');
 
     const radio7 = screen.getByRole('radio', { name: '7 days' });
@@ -35,6 +38,7 @@ describe('SegmentedControl', () => {
         options={options}
         value={7}
         onChange={handleChange}
+        ariaLabel="Period"
       />,
     );
 
@@ -51,6 +55,7 @@ describe('SegmentedControl', () => {
         options={options}
         value={7}
         onChange={handleChange}
+        ariaLabel="Period"
       />,
     );
 
@@ -65,5 +70,28 @@ describe('SegmentedControl', () => {
     // Test wrap-around backwards from first item
     await user.keyboard('{ArrowLeft}');
     expect(handleChange).toHaveBeenCalledWith(90);
+  });
+
+  it('names an icon-only option from its ariaLabel', () => {
+    render(
+      <SegmentedControl
+        options={[
+          { value: 'light', label: <svg aria-hidden="true" />, ariaLabel: 'Light theme' },
+          { value: 'dark', label: <svg aria-hidden="true" />, ariaLabel: 'Dark theme' },
+        ]}
+        value="dark"
+        onChange={vi.fn()}
+        ariaLabel="Theme"
+      />,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Dark theme' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    expect(screen.getByRole('radio', { name: 'Light theme' })).toHaveAttribute(
+      'title',
+      'Light theme',
+    );
   });
 });

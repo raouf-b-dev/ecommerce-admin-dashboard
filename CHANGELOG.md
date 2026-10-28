@@ -14,8 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `SegmentedControl` requires a group `ariaLabel` (no generic default) and an `ariaLabel` only for non-text options, so text options keep their visible label as the accessible name.
+- New `positive` and `negative` theme tokens (WCAG AA in light and dark) for the trend pill and inventory stock state; the product price currency badge uses the `secondary` token pair. Fixes axe `color-contrast` failures.
+- MSW handlers import from `msw/http`.
 - Node.js 26 LTS: `.nvmrc` 26, `engines` node `>=26.0.0` and npm `>=11.6.0`, Docker build stage pinned to `node:26.12.1-alpine3.24` by digest, local `setup-node-ci` action on the same `setup-node` v7.1.0 pin as `ci.yml`.
-- npm 12.2.1 pinned through `devEngines.packageManager` (`onFail: error`); `setup-node-ci` installs it from `package.json` (and now also serves the Playwright job; the npm cache moves from setup-node (`cache: npm` and auto `package-manager-cache`, now `false`) to `actions/cache`, because setup-node's cache probe runs the bundled npm and fails on `devEngines`), and the Docker build stage installs it via `ARG NPM_VERSION`. No Node release bundles npm 12 yet. `devEngines.runtime` (node `>=26.0.0`, `onFail: error`) restores the Node guardrail, because npm 12 does not enforce root `engines.node`.
+- npm 12.2.1 pinned through `devEngines.packageManager` (`onFail: error`); `setup-node-ci` installs it from `package.json` (and now also serves the Playwright job; the npm cache moves from setup-node (`cache: npm` and auto `package-manager-cache`, now `false`) to `actions/cache`, because setup-node's cache probe runs the bundled npm and fails on `devEngines`), and the Docker build stage installs it from `package.json` (no separate `NPM_VERSION` arg). No Node release bundles npm 12 yet. `devEngines.runtime` (node `>=26.0.0`, `onFail: error`) restores the Node guardrail, because npm 12 does not enforce root `engines.node`.
+
+### Fixed
+
+- `npm install` no longer fails with `ERESOLVE`: `oxc-transform-react` is back on `^0.152.0`, the peer range of `@vitejs/plugin-react` 6.1.2.
 
 ## [0.7.0] - 2026-10-18
 

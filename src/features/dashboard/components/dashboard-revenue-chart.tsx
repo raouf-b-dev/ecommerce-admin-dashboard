@@ -95,7 +95,7 @@ export function DashboardRevenueChart({
           options={METRIC_OPTIONS}
           value={metric}
           onChange={setMetric}
-          ariaLabel="Chart metric switcher"
+          ariaLabel="Chart metric"
         />
       </div>
 

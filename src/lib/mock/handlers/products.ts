@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import { getMockStore, isoNow } from '@/lib/mock/data/store';
 import type {
   CreateProductDto,
