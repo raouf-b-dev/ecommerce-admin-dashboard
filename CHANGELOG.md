@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- README: replace the placeholder hosted demo URL and hosted viewer credentials with a "coming soon" note that points to the ecommerce-platform repo for a local run.
+
 ## [0.8.0] - 2026-10-28
 
 Works with ecommerce-store-api v0.10.0 or later. The generated client matches API v0.11.0 (unchanged since 0.7.0).
