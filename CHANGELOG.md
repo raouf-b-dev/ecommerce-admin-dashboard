@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Node.js 26 LTS: `.nvmrc` 26, `engines` node `>=26.0.0` and npm `>=11.6.0`, Docker build stage pinned to `node:26.12.1-alpine3.24` by digest, local `setup-node-ci` action on the same `setup-node` v7.1.0 pin as `ci.yml`.
-- npm 12.2.1 pinned through `devEngines.packageManager` (`onFail: error`); `setup-node-ci` installs it from `package.json` (and now also serves the Playwright job; the npm cache moves from setup-node `cache: npm` to `actions/cache`, because setup-node's cache probe runs the bundled npm and fails on `devEngines`), and the Docker build stage installs it via `ARG NPM_VERSION`. No Node release bundles npm 12 yet.
+- npm 12.2.1 pinned through `devEngines.packageManager` (`onFail: error`); `setup-node-ci` installs it from `package.json` (and now also serves the Playwright job; the npm cache moves from setup-node (`cache: npm` and auto `package-manager-cache`, now `false`) to `actions/cache`, because setup-node's cache probe runs the bundled npm and fails on `devEngines`), and the Docker build stage installs it via `ARG NPM_VERSION`. No Node release bundles npm 12 yet.
 
 ## [0.7.0] - 2026-10-18
 

@@ -16,13 +16,16 @@ inputs:
 runs:
   using: composite
   steps:
-    # No setup-node `cache: npm`: it runs `npm config get cache` with the
-    # bundled npm, which devEngines rejects (EBADDEVENGINES) before the pinned
-    # npm is installed. The cache is restored below with actions/cache instead.
+    # setup-node caching is off (no `cache: npm`, and package-manager-cache
+    # false because setup-node auto-enables it from devEngines.packageManager):
+    # its probe runs `npm config get cache` with the bundled npm, which
+    # devEngines rejects (EBADDEVENGINES) before the pinned npm is installed.
+    # The cache is restored below with actions/cache instead.
     - name: Setup Node
       uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version-file: ${{ inputs.working-directory }}/.nvmrc
+        package-manager-cache: false
 
     # No Node release bundles npm 12 yet and setup-node has no npm-version
     # input, so install the version pinned in devEngines.packageManager.
