@@ -34,8 +34,6 @@
   --ring: 155.7 33.5% 44.5%;
   --destructive: 0 72.2% 46%;
   --destructive-foreground: 0 0% 98%;
-  --positive: 152.7 43.6% 74%;
-  --negative: 0 77.4% 75%;
   --positive: 158.4 56.1% 24.2%;
   --negative: 0 72.2% 40%;
   --chart-1: 153.3 44.4% 70.4%;
@@ -77,6 +75,8 @@
   --ring: 156 35.6% 42%;
   --destructive: 0 62.8% 40%;
   --destructive-foreground: 0 0% 98%;
+  --positive: 152.7 43.6% 74%;
+  --negative: 0 77.4% 75%;
   --chart-1: 153.3 44.4% 70.4%;
   --chart-2: 155.8 34.3% 50.4%;
   --chart-3: 156.9 42.3% 35.9%;
