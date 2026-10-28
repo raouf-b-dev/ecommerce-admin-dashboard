@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import { getMockStore } from '@/lib/mock/data/store';
 import type { SeedCategory } from '@/lib/mock/data/seed';
 import type {

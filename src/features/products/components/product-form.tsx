@@ -240,7 +240,7 @@ export function ProductForm({
                       ? `Currency: ${displayedCurrency}`
                       : 'Currency indicator'
                   }
-                  className="pointer-events-none absolute right-3 inline-flex items-center rounded bg-muted px-2 py-0.5 text-xs font-semibold tracking-wider uppercase text-muted-foreground"
+                  className="pointer-events-none absolute right-3 inline-flex items-center rounded bg-secondary px-2 py-0.5 text-xs font-semibold tracking-wider uppercase text-secondary-foreground"
                 >
                   {displayedCurrency || (storeConfigLoading ? '...' : '')}
                 </span>

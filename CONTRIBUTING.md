@@ -29,10 +29,10 @@ Requires Node.js LTS (see `.nvmrc`, currently 26) and npm 12.2.1 (see npm versio
 ### npm version policy
 
 - `devEngines.packageManager` in `package.json` (`npm` `12.2.1`, `onFail: "error"`) is the single source of truth. Any project command (`npm ci`, `npm install`, `npm run`) on another npm version fails with `EBADDEVENGINES`.
-- Why: no Node.js release bundles npm 12 yet (Node 26.12.1 ships npm 11.20.0), and `actions/setup-node` has no npm version input. So npm is installed explicitly: run `npm install -g npm@12.2.1` locally (global installs are not blocked by `devEngines`). CI does the same in `.github/actions/setup-node-ci`, reading the version from `package.json`, and the Dockerfile build stage uses its `NPM_VERSION` arg.
+- Why: no Node.js release bundles npm 12 yet (Node 26.12.1 ships npm 11.20.0), and `actions/setup-node` has no npm version input. So npm is installed explicitly: run `npm install -g npm@12.2.1` locally (global installs are not blocked by `devEngines`). CI does the same in `.github/actions/setup-node-ci`, and the Dockerfile build stage both read the version from `package.json`.
 - There is no top-level `packageManager` field, so Corepack stays off. `engines.npm` stays the consumer floor (`>=11.6.0`); `devEngines` is the stricter contributor pin.
 - npm 12 blocks dependency install scripts unless `allowScripts` in `package.json` allows them. Review with `npm install-scripts ls`, record with `npm install-scripts approve`, then `npm rebuild`. Today no dependency needs one (only optional macOS `fsevents` has one).
-- To bump npm, change `devEngines.packageManager.version` and `NPM_VERSION` in the Dockerfile in one PR. Revisit this pin (and drop the explicit install) once a Node LTS release bundles npm 12.
+- To bump npm, change `devEngines.packageManager.version` and regenerate `package-lock.json` with that npm. Revisit this pin (and drop the explicit install) once a Node LTS release bundles npm 12.
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/ecommerce-admin-dashboard.git

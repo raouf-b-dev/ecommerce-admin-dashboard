@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import {
   DEMO_ADMIN_EMAIL,
   DEMO_ADMIN_PASSWORD,

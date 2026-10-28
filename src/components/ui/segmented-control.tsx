@@ -1,12 +1,18 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useRef, type KeyboardEvent, type ReactElement } from 'react';
 import { cn } from '@/lib/utils';
 
+/**
+ * A text label is the radio's accessible name. A non-text label (an icon)
+ * must carry `ariaLabel`, so every radio has a name without overriding
+ * visible text (WCAG 2.5.3 Label in Name).
+ */
 export type SegmentOption<T extends string | number> = {
   value: T;
-  label: React.ReactNode;
-  ariaLabel?: string;
   title?: string;
-};
+} & (
+  | { label: string; ariaLabel?: never }
+  | { label: ReactElement; ariaLabel: string }
+);
 
 type SegmentedControlProps<T extends string | number> = {
   options: readonly SegmentOption<T>[] | SegmentOption<T>[];
@@ -14,7 +20,8 @@ type SegmentedControlProps<T extends string | number> = {
   onChange: (value: T) => void;
   className?: string;
   size?: 'sm' | 'md';
-  ariaLabel?: string;
+  /** Names the radiogroup (WAI-ARIA APG radio group pattern). */
+  ariaLabel: string;
 };
 
 export function SegmentedControl<T extends string | number>({
@@ -23,7 +30,7 @@ export function SegmentedControl<T extends string | number>({
   onChange,
   className,
   size = 'md',
-  ariaLabel = 'Segmented selector',
+  ariaLabel,
 }: SegmentedControlProps<T>) {
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -62,10 +69,6 @@ export function SegmentedControl<T extends string | number>({
     >
       {options.map((option, index) => {
         const isSelected = option.value === value;
-        const ariaLabelText =
-          option.ariaLabel ??
-          (typeof option.label === 'string' ? option.label : undefined);
-        const titleText = option.title ?? ariaLabelText;
         return (
           <button
             key={String(option.value)}
@@ -76,8 +79,8 @@ export function SegmentedControl<T extends string | number>({
             role="radio"
             tabIndex={isSelected ? 0 : -1}
             aria-checked={isSelected}
-            aria-label={ariaLabelText}
-            title={titleText}
+            aria-label={option.ariaLabel}
+            title={option.title ?? option.ariaLabel}
             onClick={() => onChange(option.value)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             className={cn(

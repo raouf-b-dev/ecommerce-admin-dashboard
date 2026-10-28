@@ -305,7 +305,7 @@ function InventoryDetailPage() {
                     Low stock trigger active
                   </span>
                 ) : (
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="font-medium text-positive">
                     Adequate stock level
                   </span>
                 )}
