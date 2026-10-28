@@ -1,17 +1,13 @@
 name: Setup Node and install
 description: >-
-  Setup Node from .nvmrc (npm cache), install the npm pinned in
-  package.json devEngines.packageManager, and optionally run npm ci.
+  Setup Node from .nvmrc, install the npm pinned in package.json
+  devEngines.packageManager, restore the npm cache, and optionally run npm ci.
 
 inputs:
   working-directory:
     description: Directory holding .nvmrc, package.json and package-lock.json.
     required: false
     default: .
-  cache-dependency-path:
-    description: Lockfile path(s) for the setup-node npm cache key.
-    required: false
-    default: package-lock.json
   install:
     description: Run npm ci after setup ("true" or "false").
     required: false
@@ -20,12 +16,13 @@ inputs:
 runs:
   using: composite
   steps:
+    # No setup-node `cache: npm`: it runs `npm config get cache` with the
+    # bundled npm, which devEngines rejects (EBADDEVENGINES) before the pinned
+    # npm is installed. The cache is restored below with actions/cache instead.
     - name: Setup Node
       uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version-file: ${{ inputs.working-directory }}/.nvmrc
-        cache: npm
-        cache-dependency-path: ${{ inputs.cache-dependency-path }}
 
     # No Node release bundles npm 12 yet and setup-node has no npm-version
     # input, so install the version pinned in devEngines.packageManager.
@@ -36,6 +33,14 @@ runs:
         npm_version="$(node -p "require('./package.json').devEngines.packageManager.version")"
         npm install --global "npm@${npm_version}"
         echo "npm $(npm --version)"
+
+    - name: Restore npm cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.npm
+        key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          npm-${{ runner.os }}-
 
     - name: Install dependencies
       if: inputs.install == 'true'
