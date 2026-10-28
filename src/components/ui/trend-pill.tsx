@@ -27,13 +27,11 @@ export function TrendPill({ delta, className }: TrendPillProps) {
     <span
       className={cn(
         'inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums',
-        isNeutral &&
-          'border border-border bg-muted text-foreground',
-        isPositive &&
-          'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+        isNeutral && 'border border-border bg-muted text-foreground',
+        isPositive && 'border border-positive/20 bg-positive/10 text-positive',
         !isPositive &&
           !isNeutral &&
-          'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
+          'border border-negative/20 bg-negative/10 text-negative',
         className,
       )}
     >

@@ -1,6 +1,6 @@
 # ecommerce-admin-dashboard
 
-Operator SPA for `ecommerce-store-api`. Vite, React 19, TypeScript (strict), React Router data router, TanStack Query and Table, React Hook Form + Zod, Tailwind + shadcn-style primitives, `openapi-fetch` client. Vitest + Testing Library, Playwright. Node 24+.
+Operator SPA for `ecommerce-store-api`. Vite, React 19, TypeScript (strict), React Router data router, TanStack Query and Table, React Hook Form + Zod, Tailwind + shadcn-style primitives, `openapi-fetch` client. Vitest + Testing Library, Playwright. Node.js LTS (see `.nvmrc`, currently 26). npm is pinned to 12.2.1 through `devEngines.packageManager` in `package.json` because no Node release bundles npm 12 yet; another npm version fails with `EBADDEVENGINES`, so run `npm install -g npm@12.2.1` first. Never use abbreviated or unknown npm flags (npm 12 rejects them).
 
 ## Checks
 

@@ -86,7 +86,7 @@ function DashboardPage() {
           options={PERIOD_OPTIONS}
           value={days}
           onChange={setDays}
-          ariaLabel="Dashboard period selector"
+          ariaLabel="Dashboard period"
         />
       </PageHeader>
 

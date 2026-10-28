@@ -1,15 +1,52 @@
 name: Setup Node and install
-description: Setup Node from .nvmrc (npm cache) and run npm ci.
+description: >-
+  Setup Node from .nvmrc, install the npm pinned in package.json
+  devEngines.packageManager, restore the npm cache, and optionally run npm ci.
+
+inputs:
+  working-directory:
+    description: Directory holding .nvmrc, package.json and package-lock.json.
+    required: false
+    default: .
+  install:
+    description: Run npm ci after setup ("true" or "false").
+    required: false
+    default: "true"
 
 runs:
   using: composite
   steps:
+    # setup-node caching is off (no `cache: npm`, and package-manager-cache
+    # false because setup-node auto-enables it from devEngines.packageManager):
+    # its probe runs `npm config get cache` with the bundled npm, which
+    # devEngines rejects (EBADDEVENGINES) before the pinned npm is installed.
+    # The cache is restored below with actions/cache instead.
     - name: Setup Node
-      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
-        node-version-file: .nvmrc
-        cache: npm
+        node-version-file: ${{ inputs.working-directory }}/.nvmrc
+        package-manager-cache: false
+
+    # No Node release bundles npm 12 yet and setup-node has no npm-version
+    # input, so install the version pinned in devEngines.packageManager.
+    - name: Install pinned npm
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        npm_version="$(node -p "require('./package.json').devEngines.packageManager.version")"
+        npm install --global "npm@${npm_version}"
+        echo "npm $(npm --version)"
+
+    - name: Restore npm cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.npm
+        key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          npm-${{ runner.os }}-
 
     - name: Install dependencies
+      if: inputs.install == 'true'
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: npm ci

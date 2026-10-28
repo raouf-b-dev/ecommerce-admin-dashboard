@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import { getMockStore } from '@/lib/mock/data/store';
 import { parsePositiveInt } from '@/lib/mock/lib/paginate-filter';
 

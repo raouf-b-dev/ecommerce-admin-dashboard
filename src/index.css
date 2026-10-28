@@ -2,8 +2,10 @@
  * Brand surfaces: a future brand changes only the color variables in :root and
  * .dark below, the font import in src/main.tsx, the favicon files in public/,
  * and the theme-color meta in index.html (hex of the light --primary).
- * Components read semantic tokens (primary, ring, chart-*, tint-*) and never
- * raw colors.
+ * Components read semantic tokens (primary, ring, positive, negative, chart-*,
+ * tint-*) and never raw colors. positive and negative are status text colors
+ * (trend deltas, stock state); each keeps WCAG AA 4.5:1 on background, card,
+ * muted, and its own 10% tint in both themes.
  * Values are bare HSL channels because tailwind.config.js wraps them with
  * hsl(var(--token)). The storefront holds the same accent as oklch() in its
  * own globals.css; do not copy one app's variable strings into the other.
@@ -32,6 +34,8 @@
   --ring: 155.7 33.5% 44.5%;
   --destructive: 0 72.2% 46%;
   --destructive-foreground: 0 0% 98%;
+  --positive: 158.4 56.1% 24.2%;
+  --negative: 0 72.2% 40%;
   --chart-1: 153.3 44.4% 70.4%;
   --chart-2: 155.8 34.3% 50.4%;
   --chart-3: 156.9 42.3% 35.9%;
@@ -71,6 +75,8 @@
   --ring: 156 35.6% 42%;
   --destructive: 0 62.8% 40%;
   --destructive-foreground: 0 0% 98%;
+  --positive: 152.7 43.6% 74%;
+  --negative: 0 77.4% 75%;
   --chart-1: 153.3 44.4% 70.4%;
   --chart-2: 155.8 34.3% 50.4%;
   --chart-3: 156.9 42.3% 35.9%;

@@ -36,7 +36,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       value={theme}
       onChange={setTheme}
       size="sm"
-      ariaLabel="Theme selector"
+      ariaLabel="Theme"
       className={className}
     />
   );

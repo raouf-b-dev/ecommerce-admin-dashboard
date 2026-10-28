@@ -3,10 +3,13 @@
 # -- Stage 1: build -------------------------------------------------------------
 # The static bundle does not depend on the target CPU, so this stage runs on the
 # build platform and a multi-arch build compiles it once.
-FROM --platform=$BUILDPLATFORM node:24-alpine AS build
+FROM --platform=$BUILDPLATFORM node:26.12.1-alpine3.24@sha256:40cd011b55415bc894e45b02fdd5a5dfde056921b7d23a64c74f80497af48797 AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+# No Node release bundles npm 12 yet: install the npm pinned in package.json
+# devEngines.packageManager (the single source) before any npm command.
+RUN npm install --global "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
 RUN npm ci --no-audit --no-fund
 
 COPY . .
