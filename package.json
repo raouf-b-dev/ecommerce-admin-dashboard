@@ -48,6 +48,13 @@
     "node": ">=26.0.0",
     "npm": ">=11.6.0"
   },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "12.2.1",
+      "onFail": "error"
+    }
+  },
   "bugs": {
     "url": "https://github.com/raouf-b-dev/ecommerce-admin-dashboard/issues"
   },

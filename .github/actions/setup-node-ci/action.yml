@@ -1,5 +1,21 @@
 name: Setup Node and install
-description: Setup Node from .nvmrc (npm cache) and run npm ci.
+description: >-
+  Setup Node from .nvmrc (npm cache), install the npm pinned in
+  package.json devEngines.packageManager, and optionally run npm ci.
+
+inputs:
+  working-directory:
+    description: Directory holding .nvmrc, package.json and package-lock.json.
+    required: false
+    default: .
+  cache-dependency-path:
+    description: Lockfile path(s) for the setup-node npm cache key.
+    required: false
+    default: package-lock.json
+  install:
+    description: Run npm ci after setup ("true" or "false").
+    required: false
+    default: "true"
 
 runs:
   using: composite
@@ -7,9 +23,22 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
-        node-version-file: .nvmrc
+        node-version-file: ${{ inputs.working-directory }}/.nvmrc
         cache: npm
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+    # No Node release bundles npm 12 yet and setup-node has no npm-version
+    # input, so install the version pinned in devEngines.packageManager.
+    - name: Install pinned npm
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        npm_version="$(node -p "require('./package.json').devEngines.packageManager.version")"
+        npm install --global "npm@${npm_version}"
+        echo "npm $(npm --version)"
 
     - name: Install dependencies
+      if: inputs.install == 'true'
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: npm ci
