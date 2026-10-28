@@ -22,7 +22,7 @@ Requires Node.js LTS (see `.nvmrc`, currently 26) and npm 12.2.1 (see npm versio
 ### Node version policy
 
 - `.nvmrc` is the single source of truth. CI reads it through `actions/setup-node` (`node-version-file`).
-- The Dockerfile build stage pin (`node:<version>-alpine@sha256:...`) and `engines` in `package.json` follow it. `.npmrc` sets `engine-strict=true`, so `npm install` fails on an older Node or npm.
+- The Dockerfile build stage pin (`node:<version>-alpine@sha256:...`) and `engines` in `package.json` follow it. `.npmrc` sets `engine-strict=true`, so `npm install` fails on an older Node or npm. npm 12 does not enforce root `engines.node` even with `engine-strict`, so `devEngines.runtime` (`node` `>=26.0.0`, `onFail: "error"`) keeps the Node guardrail. Change it together with `engines.node`.
 - Dependabot bumps the Docker image within the current major and ignores Node majors.
 - To move to a new LTS major, edit `.nvmrc`, the Dockerfile pin and `engines` in one PR.
 
