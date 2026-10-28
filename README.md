@@ -80,8 +80,8 @@ After the API contract changes, run `npm run api:generate` while the API is up.
 Published as `ghcr.io/raouf-b-dev/ecommerce-admin-dashboard` on pushes to `master` and on `v*` tags (linux/amd64 and linux/arm64). The container listens on **8080** and requires `API_BASE_URL` at start (absolute `http://` or `https://` origin the browser will call).
 
 ```bash
-docker pull ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.7.0
-docker run --rm -p 8080:8080 -e API_BASE_URL=http://localhost:3000 ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.7.0
+docker pull ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.8.0
+docker run --rm -p 8080:8080 -e API_BASE_URL=http://localhost:3000 ghcr.io/raouf-b-dev/ecommerce-admin-dashboard:0.8.0
 ```
 
 For the full stack (API, Postgres, Redis, storefront), use [ecommerce-platform](https://github.com/raouf-b-dev/ecommerce-platform).
