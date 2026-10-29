@@ -18,7 +18,7 @@ RUN npm run build
 
 # -- Stage 2: production --------------------------------------------------------
 # NGINX's unprivileged image: runs as uid 101 and listens on 8080.
-FROM nginxinc/nginx-unprivileged:1.29-alpine AS production
+FROM nginxinc/nginx-unprivileged:1.31-alpine AS production
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --chmod=0755 docker/nginx/40-render-config.sh /docker-entrypoint.d/40-render-config.sh
