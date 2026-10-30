@@ -111,6 +111,24 @@ describe('CategoriesPage', () => {
     expect(
       screen.getByRole('button', { name: 'Create category' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Categories' }),
+    ).toBeInTheDocument();
+  });
+
+  it('gives Delete destructive styling and Deactivate secondary styling', () => {
+    renderPage();
+
+    const row = screen.getByRole('row', { name: /electronics/i });
+    expect(within(row).getByRole('button', { name: 'Delete' })).toHaveClass(
+      'bg-destructive',
+    );
+    expect(
+      within(row).getByRole('button', { name: 'Deactivate' }),
+    ).toHaveClass('bg-secondary');
+    expect(within(row).getByRole('button', { name: 'Edit' })).toHaveClass(
+      'border',
+    );
   });
 
   it('shows the active product count per category', () => {

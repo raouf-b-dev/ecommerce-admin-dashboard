@@ -24,6 +24,7 @@ import {
 } from '@/lib/api/parse-api-error';
 import { formatDateTime } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
+import { useDocumentTitle } from '@/lib/use-document-title';
 
 const CONFLICT_MESSAGE =
   'Stock was modified by another request. Latest values were reloaded - review and adjust again.';
@@ -39,6 +40,12 @@ function InventoryDetailPage() {
   const adjustStock = useAdjustStock(productId);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
+
+  useDocumentTitle(
+    detailQuery.data?.productTitle
+      ? detailQuery.data.productTitle
+      : 'Inventory detail',
+  );
 
   async function handleAdjust(body: AdjustStockDto) {
     setConflictMessage(null);

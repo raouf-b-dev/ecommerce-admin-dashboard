@@ -56,16 +56,20 @@ export function OrdersTable({
           accessorKey: 'orderNumber',
           header: 'Order',
           cell: ({ row }) => (
-            <div className="font-medium">{row.original.orderNumber}</div>
+            <div className="whitespace-nowrap font-medium">
+              {row.original.orderNumber}
+            </div>
           ),
         },
         {
           id: 'customer',
           header: 'Customer',
           cell: ({ row }) => (
-            <div>
-              <div>{formatOptionalText(row.original.userName)}</div>
-              <div className="text-muted-foreground">
+            <div className="min-w-[10rem] max-w-[14rem]">
+              <div className="truncate">
+                {formatOptionalText(row.original.userName)}
+              </div>
+              <div className="truncate text-muted-foreground">
                 {formatOptionalText(row.original.userEmail)}
               </div>
             </div>
@@ -75,30 +79,45 @@ export function OrdersTable({
           accessorKey: 'status',
           header: 'Status',
           cell: ({ row }) => (
-            <StatusBadge variant="order" status={row.original.status} />
+            <StatusBadge
+              className="shrink-0 whitespace-nowrap"
+              variant="order"
+              status={row.original.status}
+            />
           ),
         },
         {
           accessorKey: 'itemCount',
           header: 'Items',
-          cell: ({ row }) => row.original.itemCount,
+          cell: ({ row }) => (
+            <span className="whitespace-nowrap tabular-nums">
+              {row.original.itemCount}
+            </span>
+          ),
         },
         {
           accessorKey: 'totalAmount',
           header: 'Total',
-          cell: ({ row }) =>
-            formatMoney(row.original.totalAmount, row.original.currency),
+          cell: ({ row }) => (
+            <span className="whitespace-nowrap tabular-nums">
+              {formatMoney(row.original.totalAmount, row.original.currency)}
+            </span>
+          ),
         },
         {
           accessorKey: 'createdAt',
           header: 'Created',
-          cell: ({ row }) => formatDateTime(row.original.createdAt),
+          cell: ({ row }) => (
+            <span className="whitespace-nowrap">
+              {formatDateTime(row.original.createdAt)}
+            </span>
+          ),
         },
         {
           id: 'actions',
           header: '',
           cell: ({ row }) => (
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm" className="shrink-0">
               <Link to={`/orders/${row.original.id}`}>View</Link>
             </Button>
           ),
@@ -115,8 +134,8 @@ export function OrdersTable({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-hidden rounded-md border">
+        <Table className="min-w-[44rem]" scrollRegionLabel="Orders">
           <TableHeader>
             <TableRow>
               <TableHead>Order</TableHead>

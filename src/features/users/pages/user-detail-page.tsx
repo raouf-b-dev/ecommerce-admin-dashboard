@@ -46,6 +46,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
 import { formatDateTime, formatOptionalText } from '@/lib/format';
 import { QueryLoading } from '@/components/feedback/query-state';
+import { useDocumentTitle } from '@/lib/use-document-title';
 
 function UserDetailPage() {
   const { hasPermission } = useAuth();
@@ -72,6 +73,12 @@ function UserDetailPage() {
   const [editingAddress, setEditingAddress] =
     useState<AddressResponseDto | null>(null);
   const [copiedId, setCopiedId] = useState(false);
+
+  useDocumentTitle(
+    detailQuery.data
+      ? userDisplayName(detailQuery.data)
+      : 'User detail',
+  );
 
   const editDefaults = useMemo(() => {
     const user = detailQuery.data;
