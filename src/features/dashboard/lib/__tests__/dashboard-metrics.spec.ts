@@ -2,6 +2,7 @@ import {
   buildDashboardPeriod,
   calculateRefundRate,
   formatPercent,
+  isPartialTrailingBucket,
   percentChange,
 } from '@/features/dashboard/lib/dashboard-metrics';
 
@@ -28,5 +29,25 @@ describe('dashboard-metrics', () => {
     expect(calculateRefundRate(200, 100)).toBe(100);
     expect(formatPercent(5.23)).toBe('5.2%');
     expect(formatPercent(null)).toBe('n/a');
+  });
+
+  it('flags the current UTC day bucket as partial', () => {
+    const now = new Date('2026-08-30T18:00:00.000Z');
+    expect(
+      isPartialTrailingBucket('2026-08-30T00:00:00.000Z', 'day', now),
+    ).toBe(true);
+    expect(
+      isPartialTrailingBucket('2026-08-29T00:00:00.000Z', 'day', now),
+    ).toBe(false);
+  });
+
+  it('flags the current UTC week bucket as partial', () => {
+    const now = new Date('2026-08-30T12:00:00.000Z');
+    expect(
+      isPartialTrailingBucket('2026-08-24T00:00:00.000Z', 'week', now),
+    ).toBe(true);
+    expect(
+      isPartialTrailingBucket('2026-08-17T00:00:00.000Z', 'week', now),
+    ).toBe(false);
   });
 });

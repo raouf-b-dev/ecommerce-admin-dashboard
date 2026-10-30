@@ -212,7 +212,10 @@ function ProductsPage() {
 
         {/* Collapsible Advanced Filters Drawer */}
         {filtersOpen ? (
-          <div className="rounded-lg border border-border bg-card/60 p-3.5">
+          <div
+            className="rounded-lg border border-border bg-card/60 p-3.5"
+            data-testid="products-filters-panel"
+          >
             <form
               onSubmit={applyTextFilters}
               className="flex flex-wrap items-end gap-3"

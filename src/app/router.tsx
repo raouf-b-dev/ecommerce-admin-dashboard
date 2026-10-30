@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router';
+import { QueryLoading } from '@/components/feedback/query-state';
 import { AppLayout } from '@/components/layout/app-layout';
 import { DocumentTitle } from '@/components/layout/document-title';
 import { GuestRoute } from '@/lib/auth/guest-route';
@@ -52,11 +53,7 @@ const UserDetailPage = lazy(() =>
 );
 
 function RouteFallback() {
-  return (
-    <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
-      Loading…
-    </p>
-  );
+  return <QueryLoading>Loading page…</QueryLoading>;
 }
 
 function RootDocumentTitle() {

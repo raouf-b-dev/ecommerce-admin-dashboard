@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
+import { QueryLoading } from '@/components/feedback/query-state';
 import { PageHeader } from '@/components/layout/page-header';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { DashboardAttentionList } from '@/features/dashboard/components/dashboard-attention-list';
@@ -150,7 +151,7 @@ function DashboardPage() {
                     items={overviewQuery.data.ordersNeedingAttention}
                   />
                 ) : overviewQuery.isLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading…</p>
+                  <QueryLoading>Loading…</QueryLoading>
                 ) : null}
               </section>
             ) : null}
