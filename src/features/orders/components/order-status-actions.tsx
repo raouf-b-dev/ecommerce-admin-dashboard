@@ -109,7 +109,7 @@ export function OrderStatusActions({
               disabled={isPending}
               onClick={() => setConfirmAction(null)}
             >
-              Back
+              {confirmAction === 'cancel' ? 'Keep order' : 'Back'}
             </Button>
             <Button
               type="button"
@@ -121,9 +121,11 @@ export function OrderStatusActions({
                 }
               }}
             >
-              {confirmAction
-                ? ORDER_STATUS_ACTION_LABELS[confirmAction]
-                : 'Confirm'}
+              {confirmAction === 'cancel'
+                ? 'Cancel order'
+                : confirmAction
+                  ? ORDER_STATUS_ACTION_LABELS[confirmAction]
+                  : 'Confirm'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -21,6 +21,8 @@ describe('AppLayout', () => {
         permissions: ['view_all_products', 'view_all_orders'],
       },
       logout: vi.fn(),
+      hasPermission: (permission?: string) =>
+        permission === 'view_all_products' || permission === 'view_all_orders',
     });
   });
 

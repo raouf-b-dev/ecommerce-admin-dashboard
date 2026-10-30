@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router';
 import { ChevronDown, KeyRound, LogOut, Shield } from 'lucide-react';
+import { navigation } from '@/app/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,13 +16,20 @@ type AdminUserMenuProps = {
   defaultOpen?: boolean;
 };
 
+const rolesNavItem = navigation.find((item) => item.to === '/settings/roles');
+
 export function AdminUserMenu({ defaultOpen }: AdminUserMenuProps = {}) {
-  const { session, logout } = useAuth();
+  const { session, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
 
   if (!session) {
     return null;
   }
+
+  const canManageRoles =
+    rolesNavItem?.permission !== undefined &&
+    hasPermission(rolesNavItem.permission);
+  const canChangeOwnCredentials = hasPermission('change_own_credentials');
 
   async function handleLogout() {
     await logout();
@@ -97,27 +105,39 @@ export function AdminUserMenu({ defaultOpen }: AdminUserMenuProps = {}) {
 
         <DropdownMenuSeparator className="my-1.5" />
 
-        <DropdownMenuItem asChild>
-          <Link
-            to="/roles"
-            className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
-          >
-            <Shield className="size-4 text-muted-foreground" aria-hidden="true" />
-            <span className="font-medium">Roles & Permissions</span>
-          </Link>
-        </DropdownMenuItem>
+        {canManageRoles && rolesNavItem ? (
+          <DropdownMenuItem asChild>
+            <Link
+              to={rolesNavItem.to}
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
+            >
+              <Shield
+                className="size-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <span className="font-medium">Roles & Permissions</span>
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
 
-        <DropdownMenuItem asChild>
-          <Link
-            to="/change-password"
-            className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
-          >
-            <KeyRound className="size-4 text-muted-foreground" aria-hidden="true" />
-            <span className="font-medium">Change Password</span>
-          </Link>
-        </DropdownMenuItem>
+        {canChangeOwnCredentials ? (
+          <DropdownMenuItem asChild>
+            <Link
+              to="/change-password"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
+            >
+              <KeyRound
+                className="size-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <span className="font-medium">Change Password</span>
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
 
-        <DropdownMenuSeparator className="my-1.5" />
+        {canManageRoles || canChangeOwnCredentials ? (
+          <DropdownMenuSeparator className="my-1.5" />
+        ) : null}
 
         <div className="px-2 py-2">
           <span className="mb-2 block text-[11px] font-medium text-muted-foreground">

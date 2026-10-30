@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { OrderStatusActions } from '@/features/orders/components/order-status-actions';
 
 describe('OrderStatusActions', () => {
@@ -14,6 +15,27 @@ describe('OrderStatusActions', () => {
     expect(screen.getByRole('button', { name: 'Process' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
     expect(screen.queryByRole('button', { name: 'Ship' })).not.toBeInTheDocument();
+  });
+
+  it('labels the cancel confirm dialog Keep order and Cancel order', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OrderStatusActions
+        status="confirmed"
+        isPending={false}
+        onAction={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(
+      screen.getByRole('button', { name: 'Keep order' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Cancel order' }),
+    ).toBeInTheDocument();
   });
 
   it('shows no action buttons for delivered orders', () => {

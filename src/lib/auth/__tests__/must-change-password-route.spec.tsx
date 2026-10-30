@@ -69,9 +69,10 @@ describe('ChangePasswordRoute', () => {
     mockUseAuth.mockReset();
   });
 
-  it('redirects away when password change is not required', () => {
+  it('redirects away when password change is not required and permission is missing', () => {
     mockUseAuth.mockReturnValue({
       session: { mustChangePassword: false },
+      hasPermission: () => false,
     });
 
     render(
@@ -91,5 +92,56 @@ describe('ChangePasswordRoute', () => {
     );
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
+  });
+
+  it('allows a forced password change session', () => {
+    mockUseAuth.mockReturnValue({
+      session: { mustChangePassword: true },
+      hasPermission: () => false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/change-password']}>
+        <Routes>
+          <Route path="/" element={<div>Dashboard</div>} />
+          <Route
+            path="/change-password"
+            element={
+              <ChangePasswordRoute>
+                <div>Change form</div>
+              </ChangePasswordRoute>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Change form')).toBeInTheDocument();
+  });
+
+  it('allows a voluntary change when change_own_credentials is granted', () => {
+    mockUseAuth.mockReturnValue({
+      session: { mustChangePassword: false },
+      hasPermission: (permission?: string) =>
+        permission === 'change_own_credentials',
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/change-password']}>
+        <Routes>
+          <Route path="/" element={<div>Dashboard</div>} />
+          <Route
+            path="/change-password"
+            element={
+              <ChangePasswordRoute>
+                <div>Change form</div>
+              </ChangePasswordRoute>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Change form')).toBeInTheDocument();
   });
 });
