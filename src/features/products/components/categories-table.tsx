@@ -157,7 +157,7 @@ export function CategoriesTable() {
                         {category.isActive ? (
                           <Button
                             type="button"
-                            variant="secondary"
+                            variant="outline"
                             size="sm"
                             disabled={statusPending}
                             onClick={async () => {
@@ -181,7 +181,7 @@ export function CategoriesTable() {
                         ) : (
                           <Button
                             type="button"
-                            variant="secondary"
+                            variant="outline"
                             size="sm"
                             disabled={statusPending}
                             onClick={async () => {

@@ -15,7 +15,7 @@ export function PageHeader({ title, description, children }: PageHeaderProps) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-3">
           <h1 className="text-3xl font-semibold">{title}</h1>
-          <p className="max-w-2xl text-base leading-6 text-muted-foreground">
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
             {description}
           </p>
         </div>

@@ -65,11 +65,9 @@ export function OrdersTable({
           id: 'customer',
           header: 'Customer',
           cell: ({ row }) => (
-            <div className="min-w-[10rem] max-w-[14rem]">
-              <div className="truncate">
-                {formatOptionalText(row.original.userName)}
-              </div>
-              <div className="truncate text-muted-foreground">
+            <div>
+              <div>{formatOptionalText(row.original.userName)}</div>
+              <div className="text-muted-foreground">
                 {formatOptionalText(row.original.userEmail)}
               </div>
             </div>
@@ -80,7 +78,7 @@ export function OrdersTable({
           header: 'Status',
           cell: ({ row }) => (
             <StatusBadge
-              className="shrink-0 whitespace-nowrap"
+              className="shrink-0"
               variant="order"
               status={row.original.status}
             />
@@ -89,35 +87,24 @@ export function OrdersTable({
         {
           accessorKey: 'itemCount',
           header: 'Items',
-          cell: ({ row }) => (
-            <span className="whitespace-nowrap tabular-nums">
-              {row.original.itemCount}
-            </span>
-          ),
+          cell: ({ row }) => row.original.itemCount,
         },
         {
           accessorKey: 'totalAmount',
           header: 'Total',
-          cell: ({ row }) => (
-            <span className="whitespace-nowrap tabular-nums">
-              {formatMoney(row.original.totalAmount, row.original.currency)}
-            </span>
-          ),
+          cell: ({ row }) =>
+            formatMoney(row.original.totalAmount, row.original.currency),
         },
         {
           accessorKey: 'createdAt',
           header: 'Created',
-          cell: ({ row }) => (
-            <span className="whitespace-nowrap">
-              {formatDateTime(row.original.createdAt)}
-            </span>
-          ),
+          cell: ({ row }) => formatDateTime(row.original.createdAt),
         },
         {
           id: 'actions',
           header: '',
           cell: ({ row }) => (
-            <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Button asChild variant="outline" size="sm">
               <Link to={`/orders/${row.original.id}`}>View</Link>
             </Button>
           ),
@@ -135,7 +122,8 @@ export function OrdersTable({
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-md border">
-        <Table className="min-w-[44rem]" scrollRegionLabel="Orders">
+        {/* min-w only below md so ~390px scrolls; desktop stays fluid like develop */}
+        <Table className="max-md:min-w-[44rem]" scrollRegionLabel="Orders">
           <TableHeader>
             <TableRow>
               <TableHead>Order</TableHead>
