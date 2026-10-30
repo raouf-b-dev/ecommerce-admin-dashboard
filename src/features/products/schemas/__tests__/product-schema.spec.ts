@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createProductFormSchema,
   createProductSchema,
+  priceFitsCurrencyExponent,
   toCreateProductDto,
   toProductSubmitValues,
   toUpdateProductDto,
@@ -131,5 +133,51 @@ describe('createProductSchema', () => {
     expect(submit).toMatchObject({ currency: 'EUR' });
     expect(toCreateProductDto(submit)).toMatchObject({ currency: 'EUR' });
     expect(toUpdateProductDto(submit)).toMatchObject({ currency: 'EUR' });
+  });
+});
+
+describe('priceFitsCurrencyExponent', () => {
+  it.each([
+    ['49.99', 2, true],
+    ['49.999', 2, false],
+    ['49.990', 2, true],
+    ['100', 0, true],
+    ['100.1', 0, false],
+  ])('treats %s at exponent %i as valid=%s', (price, exponent, expected) => {
+    expect(priceFitsCurrencyExponent(price, exponent)).toBe(expected);
+  });
+});
+
+describe('createProductFormSchema', () => {
+  it('rejects excess scale for the default currency', () => {
+    const schema = createProductFormSchema({
+      defaultCurrency: 'USD',
+      defaultCurrencyExponent: 2,
+    });
+
+    expect(
+      schema.safeParse({
+        name: 'Laptop',
+        price: '49.999',
+        currency: 'USD',
+        categoryId: '1',
+      }),
+    ).toMatchObject({ success: false });
+  });
+
+  it('skips scale checks for a non-default currency', () => {
+    const schema = createProductFormSchema({
+      defaultCurrency: 'USD',
+      defaultCurrencyExponent: 2,
+    });
+
+    expect(
+      schema.safeParse({
+        name: 'Laptop',
+        price: '49.999',
+        currency: 'EUR',
+        categoryId: '1',
+      }),
+    ).toMatchObject({ success: true });
   });
 });

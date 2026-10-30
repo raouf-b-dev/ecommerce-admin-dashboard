@@ -681,6 +681,11 @@ export function createSeedPermissions(): PermissionResponseDto[] {
     { id: 9, code: 'manage_inventory', description: 'Adjust and manage inventory stock' },
     { id: 10, code: 'manage_users', description: 'Manage users' },
     { id: 11, code: 'manage_roles', description: 'Manage roles' },
+    {
+      id: 12,
+      code: 'change_own_credentials',
+      description: 'Change own password',
+    },
   ];
 }
 

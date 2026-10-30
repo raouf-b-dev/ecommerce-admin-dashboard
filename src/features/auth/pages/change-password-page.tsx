@@ -32,9 +32,9 @@ function ChangePasswordPage() {
         <CardHeader>
           <CardTitle as="h1">Change your password</CardTitle>
           <CardDescription>
-            Your account requires a new password before you can use the admin
-            dashboard. Sign out if this is the wrong account or you do not
-            know the current password.
+            {session?.mustChangePassword
+              ? 'Your account requires a new password before you can use the admin dashboard. Sign out if this is the wrong account or you do not know the current password.'
+              : 'Choose a new password for your account. You will return to the app when you are done. Sign out if this is the wrong account.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

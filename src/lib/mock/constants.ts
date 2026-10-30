@@ -15,6 +15,7 @@ export const DEMO_OPERATOR_PERMISSIONS = [
   'manage_inventory',
   'manage_users',
   'manage_roles',
+  'change_own_credentials',
 ] as const;
 
 export const DEMO_CATALOG_OPERATOR_EMAIL = 'catalog@store.local';
@@ -26,4 +27,5 @@ export const DEMO_CATALOG_OPERATOR_PERMISSIONS = [
   'access_admin',
   'view_all_products',
   'manage_products',
+  'change_own_credentials',
 ] as const;

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { ProductThumbnail } from '@/components/media/product-thumbnail';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -287,6 +288,7 @@ function ProductEditPage() {
           onOpenChange={setDeleteOpen}
           onConfirm={async () => {
             await deleteProduct.mutateAsync();
+            toast.success('Product deleted');
             navigate('/products');
           }}
         />

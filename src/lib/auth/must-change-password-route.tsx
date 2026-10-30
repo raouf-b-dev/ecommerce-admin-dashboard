@@ -21,9 +21,13 @@ type ChangePasswordRouteProps = {
 };
 
 export function ChangePasswordRoute({ children }: ChangePasswordRouteProps) {
-  const { session } = useAuth();
+  const { session, hasPermission } = useAuth();
 
-  if (session && !session.mustChangePassword) {
+  const canChangePassword =
+    Boolean(session?.mustChangePassword) ||
+    hasPermission('change_own_credentials');
+
+  if (session && !canChangePassword) {
     return <Navigate to="/" replace />;
   }
 

@@ -152,4 +152,48 @@ describe('admin mock handlers', () => {
       });
     });
   });
+
+  describe('POST /v1/products', () => {
+    it('rejects prices with excess non-zero scale', async () => {
+      const response = await fetch(`${API}/v1/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Overprecise',
+          price: 49.999,
+          currency: 'USD',
+          categoryId: 1,
+        }),
+      });
+
+      expect(response.status).toBe(400);
+      const body: unknown = await response.json();
+      expect(body).toMatchObject({
+        code: 'AMOUNT_INVALID',
+        statusCode: 400,
+      });
+    });
+
+    it('slugifies a supplied slug and uppercases the SKU', async () => {
+      const response = await fetch(`${API}/v1/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Gadget',
+          price: 10,
+          currency: 'USD',
+          categoryId: 1,
+          slug: 'UX Slug!',
+          sku: ' ux 1 ',
+        }),
+      });
+
+      expect(response.status).toBe(201);
+      const body: unknown = await response.json();
+      expect(body).toMatchObject({
+        slug: 'ux-slug',
+        sku: 'UX 1',
+      });
+    });
+  });
 });
