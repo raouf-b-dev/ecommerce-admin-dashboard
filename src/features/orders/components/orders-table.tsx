@@ -56,7 +56,9 @@ export function OrdersTable({
           accessorKey: 'orderNumber',
           header: 'Order',
           cell: ({ row }) => (
-            <div className="font-medium">{row.original.orderNumber}</div>
+            <div className="whitespace-nowrap font-medium">
+              {row.original.orderNumber}
+            </div>
           ),
         },
         {
@@ -75,7 +77,11 @@ export function OrdersTable({
           accessorKey: 'status',
           header: 'Status',
           cell: ({ row }) => (
-            <StatusBadge variant="order" status={row.original.status} />
+            <StatusBadge
+              className="shrink-0"
+              variant="order"
+              status={row.original.status}
+            />
           ),
         },
         {
@@ -115,8 +121,9 @@ export function OrdersTable({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-hidden rounded-md border">
+        {/* min-w only below md so ~390px scrolls; desktop stays fluid like develop */}
+        <Table className="max-md:min-w-[44rem]" scrollRegionLabel="Orders">
           <TableHeader>
             <TableRow>
               <TableHead>Order</TableHead>

@@ -10,7 +10,8 @@ Operator-facing SPA for `ecommerce-store-api`. It consumes the versioned HTTP co
 
 - `src/main.tsx`: entry; mock gate (CONVENTIONS section 15).
 - `src/app/`: `router.tsx` (data router, lazy pages), `navigation.ts` (nav items with `permission`), `pages/` (404, root error).
-- `src/components/layout/`: shell (sidebar, header, mobile nav, page header).
+- `src/components/layout/`: shell (sidebar, header, mobile nav, page header, document title from route `handle.title`).
+- `src/lib/use-document-title.ts`: sets `document.title` (`PageTitle | E-commerce Admin`); `PageHeader` and detail pages call it.
 - `src/components/theme/`: theme provider, toggle, toaster.
 - `src/components/feedback/`: `QueryLoading`, `QueryStateAlert`, `ActionErrorAlert`, `TableEmptyState`.
 - `src/components/ui/`: shadcn-style primitives.

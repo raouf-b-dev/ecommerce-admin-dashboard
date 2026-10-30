@@ -38,6 +38,27 @@ describe('OrderStatusActions', () => {
     ).toBeInTheDocument();
   });
 
+  it('returns focus to the Cancel trigger after the dialog closes', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OrderStatusActions
+        status="confirmed"
+        isPending={false}
+        onAction={vi.fn()}
+      />,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Cancel' });
+    await user.click(trigger);
+    expect(
+      screen.getByRole('heading', { name: 'Cancel order?' }),
+    ).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(trigger).toHaveFocus();
+  });
+
   it('shows no action buttons for delivered orders', () => {
     render(
       <OrderStatusActions
@@ -53,3 +74,4 @@ describe('OrderStatusActions', () => {
     expect(screen.queryByRole('button', { name: 'Process' })).not.toBeInTheDocument();
   });
 });
+

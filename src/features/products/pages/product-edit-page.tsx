@@ -35,6 +35,7 @@ import {
 } from '@/lib/api/parse-api-error';
 import { useAuth } from '@/lib/auth/auth-context';
 import { formatMoney } from '@/lib/format';
+import { useDocumentTitle } from '@/lib/use-document-title';
 
 const CONFLICT_MESSAGE =
   'This product was modified by another request. The form was reloaded with the latest data - review the values and save again.';
@@ -58,6 +59,12 @@ function ProductEditPage() {
   const deactivateProduct = useDeactivateProduct(id);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  useDocumentTitle(
+    productQuery.data?.name
+      ? `Edit ${productQuery.data.name}`
+      : 'Edit product',
+  );
 
   const defaultValues = useMemo<Partial<ProductFormValues> | undefined>(() => {
     const product = productQuery.data;

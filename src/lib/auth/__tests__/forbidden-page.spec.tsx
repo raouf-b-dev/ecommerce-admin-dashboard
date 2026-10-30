@@ -20,7 +20,7 @@ describe('ForbiddenPage', () => {
       },
     });
 
-    render(
+    const { container } = render(
       <MemoryRouter>
         <ForbiddenPage />
       </MemoryRouter>,
@@ -32,6 +32,8 @@ describe('ForbiddenPage', () => {
     expect(
       screen.getByRole('link', { name: 'Back to dashboard' }),
     ).toHaveAttribute('href', '/');
+    expect(container.firstElementChild).toHaveClass('max-w-lg');
+    expect(container.firstElementChild).not.toHaveClass('mx-auto');
   });
 
   it('links to first permitted route for limited operator without view_all_orders', () => {
