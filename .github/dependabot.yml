@@ -19,6 +19,12 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
+    ignore:
+      # Held until @vitejs/plugin-react widens its optional peer range
+      # (6.1.2 requires oxc-transform-react ^0.152.0; newer breaks npm install).
+      - dependency-name: 'oxc-transform-react'
+        versions:
+          - '>=0.153.0'
   - package-ecosystem: 'docker'
     directory: '/'
     target-branch: 'master'
