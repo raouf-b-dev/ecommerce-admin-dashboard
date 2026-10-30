@@ -18,7 +18,7 @@ test('login page loads without admin shell', async ({ page }) => {
 test('login failure shows error', async ({ page }) => {
   await page.goto('/login');
   await page.getByLabel('Email').fill('admin@store.local');
-  await page.getByLabel('Password').fill('not-the-password');
+  await page.getByLabel('Password', { exact: true }).fill('not-the-password');
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(

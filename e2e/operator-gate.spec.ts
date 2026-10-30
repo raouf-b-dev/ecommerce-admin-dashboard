@@ -11,7 +11,7 @@ test('customer login is blocked from Control Center', async ({ page }) => {
 
   await page.goto('/login');
   await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   const operatorDenied = page.getByText(

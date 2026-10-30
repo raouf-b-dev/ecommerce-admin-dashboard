@@ -200,7 +200,7 @@ describe('ProductsPage', () => {
     expect(screen.queryByText('Could not load products')).not.toBeInTheDocument();
   });
 
-  it('opens secondary filters as an overlay and applies on submit', () => {
+  it('opens secondary filters inline and applies on submit', () => {
     listQueryMock.mockReturnValue({
       data: { items: [], total: 0, page: 1, limit: 10, totalPages: 0 },
       isLoading: false,
@@ -220,7 +220,7 @@ describe('ProductsPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Filters' }));
     const panel = screen.getByTestId('products-filters-panel');
-    expect(panel).toHaveClass('absolute');
+    expect(panel).not.toHaveClass('absolute');
     expect(
       screen.getByRole('button', { name: 'Apply price & category' }),
     ).toBeInTheDocument();

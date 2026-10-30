@@ -210,81 +210,70 @@ function ProductsPage() {
           </div>
         </div>
 
-        {/* Advanced filters overlay: does not push the table when opened */}
-        <div className="relative">
-          {filtersOpen ? (
-            <div
-              className="absolute inset-x-0 top-0 z-20 rounded-lg border border-border bg-card p-3.5 shadow-md"
-              data-testid="products-filters-panel"
+        {/* Collapsible Advanced Filters Drawer */}
+        {filtersOpen ? (
+          <div
+            className="rounded-lg border border-border bg-card/60 p-3.5"
+            data-testid="products-filters-panel"
+          >
+            <form
+              onSubmit={applyTextFilters}
+              className="flex flex-wrap items-end gap-3"
             >
-              <form
-                onSubmit={applyTextFilters}
-                className="flex flex-wrap items-end gap-3"
-              >
-                <div className="space-y-1">
-                  <Label
-                    htmlFor="products-min-price"
-                    className="text-xs text-muted-foreground"
-                  >
-                    Min price
-                  </Label>
-                  <Input
-                    id="products-min-price"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={minPriceDraft}
-                    onChange={(e) => setMinPriceDraft(e.target.value)}
-                    placeholder="0.00"
-                    className="h-8 w-28 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label
-                    htmlFor="products-max-price"
-                    className="text-xs text-muted-foreground"
-                  >
-                    Max price
-                  </Label>
-                  <Input
-                    id="products-max-price"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={maxPriceDraft}
-                    onChange={(e) => setMaxPriceDraft(e.target.value)}
-                    placeholder="0.00"
-                    className="h-8 w-28 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label
-                    htmlFor="products-category-id"
-                    className="text-xs text-muted-foreground"
-                  >
-                    Category
-                  </Label>
-                  <select
-                    id="products-category-id"
-                    value={categoryIdDraft}
-                    onChange={(e) => setCategoryIdDraft(e.target.value)}
-                    className="h-8 rounded-md border border-input bg-background px-2.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  >
-                    <option value="">All categories</option>
-                    {(categories ?? []).map((cat) => (
-                      <option key={cat.id} value={String(cat.id)}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Button type="submit" size="sm" variant="secondary" className="h-8">
-                  Apply price & category
-                </Button>
-              </form>
-            </div>
-          ) : null}
-        </div>
+              <div className="space-y-1">
+                <Label htmlFor="products-min-price" className="text-xs text-muted-foreground">
+                  Min price
+                </Label>
+                <Input
+                  id="products-min-price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={minPriceDraft}
+                  onChange={(e) => setMinPriceDraft(e.target.value)}
+                  placeholder="0.00"
+                  className="h-8 w-28 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="products-max-price" className="text-xs text-muted-foreground">
+                  Max price
+                </Label>
+                <Input
+                  id="products-max-price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={maxPriceDraft}
+                  onChange={(e) => setMaxPriceDraft(e.target.value)}
+                  placeholder="0.00"
+                  className="h-8 w-28 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="products-category-id" className="text-xs text-muted-foreground">
+                  Category
+                </Label>
+                <select
+                  id="products-category-id"
+                  value={categoryIdDraft}
+                  onChange={(e) => setCategoryIdDraft(e.target.value)}
+                  className="h-8 rounded-md border border-input bg-background px-2.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">All categories</option>
+                  {(categories ?? []).map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button type="submit" size="sm" variant="secondary" className="h-8">
+                Apply price & category
+              </Button>
+            </form>
+          </div>
+        ) : null}
 
         {/* Active Filter Chips */}
         {hasActiveProductListFilters(filters) ? (
