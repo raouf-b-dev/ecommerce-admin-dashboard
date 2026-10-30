@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { ArrowLeft, ArrowUpDown, Clock, Layers, ShieldAlert } from 'lucide-react';
+import { ArrowUpDown, Clock, Layers, ShieldAlert } from 'lucide-react';
+import { PageBreadcrumbs } from '@/components/layout/page-breadcrumbs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -99,15 +100,12 @@ function InventoryDetailPage() {
   if (detailQuery.data == null) {
     return (
       <div className="space-y-6">
-        <div>
-          <Link
-            to="/inventory"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to inventory
-          </Link>
-        </div>
+        <PageBreadcrumbs
+          items={[
+            { label: 'Inventory', to: '/inventory' },
+            { label: `Product #${productId}` },
+          ]}
+        />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -140,17 +138,13 @@ function InventoryDetailPage() {
 
   return (
     <div className="space-y-6">
-      {/* Navigation & Header */}
       <div className="space-y-4">
-        <div>
-          <Link
-            to="/inventory"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to inventory
-          </Link>
-        </div>
+        <PageBreadcrumbs
+          items={[
+            { label: 'Inventory', to: '/inventory' },
+            { label: item.productTitle },
+          ]}
+        />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">

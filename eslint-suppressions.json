@@ -59,11 +59,6 @@
       "count": 1
     }
   },
-  "src/features/users/pages/__tests__/users-ui.spec.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 9
-    }
-  },
   "src/features/users/pages/users-page.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1

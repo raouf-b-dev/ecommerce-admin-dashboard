@@ -100,6 +100,10 @@ function OrderDetailPage() {
       <PageHeader
         title={order.orderNumber}
         description={`${formatOptionalText(order.userName)} · ${formatOptionalText(order.userEmail)}`}
+        breadcrumbs={[
+          { label: 'Orders', to: '/orders' },
+          { label: order.orderNumber },
+        ]}
       >
         <Button asChild variant="outline">
           <Link to="/orders">Back to list</Link>

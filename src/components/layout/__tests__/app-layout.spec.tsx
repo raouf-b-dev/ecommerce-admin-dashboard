@@ -56,14 +56,14 @@ describe('AppLayout', () => {
     const { container } = renderLayout();
 
     const grid = container.firstElementChild;
-    expect(grid).toHaveClass('grid', 'grid-cols-1', 'xl:grid-cols-[260px_1fr]');
+    expect(grid).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-[260px_1fr]');
   });
 
   it('hides the fixed sidebar below desktop width so off-canvas nav is used', () => {
     renderLayout();
 
     const sidebar = screen.getByRole('complementary');
-    expect(sidebar).toHaveClass('hidden', 'xl:flex');
+    expect(sidebar).toHaveClass('hidden', 'lg:flex');
   });
 
   it('applies min-w-0 to the content container to contain wide child scrolling', () => {
@@ -81,6 +81,6 @@ describe('AppLayout', () => {
       name: 'Open navigation menu',
     });
     expect(mobileMenuButton).toBeInTheDocument();
-    expect(mobileMenuButton).toHaveClass('xl:hidden');
+    expect(mobileMenuButton).toHaveClass('lg:hidden');
   });
 });

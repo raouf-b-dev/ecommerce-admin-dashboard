@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { PageBreadcrumbs } from '@/components/layout/page-breadcrumbs';
 import { ProductThumbnail } from '@/components/media/product-thumbnail';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -141,17 +141,13 @@ function ProductEditPage() {
 
   return (
     <div className="space-y-6">
-      {/* Navigation & Header */}
       <div className="space-y-4">
-        <div>
-          <Link
-            to="/products"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to products
-          </Link>
-        </div>
+        <PageBreadcrumbs
+          items={[
+            { label: 'Products', to: '/products' },
+            { label: product.name || 'Edit product' },
+          ]}
+        />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { ArrowLeft, Check, Copy, Plus } from 'lucide-react';
+import { Check, Copy, Plus } from 'lucide-react';
+import { PageBreadcrumbs } from '@/components/layout/page-breadcrumbs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +17,7 @@ import {
   UserEditForm,
   toUpdateUserDto,
 } from '@/features/users/components/user-edit-form';
+import { UserOrderHistory } from '@/features/users/components/user-order-history';
 import { UserStatusActions } from '@/features/users/components/user-status-actions';
 import { UserRoleActions } from '@/features/users/components/user-role-actions';
 import { UserAddressForm } from '@/features/users/components/user-address-form';
@@ -143,17 +145,13 @@ function UserDetailPage() {
 
   return (
     <div className="space-y-6">
-      {/* Navigation & Header */}
       <div className="space-y-4">
-        <div>
-          <Link
-            to="/users"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to users
-          </Link>
-        </div>
+        <PageBreadcrumbs
+          items={[
+            { label: 'Users', to: '/users' },
+            { label: userDisplayName(user) },
+          ]}
+        />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3.5">
@@ -208,11 +206,8 @@ function UserDetailPage() {
         </div>
       </div>
 
-      {/* 2-Column Responsive Dashboard Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Main Column (2/3) */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Profile Card */}
           <Card>
             <CardHeader>
               <CardTitle as="h2" className="text-xl">Profile details</CardTitle>
@@ -346,11 +341,11 @@ function UserDetailPage() {
               ) : null}
             </CardContent>
           </Card>
+
+          {canViewOrders ? <UserOrderHistory userId={user.id} /> : null}
         </div>
 
-        {/* Sidebar Column (1/3) */}
         <div className="space-y-6">
-          {/* Account Overview Card */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Account overview</CardTitle>
