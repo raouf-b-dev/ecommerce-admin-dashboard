@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- User detail shows recent order history (last 5) with links to the order and to the orders list filtered by that user ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Shared `PageBreadcrumbs` on order, product, inventory, and user detail headers (replaces lone back links) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Per-route document titles from route `handle.title`, overridden by `PageHeader` (and access-denied screens) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+
+### Changed
+
+- Admin shell sidebar and mobile nav toggle switch at `lg` (was `xl`); lazy page and session loading use shared `QueryLoading` ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Login shows an Ecommerce Admin / Control Center brand block and a show/hide password control ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Revenue chart notes when the trailing day or week bucket is still in progress (UTC) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Status badges use theme tint / positive / negative tokens with slightly larger type for contrast ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Generated API client synced with API v0.13: hosted demo reset path, customer PII masking and cancel/payment permission docs, change-password and list-filter 403s; mock cancel for a missing order returns 422 to match the API ([#159](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/159)).
+
+### Fixed
+
+- Orders and categories tables scroll horizontally on narrow viewports through a labeled, focusable region; orders keep a fluid desktop layout ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Controlled dialogs restore focus to the last outside element on close (survives Strict Mode remounts) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Access-denied page layout aligns with other page headers (drops centered `mx-auto` wrapper) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Categories table: nowrap name, truncated description, and readable slug type ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Products advanced filters stay in normal page flow (not an absolute overlay) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+
 ## [0.8.0] - 2026-10-28
 
 Works with ecommerce-store-api v0.10.0 or later. The generated client matches API v0.11.0 (unchanged since 0.7.0).
