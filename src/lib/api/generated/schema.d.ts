@@ -279,7 +279,7 @@ export interface paths {
         put?: never;
         /**
          * Create a payment for an order
-         * @description Charges the order total for an order the caller can see. The amount, currency, and owner come from the order. A caller who cannot see the order receives the same not-found result as a missing order.
+         * @description Charges the order total for an order the caller can see. Requires manage_payments (staff) or view_own_orders (the order owner). The amount, currency, and owner come from the order. A caller who cannot see the order receives the same not-found result as a missing order.
          */
         post: operations["OrdersController_createPayment_v1"];
         delete?: never;
@@ -380,7 +380,7 @@ export interface paths {
         head?: never;
         /**
          * Cancel an order
-         * @description Cancels an order and triggers compensation logic if needed.
+         * @description Cancels an order and triggers compensation logic if needed. Requires manage_orders (staff) or cancel_own_orders (the order owner). Callers without manage_orders may cancel only PENDING_PAYMENT, PAYMENT_FAILED, or CONFIRMED; manage_orders and system callers may also cancel PROCESSING. A caller who cannot mutate the order receives the same not-found result as a missing order.
          */
         patch: operations["OrdersController_cancelOrder_v1"];
         trace?: never;
@@ -1180,6 +1180,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/demo/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reconcile hosted demo data (ops)
+         * @description Demo and ops only. Not a shopper API and not accepted with a user JWT. Returns 404 when DEMO_RESET_ENABLED is false. Requires header X-Demo-Reset-Token. On success, re-runs the idempotent demo seed: restores the documented demo account passwords, upserts the catalog, and rebuilds demo SKU stock from fixture orders. Does not delete shopper-created accounts or orders. A second request while one reset is running returns 409.
+         */
+        post: operations["DemoController_reset_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1563,12 +1583,12 @@ export interface components {
              */
             userId: number;
             /**
-             * @description Customer display name. Null when the user join has no name.
+             * @description Customer display name. Null when the user join has no name. Without view_customer_pii (and not the order owner) this is the placeholder "Customer #<userId>".
              * @example Jane Doe
              */
             userName: string | null;
             /**
-             * @description Customer email. Null when the user join has no email.
+             * @description Customer email. Null when the user join has no email. Without view_customer_pii (and not the owner) this is a masked placeholder such as "j***@***.com".
              * @example customer@store.local
              */
             userEmail: string | null;
@@ -1643,7 +1663,7 @@ export interface components {
             subtotal: number;
             /**
              * @description Product image URL captured when the order was placed
-             * @example https://api.example.com/media/demo/v1/elec-anc-001.webp
+             * @example https://api.example.com/media/demo/v2/elec-anc-001.webp
              */
             imageUrl: string | null;
         };
@@ -1664,12 +1684,12 @@ export interface components {
              */
             userId: number;
             /**
-             * @description Customer display name. Null when user details are unavailable.
+             * @description Customer display name. Null when user details are unavailable. Without view_customer_pii (and not the order owner) this is the placeholder "Customer #<userId>".
              * @example Jane Doe
              */
             userName: string | null;
             /**
-             * @description Customer email. Null when user details are unavailable.
+             * @description Customer email. Null when user details are unavailable. Without view_customer_pii (and not the owner) this is a masked placeholder such as "j***@***.com".
              * @example customer@store.local
              */
             userEmail: string | null;
@@ -1686,7 +1706,7 @@ export interface components {
              */
             paymentMethod: "CARD";
             /**
-             * @description Formatted shipping address. Null when the order has no shipping address.
+             * @description Formatted shipping address (recipient name, street, phone). Null when the order has no shipping address, and always null without view_customer_pii unless the caller owns the order.
              * @example Jane Doe, 123 Tech Boulevard, San Francisco, CA 94105, US
              */
             shippingAddress: string | null;
@@ -1835,9 +1855,15 @@ export interface components {
             orderId: number;
             /** @example 3 */
             userId: number;
-            /** @example Jane Doe */
+            /**
+             * @description Customer display name. Without view_customer_pii (and not the payment owner) this is the placeholder 'Customer #<userId>'.
+             * @example Jane Doe
+             */
             userName: string;
-            /** @example customer@store.local */
+            /**
+             * @description Customer email. Without view_customer_pii (and not the owner) this is a masked placeholder such as 'j***@***.com'.
+             * @example customer@store.local
+             */
             userEmail: string;
             /**
              * @description Payment amount as a major-unit decimal
@@ -1889,12 +1915,12 @@ export interface components {
              */
             userId: number;
             /**
-             * @description Customer display name
+             * @description Customer display name. Without view_customer_pii (and not the payment owner) this is the placeholder "Customer #<userId>".
              * @example Jane Doe
              */
             userName: string;
             /**
-             * @description Customer email
+             * @description Customer email. Without view_customer_pii (and not the owner) this is a masked placeholder such as "j***@***.com".
              * @example customer@store.local
              */
             userEmail: string;
@@ -3780,6 +3806,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Filtering by userEmail, userName, firstName, or lastName requires view_customer_pii. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     OrdersController_findOne_v1: {
@@ -4016,8 +4049,15 @@ export interface operations {
                     "application/json": components["schemas"]["OrderMutationResponseDto"];
                 };
             };
-            /** @description Order not found. */
-            404: {
+            /** @description Unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authenticated caller lacks manage_orders and cancel_own_orders. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4025,6 +4065,13 @@ export interface operations {
             };
             /** @description Order cannot be cancelled in current state. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Order not found (missing id or inaccessible; same body as GET order). */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4065,6 +4112,13 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PaginatedPaymentListResponseDto"];
                 };
+            };
+            /** @description Filtering by userEmail or userName requires view_customer_pii. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -4320,6 +4374,13 @@ export interface operations {
         responses: {
             /** @description Successfully logged out all sessions (no response body). Clears the refresh cookie. */
             204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Caller lacks change_own_credentials (for example the shared read-only demo admin) */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5378,6 +5439,64 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["InventoryAlertsResponseDto"];
                 };
+            };
+        };
+    };
+    DemoController_reset_v1: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Shared secret for the hosted-demo reset cron. Generate a high-entropy value on the host. Never commit the real token. */
+                "X-Demo-Reset-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Demo seed reconciled. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 7 */
+                        categories?: number;
+                        /** @example 29 */
+                        products?: number;
+                        /** @example 29 */
+                        inventorySkus?: number;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found (reset disabled). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description A reset is already running. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many reset attempts. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
