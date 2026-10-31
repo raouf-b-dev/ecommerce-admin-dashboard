@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Controlled dialogs restore focus to the last outside element on close (survives Strict Mode remounts) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Access-denied page layout aligns with other page headers (drops centered `mx-auto` wrapper) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Categories table: nowrap name, truncated description, and readable slug type ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
-- Products advanced filters stay in normal page flow (not an absolute overlay) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 
 ## [0.8.0] - 2026-10-28
 
