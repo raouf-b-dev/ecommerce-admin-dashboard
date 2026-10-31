@@ -40,9 +40,11 @@ function toListItem(order: OrderDetailResponseDto): OrderListItemResponseDto {
 function transitionOrder(orderId: number, action: string) {
   const order = getMockStore().orders.find((item) => item.id === orderId);
   if (!order) {
+    // The API answers a missing (or inaccessible) order on cancel with 422.
+    const status = action === 'cancel' ? 422 : 404;
     return HttpResponse.json(
-      { message: 'Order not found', statusCode: 404 },
-      { status: 404 },
+      { message: 'Order not found', statusCode: status },
+      { status },
     );
   }
 
