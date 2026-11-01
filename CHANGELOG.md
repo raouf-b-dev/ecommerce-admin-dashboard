@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Regenerated OpenAPI client so typed error `code` includes documented `ErrorCode` values (resource NOT_FOUND and SCREAMING auth codes).
 - Generated API client synced with the API shared error contract (`ErrorResponseDto` with `code`, path 404 `*_NOT_FOUND`); MSW cancel and resource not-found bodies match (cancel missing order is 404 `ORDER_NOT_FOUND`, not 422).
 - Admin shell sidebar and mobile nav toggle switch at `lg` (was `xl`); lazy page and session loading use shared `QueryLoading` ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Login shows an Ecommerce Admin / Control Center brand block and a show/hide password control ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
