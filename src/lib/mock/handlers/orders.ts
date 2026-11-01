@@ -5,6 +5,7 @@ import type {
   OrderListItemResponseDto,
   OrderMutationResponseDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalNumber,
@@ -40,12 +41,8 @@ function toListItem(order: OrderDetailResponseDto): OrderListItemResponseDto {
 function transitionOrder(orderId: number, action: string) {
   const order = getMockStore().orders.find((item) => item.id === orderId);
   if (!order) {
-    // The API answers a missing (or inaccessible) order on cancel with 422.
-    const status = action === 'cancel' ? 422 : 404;
-    return HttpResponse.json(
-      { message: 'Order not found', statusCode: status },
-      { status },
-    );
+    // Missing (or inaccessible) order: same 404 ORDER_NOT_FOUND as GET.
+    return apiErrorResponse(404, 'ORDER_NOT_FOUND', 'Order not found');
   }
 
   const nextStatus = TRANSITIONS[action];
@@ -153,10 +150,7 @@ export const ordersHandlers = [
     const id = Number(params.id);
     const order = getMockStore().orders.find((item) => item.id === id);
     if (!order) {
-      return HttpResponse.json(
-        { message: 'Order not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ORDER_NOT_FOUND', 'Order not found');
     }
     return HttpResponse.json(order);
   }),

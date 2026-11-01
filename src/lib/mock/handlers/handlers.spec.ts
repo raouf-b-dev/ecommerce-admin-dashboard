@@ -137,6 +137,48 @@ describe('admin mock handlers', () => {
       });
 
       expect(response.status).toBe(401);
+      const body: unknown = await response.json();
+      expect(body).toMatchObject({
+        success: false,
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+      });
+    });
+  });
+
+  describe('PATCH /v1/orders/:id/cancel', () => {
+    it('returns 404 ORDER_NOT_FOUND for a missing order', async () => {
+      const response = await fetch(`${API}/v1/orders/999999/cancel`, {
+        method: 'PATCH',
+      });
+
+      expect(response.status).toBe(404);
+      const body: unknown = await response.json();
+      expect(body).toMatchObject({
+        success: false,
+        statusCode: 404,
+        code: 'ORDER_NOT_FOUND',
+      });
+      expect(body).toEqual(
+        expect.objectContaining({
+          timestamp: expect.any(String),
+          message: expect.any(String),
+        }),
+      );
+    });
+  });
+
+  describe('GET /v1/products/:id', () => {
+    it('returns 404 PRODUCT_NOT_FOUND for a missing product', async () => {
+      const response = await fetch(`${API}/v1/products/999999`);
+
+      expect(response.status).toBe(404);
+      const body: unknown = await response.json();
+      expect(body).toMatchObject({
+        success: false,
+        statusCode: 404,
+        code: 'PRODUCT_NOT_FOUND',
+      });
     });
   });
 

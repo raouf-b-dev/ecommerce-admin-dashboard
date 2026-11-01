@@ -6,6 +6,7 @@ import type {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 
 function slugify(name: string): string {
   return name
@@ -19,10 +20,7 @@ function conflict(message: string) {
 }
 
 function notFound() {
-  return HttpResponse.json(
-    { message: 'Category not found', statusCode: 404 },
-    { status: 404 },
-  );
+  return apiErrorResponse(404, 'CATEGORY_NOT_FOUND', 'Category not found');
 }
 
 function toResponse(category: SeedCategory): CategoryResponseDto {

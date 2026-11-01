@@ -17,6 +17,7 @@ import {
   setMockSessionActive,
 } from '@/lib/mock/data/store';
 import type { ChangePasswordDto, LoginDto } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import { createMockJwt } from '@/lib/mock/lib/jwt';
 
 function adminTokensBody() {
@@ -73,9 +74,10 @@ export const authHandlers = [
         body.email !== DEMO_ADMIN_EMAIL ||
         body.password !== DEMO_ADMIN_PASSWORD
       ) {
-        return HttpResponse.json(
-          { message: 'Invalid credentials', statusCode: 401 },
-          { status: 401 },
+        return apiErrorResponse(
+          401,
+          'UNAUTHORIZED',
+          'Invalid credentials',
         );
       }
 
