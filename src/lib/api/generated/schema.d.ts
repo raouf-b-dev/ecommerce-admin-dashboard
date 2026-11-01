@@ -1414,7 +1414,10 @@ export interface components {
             statusCode: number;
             /** @example Order with id 42 not found */
             message: string;
-            /** @example ORDER_NOT_FOUND */
+            /**
+             * @description Stable machine-readable code. Common values include "ORDER_NOT_FOUND", "PAYMENT_NOT_FOUND", "UNAUTHORIZED", "FORBIDDEN". Not exhaustive: other SCREAMING_CASE codes also appear (for example MUST_CHANGE_PASSWORD, PAYLOAD_TOO_LARGE, METHOD_NOT_ALLOWED).
+             * @example ORDER_NOT_FOUND
+             */
             code: string;
             /** @example 2026-11-01T12:00:00.000Z */
             timestamp: string;
