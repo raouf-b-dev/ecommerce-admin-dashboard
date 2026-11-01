@@ -8,6 +8,7 @@ import type {
   UpdateUserDto,
   UserDetailResponseDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalBoolean,
@@ -60,10 +61,7 @@ export const usersHandlers = [
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
     return HttpResponse.json(user);
   }),
@@ -72,10 +70,7 @@ export const usersHandlers = [
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const body = await request.json();
@@ -87,10 +82,7 @@ export const usersHandlers = [
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
     user.isActive = true;
     user.updatedAt = isoNow();
@@ -101,10 +93,7 @@ export const usersHandlers = [
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
     user.isActive = false;
     user.updatedAt = isoNow();
@@ -115,19 +104,13 @@ export const usersHandlers = [
     const id = Number(params.id);
     const user = getMockStore().users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const body = await request.json();
     const role = getMockStore().roles.find((item) => item.code === body.roleCode);
     if (!role) {
-      return HttpResponse.json(
-        { message: 'Role not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ROLE_NOT_FOUND', 'Role not found');
     }
 
     user.roleCode = body.roleCode;
@@ -140,10 +123,7 @@ export const usersHandlers = [
     const store = getMockStore();
     const user = store.users.find((item) => item.id === id);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const body = await request.json();
@@ -186,18 +166,12 @@ export const usersHandlers = [
     const addressId = Number(params.addressId);
     const user = getMockStore().users.find((item) => item.id === userId);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const address = user.addresses.find((item) => item.id === addressId);
     if (!address) {
-      return HttpResponse.json(
-        { message: 'Address not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ADDRESS_NOT_FOUND', 'Address not found');
     }
 
     const body = await request.json();
@@ -211,18 +185,12 @@ export const usersHandlers = [
     const addressId = Number(params.addressId);
     const user = getMockStore().users.find((item) => item.id === userId);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const index = user.addresses.findIndex((item) => item.id === addressId);
     if (index < 0) {
-      return HttpResponse.json(
-        { message: 'Address not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ADDRESS_NOT_FOUND', 'Address not found');
     }
 
     const [removed] = user.addresses.splice(index, 1);
@@ -239,18 +207,12 @@ export const usersHandlers = [
     const addressId = Number(params.addressId);
     const user = getMockStore().users.find((item) => item.id === userId);
     if (!user) {
-      return HttpResponse.json(
-        { message: 'User not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'USER_NOT_FOUND', 'User not found');
     }
 
     const address = user.addresses.find((item) => item.id === addressId);
     if (!address) {
-      return HttpResponse.json(
-        { message: 'Address not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ADDRESS_NOT_FOUND', 'Address not found');
     }
 
     for (const item of user.addresses) {

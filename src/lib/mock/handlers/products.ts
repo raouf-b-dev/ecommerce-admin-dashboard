@@ -7,6 +7,7 @@ import type {
   ProductResponseDto,
   UpdateProductDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalBoolean,
@@ -167,10 +168,7 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     return HttpResponse.json(product);
   }),
@@ -237,10 +235,7 @@ export const productsHandlers = [
       const store = getMockStore();
       const product = store.products.find((item) => item.id === id);
       if (!product) {
-        return HttpResponse.json(
-          { message: 'Product not found', statusCode: 404 },
-          { status: 404 },
-        );
+        return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
       }
 
       const body = await request.json();
@@ -293,10 +288,7 @@ export const productsHandlers = [
     const store = getMockStore();
     const index = store.products.findIndex((item) => item.id === id);
     if (index < 0) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     store.products.splice(index, 1);
     store.inventory = store.inventory.filter((row) => row.productId !== id);
@@ -307,10 +299,7 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     if (product.categoryId == null) {
       return HttpResponse.json(
@@ -330,10 +319,7 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     product.isActive = false;
     product.updatedAt = isoNow();
