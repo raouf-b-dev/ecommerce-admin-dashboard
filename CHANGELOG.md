@@ -15,16 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Regenerated OpenAPI client so typed error `code` includes documented `ErrorCode` values (resource NOT_FOUND and SCREAMING auth codes).
-- Generated API client synced with the API shared error contract (`ErrorResponseDto` with `code`, path 404 `*_NOT_FOUND`); MSW cancel and resource not-found bodies match (cancel missing order is 404 `ORDER_NOT_FOUND`, not 422).
+- Regenerated OpenAPI client: the error `code` field is a string with documented common values (not an exhaustive list); synced with the API shared error contract (`ErrorResponseDto` with `code`, path 404 `*_NOT_FOUND`); MSW cancel and resource not-found bodies match (cancel missing order is 404 `ORDER_NOT_FOUND`, not 422).
 - Admin shell sidebar and mobile nav toggle switch at `lg` (was `xl`); lazy page and session loading use shared `QueryLoading` ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Login shows an Ecommerce Admin / Control Center brand block and a show/hide password control ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Revenue chart notes when the trailing day or week bucket is still in progress (UTC) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Status badges use theme tint / positive / negative tokens with slightly larger type for contrast ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
-- Generated API client synced with API v0.13: hosted demo reset path, customer PII masking and cancel/payment permission docs, change-password and list-filter 403s; mock cancel for a missing order returns 422 to match the API ([#159](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/159)).
+- Generated API client synced with API v0.13: hosted demo reset path, customer PII masking and cancel/payment permission docs, change-password and list-filter 403s ([#159](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/159)).
 
 ### Fixed
 
+- Users with the change-own-credentials permission can change their password from the account menu, product prices follow the currency's decimal places, and Roles and Permissions shows only to users who can manage roles.
 - Orders and categories tables scroll horizontally on narrow viewports through a labeled, focusable region; orders keep a fluid desktop layout ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Controlled dialogs restore focus to the last outside element on close (survives Strict Mode remounts) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Access-denied page layout aligns with other page headers (drops centered `mx-auto` wrapper) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
