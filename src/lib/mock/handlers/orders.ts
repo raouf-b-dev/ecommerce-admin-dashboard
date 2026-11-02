@@ -56,7 +56,7 @@ function transitionOrder(orderId: number, action: string) {
   const body: OrderMutationResponseDto = {
     id: order.id,
     status: order.status,
-    totalPrice: order.totalPrice,
+    totalAmount: order.totalAmount,
     currency: order.currency,
     updatedAt: order.updatedAt,
   };
