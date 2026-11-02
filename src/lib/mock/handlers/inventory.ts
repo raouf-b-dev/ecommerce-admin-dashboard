@@ -4,6 +4,7 @@ import type {
   AdjustStockDto,
   InventoryStockResponseDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalBoolean,
@@ -115,10 +116,7 @@ export const inventoryHandlers = [
       const store = getMockStore();
       const row = store.inventory.find((item) => item.productId === productId);
       if (!row) {
-        return HttpResponse.json(
-          { message: 'Inventory not found', statusCode: 404 },
-          { status: 404 },
-        );
+        return apiErrorResponse(404, 'NOT_FOUND', 'Inventory not found');
       }
 
       const body = await request.json();

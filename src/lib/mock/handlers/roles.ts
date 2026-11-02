@@ -63,9 +63,10 @@ export const rolesHandlers = [
       return apiErrorResponse(404, 'ROLE_NOT_FOUND', 'Role not found');
     }
     if (role.isSystem) {
-      return HttpResponse.json(
-        { message: 'Cannot delete system role', statusCode: 400 },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'USECASE_ERROR',
+        'Cannot delete system role',
       );
     }
     store.roles = store.roles.filter((item) => item.id !== id);

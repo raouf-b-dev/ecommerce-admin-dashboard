@@ -108,13 +108,10 @@ function currencyExponent(currency: string): number {
 }
 
 function amountInvalidResponse() {
-  return HttpResponse.json(
-    {
-      message: 'Amount must be a non-negative decimal',
-      statusCode: 400,
-      code: 'AMOUNT_INVALID',
-    },
-    { status: 400 },
+  return apiErrorResponse(
+    400,
+    'AMOUNT_INVALID',
+    'Amount must be a non-negative decimal',
   );
 }
 
@@ -178,10 +175,7 @@ export const productsHandlers = [
     const store = getMockStore();
     const createdAt = isoNow();
     if (!body.currency?.trim()) {
-      return HttpResponse.json(
-        { message: 'Currency is required', statusCode: 400 },
-        { status: 400 },
-      );
+      return apiErrorResponse(400, 'VALIDATION_FAILED', 'Currency is required');
     }
 
     const currency = body.currency.trim().toUpperCase();
@@ -302,12 +296,10 @@ export const productsHandlers = [
       return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     if (product.categoryId == null) {
-      return HttpResponse.json(
-        {
-          message: 'Cannot activate a product without a category',
-          statusCode: 400,
-        },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'USECASE_ERROR',
+        'Cannot activate a product without a category',
       );
     }
     product.isActive = true;
