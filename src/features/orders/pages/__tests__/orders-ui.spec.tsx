@@ -51,7 +51,6 @@ const detailQueryMock = vi.hoisted(() =>
             subtotal: number;
           }[];
           totalAmount: number;
-          totalPrice: number;
           currency: string;
           createdAt: string;
           updatedAt: string;
@@ -197,7 +196,6 @@ describe('OrderDetailPage', () => {
           },
         ],
         totalAmount: 10,
-        totalPrice: 10,
         currency: 'USD',
         createdAt: '2025-01-01T00:00:00.000Z',
         updatedAt: '2025-01-01T00:00:00.000Z',
@@ -236,7 +234,6 @@ describe('OrderDetailPage', () => {
         shippingAddress: '123 Main',
         items: [],
         totalAmount: 10,
-        totalPrice: 10,
         currency: 'USD',
         createdAt: '2025-01-01T00:00:00.000Z',
         updatedAt: '2025-01-01T00:00:00.000Z',
@@ -283,7 +280,6 @@ describe('OrderDetailPage', () => {
           },
         ],
         totalAmount: 10,
-        totalPrice: 10,
         currency: 'USD',
         createdAt: '2025-01-01T00:00:00.000Z',
         updatedAt: '2025-01-01T00:00:00.000Z',

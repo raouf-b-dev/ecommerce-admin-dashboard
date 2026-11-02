@@ -1621,7 +1621,7 @@ export interface components {
              */
             itemCount: number;
             /**
-             * @description Order total amount
+             * @description Order total (major units).
              * @example 224.94
              */
             totalAmount: number;
@@ -1739,15 +1739,10 @@ export interface components {
              */
             shippingCost: number;
             /**
-             * @description Order total amount
+             * @description Order total (major units).
              * @example 224.94
              */
             totalAmount: number;
-            /**
-             * @description Order total price
-             * @example 224.94
-             */
-            totalPrice: number;
             /**
              * @description Currency code
              * @example USD
@@ -1846,10 +1841,10 @@ export interface components {
              */
             status: "pending_payment" | "payment_failed" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
             /**
-             * @description Order total price
+             * @description Order total (major units).
              * @example 224.94
              */
-            totalPrice: number;
+            totalAmount: number;
             /**
              * @description Currency code
              * @example USD
