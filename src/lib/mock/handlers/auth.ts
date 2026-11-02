@@ -88,7 +88,7 @@ export const authHandlers = [
 
   http.post('*/v1/authentication/refresh', () => {
     if (!isMockSessionActive()) {
-      return new HttpResponse(null, { status: 401 });
+      return apiErrorResponse(401, 'UNAUTHORIZED', 'Unauthorized');
     }
 
     return HttpResponse.json(getTokensForCurrentUser());
@@ -103,15 +103,16 @@ export const authHandlers = [
     '*/v1/authentication/change-password',
     async ({ request }) => {
       if (!isMockSessionActive()) {
-        return new HttpResponse(null, { status: 401 });
+        return apiErrorResponse(401, 'UNAUTHORIZED', 'Unauthorized');
       }
 
       const body = await request.json();
 
       if (!body.currentPassword || !body.newPassword) {
-        return HttpResponse.json(
-          { message: 'Invalid password change request', statusCode: 400 },
-          { status: 400 },
+        return apiErrorResponse(
+          400,
+          'VALIDATION_FAILED',
+          'Invalid password change request',
         );
       }
 

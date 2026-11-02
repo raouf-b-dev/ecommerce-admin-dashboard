@@ -16,7 +16,7 @@ function slugify(name: string): string {
 }
 
 function conflict(message: string) {
-  return HttpResponse.json({ message, statusCode: 409 }, { status: 409 });
+  return apiErrorResponse(409, 'USECASE_ERROR', message);
 }
 
 function notFound() {
@@ -133,9 +133,10 @@ export const categoriesHandlers = [
       return notFound();
     }
     if (category.isActive) {
-      return HttpResponse.json(
-        { message: 'Category is already active', statusCode: 400 },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'DOMAIN_ERROR',
+        'Category is already active',
       );
     }
     category.isActive = true;
@@ -149,9 +150,10 @@ export const categoriesHandlers = [
       return notFound();
     }
     if (!category.isActive) {
-      return HttpResponse.json(
-        { message: 'Category is already inactive', statusCode: 400 },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'DOMAIN_ERROR',
+        'Category is already inactive',
       );
     }
     category.isActive = false;

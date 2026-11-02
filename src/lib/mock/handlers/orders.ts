@@ -47,10 +47,7 @@ function transitionOrder(orderId: number, action: string) {
 
   const nextStatus = TRANSITIONS[action];
   if (!nextStatus) {
-    return HttpResponse.json(
-      { message: 'Unsupported transition', statusCode: 400 },
-      { status: 400 },
-    );
+    return apiErrorResponse(400, 'DOMAIN_ERROR', 'Unsupported transition');
   }
 
   order.status = nextStatus;
