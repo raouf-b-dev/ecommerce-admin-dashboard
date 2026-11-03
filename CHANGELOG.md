@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-03
+
+Works with ecommerce-store-api v0.14.0 or later. The generated client matches API v0.14.0.
+
 ### Added
 
 - User detail shows recent order history (last 5) with links to the order and to the orders list filtered by that user ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
@@ -15,9 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Order totals in the dashboard read the API's canonical totalAmount field.
-- Regenerated OpenAPI client: the error `code` field is a string with documented common values (not an exhaustive list); synced with the API shared error contract (`ErrorResponseDto` with `code`, path 404 `*_NOT_FOUND`); MSW cancel and resource not-found bodies match (cancel missing order is 404 `ORDER_NOT_FOUND`, not 422).
-- Admin shell sidebar and mobile nav toggle switch at `lg` (was `xl`); lazy page and session loading use shared `QueryLoading` ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
+- Order totals in the dashboard read the API's canonical totalAmount field ([#169](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/169)).
+- Regenerated OpenAPI client with error `code` documented as common string values instead of an enum. Synced with the API shared error contract (`ErrorResponseDto` with `code`, path 404 `*_NOT_FOUND`), and MSW cancel and resource not-found bodies match (cancel missing order is 404 `ORDER_NOT_FOUND`, not 422) ([#161](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/161), [#162](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/162)).
+- Admin shell sidebar and mobile nav toggle switch at `lg` (was `xl`). Lazy page and session loading use shared `QueryLoading` ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Login shows an Ecommerce Admin / Control Center brand block and a show/hide password control ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Revenue chart notes when the trailing day or week bucket is still in progress (UTC) ([#158](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/158)).
 - Status badges use theme tint / positive / negative tokens with slightly larger type for contrast ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
@@ -25,11 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Users with the change-own-credentials permission can change their password from the account menu, product prices follow the currency's decimal places, and Roles and Permissions shows only to users who can manage roles.
-- Orders and categories tables scroll horizontally on narrow viewports through a labeled, focusable region; orders keep a fluid desktop layout ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+- Users with the change-own-credentials permission can change their password from the account menu, product prices follow the currency's decimal places, and Roles and Permissions shows only to users who can manage roles ([#156](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/156)).
+- Orders and categories tables scroll horizontally on narrow viewports through a labeled, focusable region. Orders keep a fluid desktop layout ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Controlled dialogs restore focus to the last outside element on close (survives Strict Mode remounts) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Access-denied page layout aligns with other page headers (drops centered `mx-auto` wrapper) ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
 - Categories table: nowrap name, truncated description, and readable slug type ([#157](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/pull/157)).
+
+### Upgrade notes
+
+- Requires ecommerce-store-api 0.14.0 or later (404 `*_NOT_FOUND` codes, uppercase auth codes).
+
+[Compare v0.8.0...v0.9.0](https://github.com/raouf-b-dev/ecommerce-admin-dashboard/compare/v0.8.0...v0.9.0)
 
 ## [0.8.0] - 2026-10-28
 
