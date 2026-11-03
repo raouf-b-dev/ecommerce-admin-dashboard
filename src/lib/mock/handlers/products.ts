@@ -7,6 +7,7 @@ import type {
   ProductResponseDto,
   UpdateProductDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalBoolean,
@@ -14,6 +15,10 @@ import {
   parsePositiveInt,
   sortByKey,
 } from '@/lib/mock/lib/paginate-filter';
+
+/** Matches mock platform config (USD, exponent 2). */
+const MOCK_DEFAULT_CURRENCY = 'USD';
+const MOCK_DEFAULT_CURRENCY_EXPONENT = 2;
 
 function categoryNameForId(categoryId?: number | null): string | null {
   if (categoryId == null) return null;
@@ -59,11 +64,55 @@ function toResponse(product: ProductDetailResponseDto): ProductResponseDto {
   };
 }
 
-function slugify(name: string): string {
-  return name
+/** Mirrors API Product.generateSlug. */
+function slugify(value: string): string {
+  return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replace(/(^-|-$)+/g, '');
+}
+
+function normalizeSku(sku: string | undefined): string | undefined {
+  const trimmed = sku?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed.toUpperCase() : undefined;
+}
+
+/**
+ * Mirrors API minorUnitsFromDecimal for a JSON number: extra fraction digits
+ * are rejected when any are non-zero beyond the currency exponent.
+ */
+function isAmountInvalidForExponent(price: number, exponent: number): boolean {
+  if (!Number.isFinite(price) || price < 0) {
+    return true;
+  }
+
+  const text = String(price);
+  const dot = text.indexOf('.');
+  if (dot === -1) {
+    return false;
+  }
+
+  const fraction = text.slice(dot + 1);
+  if (fraction.length <= exponent) {
+    return false;
+  }
+
+  return /[1-9]/.test(fraction.slice(exponent));
+}
+
+function currencyExponent(currency: string): number {
+  if (currency.toUpperCase() === MOCK_DEFAULT_CURRENCY) {
+    return MOCK_DEFAULT_CURRENCY_EXPONENT;
+  }
+  return MOCK_DEFAULT_CURRENCY_EXPONENT;
+}
+
+function amountInvalidResponse() {
+  return apiErrorResponse(
+    400,
+    'AMOUNT_INVALID',
+    'Amount must be a non-negative decimal',
+  );
 }
 
 export const productsHandlers = [
@@ -116,10 +165,7 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     return HttpResponse.json(product);
   }),
@@ -129,18 +175,28 @@ export const productsHandlers = [
     const store = getMockStore();
     const createdAt = isoNow();
     if (!body.currency?.trim()) {
-      return HttpResponse.json(
-        { message: 'Currency is required', statusCode: 400 },
-        { status: 400 },
-      );
+      return apiErrorResponse(400, 'VALIDATION_FAILED', 'Currency is required');
     }
+
+    const currency = body.currency.trim().toUpperCase();
+    if (
+      isAmountInvalidForExponent(body.price, currencyExponent(currency))
+    ) {
+      return amountInvalidResponse();
+    }
+
+    const sku = normalizeSku(body.sku) ?? `SKU-${Date.now()}`;
+    const slug = body.slug?.trim()
+      ? slugify(body.slug)
+      : slugify(body.name);
+
     const product: ProductDetailResponseDto = {
       id: store.nextProductId++,
       name: body.name,
-      slug: body.slug?.trim() || slugify(body.name),
-      sku: body.sku?.trim() || `SKU-${Date.now()}`,
+      slug,
+      sku,
       price: body.price,
-      currency: body.currency.trim().toUpperCase(),
+      currency,
       imageUrl: body.imageUrl ?? null,
       categoryId: body.categoryId,
       categoryName: categoryNameForId(body.categoryId),
@@ -166,41 +222,67 @@ export const productsHandlers = [
     return HttpResponse.json(toResponse(product), { status: 201 });
   }),
 
-  http.patch<{ id: string }, UpdateProductDto>('*/v1/products/:id', async ({ params, request }) => {
-    const id = Number(params.id);
-    const store = getMockStore();
-    const product = store.products.find((item) => item.id === id);
-    if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
-    }
+  http.patch<{ id: string }, UpdateProductDto>(
+    '*/v1/products/:id',
+    async ({ params, request }) => {
+      const id = Number(params.id);
+      const store = getMockStore();
+      const product = store.products.find((item) => item.id === id);
+      if (!product) {
+        return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
+      }
 
-    const body = await request.json();
-    Object.assign(product, body, { updatedAt: isoNow() });
-    if (body.categoryId !== undefined) {
-      product.categoryName = categoryNameForId(body.categoryId);
-    }
-    const inventory = store.inventory.find((row) => row.productId === id);
-    if (inventory) {
-      inventory.productTitle = product.name;
-      inventory.sku = product.sku;
-      inventory.updatedAt = product.updatedAt;
-    }
+      const body = await request.json();
+      const nextCurrency = body.currency?.trim()
+        ? body.currency.trim().toUpperCase()
+        : product.currency;
+      const nextPrice = body.price ?? product.price;
 
-    return HttpResponse.json(toResponse(product));
-  }),
+      if (
+        isAmountInvalidForExponent(
+          nextPrice,
+          currencyExponent(nextCurrency),
+        )
+      ) {
+        return amountInvalidResponse();
+      }
+
+      Object.assign(product, body, {
+        updatedAt: isoNow(),
+        currency: nextCurrency,
+      });
+
+      if (body.slug !== undefined) {
+        product.slug = body.slug.trim()
+          ? slugify(body.slug)
+          : slugify(product.name);
+      }
+      if (body.sku !== undefined) {
+        const normalized = normalizeSku(body.sku);
+        if (normalized) {
+          product.sku = normalized;
+        }
+      }
+      if (body.categoryId !== undefined) {
+        product.categoryName = categoryNameForId(body.categoryId);
+      }
+      const inventory = store.inventory.find((row) => row.productId === id);
+      if (inventory) {
+        inventory.productTitle = product.name;
+        inventory.sku = product.sku;
+        inventory.updatedAt = product.updatedAt;
+      }
+
+      return HttpResponse.json(toResponse(product));
+    },
+  ),
 
   http.delete('*/v1/products/:id', ({ params }) => {
     const id = Number(params.id);
     const store = getMockStore();
     const index = store.products.findIndex((item) => item.id === id);
     if (index < 0) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     store.products.splice(index, 1);
     store.inventory = store.inventory.filter((row) => row.productId !== id);
@@ -211,18 +293,13 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     if (product.categoryId == null) {
-      return HttpResponse.json(
-        {
-          message: 'Cannot activate a product without a category',
-          statusCode: 400,
-        },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'USECASE_ERROR',
+        'Cannot activate a product without a category',
       );
     }
     product.isActive = true;
@@ -234,10 +311,7 @@ export const productsHandlers = [
     const id = Number(params.id);
     const product = getMockStore().products.find((item) => item.id === id);
     if (!product) {
-      return HttpResponse.json(
-        { message: 'Product not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'PRODUCT_NOT_FOUND', 'Product not found');
     }
     product.isActive = false;
     product.updatedAt = isoNow();

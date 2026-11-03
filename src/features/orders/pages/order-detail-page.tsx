@@ -100,6 +100,10 @@ function OrderDetailPage() {
       <PageHeader
         title={order.orderNumber}
         description={`${formatOptionalText(order.userName)} · ${formatOptionalText(order.userEmail)}`}
+        breadcrumbs={[
+          { label: 'Orders', to: '/orders' },
+          { label: order.orderNumber },
+        ]}
       >
         <Button asChild variant="outline">
           <Link to="/orders">Back to list</Link>
@@ -174,7 +178,7 @@ function OrderDetailPage() {
               <div className="flex items-center justify-between pt-1">
                 <span className="text-base font-semibold text-foreground">Order total</span>
                 <span className="text-2xl font-bold tracking-tight text-foreground">
-                  {formatMoney(order.totalPrice, order.currency)}
+                  {formatMoney(order.totalAmount, order.currency)}
                 </span>
               </div>
             </CardContent>

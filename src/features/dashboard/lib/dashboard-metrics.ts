@@ -38,3 +38,40 @@ export function formatPercent(value: number | null): string {
   }
   return `${Math.round(value * 10) / 10}%`;
 }
+
+/**
+ * True when `bucketStart` falls on the current UTC calendar day (or, for
+ * week buckets, the UTC week that contains "now"). Used to cue operators that
+ * the trailing chart point may still be incomplete.
+ */
+export function isPartialTrailingBucket(
+  bucketStart: string,
+  mode: 'day' | 'week',
+  now = new Date(),
+): boolean {
+  const start = new Date(bucketStart);
+  if (Number.isNaN(start.getTime())) {
+    return false;
+  }
+
+  if (mode === 'day') {
+    return (
+      start.getUTCFullYear() === now.getUTCFullYear() &&
+      start.getUTCMonth() === now.getUTCMonth() &&
+      start.getUTCDate() === now.getUTCDate()
+    );
+  }
+
+  const startMs = Date.UTC(
+    start.getUTCFullYear(),
+    start.getUTCMonth(),
+    start.getUTCDate(),
+  );
+  const nowMs = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+  );
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  return nowMs >= startMs && nowMs < startMs + weekMs;
+}

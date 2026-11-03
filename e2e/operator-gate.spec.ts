@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { signedInShell } from './helpers/auth';
 import { skipUnlessEnv } from './helpers/env';
 
 test('customer login is blocked from Control Center', async ({ page }) => {
@@ -11,7 +12,7 @@ test('customer login is blocked from Control Center', async ({ page }) => {
 
   await page.goto('/login');
   await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   const operatorDenied = page.getByText(
@@ -27,6 +28,6 @@ test('customer login is blocked from Control Center', async ({ page }) => {
   }
 
   await expect(operatorDenied).toBeVisible();
-  await expect(page.getByText('Control Center')).not.toBeVisible();
+  await expect(signedInShell(page)).not.toBeVisible();
   await expect(page).toHaveURL(/\/login/);
 });

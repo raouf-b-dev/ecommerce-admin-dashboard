@@ -13,7 +13,7 @@ export function ForbiddenPage() {
     safeLandingRoute === '/' ? 'Back to dashboard' : 'Back to home';
 
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="max-w-lg space-y-4">
       <PageHeader
         title="Access denied"
         description="You do not have permission to view this page. Contact an administrator if you believe this is an error."

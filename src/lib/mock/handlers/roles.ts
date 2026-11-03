@@ -5,6 +5,7 @@ import type {
   RoleResponseDto,
   UpdateRoleDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 
 export const rolesHandlers = [
   http.get('*/v1/roles', () => {
@@ -15,10 +16,7 @@ export const rolesHandlers = [
     const id = Number(params.id);
     const role = getMockStore().roles.find((item) => item.id === id);
     if (!role) {
-      return HttpResponse.json(
-        { message: 'Role not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ROLE_NOT_FOUND', 'Role not found');
     }
     return HttpResponse.json(role);
   }),
@@ -46,10 +44,7 @@ export const rolesHandlers = [
       const id = Number(params.id);
       const role = getMockStore().roles.find((item) => item.id === id);
       if (!role) {
-        return HttpResponse.json(
-          { message: 'Role not found', statusCode: 404 },
-          { status: 404 },
-        );
+        return apiErrorResponse(404, 'ROLE_NOT_FOUND', 'Role not found');
       }
 
       const body = await request.json();
@@ -65,15 +60,13 @@ export const rolesHandlers = [
     const store = getMockStore();
     const role = store.roles.find((item) => item.id === id);
     if (!role) {
-      return HttpResponse.json(
-        { message: 'Role not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ROLE_NOT_FOUND', 'Role not found');
     }
     if (role.isSystem) {
-      return HttpResponse.json(
-        { message: 'Cannot delete system role', statusCode: 400 },
-        { status: 400 },
+      return apiErrorResponse(
+        400,
+        'USECASE_ERROR',
+        'Cannot delete system role',
       );
     }
     store.roles = store.roles.filter((item) => item.id !== id);

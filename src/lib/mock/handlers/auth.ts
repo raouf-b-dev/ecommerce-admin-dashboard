@@ -17,6 +17,7 @@ import {
   setMockSessionActive,
 } from '@/lib/mock/data/store';
 import type { ChangePasswordDto, LoginDto } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import { createMockJwt } from '@/lib/mock/lib/jwt';
 
 function adminTokensBody() {
@@ -73,9 +74,10 @@ export const authHandlers = [
         body.email !== DEMO_ADMIN_EMAIL ||
         body.password !== DEMO_ADMIN_PASSWORD
       ) {
-        return HttpResponse.json(
-          { message: 'Invalid credentials', statusCode: 401 },
-          { status: 401 },
+        return apiErrorResponse(
+          401,
+          'UNAUTHORIZED',
+          'Invalid credentials',
         );
       }
 
@@ -86,7 +88,7 @@ export const authHandlers = [
 
   http.post('*/v1/authentication/refresh', () => {
     if (!isMockSessionActive()) {
-      return new HttpResponse(null, { status: 401 });
+      return apiErrorResponse(401, 'UNAUTHORIZED', 'Unauthorized');
     }
 
     return HttpResponse.json(getTokensForCurrentUser());
@@ -101,15 +103,16 @@ export const authHandlers = [
     '*/v1/authentication/change-password',
     async ({ request }) => {
       if (!isMockSessionActive()) {
-        return new HttpResponse(null, { status: 401 });
+        return apiErrorResponse(401, 'UNAUTHORIZED', 'Unauthorized');
       }
 
       const body = await request.json();
 
       if (!body.currentPassword || !body.newPassword) {
-        return HttpResponse.json(
-          { message: 'Invalid password change request', statusCode: 400 },
-          { status: 400 },
+        return apiErrorResponse(
+          400,
+          'VALIDATION_FAILED',
+          'Invalid password change request',
         );
       }
 

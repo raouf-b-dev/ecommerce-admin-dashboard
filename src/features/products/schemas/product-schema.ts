@@ -5,7 +5,38 @@ import type {
   UpdateProductDto,
 } from '@/features/products/types';
 
-export const createProductSchema = z.object({
+export type ProductPriceScaleOptions = {
+  defaultCurrency?: string;
+  defaultCurrencyExponent?: number;
+};
+
+/**
+ * Mirrors API Money.fromDecimal scale rules for the store default currency only.
+ * Extra fraction digits are allowed when they are trailing zeros.
+ */
+export function priceFitsCurrencyExponent(
+  price: string,
+  exponent: number,
+): boolean {
+  const text = price.trim();
+  if (!Number.isFinite(Number(text))) {
+    return false;
+  }
+
+  const dot = text.indexOf('.');
+  if (dot === -1) {
+    return true;
+  }
+
+  const fraction = text.slice(dot + 1);
+  if (fraction.length <= exponent) {
+    return true;
+  }
+
+  return !/[1-9]/.test(fraction.slice(exponent));
+}
+
+const productFormFieldsSchema = z.object({
   name: z.string().trim().min(1, 'Name is required'),
   price: z
     .string()
@@ -40,8 +71,38 @@ export const createProductSchema = z.object({
     }, 'Category is required'),
 });
 
+/** Base fields without currency-scale refine (tests and DTO helpers). */
+export const createProductSchema = productFormFieldsSchema;
+
 /** Edit uses the same full-form schema (name + price required with loaded defaults). */
-export type ProductFormValues = z.infer<typeof createProductSchema>;
+export type ProductFormValues = z.infer<typeof productFormFieldsSchema>;
+
+export function createProductFormSchema(options?: ProductPriceScaleOptions) {
+  const defaultCurrency = options?.defaultCurrency?.trim().toUpperCase();
+  const defaultCurrencyExponent = options?.defaultCurrencyExponent;
+
+  return productFormFieldsSchema.superRefine((data, ctx) => {
+    if (
+      defaultCurrency === undefined ||
+      defaultCurrency === '' ||
+      defaultCurrencyExponent === undefined
+    ) {
+      return;
+    }
+
+    if (data.currency.trim().toUpperCase() !== defaultCurrency) {
+      return;
+    }
+
+    if (!priceFitsCurrencyExponent(data.price, defaultCurrencyExponent)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['price'],
+        message: `Price can have at most ${defaultCurrencyExponent} decimal places for ${defaultCurrency}`,
+      });
+    }
+  });
+}
 
 export type ProductSubmitValues = {
   name: string;

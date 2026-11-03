@@ -91,6 +91,11 @@ export function isOptimisticLockConflict(error: unknown): boolean {
   return readErrorCode(error) === 'OPTIMISTIC_LOCK_CONFLICT';
 }
 
+/** API code when a money amount has too many non-zero fractional digits. */
+export function isAmountInvalidError(error: unknown): boolean {
+  return readErrorCode(error) === 'AMOUNT_INVALID';
+}
+
 /**
  * Safely extracts the HTTP status code from any error shape
  * (ApiRequestError, AuthRequestError, Response-like objects, or generic error objects).

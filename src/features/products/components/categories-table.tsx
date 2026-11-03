@@ -93,8 +93,8 @@ export function CategoriesTable() {
         </div>
       ) : null}
       <ActionErrorAlert message={actionError} />
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-hidden rounded-md border">
+        <Table className="min-w-[48rem]" scrollRegionLabel="Categories">
           <TableHeader>
             <TableRow>
               <TableHead>Category</TableHead>
@@ -121,27 +121,31 @@ export function CategoriesTable() {
               categories.map((category) => (
                 <TableRow key={category.id}>
                   <TableCell>
-                    <span className="font-medium text-foreground">
+                    <span className="whitespace-nowrap font-medium text-foreground">
                       {category.name}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-muted-foreground">
+                    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-muted-foreground">
                       {formatOptionalText(category.slug)}
                     </code>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="max-w-[16rem] truncate text-muted-foreground">
                     {formatOptionalText(category.description)}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {category.productCount}
                   </TableCell>
                   <TableCell>
-                    <StatusBadge variant="product" isActive={category.isActive} />
+                    <StatusBadge
+                      className="shrink-0 whitespace-nowrap"
+                      variant="product"
+                      isActive={category.isActive}
+                    />
                   </TableCell>
                   {canManage ? (
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex flex-wrap justify-end gap-2">
                         <Button
                           type="button"
                           variant="outline"

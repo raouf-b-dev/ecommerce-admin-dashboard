@@ -188,4 +188,63 @@ describe('ProductForm', () => {
       ),
     ).not.toBeInTheDocument();
   });
+
+  it('blocks submit when default-currency price exceeds exponent', async () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <ProductForm
+        mode="create"
+        submitLabel="Create product"
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Name'), {
+      target: { value: 'Laptop' },
+    });
+    fireEvent.change(screen.getByLabelText('Price'), {
+      target: { value: '49.999' },
+    });
+    fireEvent.change(screen.getByLabelText('Category'), {
+      target: { value: '2' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Create product' }));
+
+    expect(
+      await screen.findByText(/Price can have at most 2 decimal places/i),
+    ).toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('maps AMOUNT_INVALID onto the price field by code', async () => {
+    const onSubmit = vi.fn().mockRejectedValue(
+      new ApiRequestError({
+        statusCode: 400,
+        message: 'Amount must be a non-negative decimal',
+        code: 'AMOUNT_INVALID',
+      }),
+    );
+
+    render(
+      <ProductForm
+        mode="edit"
+        submitLabel="Save changes"
+        defaultValues={{
+          name: 'Laptop',
+          price: '10',
+          currency: 'EUR',
+          categoryId: '1',
+        }}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(
+      await screen.findByText('Amount must be a non-negative decimal'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Could not save product')).not.toBeInTheDocument();
+  });
 });

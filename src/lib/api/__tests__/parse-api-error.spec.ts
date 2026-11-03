@@ -5,6 +5,7 @@ import {
   getErrorMessage,
   getErrorStatusCode,
   hasHttpStatus,
+  isAmountInvalidError,
   isClientError,
   isOptimisticLockConflict,
   isServerError,
@@ -47,6 +48,31 @@ describe('parseApiErrorBody', () => {
   it('returns null for non-object bodies', () => {
     expect(parseApiErrorBody(null)).toBeNull();
     expect(parseApiErrorBody('error')).toBeNull();
+  });
+});
+
+describe('isAmountInvalidError', () => {
+  it('detects AMOUNT_INVALID by code', () => {
+    expect(
+      isAmountInvalidError(
+        new ApiRequestError({
+          statusCode: 400,
+          message: 'Amount must be a non-negative decimal',
+          code: 'AMOUNT_INVALID',
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it('ignores matching English text without the code', () => {
+    expect(
+      isAmountInvalidError(
+        new ApiRequestError({
+          statusCode: 400,
+          message: 'Amount must be a non-negative decimal',
+        }),
+      ),
+    ).toBe(false);
   });
 });
 

@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router';
+import { QueryLoading } from '@/components/feedback/query-state';
 import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { FocusOnRouteChange } from '@/components/layout/focus-on-route-change';
@@ -23,7 +24,7 @@ export function AppLayout() {
   const demoMode = isDemoMode();
 
   return (
-    <div className="grid h-screen overflow-hidden grid-cols-1 xl:grid-cols-[260px_1fr]">
+    <div className="grid h-screen overflow-hidden grid-cols-1 lg:grid-cols-[260px_1fr]">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -31,7 +32,7 @@ export function AppLayout() {
         Skip to main content
       </a>
       <FocusOnRouteChange targetId="main" />
-      <AppSidebar className="hidden xl:flex" />
+      <AppSidebar className="hidden lg:flex" />
       <div className="flex min-h-0 min-w-0 flex-col">
         <AppHeader />
         {mockMode && DemoDataBanner ? (
@@ -54,17 +55,7 @@ export function AppLayout() {
           className="flex-1 min-w-0 overflow-y-auto px-6 py-8 outline-none"
         >
           <RouteErrorBoundary>
-            <Suspense
-              fallback={
-                <p
-                  className="text-sm text-muted-foreground"
-                  role="status"
-                  aria-live="polite"
-                >
-                  Loading…
-                </p>
-              }
-            >
+            <Suspense fallback={<QueryLoading>Loading page…</QueryLoading>}>
               <Outlet />
             </Suspense>
           </RouteErrorBoundary>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  createProductSchema,
+  createProductFormSchema,
   toProductSubmitValues,
   type ProductFormValues,
   type ProductSubmitValues,
@@ -23,6 +23,10 @@ import { useCategoriesListQuery } from '@/features/products/hooks/use-categories
 import { usePlatformConfigQuery } from '@/features/products/hooks/use-platform-config';
 import { ProductImagePreview } from '@/features/products/components/product-image-preview';
 import { applyApiFormErrors } from '@/lib/api/form-api-errors';
+import {
+  ApiRequestError,
+  isAmountInvalidError,
+} from '@/lib/api/parse-api-error';
 
 export type ProductFormMode = 'create' | 'edit';
 
@@ -73,9 +77,21 @@ export function ProductForm({
     useCategoriesListQuery();
   const { data: storeConfig, isLoading: storeConfigLoading } =
     usePlatformConfigQuery();
+  const storeConfigRef = useRef(storeConfig);
+
+  useEffect(() => {
+    storeConfigRef.current = storeConfig;
+  }, [storeConfig]);
 
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(createProductSchema),
+    resolver: async (values, context, options) => {
+      const schema = createProductFormSchema({
+        defaultCurrency: storeConfigRef.current?.defaultCurrency,
+        defaultCurrencyExponent:
+          storeConfigRef.current?.defaultCurrencyExponent,
+      });
+      return zodResolver(schema)(values, context, options);
+    },
     defaultValues: {
       ...emptyDefaults,
       ...defaultValues,
@@ -142,17 +158,22 @@ export function ProductForm({
         : (1 / Math.pow(10, storeConfig.defaultCurrencyExponent)).toFixed(
             storeConfig.defaultCurrencyExponent,
           )
-      : ['JPY', 'KRW', 'VND', 'CLP'].includes(displayedCurrency)
-        ? '1'
-        : ['BHD', 'JOD', 'KWD', 'OMR', 'TND'].includes(displayedCurrency)
-          ? '0.001'
-          : '0.01';
+      : 'any';
 
   async function handleSubmit(values: ProductFormValues) {
     setFormError(null);
     try {
       await onSubmit(toProductSubmitValues(values));
     } catch (error) {
+      if (isAmountInvalidError(error)) {
+        const message =
+          error instanceof ApiRequestError
+            ? error.message
+            : 'Amount is invalid for this currency';
+        form.setError('price', { message });
+        return;
+      }
+
       applyApiFormErrors({
         error,
         setFormError,

@@ -39,7 +39,7 @@ describe('MobileNav', () => {
     expect(trigger).toHaveFocus();
   });
 
-  it('hides the trigger on desktop screens with xl:hidden', () => {
+  it('hides the trigger on desktop screens with lg:hidden', () => {
     render(
       <MemoryRouter>
         <MobileNav />
@@ -47,6 +47,6 @@ describe('MobileNav', () => {
     );
 
     const trigger = screen.getByRole('button', { name: 'Open navigation menu' });
-    expect(trigger).toHaveClass('xl:hidden');
+    expect(trigger).toHaveClass('lg:hidden');
   });
 });

@@ -9,6 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { PaymentTimeSeriesBucketDto } from '@/features/dashboard/types';
+import { isPartialTrailingBucket } from '@/features/dashboard/lib/dashboard-metrics';
 import { formatMoney } from '@/lib/format';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 
@@ -83,9 +84,14 @@ export function DashboardRevenueChart({
     label: formatBucketLabel(row.bucketStart, bucket),
   }));
 
-  const activeOption = METRIC_OPTIONS.find((opt) => opt.value === metric)!;
+  const activeOption = METRIC_OPTIONS.find((opt) => opt.value === metric);
   const isCountMetric = metric === 'capturedCount';
   const allZero = data.every((row) => row[metric] === 0);
+  const lastBucket = buckets[buckets.length - 1];
+  const lastBucketPartial =
+    lastBucket !== undefined &&
+    isPartialTrailingBucket(lastBucket.bucketStart, bucket);
+  const metricLabel = activeOption?.label ?? 'Net revenue';
 
   return (
     <div className="space-y-4">
@@ -103,13 +109,13 @@ export function DashboardRevenueChart({
         <p className="py-12 text-center text-sm text-muted-foreground">
           {metric === 'netAmount'
             ? 'No captured revenue in this period.'
-            : `No ${activeOption.label.toLowerCase()} in this period.`}
+            : `No ${metricLabel.toLowerCase()} in this period.`}
         </p>
       ) : (
         <div
           className="h-64 sm:h-72 w-full"
           role="img"
-          aria-label={`${activeOption.label} over time`}
+          aria-label={`${metricLabel} over time`}
         >
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -154,7 +160,7 @@ export function DashboardRevenueChart({
                   isCountMetric
                     ? String(value)
                     : formatMoney(value, currency),
-                  activeOption.label,
+                  metricLabel,
                 ]}
                 labelFormatter={(label) => String(label)}
               />
@@ -169,6 +175,14 @@ export function DashboardRevenueChart({
           </ResponsiveContainer>
         </div>
       )}
+
+      {lastBucketPartial ? (
+        <p className="text-xs text-muted-foreground">
+          {bucket === 'day'
+            ? 'Today may be partial (UTC); the day is still in progress.'
+            : 'The current week may be partial (UTC); the week is still in progress.'}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -111,6 +111,9 @@ describe('CategoriesPage', () => {
     expect(
       screen.getByRole('button', { name: 'Create category' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Categories' }),
+    ).toBeInTheDocument();
   });
 
   it('shows the active product count per category', () => {

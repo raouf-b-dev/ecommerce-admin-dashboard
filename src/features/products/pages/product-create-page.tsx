@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 import { PageHeader } from '@/components/layout/page-header';
 import { ProductForm } from '@/features/products/components/product-form';
 import { useCreateProduct } from '@/features/products/hooks/use-products';
@@ -13,6 +14,7 @@ function ProductCreatePage() {
 
   async function handleSubmit(values: ProductSubmitValues) {
     await createProduct.mutateAsync(toCreateProductDto(values));
+    toast.success('Product created');
     navigate('/products');
   }
 

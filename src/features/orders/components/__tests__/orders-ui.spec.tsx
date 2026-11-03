@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { OrderStatusActions } from '@/features/orders/components/order-status-actions';
 
 describe('OrderStatusActions', () => {
@@ -16,6 +17,48 @@ describe('OrderStatusActions', () => {
     expect(screen.queryByRole('button', { name: 'Ship' })).not.toBeInTheDocument();
   });
 
+  it('labels the cancel confirm dialog Keep order and Cancel order', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OrderStatusActions
+        status="confirmed"
+        isPending={false}
+        onAction={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(
+      screen.getByRole('button', { name: 'Keep order' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Cancel order' }),
+    ).toBeInTheDocument();
+  });
+
+  it('returns focus to the Cancel trigger after the dialog closes', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OrderStatusActions
+        status="confirmed"
+        isPending={false}
+        onAction={vi.fn()}
+      />,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Cancel' });
+    await user.click(trigger);
+    expect(
+      screen.getByRole('heading', { name: 'Cancel order?' }),
+    ).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(trigger).toHaveFocus();
+  });
+
   it('shows no action buttons for delivered orders', () => {
     render(
       <OrderStatusActions
@@ -31,3 +74,4 @@ describe('OrderStatusActions', () => {
     expect(screen.queryByRole('button', { name: 'Process' })).not.toBeInTheDocument();
   });
 });
+

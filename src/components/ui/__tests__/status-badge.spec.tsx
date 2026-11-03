@@ -19,9 +19,13 @@ describe('StatusBadge', () => {
   it('renders product statuses correctly', () => {
     const { rerender } = render(<StatusBadge variant="product" isActive={true} />);
     expect(screen.getByText('Active')).toBeInTheDocument();
+    expect(screen.getByText('Active').parentElement).toHaveClass('bg-tint-1');
 
     rerender(<StatusBadge variant="product" isActive={false} />);
     expect(screen.getByText('Inactive')).toBeInTheDocument();
+    expect(screen.getByText('Inactive').parentElement).toHaveClass(
+      'bg-secondary',
+    );
   });
 
   it('renders inventory statuses correctly', () => {

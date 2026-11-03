@@ -66,6 +66,8 @@ async function performSilentRefresh(): Promise<SilentRefreshResult | null> {
     body: '{}',
   });
 
+  // Anonymous bootstrap (no refresh cookie) is expected; return null quietly.
+  // Do not log the response body - it must never include tokens or PII.
   if (response.status === 401) {
     return null;
   }

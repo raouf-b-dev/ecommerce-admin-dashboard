@@ -199,4 +199,39 @@ describe('ProductsPage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('Could not load products')).not.toBeInTheDocument();
   });
+
+  it('opens secondary filters inline and applies on submit', () => {
+    listQueryMock.mockReturnValue({
+      data: { items: [], total: 0, page: 1, limit: 10, totalPages: 0 },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isFetching: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <ProductsPage />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByTestId('products-filters-panel')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Filters' }));
+    const panel = screen.getByTestId('products-filters-panel');
+    expect(panel).not.toHaveClass('absolute');
+    expect(
+      screen.getByRole('button', { name: 'Apply price & category' }),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Min price'), {
+      target: { value: '10' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Apply price & category' }),
+    );
+
+    expect(screen.getByText('Min: $10')).toBeInTheDocument();
+  });
 });

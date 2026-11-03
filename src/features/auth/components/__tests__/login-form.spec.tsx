@@ -141,4 +141,23 @@ describe('LoginForm', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/products', { replace: true });
     });
   });
+
+  it('toggles password visibility without changing the value', () => {
+    render(
+      <MemoryRouter>
+        <LoginForm />
+      </MemoryRouter>,
+    );
+
+    const password = screen.getByLabelText('Password');
+    fireEvent.change(password, { target: { value: 'Secret123!' } });
+    expect(password).toHaveAttribute('type', 'password');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Show password' }));
+    expect(password).toHaveAttribute('type', 'text');
+    expect(password).toHaveValue('Secret123!');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Hide password' }));
+    expect(password).toHaveAttribute('type', 'password');
+  });
 });

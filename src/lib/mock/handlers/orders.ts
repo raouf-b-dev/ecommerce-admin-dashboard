@@ -5,6 +5,7 @@ import type {
   OrderListItemResponseDto,
   OrderMutationResponseDto,
 } from '@/lib/mock/data/types';
+import { apiErrorResponse } from '@/lib/mock/lib/api-error-response';
 import {
   paginate,
   parseOptionalNumber,
@@ -40,18 +41,13 @@ function toListItem(order: OrderDetailResponseDto): OrderListItemResponseDto {
 function transitionOrder(orderId: number, action: string) {
   const order = getMockStore().orders.find((item) => item.id === orderId);
   if (!order) {
-    return HttpResponse.json(
-      { message: 'Order not found', statusCode: 404 },
-      { status: 404 },
-    );
+    // Missing (or inaccessible) order: same 404 ORDER_NOT_FOUND as GET.
+    return apiErrorResponse(404, 'ORDER_NOT_FOUND', 'Order not found');
   }
 
   const nextStatus = TRANSITIONS[action];
   if (!nextStatus) {
-    return HttpResponse.json(
-      { message: 'Unsupported transition', statusCode: 400 },
-      { status: 400 },
-    );
+    return apiErrorResponse(400, 'DOMAIN_ERROR', 'Unsupported transition');
   }
 
   order.status = nextStatus;
@@ -60,7 +56,7 @@ function transitionOrder(orderId: number, action: string) {
   const body: OrderMutationResponseDto = {
     id: order.id,
     status: order.status,
-    totalPrice: order.totalPrice,
+    totalAmount: order.totalAmount,
     currency: order.currency,
     updatedAt: order.updatedAt,
   };
@@ -151,10 +147,7 @@ export const ordersHandlers = [
     const id = Number(params.id);
     const order = getMockStore().orders.find((item) => item.id === id);
     if (!order) {
-      return HttpResponse.json(
-        { message: 'Order not found', statusCode: 404 },
-        { status: 404 },
-      );
+      return apiErrorResponse(404, 'ORDER_NOT_FOUND', 'Order not found');
     }
     return HttpResponse.json(order);
   }),

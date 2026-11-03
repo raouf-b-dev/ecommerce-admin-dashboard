@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { QueryLoading } from '@/components/feedback/query-state';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { getErrorMessage } from '@/lib/api/parse-api-error';
@@ -40,9 +41,7 @@ export function DashboardWidgetFrame({
           </AlertDescription>
         </Alert>
       ) : isLoading ? (
-        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
-          Loading…
-        </p>
+        <QueryLoading>Loading…</QueryLoading>
       ) : (
         children
       )}

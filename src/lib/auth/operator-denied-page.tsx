@@ -8,8 +8,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth/auth-context';
+import { useDocumentTitle } from '@/lib/use-document-title';
 
 export function OperatorDeniedPage() {
+  useDocumentTitle('Access denied');
   const { logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 

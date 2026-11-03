@@ -28,7 +28,7 @@ test.describe('Forced password change', () => {
     async function tryPassword(pwd: string): Promise<'change' | 'shell' | 'invalid'> {
       await page.goto('/login');
       await page.getByLabel('Email').fill(email);
-      await page.getByLabel('Password').fill(pwd);
+      await page.getByLabel('Password', { exact: true }).fill(pwd);
       await page.getByRole('button', { name: 'Sign in' }).click();
 
       await Promise.race([

@@ -55,14 +55,14 @@ function getOrderBadgeStyle(status: string): BadgeStyle {
       return {
         label: formatStatusLabel(status),
         pillClasses:
-          'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+          'bg-tint-1 text-tint-1-foreground border-positive/30',
         dotClasses,
       };
     case 'confirmed':
       return {
         label: formatStatusLabel(status),
         pillClasses:
-          'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20',
+          'bg-tint-3 text-tint-3-foreground border-tint-3-foreground/25',
         dotClasses,
       };
     case 'processing':
@@ -70,7 +70,7 @@ function getOrderBadgeStyle(status: string): BadgeStyle {
       return {
         label: formatStatusLabel(status),
         pillClasses:
-          'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
+          'bg-tint-2 text-tint-2-foreground border-tint-2-foreground/25',
         dotClasses,
       };
     case 'payment_failed':
@@ -78,7 +78,7 @@ function getOrderBadgeStyle(status: string): BadgeStyle {
       return {
         label: formatStatusLabel(status),
         pillClasses:
-          'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
+          'bg-tint-4 text-tint-4-foreground border-negative/30',
         dotClasses,
       };
     case 'refunded':
@@ -86,7 +86,7 @@ function getOrderBadgeStyle(status: string): BadgeStyle {
       return {
         label: formatStatusLabel(status),
         pillClasses:
-          'bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20',
+          'bg-secondary text-secondary-foreground border-border',
         dotClasses,
       };
   }
@@ -97,15 +97,14 @@ function getProductBadgeStyle(isActive: boolean): BadgeStyle {
     return {
       label: 'Active',
       pillClasses:
-        'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
-      dotClasses: 'bg-emerald-500',
+        'bg-tint-1 text-tint-1-foreground border-positive/30',
+      dotClasses: 'bg-positive',
     };
   }
   return {
     label: 'Inactive',
-    pillClasses:
-      'bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20',
-    dotClasses: 'bg-slate-400',
+    pillClasses: 'bg-secondary text-secondary-foreground border-border',
+    dotClasses: 'bg-muted-foreground',
   };
 }
 
@@ -125,22 +124,22 @@ function getInventoryBadgeStyle(
       return {
         label: 'Critical',
         pillClasses:
-          'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
-        dotClasses: 'bg-rose-500',
+          'bg-tint-4 text-tint-4-foreground border-negative/30',
+        dotClasses: 'bg-negative',
       };
     case 'low':
       return {
         label: 'Low stock',
         pillClasses:
-          'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
-        dotClasses: 'bg-amber-500',
+          'bg-tint-2 text-tint-2-foreground border-tint-2-foreground/25',
+        dotClasses: 'bg-tint-2-foreground',
       };
     case 'healthy':
       return {
         label: 'Healthy',
         pillClasses:
-          'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
-        dotClasses: 'bg-emerald-500',
+          'bg-tint-1 text-tint-1-foreground border-positive/30',
+        dotClasses: 'bg-positive',
       };
   }
 }
@@ -172,7 +171,7 @@ export function StatusBadge(props: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-sm font-medium',
         style.pillClasses,
         props.className,
       )}
@@ -181,7 +180,7 @@ export function StatusBadge(props: StatusBadgeProps) {
         className={cn('h-1.5 w-1.5 shrink-0 rounded-full', style.dotClasses)}
         aria-hidden="true"
       />
-      <span className="capitalize">{style.label}</span>
+      <span className="truncate capitalize">{style.label}</span>
     </span>
   );
 }
