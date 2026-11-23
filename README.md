@@ -26,7 +26,7 @@ Payments use a mock adapter behind a swappable hexagonal port. `npm run dev:mock
 
 ## Demo
 
-Hosted demo: coming soon. Until then, run the full stack locally with the [ecommerce-platform](https://github.com/raouf-b-dev/ecommerce-platform) repo (`docker compose up`).
+Run the full stack locally with the [ecommerce-platform](https://github.com/raouf-b-dev/ecommerce-platform) repo (`docker compose up`). A hosted public demo is in progress (viewer-only when live).
 
 Sign-in accounts for a local run: [platform README](https://github.com/raouf-b-dev/ecommerce-platform#local-demo-sign-in-demo_read_onlyfalse). Seed env keys: [API SEEDING.md](https://github.com/raouf-b-dev/ecommerce-store-api/blob/develop/docs/development/SEEDING.md).
 
